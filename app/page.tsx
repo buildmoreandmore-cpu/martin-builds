@@ -16,7 +16,6 @@ export default function Home() {
     <>
       <Nav />
       <Hero />
-      <TrustBar />
       <BuiltWith />
       <Services />
       <PowerHourBanner />
