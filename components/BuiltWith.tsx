@@ -1,9 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 const tools: {
   name: string;
   slug?: string;
-  imgSrc?: string;
   color: string;
 }[] = [
   { name: "Supabase",    slug: "supabase",          color: "#3ECF8E" },
@@ -18,11 +19,38 @@ const tools: {
   { name: "Clerk",       slug: "clerk",              color: "#6C47FF" },
   { name: "OpenAI",      slug: "openai",             color: "#f5f5f0" },
   { name: "Grok",        slug: "xai",                color: "#f5f5f0" },
-  { name: "OpenClaw",    imgSrc: "/openclaw-logo.png", color: "#FF4D3D" },
 ];
 
-// Duplicate for seamless loop
 const doubled = [...tools, ...tools];
+
+function ToolIcon({ slug, color }: { slug: string; color: string }) {
+  const [svgContent, setSvgContent] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch(`https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/${slug}.svg`)
+      .then(r => r.ok ? r.text() : "")
+      .then(text => {
+        if (text) setSvgContent(text);
+      })
+      .catch(() => {});
+  }, [slug]);
+
+  if (!svgContent) {
+    return (
+      <div style={{ width: 22, height: 22, borderRadius: "4px", background: `${color}22`, flexShrink: 0 }} />
+    );
+  }
+
+  return (
+    <div
+      className="tool-icon"
+      style={{ width: 22, height: 22, flexShrink: 0 }}
+      dangerouslySetInnerHTML={{
+        __html: svgContent.replace(/<svg/, `<svg width="22" height="22" fill="#666" style="transition:fill 0.25s"`)
+      }}
+    />
+  );
+}
 
 export default function BuiltWith() {
   return (
@@ -60,11 +88,8 @@ export default function BuiltWith() {
         </h2>
       </div>
 
-      {/* Carousel track */}
       <div style={{ position: "relative" }}>
-        {/* Left fade */}
         <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "80px", background: "linear-gradient(to right, #0a0a0a, transparent)", zIndex: 2, pointerEvents: "none" }} />
-        {/* Right fade */}
         <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "80px", background: "linear-gradient(to left, #0a0a0a, transparent)", zIndex: 2, pointerEvents: "none" }} />
 
         <div className="carousel-track">
@@ -76,8 +101,8 @@ export default function BuiltWith() {
                 const el = e.currentTarget as HTMLDivElement;
                 el.style.borderColor = `${tool.color}44`;
                 el.style.background = "#222";
-                const img = el.querySelector<HTMLImageElement>(".tool-icon");
-                if (img) img.style.filter = "brightness(1) saturate(1)";
+                const svg = el.querySelector<HTMLElement>(".tool-icon svg");
+                if (svg) svg.style.fill = tool.color;
                 const name = el.querySelector<HTMLSpanElement>(".tool-name");
                 if (name) name.style.color = tool.color;
               }}
@@ -85,30 +110,13 @@ export default function BuiltWith() {
                 const el = e.currentTarget as HTMLDivElement;
                 el.style.borderColor = "rgba(245,245,240,0.08)";
                 el.style.background = "#1a1a1a";
-                const img = el.querySelector<HTMLImageElement>(".tool-icon");
-                if (img) img.style.filter = "brightness(0.55) saturate(0)";
+                const svg = el.querySelector<HTMLElement>(".tool-icon svg");
+                if (svg) svg.style.fill = "#666";
                 const name = el.querySelector<HTMLSpanElement>(".tool-name");
                 if (name) name.style.color = "#666";
               }}
             >
-              {tool.slug ? (
-                <img
-                  className="tool-icon"
-                  src={`https://cdn.simpleicons.org/${tool.slug}/888888`}
-                  alt={`${tool.name} logo`}
-                  width={22}
-                  height={22}
-                />
-              ) : tool.imgSrc ? (
-                <img
-                  className="tool-icon"
-                  src={tool.imgSrc}
-                  alt={`${tool.name} logo`}
-                  width={22}
-                  height={22}
-                  style={{ filter: "none", borderRadius: "4px" }}
-                />
-              ) : null}
+              {tool.slug && <ToolIcon slug={tool.slug} color={tool.color} />}
               <span className="tool-name">{tool.name}</span>
             </div>
           ))}
@@ -139,14 +147,6 @@ export default function BuiltWith() {
         }
         .carousel-tile:hover {
           transform: translateY(-2px);
-        }
-        .carousel-tile .tool-icon {
-          width: 22px;
-          height: 22px;
-          object-fit: contain;
-          filter: brightness(0.55) saturate(0);
-          transition: filter 0.25s;
-          flex-shrink: 0;
         }
         .carousel-tile .tool-name {
           font-family: 'Outfit', sans-serif;
