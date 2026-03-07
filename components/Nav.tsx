@@ -33,12 +33,12 @@ export default function Nav() {
         martin<span style={{ color: "#c8ff00" }}>.builds</span>
       </a>
       <div style={{ display: "flex", gap: "2.5rem", alignItems: "center" }}>
-        <NavLink href="#services">Services</NavLink>
-        <NavLink href="#work">Work</NavLink>
-        <NavLink href="#process">Process</NavLink>
-        <NavLink href="#testimonials">Results</NavLink>
+        <NavLink href="/#services">Services</NavLink>
+        <NavLink href="/#work">Work</NavLink>
+        <NavLink href="/#process">Process</NavLink>
+        <NavLink href="/work-with-me">Work With Me</NavLink>
         <a
-          href="#cta"
+          href="/work-with-me#book-call"
           style={{
             background: "#c8ff00",
             color: "#0a0a0a",
