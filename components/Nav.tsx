@@ -35,7 +35,7 @@ export default function Nav() {
       <div style={{ display: "flex", gap: "2.5rem", alignItems: "center" }}>
         <NavLink href="/about">About</NavLink>
         <NavLink href="/#services">Services</NavLink>
-        <NavLink href="/#work">Work</NavLink>
+        <NavLink href="/ai-agent">AI Agent</NavLink>
         <NavLink href="/power-hour">Power Hour</NavLink>
         <NavLink href="/contact">Contact</NavLink>
         <a
