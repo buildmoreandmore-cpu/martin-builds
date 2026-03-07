@@ -1,17 +1,39 @@
 "use client";
 
+import { useState, useEffect } from "react";
+
+const chatMessages = [
+  { role: "agent" as const, text: "Good morning! While you slept, I handled 12 tasks.", delay: 500 },
+  { role: "agent" as const, text: "Replied to 3 client emails", delay: 2000, arrow: true },
+  { role: "agent" as const, text: "Scheduled 2 meetings for today", delay: 2500, arrow: true },
+  { role: "agent" as const, text: "Flagged an overdue invoice — $4,200 from Apex Corp", delay: 3000, arrow: true },
+  { role: "agent" as const, text: "Want me to send a follow-up on that invoice?", delay: 4000 },
+];
+
 export default function AgentHero() {
+  const [visibleCount, setVisibleCount] = useState(0);
+  const [showTyping, setShowTyping] = useState(false);
+  const [showButtons, setShowButtons] = useState(false);
+
+  useEffect(() => {
+    const timers: NodeJS.Timeout[] = [];
+
+    chatMessages.forEach((msg, i) => {
+      // Show typing indicator before each message
+      timers.push(setTimeout(() => setShowTyping(true), msg.delay - 400));
+      timers.push(setTimeout(() => {
+        setShowTyping(false);
+        setVisibleCount(i + 1);
+      }, msg.delay));
+    });
+
+    timers.push(setTimeout(() => setShowButtons(true), 4500));
+
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
   return (
-    <section
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        padding: "8rem 3rem 4rem",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
+    <section style={{ minHeight: "100vh", display: "flex", alignItems: "center", padding: "8rem 3rem 4rem", position: "relative", overflow: "hidden" }}>
       <div style={{ position: "absolute", top: "-10%", right: "-5%", width: "50vw", height: "50vw", background: "radial-gradient(circle, rgba(200,255,0,0.07) 0%, transparent 65%)", pointerEvents: "none" }} />
 
       <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: "3rem", alignItems: "center", maxWidth: "1200px", margin: "0 auto", width: "100%" }} className="agent-hero-grid">
@@ -30,7 +52,7 @@ export default function AgentHero() {
           <div className="animate-fade-up-4" style={{ display: "flex", gap: "1rem", marginTop: "2rem", flexWrap: "wrap" }}>
             <a
               href="#cta"
-              style={{ display: "inline-block", padding: "1rem 2.5rem", background: "#c8ff00", color: "#0a0a0a", borderRadius: "100px", fontWeight: 700, fontSize: "1rem", transition: "all 0.3s" }}
+              style={{ display: "inline-block", padding: "1rem 2.5rem", background: "#c8ff00", color: "#0a0a0a", borderRadius: "100px", fontWeight: 700, fontSize: "1rem", transition: "all 0.3s", textDecoration: "none" }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-3px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 30px rgba(200,255,0,0.25)"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
             >
@@ -38,7 +60,7 @@ export default function AgentHero() {
             </a>
             <a
               href="#use-cases"
-              style={{ display: "inline-block", padding: "1rem 2.5rem", background: "transparent", color: "#f5f5f0", borderRadius: "100px", fontWeight: 600, fontSize: "1rem", border: "1px solid rgba(245,245,240,0.2)", transition: "all 0.3s" }}
+              style={{ display: "inline-block", padding: "1rem 2.5rem", background: "transparent", color: "#f5f5f0", borderRadius: "100px", fontWeight: 600, fontSize: "1rem", border: "1px solid rgba(245,245,240,0.2)", transition: "all 0.3s", textDecoration: "none" }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "#c8ff00"; (e.currentTarget as HTMLAnchorElement).style.color = "#c8ff00"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(245,245,240,0.2)"; (e.currentTarget as HTMLAnchorElement).style.color = "#f5f5f0"; }}
             >
@@ -50,77 +72,90 @@ export default function AgentHero() {
           </p>
         </div>
 
-        {/* Right: Agent Cards Grid */}
-        <div className="animate-fade-up-3" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-          <div
-            style={{ background: "#1a1a1a", border: "1px solid rgba(245,245,240,0.06)", borderRadius: "12px", padding: "1.5rem", transition: "all 0.3s" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(200,255,0,0.15)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(245,245,240,0.06)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
-          >
-            <div style={{ width: "36px", height: "36px", background: "rgba(200,255,0,0.1)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1rem" }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <circle cx="9" cy="9" r="2"/>
-                <path d="M21 15.5c-1.5-1.5-3.5-2.5-5.5-2.5s-4 1-5.5 2.5"/>
-              </svg>
+        {/* Right: Live Chat Demo */}
+        <div className="animate-fade-up-3" style={{ maxWidth: "460px", width: "100%" }}>
+          {/* Chat Header */}
+          <div style={{ background: "#1a1a1a", borderRadius: "16px 16px 0 0", padding: "1.25rem 1.5rem", borderBottom: "1px solid rgba(245,245,240,0.06)", display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <div style={{ width: "10px", height: "10px", background: "#c8ff00", borderRadius: "50%", animation: "heroPulse 2s infinite" }} />
+            <div>
+              <div style={{ fontSize: "0.95rem", fontWeight: 600, color: "#f5f5f0" }}>
+                Your AI Employee — <span style={{ color: "#c8ff00" }}>Online now</span>
+              </div>
+              <div style={{ fontSize: "0.75rem", color: "#666", fontFamily: "'Space Mono', monospace" }}>Handling tasks 24/7</div>
             </div>
-            <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "0.5rem", color: "#f5f5f0" }}>Operations Agent</h3>
-            <p style={{ fontSize: "0.8rem", color: "#888", lineHeight: 1.5 }}>Manages your inbox, schedules meetings, sends follow-ups</p>
           </div>
 
-          <div
-            style={{ background: "#1a1a1a", border: "1px solid rgba(245,245,240,0.06)", borderRadius: "12px", padding: "1.5rem", transition: "all 0.3s" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(200,255,0,0.15)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(245,245,240,0.06)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
-          >
-            <div style={{ width: "36px", height: "36px", background: "rgba(200,255,0,0.1)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1rem" }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="8.5" cy="7" r="4"/>
-                <path d="M20 8v6"/>
-                <path d="M23 11l-3-3 3-3"/>
-              </svg>
-            </div>
-            <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "0.5rem", color: "#f5f5f0" }}>Sales Agent</h3>
-            <p style={{ fontSize: "0.8rem", color: "#888", lineHeight: 1.5 }}>Qualifies leads, sends proposals, tracks pipeline</p>
+          {/* Chat Body */}
+          <div style={{ background: "#1a1a1a", padding: "1.5rem", minHeight: "320px", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            {chatMessages.slice(0, visibleCount).map((msg, i) => (
+              <div key={i} style={{ display: "flex", gap: "0.6rem", alignItems: "flex-start", animation: "heroFadeSlideUp 0.4s ease-out forwards" }}>
+                {i === 0 && (
+                  <div style={{ width: "30px", height: "30px", borderRadius: "50%", background: "rgba(200,255,0,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/></svg>
+                  </div>
+                )}
+                {i !== 0 && <div style={{ width: "30px", flexShrink: 0 }} />}
+                <div style={{ background: "rgba(200,255,0,0.08)", padding: "0.7rem 1rem", borderRadius: "14px", maxWidth: "88%", fontSize: "0.88rem", lineHeight: 1.5, color: "#f5f5f0" }}>
+                  {msg.arrow && (
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2.5" style={{ marginRight: "6px", verticalAlign: "middle" }}><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                  )}
+                  {msg.text}
+                  {i === 0 && (
+                    <div style={{ fontSize: "0.7rem", color: "#555", marginTop: "0.4rem", fontFamily: "'Space Mono', monospace" }}>9:23 AM</div>
+                  )}
+                </div>
+              </div>
+            ))}
+
+            {showTyping && (
+              <div style={{ display: "flex", gap: "0.6rem", alignItems: "flex-start" }}>
+                <div style={{ width: "30px", flexShrink: 0 }} />
+                <div style={{ background: "rgba(200,255,0,0.08)", padding: "0.7rem 1rem", borderRadius: "14px", display: "flex", gap: "4px", alignItems: "center" }}>
+                  <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#c8ff00", animation: "heroTypingDot 1s infinite 0s" }} />
+                  <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#c8ff00", animation: "heroTypingDot 1s infinite 0.2s" }} />
+                  <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#c8ff00", animation: "heroTypingDot 1s infinite 0.4s" }} />
+                </div>
+              </div>
+            )}
+
+            {showButtons && (
+              <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem", marginLeft: "36px", animation: "heroFadeSlideUp 0.4s ease-out forwards", flexWrap: "wrap" }}>
+                {["Send it", "Show me the emails"].map((label) => (
+                  <button key={label} style={{ background: "rgba(200,255,0,0.1)", border: "1px solid rgba(200,255,0,0.3)", color: "#c8ff00", padding: "0.5rem 1rem", borderRadius: "20px", fontSize: "0.8rem", cursor: "pointer", transition: "all 0.2s", fontWeight: 600 }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(200,255,0,0.2)"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(200,255,0,0.1)"; }}
+                  >{label}</button>
+                ))}
+              </div>
+            )}
           </div>
 
-          <div
-            style={{ background: "#1a1a1a", border: "1px solid rgba(245,245,240,0.06)", borderRadius: "12px", padding: "1.5rem", transition: "all 0.3s" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(200,255,0,0.15)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(245,245,240,0.06)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
-          >
-            <div style={{ width: "36px", height: "36px", background: "rgba(200,255,0,0.1)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1rem" }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-              </svg>
+          {/* Chat Input Bar */}
+          <div style={{ background: "#1a1a1a", padding: "1rem 1.5rem", borderRadius: "0 0 16px 16px", borderTop: "1px solid rgba(245,245,240,0.06)" }}>
+            <div style={{ display: "flex", gap: "0.75rem", padding: "0.6rem 1rem", background: "rgba(245,245,240,0.02)", borderRadius: "12px", border: "1px solid rgba(245,245,240,0.06)" }}>
+              <input type="text" placeholder="Your AI employee is ready..." disabled style={{ flex: 1, background: "transparent", border: "none", color: "#666", fontSize: "0.85rem", outline: "none" }} />
+              <div style={{ width: "30px", height: "30px", background: "rgba(200,255,0,0.1)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9 22,2"/></svg>
+              </div>
             </div>
-            <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "0.5rem", color: "#f5f5f0" }}>Support Agent</h3>
-            <p style={{ fontSize: "0.8rem", color: "#888", lineHeight: 1.5 }}>Answers customer questions 24/7, escalates when needed</p>
-          </div>
-
-          <div
-            style={{ background: "#1a1a1a", border: "1px solid rgba(245,245,240,0.06)", borderRadius: "12px", padding: "1.5rem", transition: "all 0.3s" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(200,255,0,0.15)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(245,245,240,0.06)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
-          >
-            <div style={{ width: "36px", height: "36px", background: "rgba(200,255,0,0.1)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1rem" }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14,2 14,8 20,8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-                <polyline points="10,9 9,9 8,9"/>
-              </svg>
-            </div>
-            <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "0.5rem", color: "#f5f5f0" }}>Admin Agent</h3>
-            <p style={{ fontSize: "0.8rem", color: "#888", lineHeight: 1.5 }}>Invoicing, data entry, reports, bookkeeping prep</p>
           </div>
         </div>
       </div>
 
       <style>{`
-        @media (max-width: 900px) {
+        @keyframes heroFadeSlideUp {
+          from { opacity: 0; transform: translateY(12px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes heroTypingDot {
+          0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); }
+          30% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes heroPulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+        @media (max-width: 768px) {
           .agent-hero-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
