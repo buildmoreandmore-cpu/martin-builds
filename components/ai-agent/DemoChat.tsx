@@ -68,7 +68,7 @@ export default function DemoChat() {
   };
 
   return (
-    <section id="demo-section" style={{ padding: "6rem 3rem" }}>
+    <section id="demo-section" className="demo-section" style={{ padding: "6rem 3rem" }}>
       <div style={{ maxWidth: "560px", margin: "0 auto" }}>
         <ScrollReveal>
           <div style={{ textAlign: "center", marginBottom: "2rem" }}>
@@ -167,6 +167,9 @@ export default function DemoChat() {
         @keyframes demoPulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
+        }
+        @media (max-width: 480px) {
+          .demo-section { padding: 3rem 1.25rem !important; }
         }
       `}</style>
     </section>

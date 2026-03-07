@@ -39,7 +39,7 @@ export default function AgentStats() {
   }, [isVisible]);
 
   return (
-    <section style={{ padding: "5rem 3rem", background: "rgba(200,255,0,0.02)" }}>
+    <section className="stats-section" style={{ padding: "5rem 3rem", background: "rgba(200,255,0,0.02)" }}>
       <div ref={ref} style={{ maxWidth: "700px", margin: "0 auto" }}>
         <ScrollReveal>
           <div style={{ textAlign: "center", marginBottom: "2rem" }}>
@@ -122,7 +122,8 @@ export default function AgentStats() {
           50% { opacity: 0.5; }
         }
         @media (max-width: 480px) {
-          .stats-bubble-grid { grid-template-columns: 1fr !important; }
+          .stats-bubble-grid { grid-template-columns: 1fr !important; margin-left: 0 !important; }
+          .stats-section { padding: 3rem 1.25rem !important; }
         }
       `}</style>
     </section>

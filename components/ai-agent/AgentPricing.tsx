@@ -68,7 +68,7 @@ export default function AgentPricing() {
   }, [isVisible]);
 
   return (
-    <section id="pricing" style={{ padding: "6rem 3rem", background: "rgba(200,255,0,0.015)" }}>
+    <section id="pricing" className="pricing-section" style={{ padding: "6rem 3rem", background: "rgba(200,255,0,0.015)" }}>
       <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
         <ScrollReveal>
           <div style={{ textAlign: "center", marginBottom: "4rem" }}>
@@ -208,6 +208,7 @@ export default function AgentPricing() {
         }
         @media (max-width: 640px) {
           .pricing-grid { grid-template-columns: 1fr !important; }
+          .pricing-section { padding: 3rem 1.25rem !important; }
         }
       `}</style>
     </section>

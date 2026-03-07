@@ -134,7 +134,7 @@ function MiniChat({ title, icon, messages }: { title: string; icon: React.ReactN
 
 export default function UseCases() {
   return (
-    <section id="use-cases" style={{ padding: "6rem 3rem", maxWidth: "1200px", margin: "0 auto" }}>
+    <section id="use-cases" className="uc-section" style={{ padding: "6rem 3rem", maxWidth: "1200px", margin: "0 auto" }}>
       <ScrollReveal><p style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", color: "#c8ff00", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "1.5rem" }}>What Your AI Employee Can Do</p></ScrollReveal>
       <ScrollReveal><h2 style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 800, lineHeight: 1.1, letterSpacing: "-2px", maxWidth: "700px" }}>One agent. Dozens of tasks. Zero sick days.</h2></ScrollReveal>
 
@@ -157,6 +157,7 @@ export default function UseCases() {
         }
         @media (max-width: 640px) {
           .uc-grid { grid-template-columns: 1fr !important; }
+          .uc-section { padding: 3rem 1.25rem !important; }
         }
       `}</style>
     </section>

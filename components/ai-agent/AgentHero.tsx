@@ -33,7 +33,7 @@ export default function AgentHero() {
   }, []);
 
   return (
-    <section style={{ minHeight: "100vh", display: "flex", alignItems: "center", padding: "8rem 3rem 4rem", position: "relative", overflow: "hidden" }}>
+    <section className="agent-hero-section" style={{ minHeight: "100vh", display: "flex", alignItems: "center", padding: "8rem 3rem 4rem", position: "relative", overflow: "hidden" }}>
       <div style={{ position: "absolute", top: "-10%", right: "-5%", width: "50vw", height: "50vw", background: "radial-gradient(circle, rgba(200,255,0,0.07) 0%, transparent 65%)", pointerEvents: "none" }} />
 
       <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: "3rem", alignItems: "center", maxWidth: "1200px", margin: "0 auto", width: "100%" }} className="agent-hero-grid">
@@ -49,7 +49,7 @@ export default function AgentHero() {
           <p className="animate-fade-up-3" style={{ fontSize: "1.1rem", fontWeight: 300, color: "#888", marginTop: "1.5rem", lineHeight: 1.7, maxWidth: "500px" }}>
             Not a chatbot. Not a dashboard. A trained AI employee that handles the work you don't have time for — emails, scheduling, follow-ups, reporting, and more. Custom-built for your business.
           </p>
-          <div className="animate-fade-up-4" style={{ display: "flex", gap: "1rem", marginTop: "2rem", flexWrap: "wrap" }}>
+          <div className="animate-fade-up-4 hero-cta-row" style={{ display: "flex", gap: "1rem", marginTop: "2rem", flexWrap: "wrap" }}>
             <a
               href="#cta"
               style={{ display: "inline-block", padding: "1rem 2.5rem", background: "#c8ff00", color: "#0a0a0a", borderRadius: "100px", fontWeight: 700, fontSize: "1rem", transition: "all 0.3s", textDecoration: "none" }}
@@ -156,7 +156,14 @@ export default function AgentHero() {
           50% { opacity: 0.5; }
         }
         @media (max-width: 768px) {
-          .agent-hero-grid { grid-template-columns: 1fr !important; }
+          .agent-hero-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+        }
+        @media (max-width: 480px) {
+          .agent-hero-section { padding: 5rem 1.25rem 2rem !important; min-height: auto !important; }
+          .agent-hero-grid { gap: 1.5rem !important; }
+          .hero-cta-row { flex-direction: column !important; }
+          .hero-cta-row a { width: 100% !important; text-align: center !important; padding: 0.9rem 1.5rem !important; font-size: 0.9rem !important; }
+          .hero-chat-box { max-width: 100% !important; }
         }
       `}</style>
     </section>

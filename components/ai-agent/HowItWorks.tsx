@@ -48,7 +48,7 @@ export default function HowItWorks() {
   }, [isVisible]);
 
   return (
-    <section style={{ padding: "6rem 3rem", maxWidth: "700px", margin: "0 auto" }}>
+    <section className="hiw-section" style={{ padding: "6rem 3rem", maxWidth: "700px", margin: "0 auto" }}>
       <ScrollReveal>
         <div style={{ textAlign: "center", marginBottom: "3rem" }}>
           <p style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", color: "#c8ff00", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "1.5rem" }}>How It Works</p>
@@ -125,6 +125,9 @@ export default function HowItWorks() {
         @keyframes hiwPulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
+        }
+        @media (max-width: 480px) {
+          .hiw-section { padding: 3rem 1.25rem !important; }
         }
       `}</style>
     </section>

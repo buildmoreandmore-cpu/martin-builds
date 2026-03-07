@@ -37,7 +37,7 @@ export default function AgentFinalCTA() {
   }, [isVisible]);
 
   return (
-    <section id="cta" style={{ padding: "6rem 3rem", background: "linear-gradient(135deg, rgba(200,255,0,0.03) 0%, rgba(200,255,0,0.01) 100%)" }}>
+    <section id="cta" className="cta-section" style={{ padding: "6rem 3rem", background: "linear-gradient(135deg, rgba(200,255,0,0.03) 0%, rgba(200,255,0,0.01) 100%)" }}>
       <div ref={ref} style={{ maxWidth: "700px", margin: "0 auto", textAlign: "center" }}>
         <ScrollReveal>
           <p style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", color: "#c8ff00", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "2rem" }}>
@@ -115,6 +115,10 @@ export default function AgentFinalCTA() {
         @keyframes ctaTypingDot {
           0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); }
           30% { opacity: 1; transform: scale(1); }
+        }
+        @media (max-width: 480px) {
+          .cta-section { padding: 3rem 1.25rem !important; }
+          .cta-section a { padding: 1rem 2rem !important; font-size: 0.95rem !important; }
         }
       `}</style>
     </section>

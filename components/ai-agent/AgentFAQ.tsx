@@ -45,7 +45,7 @@ export default function AgentFAQ() {
   };
 
   return (
-    <section style={{ padding: "6rem 3rem", maxWidth: "800px", margin: "0 auto" }}>
+    <section className="faq-section" style={{ padding: "6rem 3rem", maxWidth: "800px", margin: "0 auto" }}>
       <ScrollReveal>
         <div style={{ textAlign: "center", marginBottom: "4rem" }}>
           <p style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", color: "#c8ff00", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "1.5rem" }}>
@@ -126,6 +126,9 @@ export default function AgentFAQ() {
         @keyframes faqFadeSlideUp {
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 480px) {
+          .faq-section { padding: 3rem 1.25rem !important; }
         }
       `}</style>
     </section>
