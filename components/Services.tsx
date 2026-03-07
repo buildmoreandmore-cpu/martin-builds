@@ -5,31 +5,31 @@ import ScrollReveal from "./ScrollReveal";
 const services = [
   {
     icon: "⚡",
-    title: "2-Week AI Build Sprint",
+    title: "AI Starter Build",
     description:
-      "A complete AI-powered tool, platform, or internal system — designed, built, and deployed in two weeks. Not a prototype. The real thing.",
-    price: "From $15,000",
+      "A defined-scope AI-powered site or tool — built to show you exactly what I can do. The fastest way to get something real into your business without a massive commitment.",
+    price: "$5,000 setup fee",
+  },
+  {
+    icon: "⚙",
+    title: "AI Build Sprint",
+    description:
+      "Platforms, dashboards, and multi-feature tools. More complex than a starter build — for clients who need more than a site but aren't ready for a full SaaS product.",
+    price: "$8,000 – $12,000",
   },
   {
     icon: "↻",
     title: "AI Retainer",
     description:
-      "Ongoing iteration, new features, maintenance, and AI upgrades. Your business evolves — your tools should too. I stay on as your AI builder.",
-    price: "$5,000 – $10,000/mo",
-  },
-  {
-    icon: "⚙",
-    title: "AI-Powered Websites",
-    description:
-      "Not just a site that looks good — one that works. AI chat, smart forms, automated workflows, and conversion tools baked in from day one.",
-    price: "From $8,000",
+      "Ongoing iteration, new features, and AI upgrades on a monthly cadence. $2,500/month is easy math once you've seen the work. Even 10 clients is $25K/month recurring.",
+    price: "$2,500 – $5,000/mo",
   },
   {
     icon: "🚀",
-    title: "SaaS & App Development",
+    title: "Full Product Build",
     description:
-      "Full product builds from zero to App Store. Mobile apps, web apps, dashboards — designed for real users, not pitch decks.",
-    price: "From $20,000",
+      "App Store deployments and full SaaS builds from zero. Designed for real users, not pitch decks. This is the top of the stack.",
+    price: "From $15,000",
   },
 ];
 
