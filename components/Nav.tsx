@@ -35,7 +35,7 @@ export default function Nav() {
       <div style={{ display: "flex", gap: "2.5rem", alignItems: "center" }}>
         <NavLink href="/#services">Services</NavLink>
         <NavLink href="/#work">Work</NavLink>
-        <NavLink href="/#process">Process</NavLink>
+        <NavLink href="/power-hour">Power Hour</NavLink>
         <NavLink href="/work-with-me">Work With Me</NavLink>
         <a
           href="/work-with-me#book-call"
