@@ -4,117 +4,207 @@ import ScrollReveal from "../ScrollReveal";
 
 const plans = [
   {
-    featured: false,
     name: "Starter Agent",
     price: "$300",
-    period: "/mo",
-    desc: "Perfect for small businesses that need 24/7 customer support without hiring someone.",
-    includes: [
-      "Custom-trained on your business",
-      "Up to 500 conversations/month",
-      "Lead capture + email notifications",
-      "Branded to match your site",
+    period: "/month",
+    description: "For solopreneurs and small teams that need help with the basics.",
+    features: [
+      "Handles one core workflow (email, scheduling, OR support)",
+      "Up to 500 tasks/month",
+      "Daily activity summary",
+      "Email notifications",
       "48-hour setup",
-      "Monthly performance report",
+      "Cancel anytime"
     ],
-    cta: "Get Started",
+    cta: "Start Your Starter Agent",
+    popular: false
   },
   {
-    featured: true,
     name: "Pro Agent",
-    price: "$500",
-    period: "/mo",
-    desc: "For businesses that want the full package — booking, CRM integration, and smarter AI.",
-    includes: [
-      "Everything in Starter",
-      "Unlimited conversations",
-      "Calendar booking integration",
-      "CRM / email tool integration",
-      "Weekly AI training updates",
+    price: "$500", 
+    period: "/month",
+    description: "For businesses that need a full AI employee across multiple workflows.",
+    features: [
+      "Handles multiple workflows",
+      "Unlimited tasks",
+      "Integrates with your tools (CRM, calendar, email, etc.)",
+      "Weekly performance reports", 
       "Priority support",
-      "Multi-language support",
+      "Proactive suggestions & alerts",
+      "Custom escalation rules"
     ],
-    cta: "Get the Pro Agent",
-  },
+    cta: "Get Your Pro Agent",
+    popular: true
+  }
 ];
 
 export default function AgentPricing() {
   return (
-    <section id="pricing" style={{ padding: "6rem 3rem", maxWidth: "1200px", margin: "0 auto" }}>
-      <ScrollReveal><p style={tag}>Pricing</p></ScrollReveal>
-      <ScrollReveal><h2 style={title}>Cheaper than a part-time employee. Smarter than a contact form.</h2></ScrollReveal>
+    <section id="pricing" style={{ padding: "6rem 3rem", background: "rgba(200,255,0,0.015)" }}>
+      <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
+        <ScrollReveal>
+          <div style={{ textAlign: "center", marginBottom: "4rem" }}>
+            <p style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", color: "#c8ff00", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "1.5rem" }}>
+              Pricing
+            </p>
+            <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, lineHeight: 1.2, letterSpacing: "-2px", marginBottom: "1rem" }}>
+              Hire your AI employee today
+            </h2>
+            <p style={{ fontSize: "1.1rem", color: "#888", maxWidth: "600px", margin: "0 auto" }}>
+              No contracts. No setup fees. Your agent starts working in 48 hours.
+            </p>
+          </div>
+        </ScrollReveal>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.5rem", marginTop: "3rem", alignItems: "start" }}>
-        {plans.map((plan) => (
-          <ScrollReveal key={plan.name}>
-            <div
-              style={{
-                background: plan.featured ? "linear-gradient(180deg, rgba(200,255,0,0.04) 0%, #1a1a1a 100%)" : "#1a1a1a",
-                border: `1px solid ${plan.featured ? "#c8ff00" : "rgba(245,245,240,0.06)"}`,
-                borderRadius: "16px",
-                padding: "2.5rem",
-                position: "relative",
-                transition: "border-color 0.4s",
-              }}
-              onMouseEnter={(e) => { if (!plan.featured) (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(200,255,0,0.15)"; }}
-              onMouseLeave={(e) => { if (!plan.featured) (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(245,245,240,0.06)"; }}
-            >
-              {plan.featured && (
-                <div style={{ position: "absolute", top: "-12px", left: "50%", transform: "translateX(-50%)", background: "#c8ff00", color: "#0a0a0a", fontFamily: "'Space Mono', monospace", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "1.5px", padding: "0.3rem 1rem", borderRadius: "100px", whiteSpace: "nowrap" }}>
-                  MOST POPULAR
-                </div>
-              )}
-              <div style={{ fontSize: "1.1rem", fontWeight: 600, marginBottom: "0.5rem" }}>{plan.name}</div>
-              <div style={{ fontSize: "2.5rem", fontWeight: 900, letterSpacing: "-2px", lineHeight: 1 }}>
-                {plan.price}<span style={{ fontSize: "0.9rem", fontWeight: 400, color: "#888" }}>{plan.period}</span>
-              </div>
-              <p style={{ fontSize: "0.9rem", color: "#888", margin: "1rem 0 1.5rem", lineHeight: 1.5 }}>{plan.desc}</p>
-              <ul style={{ listStyle: "none", marginBottom: "2rem", display: "flex", flexDirection: "column" }}>
-                {plan.includes.map((item) => (
-                  <li key={item} style={{ display: "flex", alignItems: "flex-start", gap: "0.6rem", padding: "0.45rem 0", fontSize: "0.9rem", color: "rgba(245,245,240,0.8)" }}>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginTop: "2px" }}>
-                      <circle cx="8" cy="8" r="7.5" stroke="rgba(200,255,0,0.3)" />
-                      <path d="M5 8L7 10.5L11 5.5" stroke="#c8ff00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <a
-                href="mailto:francis@martin.builds"
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "2rem", alignItems: "stretch" }}>
+          {plans.map((plan) => (
+            <ScrollReveal key={plan.name}>
+              <div
                 style={{
-                  display: "block",
-                  textAlign: "center",
-                  width: "100%",
-                  padding: "0.9rem",
-                  borderRadius: "100px",
-                  fontWeight: 700,
-                  fontSize: "0.95rem",
-                  background: plan.featured ? "#c8ff00" : "transparent",
-                  color: plan.featured ? "#0a0a0a" : "#f5f5f0",
-                  border: plan.featured ? "none" : "1px solid rgba(245,245,240,0.2)",
-                  transition: "all 0.3s",
+                  background: "#1a1a1a",
+                  border: plan.popular ? "2px solid rgba(200,255,0,0.3)" : "1px solid rgba(245,245,240,0.06)",
+                  borderRadius: "20px",
+                  padding: "2.5rem",
+                  position: "relative",
+                  transition: "all 0.4s",
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column"
                 }}
                 onMouseEnter={(e) => {
-                  const el = e.currentTarget as HTMLAnchorElement;
-                  if (plan.featured) { el.style.boxShadow = "0 6px 25px rgba(200,255,0,0.25)"; el.style.transform = "translateY(-2px)"; }
-                  else { el.style.borderColor = "#c8ff00"; el.style.color = "#c8ff00"; }
+                  const el = e.currentTarget as HTMLDivElement;
+                  el.style.transform = "translateY(-8px)";
+                  if (!plan.popular) {
+                    el.style.borderColor = "rgba(200,255,0,0.15)";
+                  }
                 }}
                 onMouseLeave={(e) => {
-                  const el = e.currentTarget as HTMLAnchorElement;
-                  el.style.boxShadow = "none"; el.style.transform = "translateY(0)";
-                  if (!plan.featured) { el.style.borderColor = "rgba(245,245,240,0.2)"; el.style.color = "#f5f5f0"; }
+                  const el = e.currentTarget as HTMLDivElement;
+                  el.style.transform = "translateY(0)";
+                  if (!plan.popular) {
+                    el.style.borderColor = "rgba(245,245,240,0.06)";
+                  }
                 }}
               >
-                {plan.cta}
-              </a>
-            </div>
-          </ScrollReveal>
-        ))}
+                {plan.popular && (
+                  <div style={{
+                    position: "absolute",
+                    top: "-12px",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    background: "#c8ff00",
+                    color: "#0a0a0a",
+                    padding: "0.5rem 1.5rem",
+                    borderRadius: "20px",
+                    fontSize: "0.8rem",
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: "1px"
+                  }}>
+                    MOST POPULAR
+                  </div>
+                )}
+
+                <div style={{ marginBottom: "2rem" }}>
+                  <h3 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: "0.5rem" }}>
+                    {plan.name}
+                  </h3>
+                  <p style={{ color: "#888", fontSize: "0.95rem", lineHeight: 1.5 }}>
+                    {plan.description}
+                  </p>
+                </div>
+
+                <div style={{ marginBottom: "2rem" }}>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: "0.25rem" }}>
+                    <span style={{ fontSize: "3rem", fontWeight: 900, color: "#c8ff00" }}>
+                      {plan.price}
+                    </span>
+                    <span style={{ fontSize: "1.1rem", color: "#888" }}>
+                      {plan.period}
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{ flex: 1, marginBottom: "2rem" }}>
+                  <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
+                    {plan.features.map((feature, i) => (
+                      <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
+                        <div style={{ 
+                          width: "20px", 
+                          height: "20px", 
+                          background: "rgba(200,255,0,0.1)", 
+                          borderRadius: "50%", 
+                          display: "flex", 
+                          alignItems: "center", 
+                          justifyContent: "center",
+                          flexShrink: 0,
+                          marginTop: "2px"
+                        }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2.5">
+                            <polyline points="20,6 9,17 4,12"/>
+                          </svg>
+                        </div>
+                        <span style={{ fontSize: "0.95rem", color: "#f5f5f0", lineHeight: 1.4 }}>
+                          {feature}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <button
+                  style={{
+                    width: "100%",
+                    padding: "1.25rem 2rem",
+                    background: plan.popular ? "#c8ff00" : "transparent",
+                    color: plan.popular ? "#0a0a0a" : "#c8ff00",
+                    border: plan.popular ? "none" : "2px solid rgba(200,255,0,0.3)",
+                    borderRadius: "12px",
+                    fontSize: "1rem",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    transition: "all 0.3s"
+                  }}
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget as HTMLButtonElement;
+                    if (plan.popular) {
+                      el.style.background = "rgba(200,255,0,0.9)";
+                    } else {
+                      el.style.background = "rgba(200,255,0,0.1)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget as HTMLButtonElement;
+                    if (plan.popular) {
+                      el.style.background = "#c8ff00";
+                    } else {
+                      el.style.background = "transparent";
+                    }
+                  }}
+                >
+                  {plan.cta}
+                </button>
+              </div>
+            </ScrollReveal>
+          ))}
+        </div>
+
+        <ScrollReveal>
+          <div style={{ textAlign: "center", marginTop: "3rem", padding: "2rem", background: "rgba(200,255,0,0.03)", borderRadius: "16px" }}>
+            <p style={{ fontSize: "0.9rem", color: "#888", marginBottom: "0.5rem" }}>
+              Need something custom? Handling 50,000+ tasks per month?
+            </p>
+            <a 
+              href="/contact"
+              style={{ color: "#c8ff00", fontWeight: 600, textDecoration: "none" }}
+              onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.textDecoration = "underline"}
+              onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.textDecoration = "none"}
+            >
+              Let's talk about Enterprise pricing →
+            </a>
+          </div>
+        </ScrollReveal>
       </div>
     </section>
   );
 }
-
-const tag: React.CSSProperties = { fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", color: "#c8ff00", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "1.5rem" };
-const title: React.CSSProperties = { fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 800, lineHeight: 1.1, letterSpacing: "-2px", maxWidth: "700px" };
