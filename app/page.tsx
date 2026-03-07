@@ -20,7 +20,6 @@ export default function Home() {
       <Services />
       <PowerHourBanner />
       <Process />
-      <Work />
       <Testimonials />
       <CTA />
       <NewsletterFooter />
