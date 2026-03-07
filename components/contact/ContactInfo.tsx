@@ -9,7 +9,7 @@ export default function ContactInfo() {
       <ScrollReveal>
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           {[
-            { label: "Email", value: "francis@martin.builds", href: "mailto:francis@martin.builds" },
+            { label: "Email", value: "Use the contact form", href: "/contact" },
             { label: "Based in", value: "Atlanta, GA", href: null },
             { label: "Response time", value: "Within 24 hours", href: null },
           ].map((item) => (

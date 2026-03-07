@@ -60,7 +60,7 @@ export default function CTA() {
 
       <div style={{ display: "flex", gap: "1rem", marginTop: "2.5rem", flexWrap: "wrap", justifyContent: "center" }}>
         <a
-          href="mailto:francis@martin.builds"
+          href="/contact"
           style={primaryBtnStyle}
           onMouseEnter={(e) => {
             (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-3px)";

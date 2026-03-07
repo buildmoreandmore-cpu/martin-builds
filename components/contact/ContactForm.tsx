@@ -17,9 +17,16 @@ export default function ContactForm() {
 
   const valid = form.name.trim() && form.email.includes("@") && form.message.trim();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!valid) return;
+    try {
+      await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: form.name, email: form.email, business: form.biz, type: form.type, message: form.message }),
+      });
+    } catch { /* silent */ }
     setSubmitted(true);
   };
 

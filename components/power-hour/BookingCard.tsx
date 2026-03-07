@@ -38,7 +38,18 @@ export default function BookingCard() {
 
   useEffect(() => {
     setWeekdays(getWeekdays());
+    // Check for Stripe success redirect
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("success") === "1") {
+      setName(params.get("name") || "");
+      setSelectedDay(params.get("date") || "");
+      setSelectedTime(params.get("time") || "");
+      setStep(3);
+    }
   }, []);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const step1Valid = !!(selectedDay && selectedTime);
   const step2Valid = !!(name.trim() && email.includes("@") && biz.trim());
@@ -183,7 +194,28 @@ export default function BookingCard() {
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
           />
-          <PrimaryBtn disabled={!step2Valid} onClick={() => goTo(3)}>Review &amp; Book</PrimaryBtn>
+          {error && <p style={{ color: "#ff4444", fontSize: "0.85rem", marginBottom: "0.75rem" }}>{error}</p>}
+          <PrimaryBtn disabled={!step2Valid || loading} onClick={async () => {
+            setLoading(true);
+            setError("");
+            try {
+              const res = await fetch("/api/checkout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, business: biz, question, date: selectedDay, time: selectedTime }),
+              });
+              const data = await res.json();
+              if (data.url) {
+                window.location.href = data.url;
+              } else {
+                setError(data.error || "Something went wrong. Try again.");
+                setLoading(false);
+              }
+            } catch {
+              setError("Connection error. Try again.");
+              setLoading(false);
+            }
+          }}>{loading ? "Redirecting to payment..." : "Pay $500 & Book"}</PrimaryBtn>
           <button onClick={() => goTo(1)} style={{ background: "none", border: "none", color: "#888", fontFamily: "'Outfit', sans-serif", fontSize: "0.85rem", cursor: "pointer", padding: "0.6rem 0", marginTop: "0.5rem", display: "block", width: "100%", textAlign: "center", transition: "color 0.2s" }}
             onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.color = "#f5f5f0")}
             onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.color = "#888")}
@@ -208,11 +240,9 @@ export default function BookingCard() {
           <div style={{ background: "#2a2a2a", borderRadius: "10px", padding: "1.25rem", textAlign: "left", marginBottom: "1.5rem" }}>
             {[
               ["Name", name],
-              ["Email", email],
-              ["Business", biz],
               ["Date", selectedDay ?? ""],
               ["Time", `${selectedTime} EST`],
-              ["Amount", "$500"],
+              ["Amount", "$500 — Paid"],
             ].map(([label, value]) => (
               <div key={label} style={{ display: "flex", justifyContent: "space-between", padding: "0.4rem 0", fontSize: "0.85rem" }}>
                 <span style={{ color: "#888" }}>{label}</span>

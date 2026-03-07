@@ -68,7 +68,7 @@ export default function FinalCTA() {
       <ScrollReveal>
         <div style={{ marginTop: "3rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1.25rem" }}>
           <a
-            href="mailto:francis@martin.builds"
+            href="/contact"
             style={{
               display: "inline-block",
               background: "#c8ff00",
@@ -79,6 +79,7 @@ export default function FinalCTA() {
               fontSize: "1rem",
               letterSpacing: "0.5px",
               transition: "all 0.3s",
+              textDecoration: "none",
             }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-3px)";
@@ -92,17 +93,18 @@ export default function FinalCTA() {
             Book a Discovery Call
           </a>
           <a
-            href="mailto:francis@martin.builds"
+            href="/contact"
             style={{
               fontSize: "0.9rem",
               color: "#888",
               fontFamily: "'Space Mono', monospace",
               transition: "color 0.3s",
+              textDecoration: "none",
             }}
             onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#c8ff00")}
             onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#888")}
           >
-            Or email me directly → francis@martin.builds
+            Or reach out through the contact page →
           </a>
         </div>
       </ScrollReveal>
