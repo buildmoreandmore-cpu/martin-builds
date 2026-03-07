@@ -2,11 +2,6 @@
 
 import ScrollReveal from "../ScrollReveal";
 
-const socials = [
-  { label: "Twitter / X", href: "https://x.com/" },
-  { label: "LinkedIn", href: "https://linkedin.com/" },
-];
-
 export default function ContactInfo() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
@@ -36,39 +31,6 @@ export default function ContactInfo() {
               )}
             </div>
           ))}
-        </div>
-      </ScrollReveal>
-
-      {/* Social links */}
-      <ScrollReveal>
-        <div>
-          <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.65rem", color: "#c8ff00", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "0.75rem" }}>
-            Elsewhere
-          </div>
-          <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-            {socials.map((s) => (
-              <a
-                key={s.label}
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: "inline-block",
-                  padding: "0.5rem 1.1rem",
-                  borderRadius: "100px",
-                  border: "1px solid rgba(245,245,240,0.12)",
-                  fontFamily: "'Space Mono', monospace",
-                  fontSize: "0.75rem",
-                  color: "#888",
-                  transition: "all 0.3s",
-                }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "#c8ff00"; (e.currentTarget as HTMLAnchorElement).style.color = "#c8ff00"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(245,245,240,0.12)"; (e.currentTarget as HTMLAnchorElement).style.color = "#888"; }}
-              >
-                {s.label}
-              </a>
-            ))}
-          </div>
         </div>
       </ScrollReveal>
 

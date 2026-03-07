@@ -20,8 +20,6 @@ export default function Footer() {
         &copy; 2026 martin.builds. Atlanta, GA.
       </div>
       <div style={{ display: "flex", gap: "2rem" }}>
-        <FooterLink href="https://x.com/">Twitter / X</FooterLink>
-        <FooterLink href="https://linkedin.com/">LinkedIn</FooterLink>
         <FooterLink href="mailto:francis@martin.builds">Email</FooterLink>
       </div>
     </footer>
