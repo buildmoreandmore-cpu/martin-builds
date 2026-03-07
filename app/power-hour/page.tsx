@@ -5,6 +5,7 @@ import WhatToExpect from "@/components/power-hour/WhatToExpect";
 import WhoItsFor from "@/components/power-hour/WhoItsFor";
 import PowerHourFAQ from "@/components/power-hour/PowerHourFAQ";
 import PowerHourBottomCTA from "@/components/power-hour/BottomCTA";
+import NewsletterFooter from "@/components/NewsletterFooter";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -93,6 +94,7 @@ export default function PowerHourPage() {
       <WhoItsFor />
       <PowerHourFAQ />
       <PowerHourBottomCTA />
+      <NewsletterFooter />
       <Footer />
 
       <style>{`

@@ -7,6 +7,7 @@ import ProofWork from "@/components/wwm/ProofWork";
 import Testimonials from "@/components/wwm/Testimonials";
 import FAQ from "@/components/wwm/FAQ";
 import FinalCTA from "@/components/wwm/FinalCTA";
+import NewsletterFooter from "@/components/NewsletterFooter";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -26,6 +27,7 @@ export default function WorkWithMePage() {
       <Testimonials />
       <FAQ />
       <FinalCTA />
+      <NewsletterFooter />
       <Footer />
     </>
   );

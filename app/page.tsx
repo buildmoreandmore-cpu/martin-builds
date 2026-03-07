@@ -7,6 +7,7 @@ import Process from "@/components/Process";
 import Work from "@/components/Work";
 import Testimonials from "@/components/Testimonials";
 import CTA from "@/components/CTA";
+import NewsletterFooter from "@/components/NewsletterFooter";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -21,6 +22,7 @@ export default function Home() {
       <Work />
       <Testimonials />
       <CTA />
+      <NewsletterFooter />
       <Footer />
     </>
   );
