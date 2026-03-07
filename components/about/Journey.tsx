@@ -12,7 +12,7 @@ const cards = [
   {
     num: "02",
     title: "The Grind",
-    body: "I ran businesses before AI was a buzzword — from Amazon DSP operations to commercial lending to catering. Every venture taught me the same lesson: small businesses don't need more strategy decks. They need someone who builds the thing and makes it work.",
+    body: "I ran businesses before AI was a buzzword — from small business consulting to real estate lending to joint ventures. Every venture taught me the same lesson: small businesses don't need more strategy decks. They need someone who builds the thing and makes it work.",
     align: "right" as const,
   },
   {
