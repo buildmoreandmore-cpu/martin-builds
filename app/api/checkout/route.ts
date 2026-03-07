@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2025-04-30.basil" as Stripe.LatestApiVersion });
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,14 +14,7 @@ export async function POST(req: NextRequest) {
       customer_email: email,
       line_items: [
         {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: "AI Power Hour — 60 min session",
-              description: `Session with Francis | ${date} at ${time} EST`,
-            },
-            unit_amount: 50000, // $500
-          },
+          price: "price_1T8PSuH8PIRJCA4G2k0WQFW6",
           quantity: 1,
         },
       ],
