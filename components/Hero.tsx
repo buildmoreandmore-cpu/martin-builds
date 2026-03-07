@@ -8,7 +8,7 @@ export default function Hero() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        padding: "8rem 3rem 4rem",
+        padding: "clamp(6rem,12vw,8rem) clamp(1.25rem,5vw,3rem) clamp(3rem,6vw,4rem)",
         position: "relative",
       }}
     >

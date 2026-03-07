@@ -1,6 +1,7 @@
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import TrustBar from "@/components/TrustBar";
+import BuiltWith from "@/components/BuiltWith";
 import Services from "@/components/Services";
 import PowerHourBanner from "@/components/PowerHourBanner";
 import Process from "@/components/Process";
@@ -16,6 +17,7 @@ export default function Home() {
       <Nav />
       <Hero />
       <TrustBar />
+      <BuiltWith />
       <Services />
       <PowerHourBanner />
       <Process />

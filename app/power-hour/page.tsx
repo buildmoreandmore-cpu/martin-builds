@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Nav from "@/components/Nav";
+import { FAQJsonLd } from "@/components/JsonLd";
 import BookingCard from "@/components/power-hour/BookingCard";
 import WhatToExpect from "@/components/power-hour/WhatToExpect";
 import WhoItsFor from "@/components/power-hour/WhoItsFor";
@@ -9,13 +10,36 @@ import NewsletterFooter from "@/components/NewsletterFooter";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "AI Power Hour — martin.builds",
-  description: "60 minutes. Your business. Your AI game plan. $500. Book a 1-on-1 session with Francis and leave with a clear action plan.",
+  title: "AI Power Hour — 1-on-1 AI Strategy Session | $500",
+  description:
+    "60 minutes. Your business. Your AI game plan. $500. Book a 1-on-1 AI strategy session with Francis Martin, Atlanta AI developer, and leave with a clear action plan.",
+  alternates: { canonical: "https://martin.builds/power-hour" },
+  openGraph: {
+    title: "AI Power Hour — 1-on-1 AI Strategy Session | $500",
+    description: "60-minute 1-on-1 AI strategy session with Francis Martin. $500. Leave with a clear action plan.",
+    url: "https://martin.builds/power-hour",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI Power Hour — 1-on-1 AI Strategy Session | $500",
+    description: "60-minute 1-on-1 AI strategy session with Francis Martin. $500.",
+    images: ["/og-image.png"],
+  },
 };
+
+const powerHourFaqs = [
+  { question: "What happens after I book?", answer: "You'll get a confirmation email with a calendar invite and Zoom link. I'll review the question you submitted so we can skip the small talk and dive straight into your business." },
+  { question: "Can I get a refund if it's not helpful?", answer: "If you leave the session feeling like you didn't get value, I'll refund you in full. No forms, no questions. I've never had to do this, but the offer stands." },
+  { question: "Do I need to prepare anything?", answer: "Just fill in the 'biggest AI question' when you book. That's all I need. If you want to go deeper, have your current workflow or tools list handy — but it's not required." },
+  { question: "What if I want you to build something after?", answer: "Many Power Hour clients end up hiring me for a full build. If that happens, I'll credit your $500 session fee toward any project. The consultation is never wasted money." },
+  { question: "Is this virtual or in-person?", answer: "Virtual via Zoom. The session is recorded and sent to you after so you can reference it anytime. If you're in the Atlanta area and prefer in-person, we can arrange that too." },
+];
 
 export default function PowerHourPage() {
   return (
     <>
+      <FAQJsonLd faqs={powerHourFaqs} />
       <Nav />
 
       {/* HERO */}

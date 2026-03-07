@@ -56,3 +56,35 @@ body::before {
 ::-webkit-scrollbar-track { background: var(--black); }
 ::-webkit-scrollbar-thumb { background: var(--gray-mid); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ── Global mobile resets ─────────────────────────────────── */
+a { text-decoration: none; }
+
+@media (max-width: 768px) {
+  /* Reduce section padding globally */
+  section {
+    padding-left: clamp(1.25rem, 5vw, 3rem) !important;
+    padding-right: clamp(1.25rem, 5vw, 3rem) !important;
+  }
+
+  /* Prevent oversized letter-spacing on small screens */
+  h1, h2 {
+    letter-spacing: -1px !important;
+  }
+
+  /* Two-column grids collapse to one */
+  .contact-grid,
+  .power-hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+  }
+
+  /* Stacked button groups */
+  .btn-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .btn-group a {
+    text-align: center;
+  }
+}

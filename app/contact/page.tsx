@@ -7,8 +7,22 @@ import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 
 export const metadata: Metadata = {
-  title: "Contact — martin.builds",
-  description: "Let's talk about what you need built. Get in touch with Francis Martin.",
+  title: "Contact Francis Martin — Atlanta AI Developer",
+  description:
+    "Let's talk about what you need built. Get in touch with Francis Martin, AI developer based in Atlanta, GA. Responds within 24 hours.",
+  alternates: { canonical: "https://martin.builds/contact" },
+  openGraph: {
+    title: "Contact Francis Martin — Atlanta AI Developer",
+    description: "Get in touch with Francis Martin. Responds within 24 hours.",
+    url: "https://martin.builds/contact",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact Francis Martin — Atlanta AI Developer",
+    description: "Get in touch with Francis Martin. Responds within 24 hours.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function ContactPage() {
