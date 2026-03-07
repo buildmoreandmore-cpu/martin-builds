@@ -6,7 +6,7 @@ const cards = [
   {
     num: "01",
     title: "Roots",
-    body: "Born with family roots in Montserrat — a tiny Caribbean island with a big sense of resourcefulness. When you come from a place where you figure things out with what you have, you don't wait for permission to start. That energy shaped everything I build.",
+    body: "Born with family roots in St. Thomas, USVI — a tiny Caribbean island with a big sense of resourcefulness. When you come from a place where you figure things out with what you have, you don't wait for permission to start. That energy shaped everything I build.",
     align: "left" as const,
   },
   {
