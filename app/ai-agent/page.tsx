@@ -12,19 +12,19 @@ import NewsletterFooter from "@/components/NewsletterFooter";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "AI Chat Agent for Your Business — From $300/mo | martin.builds",
+  title: "AI Agent — martin.builds",
   description:
     "A custom AI chat agent trained on your business — answers questions, captures leads, and books appointments 24/7. Live on your site in 48 hours. From $300/mo.",
   alternates: { canonical: "https://martin.builds/ai-agent" },
   openGraph: {
-    title: "AI Chat Agent for Your Business — From $300/mo | martin.builds",
+    title: "AI Agent — martin.builds",
     description: "Custom AI chat agent trained on your business. 24/7 lead capture. Live in 48 hours. From $300/mo.",
     url: "https://martin.builds/ai-agent",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Chat Agent for Your Business — From $300/mo | martin.builds",
+    title: "AI Agent — martin.builds",
     description: "Custom AI chat agent trained on your business. From $300/mo.",
     images: ["/og-image.png"],
   },

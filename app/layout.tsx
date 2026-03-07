@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { LocalBusinessJsonLd } from "@/components/JsonLd";
 
-const title = "martin.builds — AI Tools & Products for Small Businesses";
+const title = "martin.builds — AI Tools for Small Business";
 const description =
   "Francis Martin builds custom AI tools, websites, and apps for Atlanta small businesses. 2-week builds from $5,000. Book a free discovery call.";
 

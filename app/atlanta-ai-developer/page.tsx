@@ -4,12 +4,12 @@ import Footer from "@/components/Footer";
 import { FAQJsonLd, LocalBusinessJsonLd } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
-  title: "AI Developer Atlanta GA — Custom AI Tools & Websites | martin.builds",
+  title: "Atlanta AI Developer — martin.builds",
   description:
     "Francis Martin is Atlanta's go-to AI developer for small businesses. Custom AI websites, chatbots, and tools built in 2 weeks. Book a free discovery call.",
   alternates: { canonical: "https://martin.builds/atlanta-ai-developer" },
   openGraph: {
-    title: "AI Developer Atlanta GA — Custom AI Tools & Websites | martin.builds",
+    title: "Atlanta AI Developer — martin.builds",
     description:
       "Atlanta's AI developer for small businesses. Custom AI websites, chatbots, and tools built in 2 weeks from $5,000.",
     url: "https://martin.builds/atlanta-ai-developer",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Developer Atlanta GA | martin.builds",
+    title: "Atlanta AI Developer — martin.builds",
     description: "Custom AI tools for Atlanta small businesses. 2-week builds from $5,000.",
     images: ["/og-image.png"],
   },

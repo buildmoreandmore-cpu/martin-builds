@@ -10,19 +10,19 @@ import NewsletterFooter from "@/components/NewsletterFooter";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "AI Power Hour — 1-on-1 AI Strategy Session | $500",
+  title: "AI Power Hour — martin.builds",
   description:
     "60 minutes. Your business. Your AI game plan. $500. Book a 1-on-1 AI strategy session with Francis Martin, Atlanta AI developer, and leave with a clear action plan.",
   alternates: { canonical: "https://martin.builds/power-hour" },
   openGraph: {
-    title: "AI Power Hour — 1-on-1 AI Strategy Session | $500",
+    title: "AI Power Hour — martin.builds",
     description: "60-minute 1-on-1 AI strategy session with Francis Martin. $500. Leave with a clear action plan.",
     url: "https://martin.builds/power-hour",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Power Hour — 1-on-1 AI Strategy Session | $500",
+    title: "AI Power Hour — martin.builds",
     description: "60-minute 1-on-1 AI strategy session with Francis Martin. $500.",
     images: ["/og-image.png"],
   },

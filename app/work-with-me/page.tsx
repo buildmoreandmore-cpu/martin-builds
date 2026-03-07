@@ -12,12 +12,12 @@ import Footer from "@/components/Footer";
 import { FAQJsonLd, ServiceJsonLd } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
-  title: "Work With Me — Custom AI Tools & Websites | martin.builds",
+  title: "Work With Me — martin.builds",
   description:
     "One builder. Clear scope. Live in 2 weeks. AI-powered sites, platforms, and tools for Atlanta small businesses — from $5,000.",
   alternates: { canonical: "https://martin.builds/work-with-me" },
   openGraph: {
-    title: "Work With Me — Custom AI Tools & Websites | martin.builds",
+    title: "Work With Me — martin.builds",
     description:
       "One builder. Clear scope. Live in 2 weeks. AI-powered tools for small businesses — from $5,000.",
     url: "https://martin.builds/work-with-me",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Work With Me — Custom AI Tools & Websites | martin.builds",
+    title: "Work With Me — martin.builds",
     description: "One builder. Clear scope. Live in 2 weeks. From $5,000.",
     images: ["/og-image.png"],
   },

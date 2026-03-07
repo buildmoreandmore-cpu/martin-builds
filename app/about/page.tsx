@@ -9,12 +9,12 @@ import NewsletterFooter from "@/components/NewsletterFooter";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "About Francis Martin — AI Builder in Atlanta, GA",
+  title: "About — martin.builds",
   description:
     "Francis Martin is an AI developer based in Atlanta, GA. I didn't learn AI in a classroom. I learned it by shipping real products for real businesses.",
   alternates: { canonical: "https://martin.builds/about" },
   openGraph: {
-    title: "About Francis Martin — AI Builder in Atlanta, GA",
+    title: "About — martin.builds",
     description:
       "Francis Martin is an AI developer based in Atlanta, GA. I learned AI by shipping real products for real businesses.",
     url: "https://martin.builds/about",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "About Francis Martin — AI Builder in Atlanta, GA",
+    title: "About — martin.builds",
     description: "Francis Martin is an AI developer based in Atlanta, GA.",
     images: ["/og-image.png"],
   },
