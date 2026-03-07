@@ -18,6 +18,13 @@ export default function Footer() {
           martin<span style={{ color: "#c8ff00" }}>.builds</span>
         </div>
         &copy; 2026 martin.builds. Atlanta, GA.
+        <div style={{ marginTop: "0.5rem", fontSize: "0.75rem", color: "#888" }}>
+          <a href="/privacy-policy" style={{ color: "#888", textDecoration: "none", transition: "color 0.3s" }} onMouseEnter={e => (e.currentTarget.style.color = "#f5f5f0")} onMouseLeave={e => (e.currentTarget.style.color = "#888")}>Privacy Policy</a>
+          {" | "}
+          <a href="/terms" style={{ color: "#888", textDecoration: "none", transition: "color 0.3s" }} onMouseEnter={e => (e.currentTarget.style.color = "#f5f5f0")} onMouseLeave={e => (e.currentTarget.style.color = "#888")}>Terms</a>
+          {" | "}
+          <a href="/disclaimer" style={{ color: "#888", textDecoration: "none", transition: "color 0.3s" }} onMouseEnter={e => (e.currentTarget.style.color = "#f5f5f0")} onMouseLeave={e => (e.currentTarget.style.color = "#888")}>Disclaimer</a>
+        </div>
       </div>
       <div style={{ display: "flex", gap: "2rem" }}>
         <FooterLink href="/contact">Contact</FooterLink>
