@@ -60,9 +60,9 @@ export default function CTA() {
             Book a Free Discovery Call
           </a>
           <p style={{ marginTop: "1.2rem", fontSize: "0.9rem", color: "#888" }}>
-            Or email me directly →{" "}
-            <a href="mailto:francis@martin.builds" style={{ color: "#c8ff00", textDecoration: "none" }}>
-              francis@martin.builds
+            Or{" "}
+            <a href="/contact" style={{ color: "#c8ff00", textDecoration: "none", fontWeight: 600 }}>
+              send me a message
             </a>
           </p>
         </div>
