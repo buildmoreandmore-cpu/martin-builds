@@ -14,7 +14,6 @@ export const metadata: Metadata = {
 };
 import Hero from "@/components/Hero";
 import ObjectionHandler from "@/components/ObjectionHandler";
-import VideoPlaceholder from "@/components/VideoPlaceholder";
 import BuiltWith from "@/components/BuiltWith";
 import NewsletterBand from "@/components/NewsletterBand";
 import Services from "@/components/Services";
@@ -32,7 +31,6 @@ export default function Home() {
       <Nav />
       <Hero />
       <ObjectionHandler />
-      <VideoPlaceholder />
       <BuiltWith />
       <NewsletterBand />
       <Services />
