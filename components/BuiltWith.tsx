@@ -17,16 +17,21 @@ const row2Tools = [
   { name: "Google",      slug: "google",             color: "#4285F4" },
   { name: "Clerk",       slug: "clerk",              color: "#6C47FF" },
   { name: "OpenAI",      slug: "openai",             color: "#f5f5f0" },
-  { name: "Grok",        slug: "xai",                color: "#f5f5f0" },
+  { name: "Grok",        slug: "grok",               color: "#f5f5f0" },
 ];
 
 const row1Doubled = [...row1Tools, ...row1Tools];
 const row2Doubled = [...row2Tools, ...row2Tools];
 
+const CUSTOM_ICONS: Record<string, string> = {
+  grok: `<svg width="26" height="26" viewBox="0 0 24 24" fill="#666" style="transition:fill 0.25s" xmlns="http://www.w3.org/2000/svg"><path d="M2 4l8 8-8 8h4l6-6 6 6h4l-8-8 8-8h-4l-6 6-6-6z"/></svg>`,
+};
+
 function ToolIcon({ slug, color }: { slug: string; color: string }) {
-  const [svgContent, setSvgContent] = useState<string | null>(null);
+  const [svgContent, setSvgContent] = useState<string | null>(CUSTOM_ICONS[slug] || null);
 
   useEffect(() => {
+    if (CUSTOM_ICONS[slug]) return;
     fetch(`https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/${slug}.svg`)
       .then(r => r.ok ? r.text() : "")
       .then(text => { if (text) setSvgContent(text); })
@@ -37,13 +42,15 @@ function ToolIcon({ slug, color }: { slug: string; color: string }) {
     return <div style={{ width: 26, height: 26, borderRadius: "4px", background: `${color}22`, flexShrink: 0 }} />;
   }
 
+  const html = CUSTOM_ICONS[slug]
+    ? svgContent
+    : svgContent.replace(/<svg/, `<svg width="26" height="26" fill="#666" style="transition:fill 0.25s"`);
+
   return (
     <div
       className="tool-icon"
       style={{ width: 26, height: 26, flexShrink: 0 }}
-      dangerouslySetInnerHTML={{
-        __html: svgContent.replace(/<svg/, `<svg width="26" height="26" fill="#666" style="transition:fill 0.25s"`)
-      }}
+      dangerouslySetInnerHTML={{ __html: html }}
     />
   );
 }
