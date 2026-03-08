@@ -52,7 +52,7 @@ export default function DiscoveryCallPage() {
             </h1>
             <p
               className="animate-fade-up-3 discovery-sub"
-              style={{ fontSize: "clamp(0.95rem, 2vw, 1.15rem)", fontWeight: 300, color: "#888", marginTop: "1.5rem", lineHeight: 1.7, maxWidth: "520px" }}
+              style={{ fontSize: "clamp(0.95rem, 2vw, 1.15rem)", fontWeight: 300, color: "#888", marginTop: "1.5rem", lineHeight: 1.7, maxWidth: "100%" }}
             >
               30 minutes. Just you and me. We&apos;ll talk about your business, where AI fits in, and whether working together makes sense. No pitch deck. No pressure.
             </p>

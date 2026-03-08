@@ -87,7 +87,7 @@ export default function PowerHourPage() {
             </h1>
             <p
               className="animate-fade-up-3"
-              style={{ fontSize: "clamp(0.95rem, 2vw, 1.15rem)", fontWeight: 300, color: "#888", marginTop: "1.5rem", lineHeight: 1.7, maxWidth: "520px" }}
+              style={{ fontSize: "clamp(0.95rem, 2vw, 1.15rem)", fontWeight: 300, color: "#888", marginTop: "1.5rem", lineHeight: 1.7, maxWidth: "100%" }}
             >
               Stop googling &ldquo;best AI tools for my business.&rdquo; Book a 1-on-1 session and I&apos;ll show you exactly what to use, how to use it, and what to build — for your specific situation.
             </p>
