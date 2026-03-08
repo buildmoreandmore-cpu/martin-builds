@@ -34,15 +34,15 @@ function ToolIcon({ slug, color }: { slug: string; color: string }) {
   }, [slug]);
 
   if (!svgContent) {
-    return <div style={{ width: 22, height: 22, borderRadius: "4px", background: `${color}22`, flexShrink: 0 }} />;
+    return <div style={{ width: 26, height: 26, borderRadius: "4px", background: `${color}22`, flexShrink: 0 }} />;
   }
 
   return (
     <div
       className="tool-icon"
-      style={{ width: 22, height: 22, flexShrink: 0 }}
+      style={{ width: 26, height: 26, flexShrink: 0 }}
       dangerouslySetInnerHTML={{
-        __html: svgContent.replace(/<svg/, `<svg width="22" height="22" fill="#666" style="transition:fill 0.25s"`)
+        __html: svgContent.replace(/<svg/, `<svg width="26" height="26" fill="#666" style="transition:fill 0.25s"`)
       }}
     />
   );
@@ -81,7 +81,7 @@ export default function BuiltWith() {
   return (
     <section
       style={{
-        padding: "4rem 0",
+        padding: "2.5rem 0",
         borderTop: "1px solid rgba(245,245,240,0.06)",
         borderBottom: "1px solid rgba(245,245,240,0.06)",
         overflow: "hidden",
@@ -91,7 +91,7 @@ export default function BuiltWith() {
         <p style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", color: "#c8ff00", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "1rem" }}>
           Built With
         </p>
-        <h2 style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", fontWeight: 800, letterSpacing: "-1px", marginBottom: "2.5rem", color: "#f5f5f0" }}>
+        <h2 style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", fontWeight: 800, letterSpacing: "-1px", marginBottom: "1.5rem", color: "#f5f5f0" }}>
           Built with the best tools in the game.
         </h2>
       </div>
@@ -133,7 +133,7 @@ export default function BuiltWith() {
           display: flex;
           align-items: center;
           gap: 0.6rem;
-          padding: 0.65rem 1.1rem;
+          padding: 0.85rem 1.4rem;
           background: #1a1a1a;
           border: 1px solid rgba(245,245,240,0.08);
           border-radius: 10px;
@@ -146,7 +146,7 @@ export default function BuiltWith() {
         }
         .carousel-tile .tool-name {
           font-family: 'Outfit', sans-serif;
-          font-size: 0.88rem;
+          font-size: 1rem;
           font-weight: 500;
           color: #666;
           transition: color 0.25s;
