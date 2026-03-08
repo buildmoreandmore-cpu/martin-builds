@@ -3,7 +3,7 @@ const localBusiness = {
   "@type": "LocalBusiness",
   name: "martin.builds",
   description: "Custom AI tools, websites, and apps for small businesses.",
-  url: "https://martin.builds",
+  url: "https://martin-builds.vercel.app",
   email: "francis@martin.builds",
   address: {
     "@type": "PostalAddress",
@@ -33,15 +33,15 @@ const person = {
     addressRegion: "GA",
     addressCountry: "US",
   },
-  url: "https://martin.builds",
-  sameAs: ["https://martin.builds"],
+  url: "https://martin-builds.vercel.app",
+  sameAs: ["https://martin-builds.vercel.app"],
 };
 
 const reviews = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "martin.builds",
-  url: "https://martin.builds",
+  url: "https://martin-builds.vercel.app",
   review: [
     {
       "@type": "Review",
@@ -108,6 +108,76 @@ export function FAQJsonLd({
   );
 }
 
+export function ProfessionalServiceJsonLd() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    name: "martin.builds",
+    description: "AI tools and products for small businesses. Custom-built, shipped in 2 weeks.",
+    url: "https://martin-builds.vercel.app",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Atlanta",
+      addressRegion: "GA",
+      addressCountry: "US",
+    },
+    founder: {
+      "@type": "Person",
+      name: "Francis Martin",
+      jobTitle: "AI Builder & Founder",
+    },
+    areaServed: { "@type": "Country", name: "United States" },
+    priceRange: "$300 - $15,000+",
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+export function PowerHourServiceJsonLd() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "AI Power Hour",
+    description: "1-on-1 AI strategy session for small business owners. 60 minutes.",
+    provider: { "@type": "Organization", name: "martin.builds", url: "https://martin-builds.vercel.app" },
+    offers: {
+      "@type": "Offer",
+      price: "500",
+      priceCurrency: "USD",
+    },
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+export function AIAgentServiceJsonLd() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "AI Agent",
+    description: "Custom AI employee trained on your business. Handles emails, scheduling, follow-ups 24/7.",
+    provider: { "@type": "Organization", name: "martin.builds", url: "https://martin-builds.vercel.app" },
+    offers: [
+      { "@type": "Offer", name: "Starter", price: "300", priceCurrency: "USD" },
+      { "@type": "Offer", name: "Pro", price: "500", priceCurrency: "USD" },
+    ],
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
 export function ServiceJsonLd() {
   const schema = {
     "@context": "https://schema.org",
@@ -116,7 +186,7 @@ export function ServiceJsonLd() {
     provider: {
       "@type": "LocalBusiness",
       name: "martin.builds",
-      url: "https://martin.builds",
+      url: "https://martin-builds.vercel.app",
     },
     areaServed: { "@type": "City", name: "Atlanta", containedIn: "Georgia, US" },
     hasOfferCatalog: {

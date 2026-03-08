@@ -11,13 +11,13 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "About — martin.builds",
   description:
-    "Francis Martin is an AI developer based in Atlanta, GA. I didn't learn AI in a classroom. I learned it by shipping real products for real businesses.",
-  alternates: { canonical: "https://martin.builds/about" },
+    "Francis Martin. Self-taught AI builder shipping AI tools for small businesses from Atlanta, GA. 10+ products shipped.",
+  alternates: { canonical: "https://martin-builds.vercel.app/about" },
   openGraph: {
     title: "About — martin.builds",
     description:
       "Francis Martin is an AI developer based in Atlanta, GA. I learned AI by shipping real products for real businesses.",
-    url: "https://martin.builds/about",
+    url: "https://martin-builds.vercel.app/about",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {

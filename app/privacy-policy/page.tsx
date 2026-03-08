@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — martin.builds",
-  description: "How martin.builds collects, uses, and protects your data.",
+  description: "Privacy policy for martin.builds. How we collect, use, and protect your information.",
 };
 
 const sectionStyle: React.CSSProperties = { marginBottom: "2.5rem" };

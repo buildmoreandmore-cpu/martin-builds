@@ -14,13 +14,13 @@ import { FAQJsonLd, ServiceJsonLd } from "@/components/JsonLd";
 export const metadata: Metadata = {
   title: "Work With Me — martin.builds",
   description:
-    "One builder. Clear scope. Live in 2 weeks. AI-powered sites, platforms, and tools for Atlanta small businesses — from $5,000.",
-  alternates: { canonical: "https://martin.builds/work-with-me" },
+    "Hire me to build AI-powered tools for your business. Starter builds from $5K, build sprints from $8K, retainers from $2,500/mo.",
+  alternates: { canonical: "https://martin-builds.vercel.app/work-with-me" },
   openGraph: {
     title: "Work With Me — martin.builds",
     description:
-      "One builder. Clear scope. Live in 2 weeks. AI-powered tools for small businesses — from $5,000.",
-    url: "https://martin.builds/work-with-me",
+      "AI starter builds from $5K. Complex platforms from $8K. Monthly retainers from $2,500. Shipped in 2 weeks.",
+    url: "https://martin-builds.vercel.app/work-with-me",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {

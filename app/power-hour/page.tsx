@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Nav from "@/components/Nav";
-import { FAQJsonLd } from "@/components/JsonLd";
+import { FAQJsonLd, PowerHourServiceJsonLd } from "@/components/JsonLd";
 import BookingCard from "@/components/power-hour/BookingCard";
 import WhatToExpect from "@/components/power-hour/WhatToExpect";
 import WhoItsFor from "@/components/power-hour/WhoItsFor";
@@ -12,12 +12,12 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "AI Power Hour — martin.builds",
   description:
-    "60 minutes. Your business. Your AI game plan. $500. Book a 1-on-1 AI strategy session with Francis Martin, Atlanta AI developer, and leave with a clear action plan.",
-  alternates: { canonical: "https://martin.builds/power-hour" },
+    "1-on-1 AI strategy session for small business owners. 60 minutes, $500. Get a personalized AI game plan.",
+  alternates: { canonical: "https://martin-builds.vercel.app/power-hour" },
   openGraph: {
     title: "AI Power Hour — martin.builds",
     description: "60-minute 1-on-1 AI strategy session with Francis Martin. $500. Leave with a clear action plan.",
-    url: "https://martin.builds/power-hour",
+    url: "https://martin-builds.vercel.app/power-hour",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
@@ -40,6 +40,7 @@ export default function PowerHourPage() {
   return (
     <>
       <FAQJsonLd faqs={powerHourFaqs} />
+      <PowerHourServiceJsonLd />
       <Nav />
 
       {/* HERO */}

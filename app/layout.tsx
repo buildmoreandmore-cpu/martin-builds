@@ -4,22 +4,29 @@ import { LocalBusinessJsonLd } from "@/components/JsonLd";
 
 const title = "martin.builds — AI Tools for Small Business";
 const description =
-  "Francis Martin builds custom AI tools, websites, and apps for Atlanta small businesses. 2-week builds from $5,000. Book a free discovery call.";
+  "I build AI-powered tools, websites, and products for small businesses. Custom builds shipped in 2 weeks. Based in Atlanta, GA.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://martin.builds"),
+  metadataBase: new URL("https://martin-builds.vercel.app"),
   title,
   description,
   keywords:
     "AI developer Atlanta, AI tools small business, custom AI website Atlanta, AI app developer Atlanta GA, AI consultant Atlanta, ChatGPT integration Atlanta, AI automation Atlanta",
   authors: [{ name: "Francis Martin" }],
   creator: "Francis Martin",
+  other: {
+    "theme-color": "#0a0a0a",
+    "geo.region": "US-GA",
+    "geo.placename": "Atlanta",
+    "geo.position": "33.749;-84.388",
+    ICBM: "33.749, -84.388",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
     title,
-    description,
-    url: "https://martin.builds",
+    description: "Custom AI tools, websites, and products shipped in 2 weeks. Built by Francis Martin in Atlanta.",
+    url: "https://martin-builds.vercel.app",
     siteName: "martin.builds",
     images: [
       {
@@ -38,13 +45,7 @@ export const metadata: Metadata = {
     images: ["/og-image.png"],
   },
   alternates: {
-    canonical: "https://martin.builds",
-  },
-  other: {
-    "geo.region": "US-GA",
-    "geo.placename": "Atlanta",
-    "geo.position": "33.749;-84.388",
-    ICBM: "33.749, -84.388",
+    canonical: "https://martin-builds.vercel.app",
   },
 };
 
@@ -55,6 +56,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body>
         <LocalBusinessJsonLd />
         <main>{children}</main>

@@ -9,12 +9,12 @@ import ScrollReveal from "@/components/ScrollReveal";
 export const metadata: Metadata = {
   title: "Contact — martin.builds",
   description:
-    "Let's talk about what you need built. Get in touch with Francis Martin, AI developer based in Atlanta, GA. Responds within 24 hours.",
-  alternates: { canonical: "https://martin.builds/contact" },
+    "Get in touch about AI tools, websites, or products for your business. Based in Atlanta, GA. Response within 24 hours.",
+  alternates: { canonical: "https://martin-builds.vercel.app/contact" },
   openGraph: {
     title: "Contact — martin.builds",
     description: "Get in touch with Francis Martin. Responds within 24 hours.",
-    url: "https://martin.builds/contact",
+    url: "https://martin-builds.vercel.app/contact",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {

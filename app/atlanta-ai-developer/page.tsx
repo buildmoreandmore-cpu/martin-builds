@@ -7,12 +7,12 @@ export const metadata: Metadata = {
   title: "Atlanta AI Developer — martin.builds",
   description:
     "Francis Martin is Atlanta's go-to AI developer for small businesses. Custom AI websites, chatbots, and tools built in 2 weeks. Book a free discovery call.",
-  alternates: { canonical: "https://martin.builds/atlanta-ai-developer" },
+  alternates: { canonical: "https://martin-builds.vercel.app/atlanta-ai-developer" },
   openGraph: {
     title: "Atlanta AI Developer — martin.builds",
     description:
       "Atlanta's AI developer for small businesses. Custom AI websites, chatbots, and tools built in 2 weeks from $5,000.",
-    url: "https://martin.builds/atlanta-ai-developer",
+    url: "https://martin-builds.vercel.app/atlanta-ai-developer",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {

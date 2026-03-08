@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Disclaimer — martin.builds",
-  description: "Disclaimers for martin.builds.",
+  description: "Disclaimer for martin.builds. Results vary. Content is for informational purposes.",
 };
 
 const sectionStyle: React.CSSProperties = { marginBottom: "2.5rem" };

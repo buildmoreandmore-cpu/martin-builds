@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Nav from "@/components/Nav";
-import { FAQJsonLd } from "@/components/JsonLd";
+import { FAQJsonLd, AIAgentServiceJsonLd } from "@/components/JsonLd";
 import AgentHero from "@/components/ai-agent/AgentHero";
 import UseCases from "@/components/ai-agent/UseCases";
 import AgentStats from "@/components/ai-agent/AgentStats";
@@ -14,12 +14,12 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "AI Agent — martin.builds",
   description:
-    "A custom AI chat agent trained on your business — answers questions, captures leads, and books appointments 24/7. Live on your site in 48 hours. From $300/mo.",
-  alternates: { canonical: "https://martin.builds/ai-agent" },
+    "Custom AI employee trained on your business. Handles emails, scheduling, follow-ups 24/7. From $300/mo. Live in 48 hours.",
+  alternates: { canonical: "https://martin-builds.vercel.app/ai-agent" },
   openGraph: {
     title: "AI Agent — martin.builds",
     description: "Custom AI chat agent trained on your business. 24/7 lead capture. Live in 48 hours. From $300/mo.",
-    url: "https://martin.builds/ai-agent",
+    url: "https://martin-builds.vercel.app/ai-agent",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
@@ -43,6 +43,7 @@ export default function AIAgentPage() {
   return (
     <>
       <FAQJsonLd faqs={agentFaqs} />
+      <AIAgentServiceJsonLd />
       <Nav />
       <AgentHero />
       <UseCases />

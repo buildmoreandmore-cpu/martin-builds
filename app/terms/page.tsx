@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Terms — martin.builds",
-  description: "Terms of service for martin.builds.",
+  description: "Terms and conditions for martin.builds services including AI builds, retainers, and consulting.",
 };
 
 const sectionStyle: React.CSSProperties = { marginBottom: "2.5rem" };

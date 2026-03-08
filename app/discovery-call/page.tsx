@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Discovery Call — martin.builds",
-  description: "Book a free 30-minute discovery call. Learn what AI can do for your specific business — zero obligation.",
+  description: "Book a free 30-minute discovery call. I'll tell you what I'd build, what it costs, and how fast we ship.",
 };
 
 export default function DiscoveryCallPage() {
