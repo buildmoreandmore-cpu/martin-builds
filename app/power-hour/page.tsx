@@ -49,7 +49,7 @@ export default function PowerHourPage() {
           minHeight: "100vh",
           display: "flex",
           alignItems: "center",
-          padding: "8rem 3rem 4rem",
+          padding: "clamp(5rem,10vw,8rem) clamp(1.25rem,5vw,3rem) 4rem",
           position: "relative",
           overflow: "hidden",
         }}
@@ -76,7 +76,7 @@ export default function PowerHourPage() {
             </div>
             <h1
               className="animate-fade-up-2"
-              style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", fontWeight: 900, lineHeight: 1.0, letterSpacing: "-2px" }}
+              style={{ fontSize: "clamp(1.8rem, 5vw, 4rem)", fontWeight: 900, lineHeight: 1.05, letterSpacing: "-2px" }}
             >
               60 minutes.
               <br />
@@ -87,7 +87,7 @@ export default function PowerHourPage() {
             </h1>
             <p
               className="animate-fade-up-3"
-              style={{ fontSize: "1.15rem", fontWeight: 300, color: "#888", marginTop: "1.5rem", lineHeight: 1.7, maxWidth: "520px" }}
+              style={{ fontSize: "clamp(0.95rem, 2vw, 1.15rem)", fontWeight: 300, color: "#888", marginTop: "1.5rem", lineHeight: 1.7, maxWidth: "520px" }}
             >
               Stop googling &ldquo;best AI tools for my business.&rdquo; Book a 1-on-1 session and I&apos;ll show you exactly what to use, how to use it, and what to build — for your specific situation.
             </p>
@@ -100,7 +100,7 @@ export default function PowerHourPage() {
                 { num: "14 day", label: "avg. build time" },
               ].map((s) => (
                 <div key={s.label}>
-                  <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "1.8rem", fontWeight: 700, color: "#c8ff00", lineHeight: 1 }}>{s.num}</div>
+                  <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "clamp(1.3rem, 3vw, 1.8rem)", fontWeight: 700, color: "#c8ff00", lineHeight: 1 }}>{s.num}</div>
                   <div style={{ fontSize: "0.8rem", color: "#888", marginTop: "0.3rem" }}>{s.label}</div>
                 </div>
               ))}
@@ -130,7 +130,12 @@ export default function PowerHourPage() {
         @media (max-width: 900px) {
           .power-hero-grid {
             grid-template-columns: 1fr !important;
-            gap: 2.5rem !important;
+            gap: 2rem !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .power-hero-grid {
+            padding: 0 !important;
           }
         }
       `}</style>
