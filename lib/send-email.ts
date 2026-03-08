@@ -27,7 +27,7 @@ export async function sendEmail({
         input: {
           recipient_email: to,
           subject,
-          message_body: body,
+          body,
         },
       }),
     });
