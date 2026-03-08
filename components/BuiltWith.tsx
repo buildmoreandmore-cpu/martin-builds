@@ -2,17 +2,16 @@
 
 import { useEffect, useState } from "react";
 
-const tools: {
-  name: string;
-  slug?: string;
-  color: string;
-}[] = [
+const row1Tools = [
   { name: "Supabase",    slug: "supabase",          color: "#3ECF8E" },
   { name: "GitHub",      slug: "github",             color: "#f5f5f0" },
   { name: "Stripe",      slug: "stripe",             color: "#635BFF" },
   { name: "Cursor",      slug: "cursor",             color: "#f5f5f0" },
   { name: "VS Code",     slug: "visualstudiocode",   color: "#007ACC" },
   { name: "Vercel",      slug: "vercel",             color: "#f5f5f0" },
+];
+
+const row2Tools = [
   { name: "Anthropic",   slug: "anthropic",          color: "#c8ff00" },
   { name: "Perplexity",  slug: "perplexity",         color: "#20B2AA" },
   { name: "Google",      slug: "google",             color: "#4285F4" },
@@ -21,7 +20,8 @@ const tools: {
   { name: "Grok",        slug: "xai",                color: "#f5f5f0" },
 ];
 
-const doubled = [...tools, ...tools];
+const row1Doubled = [...row1Tools, ...row1Tools];
+const row2Doubled = [...row2Tools, ...row2Tools];
 
 function ToolIcon({ slug, color }: { slug: string; color: string }) {
   const [svgContent, setSvgContent] = useState<string | null>(null);
@@ -29,26 +29,51 @@ function ToolIcon({ slug, color }: { slug: string; color: string }) {
   useEffect(() => {
     fetch(`https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/${slug}.svg`)
       .then(r => r.ok ? r.text() : "")
-      .then(text => {
-        if (text) setSvgContent(text);
-      })
+      .then(text => { if (text) setSvgContent(text); })
       .catch(() => {});
   }, [slug]);
 
   if (!svgContent) {
-    return (
-      <div style={{ width: 32, height: 32, borderRadius: "4px", background: `${color}22`, flexShrink: 0 }} />
-    );
+    return <div style={{ width: 22, height: 22, borderRadius: "4px", background: `${color}22`, flexShrink: 0 }} />;
   }
 
   return (
     <div
       className="tool-icon"
-      style={{ width: 32, height: 32, flexShrink: 0 }}
+      style={{ width: 22, height: 22, flexShrink: 0 }}
       dangerouslySetInnerHTML={{
-        __html: svgContent.replace(/<svg/, `<svg width="32" height="32" fill="#666" style="transition:fill 0.25s"`)
+        __html: svgContent.replace(/<svg/, `<svg width="22" height="22" fill="#666" style="transition:fill 0.25s"`)
       }}
     />
+  );
+}
+
+function CarouselTile({ tool }: { tool: { name: string; slug?: string; color: string } }) {
+  return (
+    <div
+      className="carousel-tile"
+      onMouseEnter={(e) => {
+        const el = e.currentTarget as HTMLDivElement;
+        el.style.borderColor = `${tool.color}44`;
+        el.style.background = "#222";
+        const svg = el.querySelector<HTMLElement>(".tool-icon svg");
+        if (svg) svg.style.fill = tool.color;
+        const name = el.querySelector<HTMLSpanElement>(".tool-name");
+        if (name) name.style.color = tool.color;
+      }}
+      onMouseLeave={(e) => {
+        const el = e.currentTarget as HTMLDivElement;
+        el.style.borderColor = "rgba(245,245,240,0.08)";
+        el.style.background = "#1a1a1a";
+        const svg = el.querySelector<HTMLElement>(".tool-icon svg");
+        if (svg) svg.style.fill = "#666";
+        const name = el.querySelector<HTMLSpanElement>(".tool-name");
+        if (name) name.style.color = "#666";
+      }}
+    >
+      {tool.slug && <ToolIcon slug={tool.slug} color={tool.color} />}
+      <span className="tool-name">{tool.name}</span>
+    </div>
   );
 }
 
@@ -56,91 +81,62 @@ export default function BuiltWith() {
   return (
     <section
       style={{
-        padding: "5rem 0",
+        padding: "4rem 0",
         borderTop: "1px solid rgba(245,245,240,0.06)",
         borderBottom: "1px solid rgba(245,245,240,0.06)",
         overflow: "hidden",
       }}
     >
-      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 clamp(1.25rem,5vw,3rem)" }}>
-        <p
-          style={{
-            fontFamily: "'Space Mono', monospace",
-            fontSize: "0.875rem",
-            color: "#c8ff00",
-            letterSpacing: "3px",
-            textTransform: "uppercase",
-            marginBottom: "1.25rem",
-          }}
-        >
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 3rem" }}>
+        <p style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", color: "#c8ff00", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "1rem" }}>
           Built With
         </p>
-        <h2
-          style={{
-            fontSize: "clamp(2rem, 4vw, 3rem)",
-            fontWeight: 800,
-            letterSpacing: "-1px",
-            marginBottom: "3rem",
-            color: "#f5f5f0",
-          }}
-        >
+        <h2 style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", fontWeight: 800, letterSpacing: "-1px", marginBottom: "2.5rem", color: "#f5f5f0" }}>
           Built with the best tools in the game.
         </h2>
       </div>
 
+      {/* Row 1 — scrolls left */}
+      <div style={{ position: "relative", marginBottom: "0.75rem" }}>
+        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "80px", background: "linear-gradient(to right, #0a0a0a, transparent)", zIndex: 2, pointerEvents: "none" }} />
+        <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "80px", background: "linear-gradient(to left, #0a0a0a, transparent)", zIndex: 2, pointerEvents: "none" }} />
+        <div className="carousel-track carousel-row-1">
+          {row1Doubled.map((tool, i) => <CarouselTile key={`r1-${tool.name}-${i}`} tool={tool} />)}
+        </div>
+      </div>
+
+      {/* Row 2 — scrolls right (reverse) */}
       <div style={{ position: "relative" }}>
         <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "80px", background: "linear-gradient(to right, #0a0a0a, transparent)", zIndex: 2, pointerEvents: "none" }} />
         <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "80px", background: "linear-gradient(to left, #0a0a0a, transparent)", zIndex: 2, pointerEvents: "none" }} />
-
-        <div className="carousel-track">
-          {doubled.map((tool, i) => (
-            <div
-              key={`${tool.name}-${i}`}
-              className="carousel-tile"
-              onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLDivElement;
-                el.style.borderColor = `${tool.color}44`;
-                el.style.background = "#222";
-                const svg = el.querySelector<HTMLElement>(".tool-icon svg");
-                if (svg) svg.style.fill = tool.color;
-                const name = el.querySelector<HTMLSpanElement>(".tool-name");
-                if (name) name.style.color = tool.color;
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLDivElement;
-                el.style.borderColor = "rgba(245,245,240,0.08)";
-                el.style.background = "#1a1a1a";
-                const svg = el.querySelector<HTMLElement>(".tool-icon svg");
-                if (svg) svg.style.fill = "#666";
-                const name = el.querySelector<HTMLSpanElement>(".tool-name");
-                if (name) name.style.color = "#666";
-              }}
-            >
-              {tool.slug && <ToolIcon slug={tool.slug} color={tool.color} />}
-              <span className="tool-name">{tool.name}</span>
-            </div>
-          ))}
+        <div className="carousel-track carousel-row-2">
+          {row2Doubled.map((tool, i) => <CarouselTile key={`r2-${tool.name}-${i}`} tool={tool} />)}
         </div>
       </div>
 
       <style>{`
         .carousel-track {
           display: flex;
-          gap: 1rem;
+          gap: 0.75rem;
           width: max-content;
-          animation: scroll 30s linear infinite;
         }
         .carousel-track:hover {
           animation-play-state: paused;
         }
+        .carousel-row-1 {
+          animation: scrollLeft 25s linear infinite;
+        }
+        .carousel-row-2 {
+          animation: scrollRight 28s linear infinite;
+        }
         .carousel-tile {
           display: flex;
           align-items: center;
-          gap: 0.85rem;
-          padding: 0.85rem 1.4rem;
+          gap: 0.6rem;
+          padding: 0.65rem 1.1rem;
           background: #1a1a1a;
           border: 1px solid rgba(245,245,240,0.08);
-          border-radius: 12px;
+          border-radius: 10px;
           cursor: default;
           transition: border-color 0.25s, background 0.25s, transform 0.2s;
           flex-shrink: 0;
@@ -150,18 +146,23 @@ export default function BuiltWith() {
         }
         .carousel-tile .tool-name {
           font-family: 'Outfit', sans-serif;
-          font-size: 1.05rem;
+          font-size: 0.88rem;
           font-weight: 500;
           color: #666;
           transition: color 0.25s;
           white-space: nowrap;
         }
-        @keyframes scroll {
+        @keyframes scrollLeft {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
+        @keyframes scrollRight {
+          0% { transform: translateX(-50%); }
+          100% { transform: translateX(0); }
+        }
         @media (max-width: 480px) {
-          .carousel-track { animation-duration: 20s; }
+          .carousel-row-1 { animation-duration: 18s; }
+          .carousel-row-2 { animation-duration: 20s; }
         }
       `}</style>
     </section>
