@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { sendEmail } from "@/lib/send-email";
 
 export async function POST(req: NextRequest) {
   try {
@@ -7,8 +8,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // Log for now — in production, forward via Composio Gmail to support@newhyer.com
-    console.log(`[Contact Form] From: ${name} <${email}> | Biz: ${business} | Type: ${type} | Message: ${message}`);
+    await sendEmail({
+      subject: `📩 Contact Form — ${name}`,
+      body: `New contact form submission:\n\nName: ${name}\nEmail: ${email}\nBusiness: ${business || "N/A"}\nType: ${type || "General"}\nMessage: ${message}\n\nReply to ${email} to respond.`,
+    });
 
     return NextResponse.json({ ok: true });
   } catch {

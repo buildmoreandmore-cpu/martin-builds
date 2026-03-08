@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { sendEmail } from "@/lib/send-email";
 
 export async function POST(req: NextRequest) {
   try {
@@ -7,10 +8,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid email" }, { status: 400 });
     }
 
-    // Forward to support@newhyer.com blind — user never sees the address
-    // Using a simple fetch to Gmail API or just logging for now
-    // In production this sends via Composio Gmail
-    console.log(`[Newsletter signup] ${email} → support@newhyer.com`);
+    await sendEmail({
+      subject: `📬 Newsletter Signup — ${email}`,
+      body: `New newsletter subscriber:\n\nEmail: ${email}\n\nAdd to mailing list.`,
+    });
 
     return NextResponse.json({ ok: true });
   } catch {

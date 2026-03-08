@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { sendEmail } from "@/lib/send-email";
 
 export async function POST(req: NextRequest) {
   try {
@@ -7,8 +8,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // Log for server — forwarded to support@newhyer.com via Composio in production
-    console.log(`[Discovery Call Booked] ${name} <${email}> | Biz: ${business} | ${date} at ${time} EST | Q: ${question}`);
+    await sendEmail({
+      subject: `🗓️ Discovery Call Booked — ${name}`,
+      body: `New discovery call booking:\n\nName: ${name}\nEmail: ${email}\nBusiness: ${business || "N/A"}\nDate: ${date}\nTime: ${time} EST\nQuestion: ${question || "None"}\n\nReply to ${email} to confirm.`,
+    });
 
     return NextResponse.json({ ok: true });
   } catch {
