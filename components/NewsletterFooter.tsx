@@ -25,7 +25,7 @@ export default function NewsletterFooter() {
         background: "#1a1a1a",
         borderTop: "1px solid rgba(245,245,240,0.06)",
         borderBottom: "1px solid rgba(245,245,240,0.06)",
-        padding: "4rem 3rem",
+        padding: "clamp(2.5rem,6vw,4rem) clamp(1.25rem,5vw,3rem)",
         position: "relative",
         overflow: "hidden",
       }}
@@ -76,7 +76,7 @@ export default function NewsletterFooter() {
         </div>
 
         {/* Right */}
-        <div style={{ minWidth: "300px", flex: "0 1 420px" }}>
+        <div style={{ minWidth: "0", flex: "1 1 300px" }}>
           {submitted ? (
             <p
               style={{
@@ -101,7 +101,7 @@ export default function NewsletterFooter() {
                 placeholder="Your email address"
                 required
                 style={{
-                  flex: "1 1 220px",
+                  flex: "1 1 180px",
                   padding: "0.85rem 1.1rem",
                   background: "#2a2a2a",
                   border: "1px solid rgba(245,245,240,0.08)",

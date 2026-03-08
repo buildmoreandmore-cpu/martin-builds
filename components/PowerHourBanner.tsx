@@ -4,14 +4,14 @@ import ScrollReveal from "./ScrollReveal";
 
 export default function PowerHourBanner() {
   return (
-    <section style={{ padding: "0 3rem 6rem", background: "#0a0a0a" }}>
+    <section style={{ padding: "0 clamp(1.25rem,5vw,3rem) clamp(3rem,8vw,6rem)", background: "#0a0a0a" }}>
       <ScrollReveal>
         <div
           style={{
             background: "linear-gradient(135deg, #111 0%, #141a0a 100%)",
             border: "1px solid rgba(200,255,0,0.15)",
             borderRadius: "20px",
-            padding: "3rem 3.5rem",
+            padding: "clamp(1.5rem,4vw,3rem) clamp(1.5rem,4vw,3.5rem)",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",

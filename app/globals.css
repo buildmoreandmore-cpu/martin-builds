@@ -63,8 +63,8 @@ a { text-decoration: none; }
 @media (max-width: 768px) {
   /* Reduce section padding globally */
   section {
-    padding-left: clamp(1.25rem, 5vw, 3rem) !important;
-    padding-right: clamp(1.25rem, 5vw, 3rem) !important;
+    padding-left: clamp(1rem, 5vw, 3rem) !important;
+    padding-right: clamp(1rem, 5vw, 3rem) !important;
   }
 
   /* Prevent oversized letter-spacing on small screens */
@@ -86,5 +86,38 @@ a { text-decoration: none; }
   }
   .btn-group a {
     text-align: center;
+  }
+
+  /* Footer stacks vertically */
+  footer {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Tighter padding on very small screens */
+  section {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Reduce vertical spacing */
+  h1 {
+    font-size: clamp(2.25rem, 10vw, 3.5rem) !important;
+    letter-spacing: -1.5px !important;
+  }
+
+  h2 {
+    font-size: clamp(1.6rem, 7vw, 2.5rem) !important;
+  }
+
+  /* Carousel tiles smaller on phones */
+  .carousel-tile {
+    padding: 0.65rem 1rem !important;
+  }
+  .carousel-tile .tool-name {
+    font-size: 0.9rem !important;
   }
 }

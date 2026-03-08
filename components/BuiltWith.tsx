@@ -37,16 +37,16 @@ function ToolIcon({ slug, color }: { slug: string; color: string }) {
 
   if (!svgContent) {
     return (
-      <div style={{ width: 22, height: 22, borderRadius: "4px", background: `${color}22`, flexShrink: 0 }} />
+      <div style={{ width: 32, height: 32, borderRadius: "4px", background: `${color}22`, flexShrink: 0 }} />
     );
   }
 
   return (
     <div
       className="tool-icon"
-      style={{ width: 22, height: 22, flexShrink: 0 }}
+      style={{ width: 32, height: 32, flexShrink: 0 }}
       dangerouslySetInnerHTML={{
-        __html: svgContent.replace(/<svg/, `<svg width="22" height="22" fill="#666" style="transition:fill 0.25s"`)
+        __html: svgContent.replace(/<svg/, `<svg width="32" height="32" fill="#666" style="transition:fill 0.25s"`)
       }}
     />
   );
@@ -56,31 +56,31 @@ export default function BuiltWith() {
   return (
     <section
       style={{
-        padding: "4rem 0",
+        padding: "5rem 0",
         borderTop: "1px solid rgba(245,245,240,0.06)",
         borderBottom: "1px solid rgba(245,245,240,0.06)",
         overflow: "hidden",
       }}
     >
-      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 3rem" }}>
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 clamp(1.25rem,5vw,3rem)" }}>
         <p
           style={{
             fontFamily: "'Space Mono', monospace",
-            fontSize: "0.75rem",
+            fontSize: "0.875rem",
             color: "#c8ff00",
             letterSpacing: "3px",
             textTransform: "uppercase",
-            marginBottom: "1rem",
+            marginBottom: "1.25rem",
           }}
         >
           Built With
         </p>
         <h2
           style={{
-            fontSize: "clamp(1.5rem, 3vw, 2.25rem)",
+            fontSize: "clamp(2rem, 4vw, 3rem)",
             fontWeight: 800,
             letterSpacing: "-1px",
-            marginBottom: "2.5rem",
+            marginBottom: "3rem",
             color: "#f5f5f0",
           }}
         >
@@ -126,7 +126,7 @@ export default function BuiltWith() {
       <style>{`
         .carousel-track {
           display: flex;
-          gap: 0.75rem;
+          gap: 1rem;
           width: max-content;
           animation: scroll 30s linear infinite;
         }
@@ -136,11 +136,11 @@ export default function BuiltWith() {
         .carousel-tile {
           display: flex;
           align-items: center;
-          gap: 0.6rem;
-          padding: 0.65rem 1.1rem;
+          gap: 0.85rem;
+          padding: 0.85rem 1.4rem;
           background: #1a1a1a;
           border: 1px solid rgba(245,245,240,0.08);
-          border-radius: 10px;
+          border-radius: 12px;
           cursor: default;
           transition: border-color 0.25s, background 0.25s, transform 0.2s;
           flex-shrink: 0;
@@ -150,7 +150,7 @@ export default function BuiltWith() {
         }
         .carousel-tile .tool-name {
           font-family: 'Outfit', sans-serif;
-          font-size: 0.88rem;
+          font-size: 1.05rem;
           font-weight: 500;
           color: #666;
           transition: color 0.25s;

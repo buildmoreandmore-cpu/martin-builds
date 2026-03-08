@@ -43,7 +43,7 @@ const projects = [
 
 export default function Work() {
   return (
-    <section id="work" style={{ padding: "6rem 3rem", background: "#0a0a0a" }}>
+    <section id="work" style={{ padding: "clamp(3rem,8vw,6rem) clamp(1.25rem,5vw,3rem)", background: "#0a0a0a" }}>
       <ScrollReveal>
         <p style={sectionTag}>Selected Work</p>
       </ScrollReveal>
@@ -58,7 +58,7 @@ export default function Work() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
           gap: "1.5rem",
           marginTop: "4rem",
         }}

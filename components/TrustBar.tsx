@@ -13,7 +13,7 @@ export default function TrustBar() {
   return (
     <div
       style={{
-        padding: "3rem",
+        padding: "clamp(1.5rem,5vw,3rem)",
         borderTop: "1px solid rgba(245,245,240,0.06)",
         borderBottom: "1px solid rgba(245,245,240,0.06)",
       }}
@@ -36,7 +36,7 @@ export default function TrustBar() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          gap: "3rem",
+          gap: "clamp(1.5rem,4vw,3rem)",
           flexWrap: "wrap",
         }}
       >
