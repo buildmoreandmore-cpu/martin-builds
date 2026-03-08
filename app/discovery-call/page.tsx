@@ -19,7 +19,7 @@ export default function DiscoveryCallPage() {
           minHeight: "100vh",
           display: "flex",
           alignItems: "center",
-          padding: "8rem 3rem 4rem",
+          padding: "clamp(5rem,10vw,8rem) clamp(1.25rem,5vw,3rem) 4rem",
           position: "relative",
           overflow: "hidden",
         }}
@@ -44,7 +44,7 @@ export default function DiscoveryCallPage() {
             </div>
             <h1
               className="animate-fade-up-2"
-              style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", fontWeight: 900, lineHeight: 1.0, letterSpacing: "-2px" }}
+              style={{ fontSize: "clamp(2rem, 5vw, 4rem)", fontWeight: 900, lineHeight: 1.05, letterSpacing: "-2px", overflowWrap: "break-word" as const, wordBreak: "break-word" as const }}
             >
               Not sure what you need?{" "}
               <span style={{ color: "#c8ff00" }}>Let&apos;s figure it out.</span>
