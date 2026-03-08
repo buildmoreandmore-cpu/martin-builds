@@ -96,6 +96,19 @@ export default function Services() {
           </ScrollReveal>
         ))}
       </div>
+
+      <ScrollReveal>
+        <div style={{ marginTop: "3rem", textAlign: "center" }}>
+          <a
+            href="/discovery-call"
+            style={{ color: "#c8ff00", fontWeight: 600, fontSize: "0.95rem", display: "inline-flex", alignItems: "center", gap: "0.4rem", textDecoration: "none", transition: "all 0.3s" }}
+            onMouseEnter={e => { const arrow = e.currentTarget.querySelector("span"); if (arrow) (arrow as HTMLSpanElement).style.transform = "translateX(3px)"; }}
+            onMouseLeave={e => { const arrow = e.currentTarget.querySelector("span"); if (arrow) (arrow as HTMLSpanElement).style.transform = "translateX(0)"; }}
+          >
+            Not sure which is right for you? Let&apos;s talk <span style={{ transition: "transform 0.3s", display: "inline-block" }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </a>
+        </div>
+      </ScrollReveal>
     </section>
   );
 }

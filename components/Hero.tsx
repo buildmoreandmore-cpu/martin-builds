@@ -29,6 +29,10 @@ export default function Hero() {
         AI Tools &amp; Products for Small Businesses
       </div>
 
+      <p className="animate-fade-up-1" style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 400, fontSize: "1rem", color: "#888", marginBottom: "1rem" }}>
+        For small business owners who are done waiting on AI
+      </p>
+
       <h1
         className="animate-fade-up-2"
         style={{
@@ -93,13 +97,13 @@ export default function Hero() {
         className="animate-fade-up-4"
         style={{ display: "flex", gap: "1rem", marginTop: "3rem", flexWrap: "wrap" }}
       >
-        <a href="#cta" style={primaryBtnStyle}
+        <a href="/discovery-call" style={primaryBtnStyle}
           onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-3px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 30px rgba(200,255,0,0.25)"; }}
           onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
         >
-          Start a 2-Week Sprint
+          Book a Free Discovery Call
         </a>
-        <a href="#work" style={secondaryBtnStyle}
+        <a href="#services" style={secondaryBtnStyle}
           onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "#c8ff00"; (e.currentTarget as HTMLAnchorElement).style.color = "#c8ff00"; }}
           onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(245,245,240,0.2)"; (e.currentTarget as HTMLAnchorElement).style.color = "#f5f5f0"; }}
         >

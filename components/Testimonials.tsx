@@ -2,27 +2,29 @@
 
 import ScrollReveal from "./ScrollReveal";
 
+// TODO: Replace placeholder quotes with real testimonials
+
 const testimonials = [
   {
     quote:
       "Francis didn't just build us a website — he built us a system. The AI tools he integrated have completely changed how we handle client intake and proposals.",
     initials: "RN",
     name: "Ruthie Norton",
-    role: "2KB Energy Engineering",
+    role: "Client — 2KB Energy Engineering",
   },
   {
     quote:
       "He understands the business side and the tech side — that's rare. He translated what I needed into something my team could actually use, in less time than I expected.",
     initials: "CA",
     name: "Camisha Alford",
-    role: "Kingly Consulting",
+    role: "Client — Kingly Consulting",
   },
   {
     quote:
       "Fast, clear communication, and the final product was exactly what we needed. No scope creep, no guessing. Francis ships.",
     initials: "BC",
-    name: "Birdhouse Coffee",
-    role: "Web Design Client",
+    name: "Birdhouse Coffee Room",
+    role: "Web Design Client — Atlanta, GA",
   },
 ];
 
@@ -88,18 +90,32 @@ export default function Testimonials() {
               >
                 {t.quote}
               </p>
+
+              {/* Accent line */}
+              <div
+                style={{
+                  width: "30px",
+                  height: "2px",
+                  background: "#c8ff00",
+                  opacity: 0.4,
+                  marginBottom: "1.5rem",
+                }}
+              />
+
               <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
                 <div
                   style={{
-                    width: "44px",
-                    height: "44px",
+                    width: "56px",
+                    height: "56px",
                     borderRadius: "50%",
-                    background: "rgba(200,255,0,0.15)",
+                    background: "rgba(200,255,0,0.12)",
+                    border: "2px solid rgba(200,255,0,0.25)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
+                    fontFamily: "'Space Mono', monospace",
                     fontWeight: 700,
-                    fontSize: "0.85rem",
+                    fontSize: "1rem",
                     color: "#c8ff00",
                     flexShrink: 0,
                   }}
@@ -115,6 +131,19 @@ export default function Testimonials() {
           </ScrollReveal>
         ))}
       </div>
+
+      <ScrollReveal>
+        <div style={{ marginTop: "3rem", textAlign: "center" }}>
+          <a
+            href="/discovery-call"
+            style={{ color: "#c8ff00", fontWeight: 600, fontSize: "0.95rem", display: "inline-flex", alignItems: "center", gap: "0.4rem", textDecoration: "none", transition: "all 0.3s" }}
+            onMouseEnter={e => { const arrow = e.currentTarget.querySelector("span"); if (arrow) (arrow as HTMLSpanElement).style.transform = "translateX(3px)"; }}
+            onMouseLeave={e => { const arrow = e.currentTarget.querySelector("span"); if (arrow) (arrow as HTMLSpanElement).style.transform = "translateX(0)"; }}
+          >
+            Join them. Book a free discovery call <span style={{ transition: "transform 0.3s", display: "inline-block" }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </a>
+        </div>
+      </ScrollReveal>
     </section>
   );
 }
