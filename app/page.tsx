@@ -19,7 +19,6 @@ import BuiltWith from "@/components/BuiltWith";
 import NewsletterBand from "@/components/NewsletterBand";
 import Services from "@/components/Services";
 import PowerHourBanner from "@/components/PowerHourBanner";
-import Work from "@/components/Work";
 import Process from "@/components/Process";
 import Testimonials from "@/components/Testimonials";
 import CTA from "@/components/CTA";
@@ -38,7 +37,6 @@ export default function Home() {
       <NewsletterBand />
       <Services />
       <PowerHourBanner />
-      <Work />
       <Process />
       <Testimonials />
       <CTA />
