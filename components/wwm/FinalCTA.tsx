@@ -68,7 +68,7 @@ export default function FinalCTA() {
       <ScrollReveal>
         <div style={{ marginTop: "3rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1.25rem" }}>
           <a
-            href="/contact"
+            href="/discovery-call"
             style={{
               display: "inline-block",
               background: "#c8ff00",

@@ -52,7 +52,7 @@ export default function Nav() {
           <NavLink href="/power-hour">Power Hour</NavLink>
           <NavLink href="/contact">Contact</NavLink>
           <a
-            href="/work-with-me"
+            href="/discovery-call"
             style={{ background: "#c8ff00", color: "#0a0a0a", padding: "0.6rem 1.5rem", borderRadius: "100px", fontWeight: 700, fontSize: "0.8rem", letterSpacing: "0.5px", textTransform: "uppercase", transition: "transform 0.3s, box-shadow 0.3s", textDecoration: "none", whiteSpace: "nowrap" }}
             onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 4px 20px rgba(200,255,0,0.3)"; }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
@@ -115,7 +115,7 @@ export default function Nav() {
           </a>
         ))}
         <a
-          href="/work-with-me"
+          href="/discovery-call"
           onClick={() => setMenuOpen(false)}
           style={{ display: "block", marginTop: "1.25rem", padding: "0.9rem 0", background: "#c8ff00", color: "#0a0a0a", borderRadius: "8px", fontWeight: 700, fontSize: "0.9rem", textAlign: "center", textDecoration: "none", letterSpacing: "0.5px" }}
         >

@@ -68,7 +68,7 @@ export default function WWMHero() {
       </p>
       <div className="animate-fade-up-4" style={{ marginTop: "3rem" }}>
         <a
-          href="#book-call"
+          href="/discovery-call"
           style={{
             display: "inline-block",
             background: "#c8ff00",
