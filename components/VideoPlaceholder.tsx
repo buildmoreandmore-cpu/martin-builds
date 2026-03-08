@@ -54,12 +54,6 @@ export default function VideoPlaceholder() {
               </p>
             </div>
           </div>
-
-          <div style={{ textAlign: "center", marginTop: "1.2rem" }}>
-            <p style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 400, fontSize: "1.05rem", color: "#f5f5f0", margin: 0, lineHeight: 1.7 }}>
-              I&apos;m Francis. I build AI-powered tools for small businesses from Atlanta. No agency. No team of 12. Just one builder who ships fast.
-            </p>
-          </div>
         </div>
       </ScrollReveal>
     </section>
