@@ -31,7 +31,7 @@ export default function Testimonials() {
     <section
       id="testimonials"
       style={{
-        padding: "6rem 3rem",
+        padding: "clamp(3rem,8vw,6rem) clamp(1.25rem,5vw,3rem)",
         background: "#0a0a0a",
         borderTop: "1px solid rgba(245,245,240,0.06)",
       }}
@@ -46,7 +46,7 @@ export default function Testimonials() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 350px), 1fr))",
           gap: "1.5rem",
           marginTop: "4rem",
         }}

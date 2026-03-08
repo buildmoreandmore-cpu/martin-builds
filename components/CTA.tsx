@@ -7,7 +7,7 @@ export default function CTA() {
     <section
       id="cta"
       style={{
-        padding: "8rem 3rem",
+        padding: "clamp(4rem,10vw,8rem) clamp(1.25rem,5vw,3rem)",
         textAlign: "center",
         position: "relative",
         overflow: "hidden",

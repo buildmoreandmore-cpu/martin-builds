@@ -27,7 +27,7 @@ const steps = [
 
 export default function Process() {
   return (
-    <section id="process" style={{ padding: "6rem 3rem", background: "#1a1a1a" }}>
+    <section id="process" style={{ padding: "clamp(3rem,8vw,6rem) clamp(1.25rem,5vw,3rem)", background: "#1a1a1a" }}>
       <ScrollReveal>
         <p style={sectionTag}>How It Works</p>
       </ScrollReveal>
@@ -42,7 +42,7 @@ export default function Process() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 250px), 1fr))",
           gap: "2rem",
           marginTop: "4rem",
         }}

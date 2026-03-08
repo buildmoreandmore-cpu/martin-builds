@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer
       style={{
-        padding: "3rem",
+        padding: "clamp(1.5rem,5vw,3rem)",
         borderTop: "1px solid rgba(245,245,240,0.06)",
         display: "flex",
         justifyContent: "space-between",
