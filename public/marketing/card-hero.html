@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 1080px; height: 1080px; background: #f0f0f0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; }
+
+.brand { display: flex; align-items: center; gap: 16px; margin-bottom: 40px; }
+.brand-name { font-family: 'Space Mono', monospace; font-size: 28px; font-weight: 700; color: #0a0a0a; }
+.brand-name span { color: #888; }
+.brand-tag { font-size: 14px; color: #888; border: 1px solid #ccc; border-radius: 100px; padding: 6px 16px; }
+
+.laptop { width: 860px; position: relative; }
+.laptop-top { background: #1a1a1a; border-radius: 16px 16px 0 0; border: 2px solid #333; overflow: hidden; }
+.laptop-notch { width: 120px; height: 6px; background: #333; border-radius: 0 0 8px 8px; margin: 0 auto; }
+.laptop-screen { padding: 0; }
+.laptop-base { height: 16px; background: linear-gradient(to bottom, #2a2a2a, #1a1a1a); border-radius: 0 0 4px 4px; margin: 0 40px; }
+.laptop-foot { height: 4px; background: #ccc; border-radius: 0 0 8px 8px; margin: 0 100px; }
+
+/* Site content replica */
+.site { background: #0a0a0a; padding: 60px 50px; color: #f5f5f0; min-height: 480px; }
+.site .tag { font-family: 'Space Mono', monospace; font-size: 11px; color: #c8ff00; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 16px; }
+.site .pre { font-size: 13px; color: #888; margin-bottom: 8px; }
+.site h1 { font-size: 56px; font-weight: 900; line-height: 0.95; letter-spacing: -3px; margin-bottom: 12px; }
+.site h1 .accent { color: #c8ff00; }
+.site .built { font-family: 'Space Mono', monospace; font-size: 14px; color: #c8ff00; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; }
+.site .sub { font-size: 16px; color: #888; line-height: 1.7; max-width: 520px; margin-bottom: 28px; }
+.site .btns { display: flex; gap: 12px; }
+.site .btn-primary { background: #c8ff00; color: #0a0a0a; padding: 14px 32px; border-radius: 100px; font-weight: 700; font-size: 14px; }
+.site .btn-secondary { border: 1px solid rgba(245,245,240,0.2); color: #f5f5f0; padding: 14px 32px; border-radius: 100px; font-weight: 600; font-size: 14px; }
+
+.tagline { margin-top: 30px; font-size: 16px; color: #888; }
+.tagline strong { color: #0a0a0a; }
+</style></head><body>
+
+<div class="brand">
+  <div class="brand-name">martin<span>.builds</span></div>
+  <div class="brand-tag">AI Tools & Platforms</div>
+</div>
+
+<div class="laptop">
+  <div class="laptop-top">
+    <div class="laptop-notch"></div>
+    <div class="laptop-screen">
+      <div class="site">
+        <div class="tag">AI Tools & Platforms for Growing Businesses</div>
+        <h1>I build AI systems<br>that save your team<br><span class="accent">thousands of hours.</span></h1>
+        <div class="built">BUILT BY FRIDAY.</div>
+        <div class="sub">Custom AI platforms, internal tools, and automation systems for businesses doing $1M+. Designed, built, and deployed in 2-3 weeks.</div>
+        <div class="btns">
+          <div class="btn-primary">Book a Free Discovery Call</div>
+          <div class="btn-secondary">See the Work</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="laptop-base"></div>
+  <div class="laptop-foot"></div>
+</div>
+
+<div class="tagline"><strong>Custom AI builds</strong> for businesses ready to scale.</div>
+
+</body></html>

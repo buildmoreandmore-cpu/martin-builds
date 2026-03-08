@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 1080px; height: 1080px; background: #f0f0f0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; }
+.brand { display: flex; align-items: center; gap: 16px; margin-bottom: 40px; }
+.brand-name { font-family: 'Space Mono', monospace; font-size: 28px; font-weight: 700; color: #0a0a0a; }
+.brand-name span { color: #888; }
+.brand-tag { font-size: 14px; color: #888; border: 1px solid #ccc; border-radius: 100px; padding: 6px 16px; }
+.laptop { width: 860px; position: relative; }
+.laptop-top { background: #1a1a1a; border-radius: 16px 16px 0 0; border: 2px solid #333; overflow: hidden; }
+.laptop-notch { width: 120px; height: 6px; background: #333; border-radius: 0 0 8px 8px; margin: 0 auto; }
+.laptop-base { height: 16px; background: linear-gradient(to bottom, #2a2a2a, #1a1a1a); border-radius: 0 0 4px 4px; margin: 0 40px; }
+.laptop-foot { height: 4px; background: #ccc; border-radius: 0 0 8px 8px; margin: 0 100px; }
+
+.site { background: #0a0a0a; padding: 50px; color: #f5f5f0; }
+.site .tag { font-family: 'Space Mono', monospace; font-size: 11px; color: #c8ff00; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 16px; }
+.site h2 { font-size: 38px; font-weight: 800; line-height: 1.1; letter-spacing: -2px; margin-bottom: 12px; }
+.site .sub { font-size: 15px; color: #888; line-height: 1.7; margin-bottom: 36px; }
+
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.card { background: #1a1a1a; border: 1px solid rgba(245,245,240,0.06); border-radius: 14px; padding: 28px; }
+.card.primary { border-color: rgba(200,255,0,0.15); border-left: 3px solid #c8ff00; }
+.card .pill { display: inline-block; background: #c8ff00; color: #0a0a0a; font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 10px; border-radius: 100px; margin-bottom: 14px; }
+.card .pill-gray { display: inline-block; background: #2a2a2a; color: #888; font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 10px; border-radius: 100px; margin-bottom: 14px; }
+.card h3 { font-size: 18px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+.card p { font-size: 13px; color: #888; line-height: 1.6; margin-bottom: 16px; }
+.card .price { font-family: 'Space Mono', monospace; font-size: 13px; color: #c8ff00; border-top: 1px solid rgba(245,245,240,0.06); padding-top: 14px; }
+
+.tagline { margin-top: 30px; font-size: 16px; color: #888; }
+.tagline strong { color: #0a0a0a; }
+</style></head><body>
+
+<div class="brand">
+  <div class="brand-name">martin<span>.builds</span></div>
+  <div class="brand-tag">Two Ways to Work Together</div>
+</div>
+
+<div class="laptop">
+  <div class="laptop-top">
+    <div class="laptop-notch"></div>
+    <div class="site">
+      <div class="tag">Who I Work With</div>
+      <h2>Two ways I can help — depending<br>on where your business is.</h2>
+      <div class="cards">
+        <div class="card primary">
+          <div class="pill">Revenue $1M+</div>
+          <h3>You need AI built into your operations.</h3>
+          <p>Custom platforms, client portals, internal dashboards, and AI automation systems. Scoped, built, and deployed in 2-3 weeks.</p>
+          <div class="price">Builds from $5,000 · Retainers from $2,500/mo</div>
+        </div>
+        <div class="card">
+          <div class="pill-gray">Getting Started</div>
+          <h3>You need to understand what AI can do for you.</h3>
+          <p>Start with a 1-on-1 strategy session or let me set up an AI agent that works for you 24/7.</p>
+          <div class="price">Power Hour $500 · AI Agent from $300/mo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="laptop-base"></div>
+  <div class="laptop-foot"></div>
+</div>
+
+<div class="tagline"><strong>From strategy to full platform</strong> — there's a lane for every business.</div>
+
+</body></html>
