@@ -82,7 +82,7 @@ export default function DiscoveryBookingCard() {
         background: "#1a1a1a",
         border: "1px solid rgba(245,245,240,0.06)",
         borderRadius: "16px",
-        padding: "2.5rem",
+        padding: "clamp(1.5rem, 4vw, 2.5rem)",
         position: "relative",
         overflow: "hidden",
       }}
