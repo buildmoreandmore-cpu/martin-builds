@@ -65,20 +65,20 @@ const services = [
 
 export default function Services() {
   return (
-    <section id="services" style={{ padding: "clamp(4rem,8vw,6rem) clamp(1.25rem,5vw,3rem)", background: "#0a0a0a" }}>
+    <section id="services" style={{ padding: "clamp(5rem,8vw,8rem) clamp(1.25rem,5vw,3rem)", background: "#0a0a0a" }}>
       <ScrollReveal>
         <p style={sectionTag}>What I Build</p>
       </ScrollReveal>
       <ScrollReveal>
         <h2 style={sectionTitle}>
-          Less hype.
+          You don&apos;t need more AI advice.
           <br />
-          More shipped products.
+          You need someone who builds.
         </h2>
       </ScrollReveal>
       <ScrollReveal>
         <p style={sectionSub}>
-          I translate what AI can do into tools your team will actually use. Custom-built. Fast. No bloat.
+          You&apos;ve seen the demos. You&apos;ve read the articles. You&apos;re ready for someone to actually build the tool your business needs — not talk about it for 6 months.
         </p>
       </ScrollReveal>
 
@@ -86,7 +86,7 @@ export default function Services() {
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
-          gap: "1.5rem",
+          gap: "2rem",
           marginTop: "4rem",
         }}
       >
@@ -101,11 +101,22 @@ export default function Services() {
         <div style={{ marginTop: "3rem", textAlign: "center" }}>
           <a
             href="/discovery-call"
-            style={{ color: "#c8ff00", fontWeight: 600, fontSize: "0.95rem", display: "inline-flex", alignItems: "center", gap: "0.4rem", textDecoration: "none", transition: "all 0.3s" }}
-            onMouseEnter={e => { const arrow = e.currentTarget.querySelector("span"); if (arrow) (arrow as HTMLSpanElement).style.transform = "translateX(3px)"; }}
-            onMouseLeave={e => { const arrow = e.currentTarget.querySelector("span"); if (arrow) (arrow as HTMLSpanElement).style.transform = "translateX(0)"; }}
+            style={{
+              background: "#c8ff00",
+              color: "#0a0a0a",
+              padding: "1rem 2.5rem",
+              borderRadius: "100px",
+              fontWeight: 700,
+              fontSize: "1rem",
+              letterSpacing: "0.5px",
+              transition: "all 0.3s",
+              display: "inline-block",
+              textDecoration: "none",
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-3px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 30px rgba(200,255,0,0.25)"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
           >
-            Not sure which is right for you? Let&apos;s talk <span style={{ transition: "transform 0.3s", display: "inline-block" }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+            Book a Free Discovery Call — I&apos;ll Match You to the Right Option
           </a>
         </div>
       </ScrollReveal>

@@ -90,7 +90,7 @@ export default function Hero() {
           lineHeight: 1.7,
         }}
       >
-        You don&apos;t need a deck about AI strategy. You need someone who shows up, builds the thing, and it works by Friday. That&apos;s what I do.
+        You&apos;ve been told AI will change your business. But nobody&apos;s actually built anything for you yet. I will. And it&apos;ll be live in two weeks.
       </p>
 
       <div
@@ -103,7 +103,7 @@ export default function Hero() {
         >
           Book a Free Discovery Call
         </a>
-        <a href="#services" style={secondaryBtnStyle}
+        <a href="#work" style={secondaryBtnStyle}
           onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "#c8ff00"; (e.currentTarget as HTMLAnchorElement).style.color = "#c8ff00"; }}
           onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(245,245,240,0.2)"; (e.currentTarget as HTMLAnchorElement).style.color = "#f5f5f0"; }}
         >

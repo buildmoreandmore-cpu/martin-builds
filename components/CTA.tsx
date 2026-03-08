@@ -7,7 +7,7 @@ export default function CTA() {
     <section
       id="cta"
       style={{
-        padding: "clamp(4rem,10vw,8rem) clamp(1.25rem,5vw,3rem)",
+        padding: "clamp(5rem,10vw,8rem) clamp(1.25rem,5vw,3rem)",
         textAlign: "center",
         position: "relative",
         overflow: "hidden",
@@ -31,63 +31,42 @@ export default function CTA() {
       </ScrollReveal>
       <ScrollReveal>
         <h2 style={{ ...sectionTitle, margin: "0 auto" }}>
-          Your business needs AI that{" "}
-          <span style={{ color: "#c8ff00", position: "relative", display: "inline-block" }}>
-            works
-            <span
-              style={{
-                position: "absolute",
-                bottom: "5px",
-                left: 0,
-                right: 0,
-                height: "4px",
-                background: "#c8ff00",
-                opacity: 0.4,
-                borderRadius: "2px",
-                display: "block",
-              }}
-            />
-          </span>
-          ,<br />
-          not AI that <em>talks</em>.
+          You&apos;ve scrolled this far.
+          <br />
+          That means something.{" "}
+          <span style={{ color: "#c8ff00" }}>Let&apos;s talk.</span>
         </h2>
       </ScrollReveal>
       <ScrollReveal>
         <p style={{ ...sectionSub, margin: "1.5rem auto 0" }}>
-          Book a free 30-minute discovery call. I&apos;ll tell you exactly what I&apos;d build, what it costs, and how fast we can ship it.
+          30 minutes. Free. You tell me the problem, I tell you exactly what I&apos;d build, what it costs, and when you&apos;d have it. No pitch deck. No follow-up spam. Just a real conversation.
         </p>
       </ScrollReveal>
 
-      <div style={{ display: "flex", gap: "1rem", marginTop: "2.5rem", flexWrap: "wrap", justifyContent: "center" }}>
-        <a
-          href="/discovery-call"
-          style={primaryBtnStyle}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-3px)";
-            (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 30px rgba(200,255,0,0.25)";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)";
-            (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none";
-          }}
-        >
-          Book a Discovery Call
-        </a>
-        <a
-          href="#work"
-          style={secondaryBtnStyle}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.borderColor = "#c8ff00";
-            (e.currentTarget as HTMLAnchorElement).style.color = "#c8ff00";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(245,245,240,0.2)";
-            (e.currentTarget as HTMLAnchorElement).style.color = "#f5f5f0";
-          }}
-        >
-          See More Work
-        </a>
-      </div>
+      <ScrollReveal>
+        <div style={{ marginTop: "2.5rem" }}>
+          <a
+            href="/discovery-call"
+            style={primaryBtnStyle}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-3px)";
+              (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 30px rgba(200,255,0,0.25)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)";
+              (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none";
+            }}
+          >
+            Book a Free Discovery Call
+          </a>
+          <p style={{ marginTop: "1.2rem", fontSize: "0.9rem", color: "#888" }}>
+            Or email me directly →{" "}
+            <a href="mailto:francis@martin.builds" style={{ color: "#c8ff00", textDecoration: "none" }}>
+              francis@martin.builds
+            </a>
+          </p>
+        </div>
+      </ScrollReveal>
     </section>
   );
 }
@@ -113,7 +92,7 @@ const sectionSub: React.CSSProperties = {
   fontSize: "1.15rem",
   fontWeight: 300,
   color: "#888",
-  maxWidth: "500px",
+  maxWidth: "550px",
   lineHeight: 1.7,
 };
 
@@ -127,16 +106,5 @@ const primaryBtnStyle: React.CSSProperties = {
   letterSpacing: "0.5px",
   transition: "all 0.3s",
   display: "inline-block",
-};
-
-const secondaryBtnStyle: React.CSSProperties = {
-  background: "transparent",
-  color: "#f5f5f0",
-  padding: "1rem 2.5rem",
-  borderRadius: "100px",
-  fontWeight: 600,
-  fontSize: "1rem",
-  border: "1px solid rgba(245,245,240,0.2)",
-  transition: "all 0.3s",
-  display: "inline-block",
+  textDecoration: "none",
 };

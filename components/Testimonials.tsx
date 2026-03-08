@@ -2,22 +2,20 @@
 
 import ScrollReveal from "./ScrollReveal";
 
-// TODO: Replace placeholder quotes with real testimonials
-
 const testimonials = [
   {
     quote:
       "Francis didn't just build us a website — he built us a system. The AI tools he integrated have completely changed how we handle client intake and proposals.",
     initials: "RN",
     name: "Ruthie Norton",
-    role: "Client — 2KB Energy Engineering",
+    role: "2KB Energy Engineering",
   },
   {
     quote:
       "He understands the business side and the tech side — that's rare. He translated what I needed into something my team could actually use, in less time than I expected.",
     initials: "CA",
     name: "Camisha Alford",
-    role: "Client — Kingly Consulting",
+    role: "Kingly Consulting",
   },
   {
     quote:
@@ -33,76 +31,75 @@ export default function Testimonials() {
     <section
       id="testimonials"
       style={{
-        padding: "clamp(3rem,8vw,6rem) clamp(1.25rem,5vw,3rem)",
-        background: "#0a0a0a",
-        borderTop: "1px solid rgba(245,245,240,0.06)",
+        padding: "clamp(5rem,8vw,8rem) clamp(1.25rem,5vw,3rem)",
+        background: "#1a1a1a",
+        borderTop: "1px solid rgba(200,255,0,0.08)",
       }}
     >
       <ScrollReveal>
-        <p style={sectionTag}>Results</p>
+        <p style={sectionTag}>What Clients Say</p>
       </ScrollReveal>
       <ScrollReveal>
-        <h2 style={sectionTitle}>Don&apos;t take my word for it.</h2>
+        <h2 style={{ ...sectionTitle, maxWidth: "800px" }}>
+          They had the same question you do.
+          <br />
+          Here&apos;s what happened.
+        </h2>
       </ScrollReveal>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 350px), 1fr))",
-          gap: "1.5rem",
-          marginTop: "4rem",
-        }}
-      >
-        {testimonials.map((t) => (
+      <div style={{ maxWidth: "700px", margin: "4rem auto 0" }}>
+        {testimonials.map((t, i) => (
           <ScrollReveal key={t.name}>
             <div
               style={{
-                background: "#1a1a1a",
-                border: "1px solid rgba(245,245,240,0.06)",
-                borderRadius: "16px",
-                padding: "2.5rem",
-                position: "relative",
+                padding: "3rem 0",
+                textAlign: "center",
+                borderBottom: i < testimonials.length - 1 ? "1px solid rgba(245,245,240,0.04)" : "none",
               }}
             >
+              {/* Large quote mark */}
               <span
                 style={{
                   fontSize: "5rem",
-                  color: "rgba(200,255,0,0.1)",
+                  color: "rgba(200,255,0,0.12)",
                   fontFamily: "Georgia, serif",
-                  position: "absolute",
-                  top: "10px",
-                  left: "20px",
-                  lineHeight: 1,
+                  lineHeight: 0.5,
+                  display: "block",
                   userSelect: "none",
+                  marginBottom: "1rem",
                 }}
               >
                 &ldquo;
               </span>
+
+              {/* Quote */}
               <p
                 style={{
-                  fontSize: "1rem",
-                  lineHeight: 1.7,
-                  color: "rgba(245,245,240,0.85)",
-                  marginBottom: "1.5rem",
-                  position: "relative",
-                  zIndex: 1,
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: "1.2rem",
+                  fontStyle: "italic",
+                  color: "#f5f5f0",
+                  lineHeight: 1.8,
+                  maxWidth: "700px",
+                  margin: "0 auto 1.5rem",
                 }}
               >
                 {t.quote}
               </p>
 
-              {/* Accent line */}
+              {/* Accent divider */}
               <div
                 style={{
-                  width: "30px",
+                  width: "40px",
                   height: "2px",
                   background: "#c8ff00",
                   opacity: 0.4,
-                  marginBottom: "1.5rem",
+                  margin: "0 auto 1.5rem",
                 }}
               />
 
-              <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              {/* Author */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem" }}>
                 <div
                   style={{
                     width: "56px",
@@ -122,9 +119,9 @@ export default function Testimonials() {
                 >
                   {t.initials}
                 </div>
-                <div>
-                  <div style={{ fontWeight: 600, fontSize: "0.95rem" }}>{t.name}</div>
-                  <div style={{ fontSize: "0.8rem", color: "#888" }}>{t.role}</div>
+                <div style={{ textAlign: "left" }}>
+                  <div style={{ fontWeight: 600, fontSize: "1rem" }}>{t.name}</div>
+                  <div style={{ fontSize: "0.85rem", color: "#888" }}>{t.role}</div>
                 </div>
               </div>
             </div>
@@ -133,16 +130,13 @@ export default function Testimonials() {
       </div>
 
       <ScrollReveal>
-        <div style={{ marginTop: "3rem", textAlign: "center" }}>
-          <a
-            href="/discovery-call"
-            style={{ color: "#c8ff00", fontWeight: 600, fontSize: "0.95rem", display: "inline-flex", alignItems: "center", gap: "0.4rem", textDecoration: "none", transition: "all 0.3s" }}
-            onMouseEnter={e => { const arrow = e.currentTarget.querySelector("span"); if (arrow) (arrow as HTMLSpanElement).style.transform = "translateX(3px)"; }}
-            onMouseLeave={e => { const arrow = e.currentTarget.querySelector("span"); if (arrow) (arrow as HTMLSpanElement).style.transform = "translateX(0)"; }}
-          >
-            Join them. Book a free discovery call <span style={{ transition: "transform 0.3s", display: "inline-block" }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-          </a>
-        </div>
+        <p style={{ textAlign: "center", marginTop: "3rem", fontSize: "1rem", color: "#888" }}>
+          Want to be the next one?{" "}
+          <a href="/discovery-call" style={{ color: "#c8ff00", fontWeight: 600, textDecoration: "none" }}>
+            Book a discovery call
+          </a>{" "}
+          and let&apos;s build something.
+        </p>
       </ScrollReveal>
     </section>
   );
@@ -162,5 +156,4 @@ const sectionTitle: React.CSSProperties = {
   fontWeight: 800,
   lineHeight: 1.1,
   letterSpacing: "-2px",
-  maxWidth: "700px",
 };

@@ -27,15 +27,15 @@ const steps = [
 
 export default function Process() {
   return (
-    <section id="process" style={{ padding: "clamp(3rem,8vw,6rem) clamp(1.25rem,5vw,3rem)", background: "#1a1a1a" }}>
+    <section id="process" style={{ padding: "clamp(5rem,8vw,8rem) clamp(1.25rem,5vw,3rem)", background: "#1a1a1a" }}>
       <ScrollReveal>
         <p style={sectionTag}>How It Works</p>
       </ScrollReveal>
       <ScrollReveal>
         <h2 style={sectionTitle}>
-          From &ldquo;I need this&rdquo; to
+          You tell me the problem Monday.
           <br />
-          &ldquo;it&apos;s live&rdquo; in 14 days.
+          It&apos;s live by Friday.
         </h2>
       </ScrollReveal>
 
