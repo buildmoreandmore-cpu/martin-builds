@@ -8,14 +8,14 @@ const testimonials = [
       "Francis didn't just build us a website — he built us a system. The AI tools he integrated have completely changed how we handle client intake and proposals.",
     initials: "RN",
     name: "Ruthie Norton",
-    role: "2KB Energy Engineering",
+    role: "2KB Energy Engineering — Energy Services",
   },
   {
     quote:
       "He understands the business side and the tech side — that's rare. He translated what I needed into something my team could actually use, in less time than I expected.",
     initials: "CA",
     name: "Camisha Alford",
-    role: "Kingly Consulting",
+    role: "Kingly Consulting — Business Consulting",
   },
   {
     quote:

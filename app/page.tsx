@@ -14,11 +14,11 @@ export const metadata: Metadata = {
 };
 import Hero from "@/components/Hero";
 import ObjectionHandler from "@/components/ObjectionHandler";
+import TwoPaths from "@/components/TwoPaths";
 import BuiltWith from "@/components/BuiltWith";
-import NewsletterBand from "@/components/NewsletterBand";
 import Services from "@/components/Services";
-import PowerHourBanner from "@/components/PowerHourBanner";
 import Process from "@/components/Process";
+import Industries from "@/components/Industries";
 import Testimonials from "@/components/Testimonials";
 import CTA from "@/components/CTA";
 import NewsletterFooter from "@/components/NewsletterFooter";
@@ -31,11 +31,11 @@ export default function Home() {
       <Nav />
       <Hero />
       <ObjectionHandler />
+      <TwoPaths />
       <BuiltWith />
-      <NewsletterBand />
       <Services />
-      <PowerHourBanner />
       <Process />
+      <Industries />
       <Testimonials />
       <CTA />
       <NewsletterFooter />

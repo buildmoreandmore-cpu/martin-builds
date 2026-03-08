@@ -2,20 +2,21 @@
 
 import ScrollReveal from "./ScrollReveal";
 
-const LightningIcon = () => (
+const PlatformIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+    <line x1="8" y1="21" x2="16" y2="21" />
+    <line x1="12" y1="17" x2="12" y2="21" />
+  </svg>
+);
+
+const SprintIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
   </svg>
 );
 
-const GearIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="3" />
-    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-  </svg>
-);
-
-const RefreshIcon = () => (
+const RetainerIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="23 4 23 10 17 10" />
     <polyline points="1 20 1 14 7 14" />
@@ -23,43 +24,27 @@ const RefreshIcon = () => (
   </svg>
 );
 
-const RocketIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
-    <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
-    <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
-    <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
-  </svg>
-);
-
 const services = [
   {
-    icon: <LightningIcon />,
-    title: "AI Starter Build",
-    description:
-      "A defined-scope AI-powered site or tool — built to show you exactly what I can do. The fastest way to get something real into your business without a massive commitment.",
-    price: "$5,000 setup fee",
+    icon: <PlatformIcon />,
+    title: "AI Platform Build",
+    price: "From $8,000",
+    description: "Full-stack AI platforms — client portals, admin dashboards, automated workflows, and integrations. Scoped, built, and live in 2-3 weeks.",
+    tags: "Platforms · Dashboards · Portals",
   },
   {
-    icon: <GearIcon />,
+    icon: <SprintIcon />,
     title: "AI Build Sprint",
-    description:
-      "Platforms, dashboards, and multi-feature tools. More complex than a starter build — for clients who need more than a site but aren't ready for a full SaaS product.",
-    price: "$8,000 – $12,000",
+    price: "From $5,000",
+    description: "A defined AI-powered tool or website — designed, built, and deployed fast. Perfect for your first AI integration or a system your team needs yesterday.",
+    tags: "Websites · Tools · Integrations",
   },
   {
-    icon: <RefreshIcon />,
+    icon: <RetainerIcon />,
     title: "AI Retainer",
-    description:
-      "Ongoing iteration, new features, and AI upgrades on a monthly cadence. $2,500/month is easy math once you've seen the work. Even 10 clients is $25K/month recurring.",
     price: "$2,500 – $5,000/mo",
-  },
-  {
-    icon: <RocketIcon />,
-    title: "Full Product Build",
-    description:
-      "App Store deployments and full SaaS builds from zero. Designed for real users, not pitch decks. This is the top of the stack.",
-    price: "From $15,000",
+    description: "Your AI builder on call. New features, iterations, and system upgrades every month. Your operations evolve — your tools should too.",
+    tags: "Ongoing · Growth · Priority",
   },
 ];
 
@@ -71,14 +56,14 @@ export default function Services() {
       </ScrollReveal>
       <ScrollReveal>
         <h2 style={sectionTitle}>
-          You don&apos;t need more AI advice.
+          AI systems for businesses
           <br />
-          You need someone who builds.
+          that are ready to scale.
         </h2>
       </ScrollReveal>
       <ScrollReveal>
         <p style={sectionSub}>
-          You&apos;ve seen the demos. You&apos;ve read the articles. You&apos;re ready for someone to actually build the tool your business needs — not talk about it for 6 months.
+          I don&apos;t build templates. I build custom tools that plug into your operations and start working on day one.
         </p>
       </ScrollReveal>
 
@@ -116,8 +101,20 @@ export default function Services() {
             onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-3px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 30px rgba(200,255,0,0.25)"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
           >
-            Book a Free Discovery Call — I&apos;ll Match You to the Right Option
+            Book a Free Discovery Call
           </a>
+        </div>
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <div style={{ maxWidth: "600px", margin: "3rem auto 0", textAlign: "center" }}>
+          <p style={{ fontSize: "0.9rem", color: "#888", lineHeight: 1.7 }}>
+            Running a small business and just getting started with AI? Check out the{" "}
+            <a href="/power-hour" style={{ color: "#c8ff00", textDecoration: "none" }}>AI Power Hour ($500)</a>
+            {" "}or{" "}
+            <a href="/ai-agent" style={{ color: "#c8ff00", textDecoration: "none" }}>AI Agent ($300/mo)</a>
+            {" "}— built for businesses that want results without a big upfront investment.
+          </p>
         </div>
       </ScrollReveal>
     </section>
@@ -129,11 +126,13 @@ function ServiceCard({
   title,
   description,
   price,
+  tags,
 }: {
   icon: React.ReactNode;
   title: string;
   description: string;
   price: string;
+  tags: string;
 }) {
   return (
     <div
@@ -193,10 +192,10 @@ function ServiceCard({
       <h3 style={{ fontSize: "1.3rem", fontWeight: 700, marginBottom: "0.8rem", letterSpacing: "-0.5px" }}>
         {title}
       </h3>
-      <p style={{ fontSize: "0.95rem", color: "#888", lineHeight: 1.6 }}>{description}</p>
+      <p style={{ fontSize: "0.95rem", color: "#888", lineHeight: 1.6, marginBottom: "1rem" }}>{description}</p>
+      <p style={{ fontSize: "0.8rem", color: "#666", marginBottom: "1.5rem" }}>{tags}</p>
       <div
         style={{
-          marginTop: "1.5rem",
           paddingTop: "1.5rem",
           borderTop: "1px solid rgba(245,245,240,0.06)",
           fontFamily: "'Space Mono', monospace",
@@ -220,7 +219,7 @@ const sectionTag: React.CSSProperties = {
 };
 
 const sectionTitle: React.CSSProperties = {
-  fontSize: "clamp(2rem, 5vw, 3.5rem)",
+  fontSize: "clamp(1.8rem, 5vw, 3.5rem)",
   fontWeight: 800,
   lineHeight: 1.1,
   letterSpacing: "-2px",
@@ -228,7 +227,7 @@ const sectionTitle: React.CSSProperties = {
 };
 
 const sectionSub: React.CSSProperties = {
-  fontSize: "1.15rem",
+  fontSize: "clamp(0.95rem, 2vw, 1.15rem)",
   fontWeight: 300,
   color: "#888",
   maxWidth: "600px",

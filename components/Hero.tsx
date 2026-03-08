@@ -26,11 +26,11 @@ export default function Hero() {
       />
 
       <div className="animate-fade-up-1" style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.8rem", color: "#c8ff00", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "2rem" }}>
-        AI Tools &amp; Products for Small Businesses
+        AI Tools &amp; Platforms for Growing Businesses
       </div>
 
       <p className="animate-fade-up-1" style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 400, fontSize: "1rem", color: "#888", marginBottom: "1rem" }}>
-        For small business owners who are done waiting on AI
+        AI tools &amp; platforms for growing businesses
       </p>
 
       <h1
@@ -43,11 +43,11 @@ export default function Hero() {
           maxWidth: "900px",
         }}
       >
-        I build the AI tools
+        I build AI systems that save
         <br />
-        your business{" "}
+        your team{" "}
         <span style={{ color: "#c8ff00", position: "relative", display: "inline-block" }}>
-          actually needs.
+          thousands of hours.
           <span
             style={{
               content: "''",
@@ -90,7 +90,7 @@ export default function Hero() {
           lineHeight: 1.7,
         }}
       >
-        You&apos;ve been told AI will change your business. But nobody&apos;s actually built anything for you yet. I will. And it&apos;ll be live in two weeks.
+        Custom AI platforms, internal tools, and automation systems for businesses doing $1M+. From client portals to AI-powered operations — designed, built, and deployed in 2-3 weeks.
       </p>
 
       <div
