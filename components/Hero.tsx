@@ -103,7 +103,7 @@ export default function Hero() {
         >
           Book a Free Discovery Call
         </a>
-        <a href="#work" style={secondaryBtnStyle}
+        <a href="#services" style={secondaryBtnStyle}
           onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "#c8ff00"; (e.currentTarget as HTMLAnchorElement).style.color = "#c8ff00"; }}
           onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(245,245,240,0.2)"; (e.currentTarget as HTMLAnchorElement).style.color = "#f5f5f0"; }}
         >
