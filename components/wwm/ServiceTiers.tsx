@@ -7,8 +7,11 @@ const growingTiers = [
     featured: false,
     label: "Fast Start",
     title: "AI Build Sprint",
+    subtitle: "For when you need your first AI tool — fast.",
     price: "From $5,000",
-    desc: "A defined AI-powered tool or website — designed, built, and deployed fast. Perfect for your first AI integration or a system your team needs yesterday.",
+    priceContext: "Defined scope, fixed price",
+    hook: "Live in two weeks. No excuses.",
+    paragraph: "You come to me with a business problem. I build you a complete AI-powered website or tool — designed, functional, and deployed. Two weeks later, it's live and your customers are using it. That's the whole process.",
     includes: [
       "Custom AI-powered website or business tool",
       "AI integrations (chat, automation, smart forms)",
@@ -16,15 +19,16 @@ const growingTiers = [
       "2 rounds of revisions",
       "Deployed and live in 2 weeks",
     ],
-    cta: "Book a Discovery Call",
-    href: "/discovery-call",
   },
   {
     featured: true,
     label: "Full Platform",
     title: "AI Platform Build",
+    subtitle: "For when the problem is bigger than a website.",
     price: "From $8,000",
-    desc: "Full-stack AI platforms — client portals, admin dashboards, automated workflows, and integrations. Scoped, built, and live in 2-3 weeks.",
+    priceContext: "Scoped to your operations",
+    hook: "The tool your team keeps asking for — built.",
+    paragraph: "Some problems need more than a website. Dashboards, client portals, multi-step automations, internal tools — this is where we go deep. I map the architecture, you approve the scope, and I build until it's done. No feature creep. No surprises.",
     includes: [
       "Full-stack AI platform or dashboard",
       "Multiple AI integrations and automations",
@@ -32,15 +36,16 @@ const growingTiers = [
       "Custom database architecture",
       "Deployed in 2–3 weeks",
     ],
-    cta: "Book a Discovery Call",
-    href: "/discovery-call",
   },
   {
     featured: false,
     label: "Ongoing Partnership",
     title: "AI Retainer",
+    subtitle: "For when you want an AI builder on your team every month.",
     price: "$2,500 – $5,000/mo",
-    desc: "Your AI builder on call. New features, iterations, and system upgrades every month. Your operations evolve — your tools should too.",
+    priceContext: "Cancel anytime",
+    hook: "Your AI builder, on call.",
+    paragraph: "Your business doesn't stop evolving, and your tools shouldn't either. Every month I build new features, optimize what's running, and bring you ideas you haven't thought of yet. Think of it as having a full-time AI developer — without the full-time salary.",
     includes: [
       "Monthly feature builds and improvements",
       "AI model updates and optimization",
@@ -48,29 +53,31 @@ const growingTiers = [
       "Strategy sessions on what to build next",
       "Cancel anytime",
     ],
-    cta: "Book a Discovery Call",
-    href: "/discovery-call",
   },
 ];
 
 const smallBizOptions = [
   {
     title: "AI Power Hour",
+    subtitle: "For when you need clarity before commitment.",
     price: "$500",
-    desc: "1-on-1, 60 minutes, Zoom. I show you exactly which AI tools fit your business — with live demos and a personalized game plan.",
+    priceContext: "One-time / 60 minutes / Zoom",
+    hook: "Leave with a game plan, not more questions.",
+    paragraph: "I show you exactly which AI tools fit your business — with live demos and a personalized plan. Your $500 is credited toward any future build, so the session is never wasted money.",
     includes: [
       "AI tool recommendations for your specific business",
       "Live demos and walkthroughs",
       "Recorded session + 30-day follow-up",
       "$500 credited toward any future build",
     ],
-    cta: "Book a Power Hour",
-    href: "/power-hour",
   },
   {
     title: "AI Chat Agent",
+    subtitle: "For when you need AI working for you 24/7.",
     price: "From $300/mo",
-    desc: "A custom-trained AI agent that answers customer questions, captures leads, and books appointments — 24/7, branded to your business.",
+    priceContext: "Live in 48 hours",
+    hook: "Your newest employee never sleeps.",
+    paragraph: "A custom-trained AI agent that answers customer questions, captures leads, and books appointments — around the clock, branded to match your business. No code, no setup on your end.",
     includes: [
       "Custom-trained on your business",
       "Answers customer questions 24/7",
@@ -78,8 +85,6 @@ const smallBizOptions = [
       "Branded to match your site",
       "Live in 48 hours",
     ],
-    cta: "See the Demo",
-    href: "/ai-agent",
   },
 ];
 
@@ -95,8 +100,8 @@ export default function ServiceTiers() {
           <h2 style={sectionTitle}>Custom AI systems built for your operations.</h2>
         </ScrollReveal>
         <ScrollReveal>
-          <p style={sectionSub}>
-            Platforms, dashboards, and tools designed to save your team time and scale with your business.
+          <p style={bridgeStyle}>
+            Whether you need a quick win for $5K or an AI builder on your team every month — there&apos;s a lane for you.
           </p>
         </ScrollReveal>
 
@@ -106,7 +111,7 @@ export default function ServiceTiers() {
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
             gap: "1.5rem",
-            marginTop: "4rem",
+            marginTop: "3rem",
             alignItems: "start",
           }}
         >
@@ -116,6 +121,18 @@ export default function ServiceTiers() {
             </ScrollReveal>
           ))}
         </div>
+
+        <ScrollReveal>
+          <div style={{ textAlign: "center", marginTop: "3rem" }}>
+            <a href="/discovery-call" style={primaryBtnStyle}
+              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-3px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 30px rgba(200,255,0,0.25)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
+            >Book a Free Discovery Call</a>
+            <p style={{ marginTop: "0.8rem", fontSize: "0.85rem", color: "#888" }}>
+              Not sure which tier fits? That&apos;s exactly what the call is for.
+            </p>
+          </div>
+        </ScrollReveal>
       </section>
 
       {/* Section B: Small Businesses */}
@@ -129,7 +146,7 @@ export default function ServiceTiers() {
           </h2>
         </ScrollReveal>
         <ScrollReveal>
-          <p style={sectionSub}>
+          <p style={bridgeStyle}>
             These options are designed for small businesses that want to start using AI without a big upfront investment.
           </p>
         </ScrollReveal>
@@ -149,29 +166,35 @@ export default function ServiceTiers() {
             </ScrollReveal>
           ))}
         </div>
+
+        <ScrollReveal>
+          <div style={{ textAlign: "center", marginTop: "3rem" }}>
+            <a href="/discovery-call" style={primaryBtnStyle}
+              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-3px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 30px rgba(200,255,0,0.25)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
+            >Book a Free Discovery Call</a>
+          </div>
+        </ScrollReveal>
       </section>
     </>
   );
 }
 
+function CheckItem({ text }: { text: string }) {
+  return (
+    <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
+      <span style={{ width: "18px", height: "18px", borderRadius: "50%", background: "rgba(200,255,0,0.1)", border: "1px solid rgba(200,255,0,0.3)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "2px" }}>
+        <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#c8ff00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      </span>
+      <span style={{ fontSize: "0.9rem", color: "rgba(245,245,240,0.75)", lineHeight: 1.5 }}>{text}</span>
+    </div>
+  );
+}
+
 function TierCard({
-  featured,
-  label,
-  title,
-  price,
-  desc,
-  includes,
-  cta,
-  href,
+  featured, label, title, subtitle, price, priceContext, hook, paragraph, includes,
 }: {
-  featured: boolean;
-  label: string;
-  title: string;
-  price: string;
-  desc: string;
-  includes: string[];
-  cta: string;
-  href: string;
+  featured: boolean; label: string; title: string; subtitle: string; price: string; priceContext: string; hook: string; paragraph: string; includes: string[];
 }) {
   return (
     <div
@@ -200,6 +223,8 @@ function TierCard({
       }}
     >
       {featured && <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: "#c8ff00" }} />}
+
+      {/* Label */}
       <div style={{
         display: "inline-block", fontFamily: "'Space Mono', monospace", fontSize: "0.65rem",
         letterSpacing: "2px", textTransform: "uppercase",
@@ -207,33 +232,31 @@ function TierCard({
         background: featured ? "#c8ff00" : "rgba(200,255,0,0.08)",
         padding: "0.3rem 0.75rem", borderRadius: "100px", marginBottom: "1.5rem", alignSelf: "flex-start",
       }}>{label}</div>
-      <h3 style={{ fontSize: "1.4rem", fontWeight: 800, letterSpacing: "-0.5px", marginBottom: "0.5rem" }}>{title}</h3>
-      <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "1.1rem", fontWeight: 700, color: "#c8ff00", marginBottom: "1.25rem" }}>{price}</div>
-      <p style={{ fontSize: "0.95rem", color: "#888", lineHeight: 1.65, marginBottom: "2rem" }}>{desc}</p>
-      <div style={{ borderTop: "1px solid rgba(245,245,240,0.06)", paddingTop: "1.5rem", marginBottom: "2rem", display: "flex", flexDirection: "column", gap: "0.75rem", flex: 1 }}>
-        {includes.map((item) => (
-          <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
-            <span style={{ width: "18px", height: "18px", borderRadius: "50%", background: "rgba(200,255,0,0.1)", border: "1px solid rgba(200,255,0,0.3)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "2px" }}>
-              <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#c8ff00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            </span>
-            <span style={{ fontSize: "0.9rem", color: "rgba(245,245,240,0.75)", lineHeight: 1.5 }}>{item}</span>
-          </div>
-        ))}
+
+      {/* Title + Subtitle */}
+      <h3 style={{ fontSize: "1.4rem", fontWeight: 800, letterSpacing: "-0.5px", marginBottom: "0.3rem" }}>{title}</h3>
+      <p style={{ fontSize: "0.85rem", fontWeight: 400, fontStyle: "italic", color: "#888", marginBottom: "1rem" }}>{subtitle}</p>
+
+      {/* Price */}
+      <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "1.1rem", fontWeight: 700, color: "#c8ff00", marginBottom: "0.3rem" }}>{price}</div>
+      <div style={{ fontSize: "0.85rem", color: "#888", marginBottom: "1.2rem" }}>{priceContext}</div>
+
+      {/* Hook */}
+      <p style={{ fontSize: "1.1rem", fontWeight: 700, color: "#f5f5f0", marginBottom: "0.8rem" }}>{hook}</p>
+
+      {/* Paragraph */}
+      <p style={{ fontSize: "0.9rem", fontWeight: 300, color: "#888", lineHeight: 1.7, marginBottom: "1.5rem" }}>{paragraph}</p>
+
+      {/* Checklist */}
+      <div style={{ borderTop: "1px solid rgba(245,245,240,0.06)", paddingTop: "1.5rem", display: "flex", flexDirection: "column", gap: "0.75rem", flex: 1 }}>
+        {includes.map((item) => <CheckItem key={item} text={item} />)}
       </div>
-      <a href={href} style={{
-        display: "block", textAlign: "center",
-        background: featured ? "#c8ff00" : "transparent",
-        color: featured ? "#0a0a0a" : "#f5f5f0",
-        border: featured ? "none" : "1px solid rgba(245,245,240,0.2)",
-        padding: "0.9rem 1.5rem", borderRadius: "100px", fontWeight: 700, fontSize: "0.95rem",
-        transition: "all 0.3s", textDecoration: "none",
-      }}>{cta}</a>
     </div>
   );
 }
 
-function SmallBizCard({ title, price, desc, includes, cta, href }: {
-  title: string; price: string; desc: string; includes: string[]; cta: string; href: string;
+function SmallBizCard({ title, subtitle, price, priceContext, hook, paragraph, includes }: {
+  title: string; subtitle: string; price: string; priceContext: string; hook: string; paragraph: string; includes: string[];
 }) {
   return (
     <div style={{
@@ -244,27 +267,24 @@ function SmallBizCard({ title, price, desc, includes, cta, href }: {
       onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(200,255,0,0.15)"; }}
       onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(245,245,240,0.06)"; }}
     >
-      <h3 style={{ fontSize: "1.3rem", fontWeight: 800, letterSpacing: "-0.5px", marginBottom: "0.5rem" }}>{title}</h3>
-      <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "1.1rem", fontWeight: 700, color: "#c8ff00", marginBottom: "1rem" }}>{price}</div>
-      <p style={{ fontSize: "0.95rem", color: "#888", lineHeight: 1.65, marginBottom: "1.5rem" }}>{desc}</p>
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", flex: 1, marginBottom: "1.5rem" }}>
-        {includes.map((item) => (
-          <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
-            <span style={{ width: "18px", height: "18px", borderRadius: "50%", background: "rgba(200,255,0,0.1)", border: "1px solid rgba(200,255,0,0.3)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "2px" }}>
-              <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#c8ff00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            </span>
-            <span style={{ fontSize: "0.9rem", color: "rgba(245,245,240,0.75)", lineHeight: 1.5 }}>{item}</span>
-          </div>
-        ))}
+      <h3 style={{ fontSize: "1.3rem", fontWeight: 800, letterSpacing: "-0.5px", marginBottom: "0.3rem" }}>{title}</h3>
+      <p style={{ fontSize: "0.85rem", fontWeight: 400, fontStyle: "italic", color: "#888", marginBottom: "1rem" }}>{subtitle}</p>
+      <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "1.1rem", fontWeight: 700, color: "#c8ff00", marginBottom: "0.3rem" }}>{price}</div>
+      <div style={{ fontSize: "0.85rem", color: "#888", marginBottom: "1.2rem" }}>{priceContext}</div>
+      <p style={{ fontSize: "1.1rem", fontWeight: 700, color: "#f5f5f0", marginBottom: "0.8rem" }}>{hook}</p>
+      <p style={{ fontSize: "0.9rem", fontWeight: 300, color: "#888", lineHeight: 1.7, marginBottom: "1.5rem" }}>{paragraph}</p>
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", flex: 1 }}>
+        {includes.map((item) => <CheckItem key={item} text={item} />)}
       </div>
-      <a href={href} style={{
-        display: "block", textAlign: "center", background: "transparent", color: "#f5f5f0",
-        border: "1px solid rgba(245,245,240,0.2)", padding: "0.9rem 1.5rem", borderRadius: "100px",
-        fontWeight: 700, fontSize: "0.95rem", transition: "all 0.3s", textDecoration: "none",
-      }}>{cta}</a>
     </div>
   );
 }
+
+const primaryBtnStyle: React.CSSProperties = {
+  background: "#c8ff00", color: "#0a0a0a", padding: "1rem 2.5rem", borderRadius: "100px",
+  fontWeight: 700, fontSize: "1rem", letterSpacing: "0.5px", transition: "all 0.3s",
+  display: "inline-block", textDecoration: "none",
+};
 
 const sectionTag: React.CSSProperties = {
   fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", color: "#c8ff00",
@@ -274,7 +294,7 @@ const sectionTitle: React.CSSProperties = {
   fontSize: "clamp(1.8rem, 5vw, 3.5rem)", fontWeight: 800, lineHeight: 1.1,
   letterSpacing: "-2px", maxWidth: "700px",
 };
-const sectionSub: React.CSSProperties = {
-  fontSize: "clamp(0.95rem, 2vw, 1.15rem)", fontWeight: 300, color: "#888",
-  maxWidth: "600px", marginTop: "1.5rem", lineHeight: 1.7,
+const bridgeStyle: React.CSSProperties = {
+  fontSize: "1.15rem", fontWeight: 300, color: "#888", maxWidth: "600px",
+  lineHeight: 1.7, marginTop: "1.5rem",
 };

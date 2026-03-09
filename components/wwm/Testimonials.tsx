@@ -102,6 +102,14 @@ export default function Testimonials() {
           </ScrollReveal>
         ))}
       </div>
+
+      <ScrollReveal>
+        <div style={{ textAlign: "center", marginTop: "3rem" }}>
+          <a href="/discovery-call" style={{ background: "#c8ff00", color: "#0a0a0a", padding: "1rem 2.5rem", borderRadius: "100px", fontWeight: 700, fontSize: "1rem", letterSpacing: "0.5px", transition: "all 0.3s", display: "inline-block", textDecoration: "none" }}>
+            Book a Free Discovery Call
+          </a>
+        </div>
+      </ScrollReveal>
     </section>
   );
 }
