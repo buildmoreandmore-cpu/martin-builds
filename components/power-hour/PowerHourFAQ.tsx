@@ -5,7 +5,7 @@ import ScrollReveal from "../ScrollReveal";
 
 const faqs = [
   { q: "What happens after I book?", a: "You'll get a confirmation email with a calendar invite and Zoom link. I'll review the question you submitted so we can skip the small talk and dive straight into your business." },
-  { q: "Can I get a refund if it's not helpful?", a: "If you leave the session feeling like you didn't get value, I'll refund you in full. No forms, no questions. I've never had to do this, but the offer stands." },
+  { q: "Can I get a refund if it's not helpful?", a: "If you leave the session feeling like you didn't get value, I refund you in full. No forms, no questions, no waiting period. I send the money back the same day. I've done hundreds of these sessions and have never had to issue a refund — but the guarantee exists because I know what I deliver." },
   { q: "Do I need to prepare anything?", a: "Just fill in the 'biggest AI question' when you book. That's all I need. If you want to go deeper, have your current workflow or tools list handy — but it's not required." },
   { q: "What if I want you to build something after?", a: "Many Power Hour clients end up hiring me for a full build. If that happens, I'll credit your $500 session fee toward any project. The consultation is never wasted money." },
   { q: "Is this virtual or in-person?", a: "Virtual via Zoom. The session is recorded and sent to you after so you can reference it anytime. If you're in the Atlanta area and prefer in-person, we can arrange that too." },

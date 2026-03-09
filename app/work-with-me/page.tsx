@@ -4,6 +4,7 @@ import WWMHero from "@/components/wwm/Hero";
 import TheGap from "@/components/wwm/TheGap";
 import UseCaseShowcase from "@/components/wwm/UseCaseShowcase";
 import ServiceTiers from "@/components/wwm/ServiceTiers";
+import TheGuarantee from "@/components/wwm/TheGuarantee";
 import ProofWork from "@/components/wwm/ProofWork";
 import Testimonials from "@/components/wwm/Testimonials";
 import FAQ from "@/components/wwm/FAQ";
@@ -51,6 +52,7 @@ export default function WorkWithMePage() {
       <TheGap />
       <UseCaseShowcase />
       <ServiceTiers />
+      <TheGuarantee />
       <ProofWork />
       <Testimonials />
       <FAQ />

@@ -47,7 +47,44 @@ export default function Testimonials() {
         </h2>
       </ScrollReveal>
 
-      <div style={{ maxWidth: "700px", margin: "4rem auto 0" }}>
+      {/* Results at a glance */}
+      <ScrollReveal>
+        <div
+          className="results-counter"
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "4rem",
+            marginTop: "3rem",
+            marginBottom: "3rem",
+            flexWrap: "wrap",
+          }}
+        >
+          {[
+            { num: "10+", label: "products shipped" },
+            { num: "14 days", label: "avg delivery" },
+            { num: "$5K", label: "starting price" },
+            { num: "0", label: "clients ghosted" },
+          ].map((s) => (
+            <div key={s.label} style={{ textAlign: "center" }}>
+              <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "2.2rem", fontWeight: 700, color: "#c8ff00" }}>{s.num}</div>
+              <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "0.8rem", color: "#888", marginTop: "0.3rem" }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </ScrollReveal>
+
+      <style>{`
+        @media (max-width: 600px) {
+          .results-counter {
+            display: grid !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 2rem !important;
+          }
+        }
+      `}</style>
+
+      <div style={{ maxWidth: "700px", margin: "0 auto" }}>
         {testimonials.map((t, i) => (
           <ScrollReveal key={t.name}>
             <div

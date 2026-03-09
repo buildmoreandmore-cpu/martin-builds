@@ -100,6 +100,21 @@ export default function BookingCard() {
         ))}
       </ul>
 
+      {/* Zero-risk guarantee */}
+      <div style={{
+        background: "rgba(200,255,0,0.05)",
+        border: "1px solid rgba(200,255,0,0.12)",
+        borderRadius: "10px",
+        padding: "1rem 1.2rem",
+        fontSize: "0.85rem",
+        color: "rgba(245,245,240,0.8)",
+        lineHeight: 1.6,
+        marginBottom: "1.5rem",
+      }}>
+        <span style={{ color: "#c8ff00", fontWeight: 700 }}>Zero-risk guarantee:</span>{" "}
+        If you leave the session feeling like you didn&apos;t get value, I refund you in full. No forms. No questions. I&apos;ve never had to — but the offer stands.
+      </div>
+
       <div style={{ borderTop: "1px solid rgba(245,245,240,0.06)", marginBottom: "1.5rem" }} />
 
       {/* Step dots */}

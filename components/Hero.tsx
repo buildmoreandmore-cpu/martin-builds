@@ -110,6 +110,18 @@ export default function Hero() {
           See the Work
         </a>
       </div>
+
+      <p
+        className="animate-fade-up-4"
+        style={{
+          fontSize: "0.85rem",
+          color: "#888",
+          marginTop: "1.2rem",
+        }}
+      >
+        What agencies charge $50K+ for — I build for $5K.{" "}
+        <a href="/work-with-me" style={{ color: "#c8ff00", textDecoration: "none" }}>See how →</a>
+      </p>
     </section>
   );
 }

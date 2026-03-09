@@ -6,6 +6,7 @@ import UseCases from "@/components/ai-agent/UseCases";
 import AgentStats from "@/components/ai-agent/AgentStats";
 import HowItWorks from "@/components/ai-agent/HowItWorks";
 import AgentPricing from "@/components/ai-agent/AgentPricing";
+import AgentGuarantee from "@/components/ai-agent/AgentGuarantee";
 import AgentFAQ from "@/components/ai-agent/AgentFAQ";
 import AgentFinalCTA from "@/components/ai-agent/AgentFinalCTA";
 import NewsletterFooter from "@/components/NewsletterFooter";
@@ -50,6 +51,7 @@ export default function AIAgentPage() {
       <AgentStats />
       <HowItWorks />
       <AgentPricing />
+      <AgentGuarantee />
       <AgentFAQ />
       <AgentFinalCTA />
       <NewsletterFooter />

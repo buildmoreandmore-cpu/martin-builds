@@ -19,6 +19,7 @@ const growingTiers = [
       "2 rounds of revisions",
       "Deployed and live in 2 weeks",
     ],
+    guarantee: "Week-one refund guarantee",
   },
   {
     featured: true,
@@ -36,6 +37,7 @@ const growingTiers = [
       "Custom database architecture",
       "Deployed in 2–3 weeks",
     ],
+    guarantee: "Week-one refund guarantee",
   },
   {
     featured: false,
@@ -53,6 +55,7 @@ const growingTiers = [
       "Strategy sessions on what to build next",
       "Cancel anytime",
     ],
+    guarantee: "Cancel anytime — no contracts",
   },
 ];
 
@@ -192,9 +195,9 @@ function CheckItem({ text }: { text: string }) {
 }
 
 function TierCard({
-  featured, label, title, subtitle, price, priceContext, hook, paragraph, includes,
+  featured, label, title, subtitle, price, priceContext, hook, paragraph, includes, guarantee,
 }: {
-  featured: boolean; label: string; title: string; subtitle: string; price: string; priceContext: string; hook: string; paragraph: string; includes: string[];
+  featured: boolean; label: string; title: string; subtitle: string; price: string; priceContext: string; hook: string; paragraph: string; includes: string[]; guarantee?: string;
 }) {
   return (
     <div
@@ -251,6 +254,13 @@ function TierCard({
       <div style={{ borderTop: "1px solid rgba(245,245,240,0.06)", paddingTop: "1.5rem", display: "flex", flexDirection: "column", gap: "0.75rem", flex: 1 }}>
         {includes.map((item) => <CheckItem key={item} text={item} />)}
       </div>
+
+      {guarantee && (
+        <div style={{ marginTop: "1.5rem", paddingTop: "1rem", borderTop: "1px solid rgba(245,245,240,0.06)", fontSize: "0.8rem", color: "#c8ff00", fontFamily: "'Space Mono', monospace", display: "flex", alignItems: "center", gap: "0.5rem", opacity: 0.8 }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          {guarantee}
+        </div>
+      )}
     </div>
   );
 }
