@@ -4,6 +4,7 @@ import { FAQJsonLd, AIAgentServiceJsonLd } from "@/components/JsonLd";
 import AgentHero from "@/components/ai-agent/AgentHero";
 import UseCases from "@/components/ai-agent/UseCases";
 import AgentStats from "@/components/ai-agent/AgentStats";
+import IndustryGrid from "@/components/ai-agent/IndustryGrid";
 import HowItWorks from "@/components/ai-agent/HowItWorks";
 import AgentPricing from "@/components/ai-agent/AgentPricing";
 import AgentGuarantee from "@/components/ai-agent/AgentGuarantee";
@@ -49,6 +50,7 @@ export default function AIAgentPage() {
       <AgentHero />
       <UseCases />
       <AgentStats />
+      <IndustryGrid />
       <HowItWorks />
       <AgentPricing />
       <AgentGuarantee />

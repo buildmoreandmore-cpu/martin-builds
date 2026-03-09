@@ -107,6 +107,11 @@ export default function ServiceTiers() {
             Whether you need a quick win for $5K or an AI builder on your team every month — there&apos;s a lane for you.
           </p>
         </ScrollReveal>
+        <ScrollReveal>
+          <p style={{ textAlign: "center", fontSize: "0.85rem", color: "rgba(245,245,240,0.5)", marginTop: "1rem" }}>
+            Built for: <span style={{ color: "rgba(200,255,0,0.6)" }}>Healthcare &amp; Dental</span> · <span style={{ color: "rgba(200,255,0,0.6)" }}>Law Firms</span> · <span style={{ color: "rgba(200,255,0,0.6)" }}>Energy &amp; HVAC</span> · <span style={{ color: "rgba(200,255,0,0.6)" }}>Real Estate</span> · <span style={{ color: "rgba(200,255,0,0.6)" }}>Financial Services</span> · <span style={{ color: "rgba(200,255,0,0.6)" }}>Insurance</span> · <span style={{ color: "rgba(200,255,0,0.6)" }}>Consulting</span> · <span style={{ color: "rgba(200,255,0,0.6)" }}>Service Businesses</span>
+          </p>
+        </ScrollReveal>
 
         <div
           className="tiers-grid"

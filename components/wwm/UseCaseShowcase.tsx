@@ -10,6 +10,7 @@ const useCases = [
     description:
       "Your customers ask the same 20 questions over and over — hours, pricing, availability, \"do you offer X?\" An AI agent handles all of them instantly, 24/7, in any language. It captures leads, books appointments, and sends you a summary every morning. Your customers think your support is just really fast.",
     example: '"Do you have availability this Saturday for a group of 8?"',
+    example2: '"Does Dr. Patel have any openings this Thursday afternoon?"',
   },
   {
     icon: "📋",
@@ -19,6 +20,7 @@ const useCases = [
       "You spend hours writing proposals, scoping projects, and building quotes. An AI-powered proposal tool pulls from your services, your pricing, and your templates to generate a complete, branded proposal in minutes. Your clients get a professional document. You get your evenings back.",
     example:
       '"Generate a proposal for a 2,500 sq ft energy audit with LED retrofit"',
+    example2: '"Draft a retainer agreement for a commercial real estate client"',
   },
   {
     icon: "⚙",
@@ -28,6 +30,7 @@ const useCases = [
       "Data entry. Follow-up emails. Invoice reminders. Scheduling. Intake forms that go nowhere. I build AI automations that handle the repetitive tasks silently in the background, so your team can focus on the work that actually grows the business. No new software to learn — it just works inside what you already use.",
     example:
       '"Auto-send a follow-up email 48 hours after every new inquiry"',
+    example2: '"Auto-remind patients about their upcoming appointments via text"',
   },
   {
     icon: "💻",
@@ -36,6 +39,7 @@ const useCases = [
     description:
       "A branded dashboard where your clients can log in and see their project status, documents, invoices, and next steps — without calling you. Reduces support emails by 80% and makes your small business look like an enterprise operation. Built custom, not a template.",
     example: '"Where\'s my project at? Can I see the latest version?"',
+    example2: '"Let tenants submit maintenance requests and track status online"',
   },
   {
     icon: "🚀",
@@ -82,6 +86,7 @@ export default function UseCaseShowcase() {
               </div>
               <p style={descStyle}>{uc.description}</p>
               <div style={exampleStyle}>→ {uc.example}</div>
+              {uc.example2 && <div style={{ ...exampleStyle, marginTop: "0.4rem", paddingTop: 0, borderTop: "none", opacity: 0.45 }}>→ {uc.example2}</div>}
             </div>
           </ScrollReveal>
         ))}

@@ -63,7 +63,7 @@ export default function Services() {
       </ScrollReveal>
       <ScrollReveal>
         <p style={sectionSub}>
-          I don&apos;t build templates. I build custom tools that plug into your operations and start working on day one.
+          I build AI tools for healthcare practices, law firms, energy companies, real estate teams, and service businesses — the industries where AI makes the biggest immediate impact.
         </p>
       </ScrollReveal>
 

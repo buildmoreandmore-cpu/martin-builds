@@ -64,7 +64,7 @@ export default function WWMHero() {
           lineHeight: 1.7,
         }}
       >
-        No 6-month timelines. No bloated proposals. No team of 12. Just one builder who shows up, ships fast, and hands you something that works.
+        I help healthcare practices, law firms, energy companies, and service businesses implement AI tools that save time, capture leads, and automate the work your team hates — in 2 weeks or less.
       </p>
       <div className="animate-fade-up-4" style={{ marginTop: "3rem" }}>
         <a

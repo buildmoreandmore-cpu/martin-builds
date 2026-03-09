@@ -47,7 +47,7 @@ export default function AgentHero() {
             <span style={{ color: "#c8ff00" }}>It starts Monday</span>.
           </h1>
           <p className="animate-fade-up-3" style={{ fontSize: "1.1rem", fontWeight: 300, color: "#888", marginTop: "1.5rem", lineHeight: 1.7, maxWidth: "500px" }}>
-            Not a chatbot. Not a dashboard. A trained AI employee that handles the work you don't have time for — emails, scheduling, follow-ups, reporting, and more. Custom-built for your business.
+            A custom AI chat agent trained on YOUR business — whether you&apos;re a dental practice, law firm, HVAC company, or real estate team. It answers customer questions, captures leads, and books appointments 24/7. Live on your site in 48 hours.
           </p>
           <div className="animate-fade-up-4 hero-cta-row" style={{ display: "flex", gap: "1rem", marginTop: "2rem", flexWrap: "wrap" }}>
             <a

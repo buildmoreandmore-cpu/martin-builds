@@ -3,16 +3,14 @@
 import ScrollReveal from "./ScrollReveal";
 
 const industries = [
+  "Healthcare & Dental",
+  "Law Firms",
   "Energy & Engineering",
-  "Professional Services",
-  "Healthcare & Medical",
-  "Construction & Contracting",
-  "Property Management",
-  "Insurance & Financial Services",
-  "Logistics & Fleet",
-  "Staffing & Recruiting",
-  "Franchise Operations",
-  "Legal & Law Firms",
+  "Real Estate",
+  "Financial Services",
+  "Insurance & Claims",
+  "Consulting & Coaching",
+  "Service Businesses",
 ];
 
 export default function Industries() {
@@ -41,17 +39,18 @@ export default function Industries() {
               key={ind}
               className="industry-pill"
               style={{
-                background: "#2a2a2a",
-                border: "1px solid rgba(245,245,240,0.08)",
+                background: "rgba(200,255,0,0.06)",
+                border: "1px solid rgba(200,255,0,0.12)",
                 borderRadius: "100px",
-                padding: "0.5rem 1.2rem",
-                fontSize: "0.85rem",
-                color: "#f5f5f0",
-                transition: "border-color 0.3s",
+                padding: "0.45rem 1rem",
+                fontSize: "0.75rem",
+                fontFamily: "'Space Mono', monospace",
+                color: "#c8ff00",
+                transition: "all 0.3s",
                 cursor: "default",
               }}
-              onMouseEnter={e => { (e.currentTarget as HTMLSpanElement).style.borderColor = "#c8ff00"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLSpanElement).style.borderColor = "rgba(245,245,240,0.08)"; }}
+              onMouseEnter={e => { (e.currentTarget as HTMLSpanElement).style.background = "rgba(200,255,0,0.12)"; (e.currentTarget as HTMLSpanElement).style.borderColor = "rgba(200,255,0,0.25)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLSpanElement).style.background = "rgba(200,255,0,0.06)"; (e.currentTarget as HTMLSpanElement).style.borderColor = "rgba(200,255,0,0.12)"; }}
             >
               {ind}
             </span>

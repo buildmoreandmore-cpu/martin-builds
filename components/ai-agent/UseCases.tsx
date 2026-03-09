@@ -47,12 +47,12 @@ const GlobeIcon = () => (
 );
 
 const cases = [
-  { icon: <ChatIcon />, title: "Answers Customer Questions", body: "Hours, pricing, services, policies — your AI knows it all and responds instantly. No more \"I'll get back to you.\"", example: "\"What time do you close on Sundays?\"" },
-  { icon: <ClipboardIcon />, title: "Captures Leads", body: "Collects name, email, and what they need — then sends it to you. Every visitor becomes a potential customer.", example: "\"I'd like a quote for a kitchen remodel\"" },
-  { icon: <CalendarIcon />, title: "Books Appointments", body: "Connects to your calendar and lets customers schedule directly through the chat. No back-and-forth emails.", example: "\"Can I book a consultation for Thursday?\"" },
-  { icon: <TagIcon />, title: "Recommends Products", body: "Suggests the right service, menu item, or product based on what the customer tells it. Like a virtual salesperson.", example: "\"What's good for someone who doesn't like dark roast?\"" },
-  { icon: <BellIcon />, title: "Handles After-Hours", body: "When you're closed, your agent is open. Captures inquiries at 2 AM so you wake up to warm leads, not missed opportunities.", example: "\"Are you open tomorrow? I need a rush order\"" },
-  { icon: <GlobeIcon />, title: "Speaks Their Language", body: "Multilingual support out of the box. Your agent can respond in Spanish, French, Creole — whatever your customers speak.", example: "\"Hola, tienen opciones vegetarianas?\"" },
+  { icon: <ChatIcon />, title: "Answers Customer Questions", body: "Hours, pricing, services, policies — your AI knows it all and responds instantly. No more \"I'll get back to you.\"", example: "\"Does Dr. Chen accept Blue Cross insurance?\"" },
+  { icon: <ClipboardIcon />, title: "Captures Leads", body: "Collects name, email, and what they need — then sends it to you. Every visitor becomes a potential customer.", example: "\"I need a real estate attorney for a closing next month\"" },
+  { icon: <CalendarIcon />, title: "Books Appointments", body: "Connects to your calendar and lets customers schedule directly through the chat. No back-and-forth emails.", example: "\"Can I schedule a teeth cleaning for my daughter on Friday?\"" },
+  { icon: <TagIcon />, title: "Recommends Products", body: "Suggests the right service, menu item, or product based on what the customer tells it. Like a virtual salesperson.", example: "\"Which HVAC system is best for a 3,000 sq ft commercial space?\"" },
+  { icon: <BellIcon />, title: "Handles After-Hours", body: "When you're closed, your agent is open. Captures inquiries at 2 AM so you wake up to warm leads, not missed opportunities.", example: "\"I just got served with papers, can I speak with an attorney tomorrow morning?\"" },
+  { icon: <GlobeIcon />, title: "Speaks Their Language", body: "Multilingual support out of the box. Your agent can respond in Spanish, French, Creole — whatever your customers speak.", example: "\"Necesito hacer una cita con el dentista para mi hijo\"" },
 ];
 
 export default function UseCases() {

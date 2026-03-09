@@ -26,11 +26,11 @@ export default function Hero() {
       />
 
       <div className="animate-fade-up-1" style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.8rem", color: "#c8ff00", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "2rem" }}>
-        AI Tools &amp; Platforms for Growing Businesses
+        AI Tools for Healthcare, Legal, Energy &amp; Service Businesses
       </div>
 
       <p className="animate-fade-up-1" style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 400, fontSize: "1rem", color: "#888", marginBottom: "1rem" }}>
-        AI tools &amp; platforms for growing businesses
+        For healthcare practices, law firms, contractors, and service businesses ready to stop waiting on AI
       </p>
 
       <h1

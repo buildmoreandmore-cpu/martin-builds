@@ -10,17 +10,17 @@ type Message = {
 };
 
 const quickQuestions = [
-  { label: "What can you do?", key: "capabilities" },
-  { label: "How much does it cost?", key: "pricing" },
-  { label: "How fast can you start?", key: "speed" },
-  { label: "Is this a chatbot?", key: "notbot" },
+  { label: "Accept Delta Dental?", key: "delta" },
+  { label: "Book a cleaning", key: "cleaning" },
+  { label: "Do you do Invisalign?", key: "invisalign" },
+  { label: "What are your hours?", key: "hours" },
 ];
 
 const responses: Record<string, string> = {
-  capabilities: "I handle the repetitive work that eats your day — emails, scheduling, lead follow-ups, invoicing, CRM updates, customer support, and reporting. Think of me as a full-time employee who never sleeps, never forgets, and costs a fraction of a hire.",
-  pricing: "Plans start at $300/month for a Starter Agent (one core workflow, up to 500 tasks). The Pro Agent is $500/month — unlimited tasks, multiple workflows, integrations with all your tools. No contracts, cancel anytime.",
-  speed: "Most clients are live within 48 hours. We scope your needs, build and train your agent on your business, you test it, and then it starts working. Simple as that.",
-  notbot: "Not even close. Chatbots answer questions. I do work — I send emails, book meetings, chase invoices, update your CRM, generate reports. I take action across your tools, not just respond in a chat window.",
+  delta: "Yes! We accept Delta Dental, Aetna, Cigna, MetLife, and most major PPO plans. If you're not sure about your specific plan, I can check for you — just share your insurance provider and I'll confirm. Would you like to book an appointment?",
+  cleaning: "I'd love to get you scheduled! Dr. Patel has openings on Tuesday at 10 AM and Thursday at 2 PM next week. Which works better for you? I'll also need your name and phone number to confirm.",
+  invisalign: "Yes! We're a certified Invisalign provider. Dr. Patel offers free Invisalign consultations where she'll scan your teeth and show you a 3D preview of your results. Want me to book one? Most insurance plans cover a portion of the cost.",
+  hours: "We're open Monday through Friday 8 AM to 5 PM, and Saturdays 9 AM to 1 PM. We're closed on Sundays. Would you like to book an appointment?",
 };
 
 export default function DemoChat() {
@@ -37,7 +37,7 @@ export default function DemoChat() {
       setShowTyping(false);
       setMessages([{
         role: "agent",
-        content: "Hi there! I'm an AI employee demo. Ask me anything about what I can do for your business.",
+        content: "Hi! Welcome to Bright Smile Dental. I can help with appointments, insurance questions, services, or hours. What do you need?",
         timestamp: "Now"
       }]);
       setInitialLoaded(true);
@@ -83,7 +83,7 @@ export default function DemoChat() {
             <div style={{ background: "#1a1a1a", padding: "1.25rem 1.5rem", borderBottom: "1px solid rgba(245,245,240,0.06)", display: "flex", alignItems: "center", gap: "0.75rem" }}>
               <div style={{ width: "10px", height: "10px", background: "#c8ff00", borderRadius: "50%", animation: "demoPulse 2s infinite" }} />
               <div>
-                <div style={{ fontSize: "0.95rem", fontWeight: 600, color: "#f5f5f0" }}>AI Employee Demo — <span style={{ color: "#c8ff00" }}>Online now</span></div>
+                <div style={{ fontSize: "0.95rem", fontWeight: 600, color: "#f5f5f0" }}>Bright Smile Dental AI — <span style={{ color: "#c8ff00" }}>Online now</span></div>
                 <div style={{ fontSize: "0.75rem", color: "#666", fontFamily: "'Space Mono', monospace" }}>Interactive preview</div>
               </div>
             </div>
