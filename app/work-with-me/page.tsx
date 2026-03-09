@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Nav from "@/components/Nav";
 import WWMHero from "@/components/wwm/Hero";
 import TheGap from "@/components/wwm/TheGap";
+import UseCaseShowcase from "@/components/wwm/UseCaseShowcase";
 import ServiceTiers from "@/components/wwm/ServiceTiers";
 import ProofWork from "@/components/wwm/ProofWork";
 import Testimonials from "@/components/wwm/Testimonials";
@@ -48,6 +49,7 @@ export default function WorkWithMePage() {
       <Nav />
       <WWMHero />
       <TheGap />
+      <UseCaseShowcase />
       <ServiceTiers />
       <ProofWork />
       <Testimonials />
