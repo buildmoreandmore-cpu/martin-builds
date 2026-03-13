@@ -208,7 +208,7 @@ export function ServiceJsonLd() {
         {
           "@type": "Offer",
           itemOffered: { "@type": "Service", name: "AI Retainer" },
-          price: "2500",
+          price: "5000",
           priceCurrency: "USD",
         },
         {

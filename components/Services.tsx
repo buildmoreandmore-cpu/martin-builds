@@ -42,7 +42,7 @@ const services = [
   {
     icon: <RetainerIcon />,
     title: "AI Retainer",
-    price: "$2,500 – $5,000/mo",
+    price: "Custom pricing",
     description: "Your AI builder on call. New features, iterations, and system upgrades every month. Your operations evolve — your tools should too.",
     tags: "Ongoing · Growth · Priority",
   },

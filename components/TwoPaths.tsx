@@ -35,7 +35,7 @@ export default function TwoPaths() {
               <li style={listItem}>Custom CRM and workflow tools</li>
               <li style={listItem}>AI agents integrated into your stack</li>
             </ul>
-            <div style={priceStyle}>Builds from $5,000 · Retainers from $2,500/mo</div>
+            <div style={priceStyle}>Builds from $5,000 · Monthly retainers available</div>
             <a href="/discovery-call" style={primaryBtnStyle}
               onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 30px rgba(200,255,0,0.25)"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}

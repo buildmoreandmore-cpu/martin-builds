@@ -44,7 +44,7 @@ const growingTiers = [
     label: "Ongoing Partnership",
     title: "AI Retainer",
     subtitle: "For when you want an AI builder on your team every month.",
-    price: "$2,500 – $5,000/mo",
+    price: "Custom pricing",
     priceContext: "Cancel anytime",
     hook: "Your AI builder, on call.",
     paragraph: "Your business doesn't stop evolving, and your tools shouldn't either. Every month I build new features, optimize what's running, and bring you ideas you haven't thought of yet. Think of it as having a full-time AI developer — without the full-time salary.",

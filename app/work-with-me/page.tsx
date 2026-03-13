@@ -16,12 +16,12 @@ import { FAQJsonLd, ServiceJsonLd } from "@/components/JsonLd";
 export const metadata: Metadata = {
   title: "Work With Me — martin.builds",
   description:
-    "Hire me to build AI-powered tools for your business. Starter builds from $5K, build sprints from $8K, retainers from $2,500/mo.",
+    "Hire me to build AI-powered tools for your business. Starter builds from $5K, build sprints from $8K, monthly retainers available.",
   alternates: { canonical: "https://martinbuilds.ai/work-with-me" },
   openGraph: {
     title: "Work With Me — martin.builds",
     description:
-      "AI starter builds from $5K. Complex platforms from $8K. Monthly retainers from $2,500. Shipped in 2 weeks.",
+      "AI starter builds from $5K. Complex platforms from $8K. Monthly retainers available. Shipped in 2 weeks.",
     url: "https://martinbuilds.ai/work-with-me",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
