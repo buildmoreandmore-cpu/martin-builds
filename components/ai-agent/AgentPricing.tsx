@@ -12,7 +12,8 @@ const plans = [
     features: [
       "Handles one core workflow (email, scheduling, OR support)",
       "Up to 500 tasks/month",
-      "Daily activity summary",
+      "Monthly performance dashboard + reports",
+      "Lead generation list (monthly)",
       "Email notifications",
       "48-hour setup",
       "Cancel anytime"
@@ -28,10 +29,12 @@ const plans = [
     features: [
       "Handles multiple workflows",
       "Unlimited tasks",
+      "Weekly performance dashboard + reports",
+      "Market research & customer insights (weekly)",
+      "Lead generation list (weekly)",
+      "Custom decision tools (ROI calculators, profit estimators)",
       "Integrates with your tools (CRM, calendar, email, etc.)",
-      "Weekly performance reports",
-      "Priority support",
-      "Proactive suggestions & alerts",
+      "Priority support + real-time alerts",
       "Custom escalation rules"
     ],
     cta: "Get Your Pro Agent",

@@ -73,7 +73,7 @@ export default function UseCaseShowcase() {
 
       <div className="usecase-grid" style={gridStyle}>
         {useCases.map((uc, i) => (
-          <ScrollReveal key={uc.name} delay={i * 80}>
+          <ScrollReveal key={uc.name}>
             <div className="usecase-card" style={cardStyle}>
               <div style={cardTopRow}>
                 <div style={iconContainer}>

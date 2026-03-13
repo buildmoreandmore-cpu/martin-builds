@@ -3,6 +3,7 @@ import Nav from "@/components/Nav";
 import { FAQJsonLd, AIAgentServiceJsonLd } from "@/components/JsonLd";
 import AgentHero from "@/components/ai-agent/AgentHero";
 import UseCases from "@/components/ai-agent/UseCases";
+import Deliverables from "@/components/ai-agent/Deliverables";
 import AgentStats from "@/components/ai-agent/AgentStats";
 import IndustryGrid from "@/components/ai-agent/IndustryGrid";
 import HowItWorks from "@/components/ai-agent/HowItWorks";
@@ -49,6 +50,7 @@ export default function AIAgentPage() {
       <Nav />
       <AgentHero />
       <UseCases />
+      <Deliverables />
       <AgentStats />
       <IndustryGrid />
       <HowItWorks />
