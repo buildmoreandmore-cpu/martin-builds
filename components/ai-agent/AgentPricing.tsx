@@ -12,8 +12,8 @@ const plans = [
     features: [
       "Handles one core workflow (email, scheduling, OR support)",
       "Up to 500 tasks/month",
-      "Monthly performance dashboard + reports",
-      "Lead generation list (monthly)",
+      "Custom business dashboard (built for you)",
+      "Daily activity summary",
       "Email notifications",
       "48-hour setup",
       "Cancel anytime"
@@ -27,12 +27,12 @@ const plans = [
     period: "/month",
     description: "For businesses that need a full AI employee across multiple workflows.",
     features: [
+      "Everything in Starter, plus:",
       "Handles multiple workflows",
       "Unlimited tasks",
-      "Weekly performance dashboard + reports",
-      "Market research & customer insights (weekly)",
-      "Lead generation list (weekly)",
-      "Custom decision tools (ROI calculators, profit estimators)",
+      "Full business dashboard with weekly reports",
+      "Weekly lead generation list",
+      "Monthly market research report",
       "Integrates with your tools (CRM, calendar, email, etc.)",
       "Priority support + real-time alerts",
       "Custom escalation rules"

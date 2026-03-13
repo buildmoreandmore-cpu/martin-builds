@@ -9,21 +9,15 @@ const ChartIcon = () => (
   </svg>
 );
 
-const SearchIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-);
-
-const UsersIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
-  </svg>
-);
-
 const TargetIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" />
+  </svg>
+);
+
+const SearchIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
   </svg>
 );
 
@@ -33,35 +27,37 @@ const ToolIcon = () => (
   </svg>
 );
 
-const deliverables = [
+const items = [
   {
     icon: <ChartIcon />,
-    title: "Performance Dashboard",
-    desc: "See how your business is actually doing — revenue trends, top services, busiest days, customer retention. Updated automatically.",
+    title: "Business Dashboard",
+    desc: "A custom dashboard built around your business — revenue, appointments, top services, busiest days, customer retention. Set up for you, updated automatically.",
+    tag: "INCLUDED WITH EVERY PLAN",
+    tagColor: "#c8ff00",
     example: "\"Your Tuesday appointments are up 34% since adding the evening slot.\""
   },
   {
-    icon: <SearchIcon />,
-    title: "Market Research Report",
-    desc: "Know what your competitors charge, what customers in your area are searching for, and where the gaps are. Monthly intel drops.",
-    example: "\"3 dental offices within 2 miles don't offer Saturday hours. You do.\""
-  },
-  {
-    icon: <UsersIcon />,
-    title: "Customer Insights Report",
-    desc: "Who's coming back, who's not, what services they want next. Your agent tracks patterns humans miss.",
-    example: "\"68% of your new clients found you through Google — not referrals.\""
-  },
-  {
     icon: <TargetIcon />,
-    title: "Lead Generation List",
-    desc: "Fresh prospects in your area that match your ideal customer. Names, contacts, and why they're a fit. Delivered weekly.",
+    title: "Weekly Lead List",
+    desc: "Fresh prospects in your area that match your ideal customer. Names, contacts, and why they're a fit. Delivered to your inbox every week.",
+    tag: "PRO PLAN",
+    tagColor: "#c8ff00",
     example: "\"12 new homeowners within 5 miles who haven't chosen an HVAC provider yet.\""
   },
   {
+    icon: <SearchIcon />,
+    title: "Monthly Market Research",
+    desc: "What your competitors charge, what customers in your area search for, and where the gaps are. Monthly intel so you stay ahead.",
+    tag: "PRO PLAN",
+    tagColor: "#c8ff00",
+    example: "\"3 dental offices within 2 miles don't offer Saturday hours. You do.\""
+  },
+  {
     icon: <ToolIcon />,
-    title: "Decision-Making Tools",
-    desc: "ROI calculators, profit estimators, pricing analyzers — custom tools built for your business so you stop guessing.",
+    title: "Custom Decision Tools",
+    desc: "ROI calculators, profit estimators, pricing analyzers — built specifically for your business and added to your dashboard. Stop guessing, start knowing.",
+    tag: "ADD-ON · $200–$500 PER TOOL",
+    tagColor: "#888",
     example: "\"If you raise your cleaning price by $15, you'd net $2,400 more per month.\""
   },
 ];
@@ -88,7 +84,7 @@ export default function Deliverables() {
     const timers: NodeJS.Timeout[] = [];
     timers.push(setTimeout(() => setShowTyping(true), 300));
     timers.push(setTimeout(() => { setShowTyping(false); setShowIntro(true); }, 900));
-    deliverables.forEach((_, i) => {
+    items.forEach((_, i) => {
       timers.push(setTimeout(() => setVisibleCards(i + 1), 1400 + i * 250));
     });
     return () => timers.forEach(clearTimeout);
@@ -98,13 +94,13 @@ export default function Deliverables() {
     <section className="deliverables-section" style={{ padding: "6rem 3rem", background: "rgba(200,255,0,0.015)" }}>
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
         <ScrollReveal>
-          <p style={tag}>What You Get Every Month</p>
+          <p style={tagStyle}>More Than an Agent</p>
         </ScrollReveal>
         <ScrollReveal>
-          <h2 style={title}>Your AI doesn&apos;t just answer questions.<br />It runs your back office.</h2>
+          <h2 style={title}>Your agent handles the front line.<br />We handle the intelligence behind it.</h2>
         </ScrollReveal>
         <ScrollReveal>
-          <p style={subtitle}>Most businesses have data — they just don&apos;t have anyone turning it into decisions. Your agent does that automatically.</p>
+          <p style={subtitle}>Every plan includes a custom dashboard. Pro clients get weekly leads and monthly market research delivered to their inbox.</p>
         </ScrollReveal>
 
         <div ref={ref} style={{ marginTop: "3rem" }}>
@@ -116,21 +112,21 @@ export default function Deliverables() {
               </div>
               {showTyping && !showIntro ? (
                 <div style={{ background: "rgba(200,255,0,0.08)", padding: "0.75rem 1rem", borderRadius: "14px", display: "flex", gap: "4px", alignItems: "center" }}>
-                  <span style={{ ...dot, animation: "delTypingDot 1s infinite 0s" }} />
-                  <span style={{ ...dot, animation: "delTypingDot 1s infinite 0.2s" }} />
-                  <span style={{ ...dot, animation: "delTypingDot 1s infinite 0.4s" }} />
+                  <span style={{ ...dotStyle, animation: "delTypingDot 1s infinite 0s" }} />
+                  <span style={{ ...dotStyle, animation: "delTypingDot 1s infinite 0.2s" }} />
+                  <span style={{ ...dotStyle, animation: "delTypingDot 1s infinite 0.4s" }} />
                 </div>
               ) : showIntro ? (
                 <div style={{ background: "rgba(200,255,0,0.08)", padding: "0.75rem 1rem", borderRadius: "14px 14px 14px 4px", fontSize: "0.95rem", color: "#f5f5f0", lineHeight: 1.5, animation: "delFadeUp 0.4s ease-out forwards" }}>
-                  Here&apos;s what I deliver to your inbox every month — no login required:
+                  Here&apos;s what comes with your plan — and what you can add on:
                 </div>
               ) : null}
             </div>
           )}
 
-          {/* Cards */}
-          <div className="deliverables-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.5rem" }}>
-            {deliverables.map((d, i) => (
+          {/* Cards — 2x2 grid */}
+          <div className="deliverables-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "1.5rem" }}>
+            {items.map((d, i) => (
               <div
                 key={d.title}
                 style={{
@@ -163,22 +159,16 @@ export default function Deliverables() {
                 }}
               >
                 <div className="del-bar" style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: "#c8ff00", transform: "scaleX(0)", transformOrigin: "left", transition: "transform 0.4s" }} />
-                <div style={{ width: "44px", height: "44px", background: "rgba(200,255,0,0.1)", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.2rem", flexShrink: 0 }}>{d.icon}</div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.2rem" }}>
+                  <div style={{ width: "44px", height: "44px", background: "rgba(200,255,0,0.1)", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{d.icon}</div>
+                  <span style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.65rem", color: d.tagColor, letterSpacing: "1.5px", textTransform: "uppercase", opacity: 0.8 }}>{d.tag}</span>
+                </div>
                 <h3 style={{ fontSize: "1.15rem", fontWeight: 700, marginBottom: "0.5rem" }}>{d.title}</h3>
                 <p style={{ fontSize: "0.9rem", color: "#888", lineHeight: 1.6, flex: 1 }}>{d.desc}</p>
                 <div style={{ marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid rgba(245,245,240,0.06)", fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", color: "#c8ff00", opacity: 0.7 }}>{d.example}</div>
               </div>
             ))}
           </div>
-
-          {/* Bottom note */}
-          <ScrollReveal>
-            <div style={{ textAlign: "center", marginTop: "3rem" }}>
-              <p style={{ fontSize: "0.95rem", color: "#888", lineHeight: 1.6, maxWidth: "600px", margin: "0 auto" }}>
-                All deliverables included in both plans. Starter gets monthly reports. Pro gets weekly reports + real-time alerts.
-              </p>
-            </div>
-          </ScrollReveal>
         </div>
       </div>
 
@@ -191,7 +181,7 @@ export default function Deliverables() {
           0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); }
           30% { opacity: 1; transform: scale(1); }
         }
-        @media (max-width: 640px) {
+        @media (max-width: 700px) {
           .deliverables-section { padding: 3rem 1.25rem !important; }
           .deliverables-grid { grid-template-columns: 1fr !important; }
         }
@@ -200,7 +190,7 @@ export default function Deliverables() {
   );
 }
 
-const dot: React.CSSProperties = { width: "6px", height: "6px", borderRadius: "50%", background: "#c8ff00", display: "inline-block" };
-const tag: React.CSSProperties = { fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", color: "#c8ff00", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "1.5rem" };
+const dotStyle: React.CSSProperties = { width: "6px", height: "6px", borderRadius: "50%", background: "#c8ff00", display: "inline-block" };
+const tagStyle: React.CSSProperties = { fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", color: "#c8ff00", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "1.5rem" };
 const title: React.CSSProperties = { fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 800, lineHeight: 1.1, letterSpacing: "-2px", maxWidth: "750px" };
-const subtitle: React.CSSProperties = { fontSize: "1.1rem", color: "#888", lineHeight: 1.6, maxWidth: "600px", marginTop: "1.5rem" };
+const subtitle: React.CSSProperties = { fontSize: "1.1rem", color: "#888", lineHeight: 1.6, maxWidth: "650px", marginTop: "1.5rem" };
