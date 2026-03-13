@@ -12,7 +12,7 @@ const plans = [
     features: [
       "Handles one core workflow (email, scheduling, OR support)",
       "Up to 500 tasks/month",
-      "Custom business dashboard (built for you)",
+      "Custom business dashboard",
       "Daily activity summary",
       "Email notifications",
       "48-hour setup",
@@ -31,8 +31,7 @@ const plans = [
       "Handles multiple workflows",
       "Unlimited tasks",
       "Full business dashboard with weekly reports",
-      "Weekly lead generation list",
-      "Monthly market research report",
+      "Built-in decision tools (ROI calculators, profit estimators)",
       "Integrates with your tools (CRM, calendar, email, etc.)",
       "Priority support + real-time alerts",
       "Custom escalation rules"
