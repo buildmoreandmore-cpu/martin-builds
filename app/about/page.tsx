@@ -12,12 +12,12 @@ export const metadata: Metadata = {
   title: "About — martin.builds",
   description:
     "Francis Martin. Self-taught AI builder shipping AI tools for small businesses from Atlanta, GA. 10+ products shipped.",
-  alternates: { canonical: "https://martin-builds.vercel.app/about" },
+  alternates: { canonical: "https://martinbuilds.ai/about" },
   openGraph: {
     title: "About — martin.builds",
     description:
       "Francis Martin is an AI developer based in Atlanta, GA. I learned AI by shipping real products for real businesses.",
-    url: "https://martin-builds.vercel.app/about",
+    url: "https://martinbuilds.ai/about",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {

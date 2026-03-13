@@ -18,11 +18,11 @@ export const metadata: Metadata = {
   title: "AI Agent — martin.builds",
   description:
     "Custom AI employee trained on your business. Handles emails, scheduling, follow-ups 24/7. From $300/mo. Live in 48 hours.",
-  alternates: { canonical: "https://martin-builds.vercel.app/ai-agent" },
+  alternates: { canonical: "https://martinbuilds.ai/ai-agent" },
   openGraph: {
     title: "AI Agent — martin.builds",
     description: "Custom AI chat agent trained on your business. 24/7 lead capture. Live in 48 hours. From $300/mo.",
-    url: "https://martin-builds.vercel.app/ai-agent",
+    url: "https://martinbuilds.ai/ai-agent",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {

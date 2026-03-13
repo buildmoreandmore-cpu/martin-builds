@@ -13,11 +13,11 @@ export const metadata: Metadata = {
   title: "AI Power Hour — martin.builds",
   description:
     "1-on-1 AI strategy session for small business owners. 60 minutes, $500. Get a personalized AI game plan.",
-  alternates: { canonical: "https://martin-builds.vercel.app/power-hour" },
+  alternates: { canonical: "https://martinbuilds.ai/power-hour" },
   openGraph: {
     title: "AI Power Hour — martin.builds",
     description: "60-minute 1-on-1 AI strategy session with Francis Martin. $500. Leave with a clear action plan.",
-    url: "https://martin-builds.vercel.app/power-hour",
+    url: "https://martinbuilds.ai/power-hour",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {

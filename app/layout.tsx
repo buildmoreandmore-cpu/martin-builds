@@ -7,7 +7,7 @@ const description =
   "I build AI-powered tools, websites, and products for small businesses. Custom builds shipped in 2 weeks. Based in Atlanta, GA.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://martin-builds.vercel.app"),
+  metadataBase: new URL("https://martinbuilds.ai"),
   title,
   description,
   keywords:
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     title,
     description: "Custom AI tools, websites, and products shipped in 2 weeks. Built by Francis Martin in Atlanta.",
-    url: "https://martin-builds.vercel.app",
+    url: "https://martinbuilds.ai",
     siteName: "martin.builds",
     images: [
       {
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     images: ["/og-image.png"],
   },
   alternates: {
-    canonical: "https://martin-builds.vercel.app",
+    canonical: "https://martinbuilds.ai",
   },
 };
 

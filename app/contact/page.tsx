@@ -10,11 +10,11 @@ export const metadata: Metadata = {
   title: "Contact — martin.builds",
   description:
     "Get in touch about AI tools, websites, or products for your business. Based in Atlanta, GA. Response within 24 hours.",
-  alternates: { canonical: "https://martin-builds.vercel.app/contact" },
+  alternates: { canonical: "https://martinbuilds.ai/contact" },
   openGraph: {
     title: "Contact — martin.builds",
     description: "Get in touch with Francis Martin. Responds within 24 hours.",
-    url: "https://martin-builds.vercel.app/contact",
+    url: "https://martinbuilds.ai/contact",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
