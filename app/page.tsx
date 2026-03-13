@@ -17,7 +17,7 @@ import ObjectionHandler from "@/components/ObjectionHandler";
 import TwoPaths from "@/components/TwoPaths";
 import BuiltWith from "@/components/BuiltWith";
 import Services from "@/components/Services";
-import GuaranteeStrip from "@/components/GuaranteeStrip";
+// GuaranteeStrip removed
 import Process from "@/components/Process";
 import Industries from "@/components/Industries";
 import Testimonials from "@/components/Testimonials";
@@ -35,7 +35,6 @@ export default function Home() {
       <TwoPaths />
       <BuiltWith />
       <Services />
-      <GuaranteeStrip />
       <Process />
       <Industries />
       <Testimonials />
