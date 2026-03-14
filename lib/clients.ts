@@ -19,6 +19,8 @@ export interface Client {
   linking_code?: string;
   stripe_customer_id?: string;
   stripe_subscription_id?: string;
+  bot_token?: string;
+  bot_username?: string;
   active: boolean;
   created_at?: string;
   updated_at?: string;
@@ -51,6 +53,15 @@ export async function getClientByTelegramId(chatId: string): Promise<Client | nu
     .from("clients")
     .select("*")
     .eq("telegram_chat_id", chatId)
+    .single();
+  return data;
+}
+
+export async function getClientByBotToken(token: string): Promise<Client | null> {
+  const { data } = await supabase
+    .from("clients")
+    .select("*")
+    .eq("bot_token", token)
     .single();
   return data;
 }

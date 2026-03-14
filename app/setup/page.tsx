@@ -105,6 +105,8 @@ function SetupInner() {
     }
   };
 
+  const [hasDedicatedBot, setHasDedicatedBot] = useState(false);
+
   const handleFinish = async () => {
     const res = await fetch("/api/setup/finish", {
       method: "POST",
@@ -114,6 +116,7 @@ function SetupInner() {
     const data = await res.json();
     setTelegramLink(data.telegramLink || "https://t.me/Martinbuilds_bot");
     setLinkingCode(data.linkingCode || "");
+    setHasDedicatedBot(data.hasDedicatedBot || false);
     setStep("done");
   };
 
@@ -292,27 +295,41 @@ function SetupInner() {
         <div style={{ background: "#111118", border: "1px solid #222", borderRadius: 12, padding: 20, marginTop: 20 }}>
           <h3 style={{ color: "#fff", fontSize: 16, margin: "0 0 12px", fontWeight: 600 }}>Start a conversation:</h3>
 
-          <a
-            href={`${telegramLink}?start=${linkingCode}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              background: "#0088cc",
-              color: "#fff",
-              padding: "12px 16px",
-              borderRadius: 10,
-              textDecoration: "none",
-              fontWeight: 600,
-              fontSize: 15,
-              marginBottom: 10,
-            }}
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0h-.056zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 01.171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-            Open on Telegram
-          </a>
+          {hasDedicatedBot ? (
+            <a
+              href={telegramLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                background: "#0088cc",
+                color: "#fff",
+                padding: "12px 16px",
+                borderRadius: 10,
+                textDecoration: "none",
+                fontWeight: 600,
+                fontSize: 15,
+                marginBottom: 10,
+              }}
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0h-.056zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 01.171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+              Open {botName} on Telegram
+            </a>
+          ) : (
+            <div>
+              <div style={{ background: "#0d0d14", border: "1px solid #c8ff0040", borderRadius: 10, padding: 14, marginBottom: 10 }}>
+                <p style={{ color: "#c8ff00", fontSize: 14, margin: "0 0 6px", fontWeight: 600 }}>🔧 Your dedicated bot is being set up</p>
+                <p style={{ color: "#999", fontSize: 13, margin: 0 }}>
+                  We&apos;re creating a Telegram bot named <strong style={{ color: "#fff" }}>{botName}</strong> just for you. You&apos;ll get an email with the link within 24 hours.
+                </p>
+              </div>
+              <p style={{ color: "#666", fontSize: 12, margin: "8px 0 0" }}>
+                We&apos;ve also sent these details to your email.
+              </p>
+            </div>
+          )}
 
           <p style={{ color: "#777", fontSize: 13, margin: "12px 0 0" }}>
             WhatsApp coming soon — we&apos;ll notify you when it&apos;s ready.

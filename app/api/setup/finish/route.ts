@@ -11,10 +11,13 @@ export async function POST(req: NextRequest) {
     if (!code) return NextResponse.json({ error: "Client not found" }, { status: 404 });
 
     const client = await getClientByEmail(email);
-    const botName = client?.bot_name || client?.business_name + " Agent" || "Your Agent";
-    const telegramLink = "https://t.me/Martinbuilds_bot";
+    const botName = client?.bot_name || (client?.business_name || "") + " Agent";
+    const botUsername = client?.bot_username;
+    const telegramLink = botUsername
+      ? `https://t.me/${botUsername}`
+      : "https://t.me/Martinbuilds_bot";
 
-    // Send welcome email with linking code
+    // Send welcome email with bot link
     await sendEmail({
       to: email,
       subject: `${botName} is ready — here's how to connect`,
@@ -22,11 +25,10 @@ export async function POST(req: NextRequest) {
 
 Your AI agent "${botName}" for ${client?.business_name || "your business"} is set up and ready to go.
 
-To start chatting with your agent on Telegram:
-${telegramLink}?start=${code}
-
-Or search for @Martinbuilds_bot on Telegram and send:
-/start ${code}
+${botUsername
+  ? `Open your agent on Telegram:\n${telegramLink}\n\nJust tap Start — you'll be connected automatically.`
+  : `Your dedicated bot is being created. We'll email you the link within 24 hours.\n\nIn the meantime, you can use our shared bot:\n${telegramLink}?start=${code}\n\nOr search for @Martinbuilds_bot on Telegram and send:\n/start ${code}`
+}
 
 Things you can ask:
 • "Check my emails"
@@ -36,9 +38,7 @@ Things you can ask:
 
 You can connect more tools anytime — just tell your agent what you want to connect.
 
-Your linking code: ${code}
-(Save this — you can use it to reconnect anytime)
-
+${!botUsername ? `Your linking code: ${code}\n(Save this — you can use it to reconnect anytime)\n` : ""}
 If you need help, reply to this email.
 
 — martin.builds`,
@@ -47,7 +47,8 @@ If you need help, reply to this email.
     return NextResponse.json({
       linkingCode: code,
       telegramLink,
-      instructions: `Open Telegram and click the link, or search for @Martinbuilds_bot and send: /start ${code}`,
+      botUsername: botUsername || null,
+      hasDedicatedBot: !!botUsername,
     });
   } catch (err) {
     console.error("[Setup Finish]", err);
