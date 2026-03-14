@@ -1,0 +1,23 @@
+{
+  "businessName": "Atlanta Family Law Group",
+  "avatarInitials": "AF",
+  "industry": "Law Firm",
+  "welcomeMessage": "Hi! Welcome to Atlanta Family Law Group. I can help with practice area questions, scheduling a consultation, fees, or office information. How can I assist you?",
+  "quickPrompts": [
+    { "label": "Divorce info", "question": "I'm considering filing for divorce" },
+    { "label": "Consultation cost", "question": "How much does a consultation cost?" },
+    { "label": "Custody cases", "question": "Do you handle child custody cases?" },
+    { "label": "Office hours", "question": "What are your hours?" }
+  ],
+  "responses": {
+    "divorce|separation|filing": "We handle all aspects of divorce including contested, uncontested, mediation, and high-asset cases. Attorney Williams offers a free 30-minute initial consultation. Would you like to schedule one?",
+    "custody|child|visitation": "Child custody is one of our primary practice areas. We handle both initial custody arrangements and modifications. Every case starts with a free consultation. Want to book one?",
+    "cost|fee|price|how much|consult": "Our initial consultation is free — 30 minutes with Attorney Williams. After that, fees depend on case complexity. Most family law matters work on a retainer basis. We can discuss specifics during your consultation.",
+    "hours|open": "Our office is open Monday through Friday, 9 AM to 6 PM. We also offer evening appointments on Tuesdays and Thursdays by request.",
+    "location|address|where": "We're at 1234 Peachtree Street NE, Suite 400, Atlanta, GA 30309. Free parking in the building garage.",
+    "how long|timeline|duration": "Every case is different. Uncontested divorces typically take 30-60 days. Contested cases can take 6-12 months. We'll give you a realistic timeline during your consultation.",
+    "payment|pay|finance": "We accept all major credit cards and offer payment plans for qualified clients. We can discuss fee arrangements during your free consultation.",
+    "experience|qualified|background": "Attorney Williams has 15 years of experience in family law with over 500 cases resolved. She's a member of the Georgia Bar Association and the American Academy of Matrimonial Lawyers."
+  },
+  "fallback": "For the most accurate answer to your specific situation, I'd recommend scheduling a free consultation with Attorney Williams. She can address everything in detail. Want me to book that?"
+}

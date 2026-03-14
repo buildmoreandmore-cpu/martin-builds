@@ -49,6 +49,7 @@ export default function Nav() {
           <NavLink href="/about">About</NavLink>
           <NavLink href="/#services">Services</NavLink>
           <NavLink href="/ai-agent">AI Agent</NavLink>
+          <NavLink href="/demo">Demo</NavLink>
           <NavLink href="/power-hour">Power Hour</NavLink>
           <a
             href="/scan"
@@ -109,6 +110,7 @@ export default function Nav() {
           { href: "/about", label: "About" },
           { href: "/#services", label: "Services" },
           { href: "/ai-agent", label: "AI Agent" },
+          { href: "/demo", label: "Demo" },
           { href: "/power-hour", label: "Power Hour" },
           { href: "/scan", label: "Free Scan" },
           { href: "/contact", label: "Contact" },

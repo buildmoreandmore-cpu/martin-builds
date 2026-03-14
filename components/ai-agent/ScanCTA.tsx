@@ -15,6 +15,17 @@ export default function ScanCTA() {
         >
           Scan Your Website — Free
         </a>
+        <p style={{ fontSize: "0.85rem", color: "#888", marginTop: "1.25rem", marginBottom: "0.75rem" }}>
+          Or request a custom demo — we&apos;ll build an AI agent trained on your business and send you the link.
+        </p>
+        <a
+          href="/demo"
+          style={{ display: "inline-block", padding: "0.75rem 1.75rem", borderRadius: 10, background: "transparent", border: "1.5px solid rgba(200,255,0,0.4)", color: "#c8ff00", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none", transition: "all 0.2s" }}
+          onMouseEnter={(e) => { const t = e.currentTarget as HTMLAnchorElement; t.style.background = "rgba(200,255,0,0.1)"; t.style.borderColor = "#c8ff00"; }}
+          onMouseLeave={(e) => { const t = e.currentTarget as HTMLAnchorElement; t.style.background = "transparent"; t.style.borderColor = "rgba(200,255,0,0.4)"; }}
+        >
+          Request a Free Demo
+        </a>
       </div>
     </section>
   );
