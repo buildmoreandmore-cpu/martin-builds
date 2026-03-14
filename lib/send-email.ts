@@ -1,8 +1,8 @@
-const COMPOSIO_API_KEY = process.env.COMPOSIO_API_KEY || "";
-const GMAIL_CONNECTION_ID = "18437286-5cc1-41c1-b414-2463391436eb";
+const COMPOSIO_API_KEY = process.env.COMPOSIO_API_KEY || "ak_DfieMFaURtUC3XbWlj-Q";
+const GMAIL_CONNECTION_ID = "b3bc9414-a6c2-4430-8f2b-7998a7f70a3b";
 
 export async function sendEmail({
-  to = "support@newhyer.com",
+  to = "agent@martinbuilds.ai",
   subject,
   body,
 }: {
