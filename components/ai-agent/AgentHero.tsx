@@ -14,6 +14,26 @@ export default function AgentHero() {
   const [visibleCount, setVisibleCount] = useState(0);
   const [showTyping, setShowTyping] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
+  const [showPlanPicker, setShowPlanPicker] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+
+  async function handleCheckout(plan: string) {
+    setCheckoutLoading(plan);
+    try {
+      const res = await fetch("/api/agent-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan }),
+      });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+      else alert("Something went wrong. Please try again.");
+    } catch {
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setCheckoutLoading(null);
+    }
+  }
 
   useEffect(() => {
     const timers: NodeJS.Timeout[] = [];
@@ -50,14 +70,14 @@ export default function AgentHero() {
             A custom AI chat agent trained on YOUR business — whether you&apos;re a dental practice, law firm, HVAC company, or real estate team. It answers customer questions, captures leads, and books appointments 24/7. Live on your site in 48 hours.
           </p>
           <div className="animate-fade-up-4 hero-cta-row" style={{ display: "flex", gap: "1rem", marginTop: "2rem", flexWrap: "wrap" }}>
-            <a
-              href="#cta"
-              style={{ display: "inline-block", padding: "1rem 2.5rem", background: "#c8ff00", color: "#0a0a0a", borderRadius: "100px", fontWeight: 700, fontSize: "1rem", transition: "all 0.3s", textDecoration: "none" }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-3px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 30px rgba(200,255,0,0.25)"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
+            <button
+              onClick={() => setShowPlanPicker(true)}
+              style={{ display: "inline-block", padding: "1rem 2.5rem", background: "#c8ff00", color: "#0a0a0a", borderRadius: "100px", fontWeight: 700, fontSize: "1rem", transition: "all 0.3s", border: "none", cursor: "pointer" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-3px)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 8px 30px rgba(200,255,0,0.25)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "none"; }}
             >
-              Tell Us What You Need
-            </a>
+              Hire Your AI Employee
+            </button>
             <a
               href="#use-cases"
               style={{ display: "inline-block", padding: "1rem 2.5rem", background: "transparent", color: "#f5f5f0", borderRadius: "100px", fontWeight: 600, fontSize: "1rem", border: "1px solid rgba(245,245,240,0.2)", transition: "all 0.3s", textDecoration: "none" }}
@@ -141,6 +161,46 @@ export default function AgentHero() {
           </div>
         </div>
       </div>
+
+      {/* Plan Picker Modal */}
+      {showPlanPicker && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(8px)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }} onClick={() => setShowPlanPicker(false)}>
+          <div style={{ background: "#1a1a1a", borderRadius: "24px", maxWidth: "500px", width: "100%", padding: "2.5rem", position: "relative", border: "1px solid rgba(200,255,0,0.15)" }} onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setShowPlanPicker(false)} style={{ position: "absolute", top: "1rem", right: "1rem", background: "none", border: "none", color: "#666", fontSize: "1.5rem", cursor: "pointer", padding: "0.5rem" }}>&times;</button>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: 800, marginBottom: "0.5rem", color: "#f5f5f0" }}>Choose your plan</h2>
+            <p style={{ color: "#888", fontSize: "0.9rem", marginBottom: "2rem" }}>No contracts. Cancel anytime. Live in 48 hours.</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <button
+                onClick={() => handleCheckout("starter")}
+                disabled={checkoutLoading === "starter"}
+                style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1.25rem 1.5rem", background: "rgba(245,245,240,0.03)", border: "1px solid rgba(245,245,240,0.1)", borderRadius: "16px", cursor: checkoutLoading === "starter" ? "wait" : "pointer", transition: "all 0.3s", color: "#f5f5f0", width: "100%" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(200,255,0,0.3)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(245,245,240,0.1)"; }}
+              >
+                <div style={{ textAlign: "left" }}>
+                  <div style={{ fontWeight: 700, fontSize: "1.1rem" }}>Starter Agent</div>
+                  <div style={{ color: "#888", fontSize: "0.85rem", marginTop: "0.25rem" }}>One workflow, 500 tasks/mo</div>
+                </div>
+                <div style={{ fontWeight: 900, fontSize: "1.3rem", color: "#c8ff00" }}>{checkoutLoading === "starter" ? "..." : "$300/mo"}</div>
+              </button>
+              <button
+                onClick={() => handleCheckout("pro")}
+                disabled={checkoutLoading === "pro"}
+                style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1.25rem 1.5rem", background: "rgba(200,255,0,0.05)", border: "2px solid rgba(200,255,0,0.3)", borderRadius: "16px", cursor: checkoutLoading === "pro" ? "wait" : "pointer", transition: "all 0.3s", color: "#f5f5f0", width: "100%", position: "relative" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#c8ff00"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(200,255,0,0.3)"; }}
+              >
+                <div style={{ position: "absolute", top: "-10px", left: "1rem", background: "#c8ff00", color: "#0a0a0a", padding: "0.2rem 0.75rem", borderRadius: "10px", fontSize: "0.65rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px" }}>Most Popular</div>
+                <div style={{ textAlign: "left" }}>
+                  <div style={{ fontWeight: 700, fontSize: "1.1rem" }}>Pro Agent</div>
+                  <div style={{ color: "#888", fontSize: "0.85rem", marginTop: "0.25rem" }}>Multiple workflows, unlimited tasks, integrations</div>
+                </div>
+                <div style={{ fontWeight: 900, fontSize: "1.3rem", color: "#c8ff00" }}>{checkoutLoading === "pro" ? "..." : "$500/mo"}</div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style>{`
         @keyframes heroFadeSlideUp {
