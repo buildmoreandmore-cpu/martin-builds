@@ -80,6 +80,12 @@ export default function DemoChat({ config }: { config: DemoConfig }) {
     if (shouldCTA) {
       response += CTA_APPEND;
       setCTAShown(true);
+      // Notify Francis
+      fetch("/api/demo-notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessName: config.businessName, industry: config.industry, slug: window.location.pathname.split("/").pop() }),
+      }).catch(() => {});
     }
 
     const buttons: Message["buttons"] = shouldCTA
