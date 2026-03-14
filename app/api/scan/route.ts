@@ -83,25 +83,21 @@ export async function POST(req: Request) {
     const score = computeScore(q1, q2, q3);
     const leaks = leakSeverity(q1, q2, q3);
 
-    // Store to Google Sheets
+    // Store to Supabase
     try {
-      await composioAction("GOOGLESHEETS_BATCH_UPDATE", "b7b9c346-46c2-4669-a56b-0887df49e72a", {
-        spreadsheet_id: "Website Scans",
-        range: "Sheet1!A:H",
-        values: [[new Date().toISOString(), email, url, industry, q1, q2, q3, String(score)]],
-        majorDimension: "ROWS",
+      const sbRes = await fetch("https://lnvzvmjhulntglbjyryz.supabase.co/rest/v1/scans", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: process.env.SUPABASE_SERVICE_ROLE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxudnp2bWpodWxudGdsYmp5cnl6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzQ1Mzk4MywiZXhwIjoyMDg5MDI5OTgzfQ.FBIT5IoBUNxQGHvHEBW-m_ss-9jbR88T72-Y1ulOyj4",
+          Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxudnp2bWpodWxudGdsYmp5cnl6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzQ1Mzk4MywiZXhwIjoyMDg5MDI5OTgzfQ.FBIT5IoBUNxQGHvHEBW-m_ss-9jbR88T72-Y1ulOyj4"}`,
+          Prefer: "return=minimal",
+        },
+        body: JSON.stringify({ email, url, industry, q1, q2, q3, score }),
       });
-    } catch {
-      // Fallback: email notification
-      try {
-        await composioAction("GMAIL_SEND_EMAIL", "b3bc9414-a6c2-4430-8f2b-7998a7f70a3b", {
-          recipient_email: "agent@martinbuilds.ai",
-          subject: `New Website Scan: ${url}`,
-          body: `Email: ${email}\nURL: ${url}\nIndustry: ${industry}\nQ1: ${q1}\nQ2: ${q2}\nQ3: ${q3}\nScore: ${score}`,
-        });
-      } catch {
-        console.error("Both Sheets and Gmail fallback failed");
-      }
+      if (!sbRes.ok) throw new Error("Supabase insert failed");
+    } catch (e) {
+      console.error("Supabase store failed:", e);
     }
 
     // Send results email to prospect
