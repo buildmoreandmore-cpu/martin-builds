@@ -79,6 +79,53 @@ function getPain(industry: string): { pain: string; stat: string } {
   return INDUSTRY_PAIN[industry] || { pain: "repetitive tasks eating your day", stat: "Businesses using AI automation save 15+ hours per week on average" };
 }
 
+// --- Scan Email Templates ---
+
+interface ScanTemplateData {
+  name: string;
+  businessName: string;
+  websiteUrl: string;
+  score: number;
+  leaks: { title: string; severity: string }[];
+}
+
+export function getScanEmailTemplate(dayNumber: number, data: ScanTemplateData): { subject: string; body: string } | null {
+  const { name, businessName, websiteUrl, score, leaks } = data;
+  const topLeaks = leaks
+    .filter(l => l.severity === "CRITICAL" || l.severity === "WARNING")
+    .slice(0, 3);
+
+  switch (dayNumber) {
+    case 0: {
+      return {
+        subject: `Your Website Health Score: ${score}/100`,
+        body: `Hi ${name},\n\nHere are your scan results for ${websiteUrl}.\n\nYour score: ${score}/100\n\nYour top revenue leaks:\n${topLeaks.map(l => `• ${l.title} (${l.severity})`).join("\n")}\n\nThese are costing you leads every day. Want to see how we'd fix them?\n\nhttps://martinbuilds.ai/discovery-call\n\n— Martin`,
+      };
+    }
+    case 2: {
+      const worst = topLeaks[0] || { title: "Lead Capture Failure", severity: "CRITICAL" };
+      return {
+        subject: "Your biggest revenue leak — and what it's costing you",
+        body: `Hey ${name},\n\nYour scan flagged "${worst.title}" as your #1 issue.\n\nIn plain English: visitors are landing on ${websiteUrl} and leaving without a way to reach you. Every day that goes unfixed, you're losing potential customers who were ready to buy.\n\nThe fix isn't complicated — it just needs to get done. We typically resolve this in the first week.\n\nWant to see the game plan?\nhttps://martinbuilds.ai/discovery-call\n\n— Martin`,
+      };
+    }
+    case 4: {
+      return {
+        subject: `Before vs. After: What ${websiteUrl} could look like`,
+        body: `Hey ${name},\n\nImagine ${websiteUrl} with every leak fixed:\n\n• Loads fast on every device\n• Mobile-optimized so visitors don't bounce\n• Clear CTAs that actually convert\n• SEO basics dialed in so Google sends you traffic\n• Leads captured 24/7 — even at 2 AM\n\nWe do this in 2 weeks. No contracts.\n\nhttps://martinbuilds.ai/discovery-call\n\n— Martin`,
+      };
+    }
+    case 7: {
+      return {
+        subject: `Last call, ${name}`,
+        body: `Hey ${name},\n\nI don't want to keep emailing if the timing isn't right.\n\nBut your site is still leaking leads. If you ever want to fix it:\nhttps://martinbuilds.ai/discovery-call\n\nWishing ${businessName} all the best.\n\n— Martin`,
+      };
+    }
+    default:
+      return null;
+  }
+}
+
 export function getEmailTemplate(dayNumber: number, data: TemplateData): { subject: string; body: string } | null {
   const { name, businessName, industry, email } = data;
 

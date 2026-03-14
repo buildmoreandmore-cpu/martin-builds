@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { handleWhatsAppMessage } from "@/lib/whatsapp-agent-brain";
 import { getClientByPhone } from "@/lib/clients";
+import { sendEmail } from "@/lib/send-email";
 
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || "martin-builds-whatsapp-2026";
 const WA_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN || "";
@@ -49,8 +50,24 @@ export async function POST(req: NextRequest) {
 
       // Send reply back via WhatsApp API
       if (reply && WA_ACCESS_TOKEN) {
-        await sendWhatsAppMessage(phone, reply);
-        console.log(`[WhatsApp] Reply sent to ${phone}: ${reply.slice(0, 100)}`);
+        const waSuccess = await sendWhatsAppMessage(phone, reply);
+        if (waSuccess) {
+          console.log(`[WhatsApp] Reply sent to ${phone}: ${reply.slice(0, 100)}`);
+        } else {
+          // Fallback: send via email
+          console.log(`[WhatsApp] Send failed, attempting email fallback for ${phone}`);
+          const client = await getClientByPhone(phone);
+          if (client?.email) {
+            await sendEmail({
+              to: client.email,
+              subject: "Your AI Agent Reply",
+              body: `${reply}\n\n---\nYour agent replied via email while we finish setting up your WhatsApp connection. Once WhatsApp is fully active, all replies will come directly to your WhatsApp.`,
+            });
+            console.log(`[WhatsApp] Email fallback sent to ${client.email}`);
+          } else {
+            console.error(`[WhatsApp] No email found for phone ${phone}, reply dropped`);
+          }
+        }
       }
     }
 
@@ -63,7 +80,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function sendWhatsAppMessage(to: string, text: string) {
+async function sendWhatsAppMessage(to: string, text: string): Promise<boolean> {
   const res = await fetch(`https://graph.facebook.com/v21.0/${WA_PHONE_NUMBER_ID}/messages`, {
     method: "POST",
     headers: {
@@ -81,5 +98,7 @@ async function sendWhatsAppMessage(to: string, text: string) {
   if (!res.ok) {
     const err = await res.text();
     console.error("[WhatsApp] Send failed:", err);
+    return false;
   }
+  return true;
 }

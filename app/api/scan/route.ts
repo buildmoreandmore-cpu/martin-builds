@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { addToScanFunnel, updateScanFunnelEntry } from "@/lib/funnel";
+import { getScanEmailTemplate } from "@/lib/email-templates";
+import { sendEmail } from "@/lib/send-email";
 
 type Severity = "CRITICAL" | "WARNING" | "OK";
 
@@ -110,6 +113,35 @@ export async function POST(req: Request) {
       });
     } catch {
       console.error("Failed to send results email");
+    }
+
+    // Add to scan funnel and send Day 0 email
+    try {
+      const entry = addToScanFunnel({
+        email,
+        name: email.split("@")[0], // best we have; scan form may not capture name
+        businessName: url,
+        websiteUrl: url,
+        score,
+        leaks: leaks.map(l => ({ title: l.title, severity: l.severity })),
+      });
+
+      const template = getScanEmailTemplate(0, {
+        name: entry.name,
+        businessName: entry.businessName,
+        websiteUrl: entry.websiteUrl,
+        score: entry.score,
+        leaks: entry.leaks,
+      });
+
+      if (template) {
+        const sent = await sendEmail({ to: email, subject: template.subject, body: template.body });
+        if (sent) {
+          updateScanFunnelEntry(email, { emailsSent: [0] });
+        }
+      }
+    } catch (e) {
+      console.error("Scan funnel error:", e);
     }
 
     return NextResponse.json({ success: true });
