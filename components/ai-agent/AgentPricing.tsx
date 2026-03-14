@@ -6,6 +6,7 @@ import ScrollReveal from "../ScrollReveal";
 const plans = [
   {
     name: "Starter Agent",
+    key: "starter",
     price: "$300",
     period: "/month",
     description: "For solopreneurs and small teams that need help with the basics.",
@@ -23,6 +24,7 @@ const plans = [
   },
   {
     name: "Pro Agent",
+    key: "pro",
     price: "$500",
     period: "/month",
     description: "For businesses that need a full AI employee across multiple workflows.",
@@ -47,6 +49,7 @@ export default function AgentPricing() {
   const [showOutro, setShowOutro] = useState(false);
   const [showTyping, setShowTyping] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [loading, setLoading] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -69,6 +72,24 @@ export default function AgentPricing() {
     return () => timers.forEach(clearTimeout);
   }, [isVisible]);
 
+  async function handleCheckout(planKey: string) {
+    setLoading(planKey);
+    try {
+      const res = await fetch("/api/agent-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: planKey }),
+      });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+      else alert("Something went wrong. Please try again.");
+    } catch {
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(null);
+    }
+  }
+
   return (
     <section id="pricing" className="pricing-section" style={{ padding: "6rem 3rem", background: "rgba(200,255,0,0.015)" }}>
       <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
@@ -81,7 +102,6 @@ export default function AgentPricing() {
         </ScrollReveal>
 
         <div ref={ref}>
-          {/* Agent intro message */}
           {(showIntro || showTyping) && (
             <div style={{ maxWidth: "600px", margin: "0 auto 2rem", display: "flex", gap: "0.6rem", alignItems: "flex-start" }}>
               <div style={{ width: "30px", height: "30px", borderRadius: "50%", background: "rgba(200,255,0,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -101,7 +121,6 @@ export default function AgentPricing() {
             </div>
           )}
 
-          {/* Pricing Cards */}
           {showCards && (
             <div className="pricing-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "2rem", alignItems: "stretch", animation: "pricingFadeSlideUp 0.5s ease-out forwards" }}>
               {plans.map((plan) => (
@@ -155,31 +174,35 @@ export default function AgentPricing() {
                       ))}
                     </ul>
                   </div>
-                  <a href="/contact" style={{
-                    display: "block",
-                    width: "100%",
-                    padding: "1.25rem 2rem",
-                    background: plan.popular ? "#c8ff00" : "transparent",
-                    color: plan.popular ? "#0a0a0a" : "#c8ff00",
-                    border: plan.popular ? "none" : "2px solid rgba(200,255,0,0.3)",
-                    borderRadius: "12px",
-                    fontSize: "1rem",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                    transition: "all 0.3s",
-                    textDecoration: "none",
-                    textAlign: "center",
-                    boxSizing: "border-box"
-                  }}
-                    onMouseEnter={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.background = plan.popular ? "rgba(200,255,0,0.9)" : "rgba(200,255,0,0.1)"; }}
-                    onMouseLeave={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.background = plan.popular ? "#c8ff00" : "transparent"; }}
-                  >{plan.cta}</a>
-
+                  <button
+                    onClick={() => handleCheckout(plan.key)}
+                    disabled={loading === plan.key}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "1.25rem 2rem",
+                      background: plan.popular ? "#c8ff00" : "transparent",
+                      color: plan.popular ? "#0a0a0a" : "#c8ff00",
+                      border: plan.popular ? "none" : "2px solid rgba(200,255,0,0.3)",
+                      borderRadius: "12px",
+                      fontSize: "1rem",
+                      fontWeight: 700,
+                      cursor: loading === plan.key ? "wait" : "pointer",
+                      transition: "all 0.3s",
+                      textAlign: "center",
+                      boxSizing: "border-box",
+                      opacity: loading === plan.key ? 0.6 : 1,
+                    }}
+                    onMouseEnter={(e) => { if (loading) return; const el = e.currentTarget as HTMLButtonElement; el.style.background = plan.popular ? "rgba(200,255,0,0.9)" : "rgba(200,255,0,0.1)"; }}
+                    onMouseLeave={(e) => { const el = e.currentTarget as HTMLButtonElement; el.style.background = plan.popular ? "#c8ff00" : "transparent"; }}
+                  >
+                    {loading === plan.key ? "Redirecting to checkout..." : plan.cta}
+                  </button>
+                </div>
               ))}
             </div>
           )}
 
-          {/* Outro message */}
           {showOutro && (
             <div style={{ maxWidth: "600px", margin: "2rem auto 0", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
               <div style={{ display: "flex", gap: "0.6rem", alignItems: "flex-start", animation: "pricingFadeSlideUp 0.4s ease-out forwards" }}>
