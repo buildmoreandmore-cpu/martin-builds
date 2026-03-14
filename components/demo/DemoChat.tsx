@@ -29,7 +29,14 @@ export default function DemoChat({ config }: { config: DemoConfig }) {
   const [promptsUsed, setPromptsUsed] = useState(false);
   const [userMsgCount, setUserMsgCount] = useState(0);
   const [ctaShown, setCTAShown] = useState(false);
+  const [demoEmail, setDemoEmail] = useState("");
+  const [demoName, setDemoName] = useState("");
   const chatRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setDemoEmail(localStorage.getItem("demo_email") || "");
+    setDemoName(localStorage.getItem("demo_name") || "");
+  }, []);
 
   useEffect(() => {
     if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
@@ -84,7 +91,7 @@ export default function DemoChat({ config }: { config: DemoConfig }) {
       fetch("/api/demo-notify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ businessName: config.businessName, industry: config.industry, slug: window.location.pathname.split("/").pop() }),
+        body: JSON.stringify({ businessName: config.businessName, industry: config.industry, slug: window.location.pathname.split("/").pop(), email: demoEmail, name: demoName }),
       }).catch(() => {});
     }
 

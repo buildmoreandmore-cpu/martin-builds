@@ -40,6 +40,8 @@ export default function DemoRequest() {
         return;
       }
       if (!res.ok) throw new Error();
+      localStorage.setItem("demo_email", form.email);
+      localStorage.setItem("demo_name", form.name);
       setSubmitted(true);
     } catch {
       setError("Something went wrong. Please try again.");
