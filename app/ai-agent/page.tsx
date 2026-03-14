@@ -8,7 +8,6 @@ import AgentStats from "@/components/ai-agent/AgentStats";
 import IndustryGrid from "@/components/ai-agent/IndustryGrid";
 import HowItWorks from "@/components/ai-agent/HowItWorks";
 import AgentPricing from "@/components/ai-agent/AgentPricing";
-import AgentGuarantee from "@/components/ai-agent/AgentGuarantee";
 import AgentFAQ from "@/components/ai-agent/AgentFAQ";
 import ScanCTA from "@/components/ai-agent/ScanCTA";
 import AgentFinalCTA from "@/components/ai-agent/AgentFinalCTA";
@@ -56,7 +55,6 @@ export default function AIAgentPage() {
       <IndustryGrid />
       <HowItWorks />
       <AgentPricing />
-      <AgentGuarantee />
       <AgentFAQ />
       <ScanCTA />
       <AgentFinalCTA />

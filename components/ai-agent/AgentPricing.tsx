@@ -175,11 +175,6 @@ export default function AgentPricing() {
                     onMouseLeave={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.background = plan.popular ? "#c8ff00" : "transparent"; }}
                   >{plan.cta}</a>
 
-                  <div style={{ marginTop: "1.5rem", paddingTop: "1rem", borderTop: "1px solid rgba(245,245,240,0.06)", fontSize: "0.8rem", color: "#c8ff00", fontFamily: "'Space Mono', monospace", display: "flex", alignItems: "center", gap: "0.5rem", opacity: 0.8 }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-                    10 leads in 30 days or month 1 is free
-                  </div>
-                </div>
               ))}
             </div>
           )}
