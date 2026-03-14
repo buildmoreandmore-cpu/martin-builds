@@ -20,6 +20,14 @@ interface Message {
 
 const CTA_APPEND = "\n\nBy the way — this is just the demo version. The full agent captures every lead, books appointments directly into your calendar, follows up automatically, and integrates with your existing tools. Want to see what the full setup looks like?";
 
+const FALLBACK_VARIANTS = [
+  (name: string) => `That's a great question! For the most specific answer, I'd recommend speaking with the team at ${name} directly. Want me to help you schedule that?`,
+  (name: string) => `I want to make sure I give you accurate info on that. The team at ${name} can give you the details — would you like to book a quick call?`,
+  (name: string) => `Good question. I don't have that specific detail right now, but I can connect you with someone at ${name} who does. Want to schedule a time?`,
+  (name: string) => `I appreciate you asking! That's something the team at ${name} handles directly. Can I help you set up a time to chat with them?`,
+  (name: string) => `Let me make sure you get the right answer on that. Would you like to schedule a consultation with ${name}? I can help with that right now.`,
+];
+
 export default function DemoChat({ config }: { config: DemoConfig }) {
   const [messages, setMessages] = useState<Message[]>([
     { role: "agent", text: config.welcomeMessage },
@@ -29,7 +37,8 @@ export default function DemoChat({ config }: { config: DemoConfig }) {
   const [promptsUsed, setPromptsUsed] = useState(false);
   const [userMsgCount, setUserMsgCount] = useState(0);
   const [ctaShown, setCTAShown] = useState(false);
-  const [tellMeMoreShown, setTellMeMoreShown] = useState(false);
+  const usedResponseKeys = useRef<Set<string>>(new Set());
+  const fallbackIndex = useRef(0);
   const chatRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -38,11 +47,39 @@ export default function DemoChat({ config }: { config: DemoConfig }) {
 
   function findResponse(text: string): string {
     const lower = text.toLowerCase();
+
+    // Score each response key by how many keywords match
+    const scored: { key: string; response: string; score: number; matchCount: number }[] = [];
+
     for (const [keys, response] of Object.entries(config.responses)) {
-      const keywords = keys.split("|");
-      if (keywords.some((k) => lower.includes(k.trim()))) return response;
+      const keywords = keys.split("|").map(k => k.trim().toLowerCase());
+      const matchCount = keywords.filter(k => lower.includes(k)).length;
+      if (matchCount > 0) {
+        // Penalize already-used responses so we prefer fresh ones
+        const usedPenalty = usedResponseKeys.current.has(keys) ? -0.5 : 0;
+        scored.push({ key: keys, response, score: matchCount + usedPenalty, matchCount });
+      }
     }
-    return config.fallback;
+
+    // Sort by score descending
+    scored.sort((a, b) => b.score - a.score);
+
+    // Try to find an unused response first
+    const unused = scored.find(s => !usedResponseKeys.current.has(s.key));
+    if (unused) {
+      usedResponseKeys.current.add(unused.key);
+      return unused.response;
+    }
+
+    // If all matching responses have been used, return the best match anyway
+    if (scored.length > 0) {
+      return scored[0].response;
+    }
+
+    // Rotate through fallback variants
+    const idx = fallbackIndex.current % FALLBACK_VARIANTS.length;
+    fallbackIndex.current++;
+    return FALLBACK_VARIANTS[idx](config.businessName);
   }
 
   function sendMessage(text: string) {
@@ -72,16 +109,11 @@ export default function DemoChat({ config }: { config: DemoConfig }) {
   }
 
   function handleTellMore() {
-    setTellMeMoreShown(true);
     setMessages((prev) => {
-      // Remove buttons from last agent msg
       const updated = [...prev];
       const last = updated[updated.length - 1];
       if (last && last.buttons) updated[updated.length - 1] = { ...last, buttons: undefined };
-      return [
-        ...updated,
-        { role: "user", text: "Tell me more" },
-      ];
+      return [...updated, { role: "user", text: "Tell me more" }];
     });
     setTyping(true);
     setTimeout(() => {
