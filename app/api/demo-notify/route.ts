@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     if (email) {
       addToFunnel({ email, name, businessName, industry, slug });
 
-      const template = getEmailTemplate(0, { name, businessName, industry });
+      const template = getEmailTemplate(0, { name, businessName, industry, email });
       if (template) {
         await sendEmail({ to: email, subject: template.subject, body: template.body }).catch(() => {});
       }
