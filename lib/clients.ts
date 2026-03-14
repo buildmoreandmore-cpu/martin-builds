@@ -1,162 +1,170 @@
 /**
- * Client Registry — JSON file-based for MVP.
- * Maps WhatsApp phone numbers to client profiles.
- * Will move to DB later.
+ * Client Registry — Supabase-backed.
  */
 
-import { readFile, writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { supabase } from "./supabase";
 
-const DATA_DIR = path.join(process.cwd(), "data");
-const CLIENTS_FILE = path.join(DATA_DIR, "clients.json");
-
-export interface WhatsAppClient {
+export interface Client {
+  id?: string;
   email: string;
   name: string;
   phone: string;
-  businessName: string;
-  businessDescription?: string;
-  botName?: string;
+  business_name: string;
+  business_description?: string;
+  bot_name?: string;
   industry: string;
   plan: string;
-  connectedTools: string[];
-  createdAt: string;
-  telegramChatId?: string;
-  linkingCode?: string;
-  stripeCustomerId?: string;
-  stripeSubscriptionId?: string;
+  connected_tools: string[];
+  telegram_chat_id?: string;
+  linking_code?: string;
+  stripe_customer_id?: string;
+  stripe_subscription_id?: string;
   active: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
-type ClientsMap = Record<string, WhatsAppClient>;
+// Backward compat alias
+export type WhatsAppClient = Client;
 
-async function ensureDataDir(): Promise<void> {
-  try {
-    await mkdir(DATA_DIR, { recursive: true });
-  } catch {
-    // already exists
-  }
+export async function getClientByPhone(phone: string): Promise<Client | null> {
+  const normalized = normalizePhone(phone);
+  const { data } = await supabase
+    .from("clients")
+    .select("*")
+    .eq("phone", normalized)
+    .single();
+  return data;
 }
 
-async function loadClients(): Promise<ClientsMap> {
-  try {
-    const raw = await readFile(CLIENTS_FILE, "utf-8");
-    return JSON.parse(raw);
-  } catch {
-    return {};
-  }
+export async function getClientByEmail(email: string): Promise<Client | null> {
+  const { data } = await supabase
+    .from("clients")
+    .select("*")
+    .eq("email", email.toLowerCase())
+    .single();
+  return data;
 }
 
-async function saveClients(clients: ClientsMap): Promise<void> {
-  await ensureDataDir();
-  await writeFile(CLIENTS_FILE, JSON.stringify(clients, null, 2));
+export async function getClientByTelegramId(chatId: string): Promise<Client | null> {
+  const { data } = await supabase
+    .from("clients")
+    .select("*")
+    .eq("telegram_chat_id", chatId)
+    .single();
+  return data;
 }
 
-/**
- * Normalize phone: strip spaces, dashes, ensure + prefix.
- */
-function normalizePhone(phone: string): string {
-  const cleaned = phone.replace(/[\s\-()]/g, "");
-  return cleaned.startsWith("+") ? cleaned : `+${cleaned}`;
-}
-
-export async function getClientByPhone(phone: string): Promise<WhatsAppClient | null> {
-  const clients = await loadClients();
-  return clients[normalizePhone(phone)] || null;
-}
-
-export async function getClientByEmail(email: string): Promise<WhatsAppClient | null> {
-  const clients = await loadClients();
-  const normalized = email.toLowerCase();
-  for (const client of Object.values(clients)) {
-    if (client.email.toLowerCase() === normalized) return client;
-  }
-  return null;
+export async function getClientByStripeCustomer(customerId: string): Promise<Client | null> {
+  const { data } = await supabase
+    .from("clients")
+    .select("*")
+    .eq("stripe_customer_id", customerId)
+    .single();
+  return data;
 }
 
 export async function registerClient(data: {
-  email: string;
   name: string;
+  email: string;
   phone: string;
   businessName: string;
   industry: string;
   plan?: string;
-}): Promise<WhatsAppClient> {
-  const clients = await loadClients();
-  const phone = normalizePhone(data.phone);
-
-  const client: WhatsAppClient = {
-    email: data.email,
+}): Promise<Client> {
+  const row = {
     name: data.name,
-    phone,
-    businessName: data.businessName,
-    industry: data.industry,
+    email: data.email.toLowerCase(),
+    phone: normalizePhone(data.phone),
+    business_name: data.businessName,
+    industry: data.industry || "other",
     plan: data.plan || "starter",
-    connectedTools: [],
-    createdAt: new Date().toISOString(),
+    connected_tools: [],
     active: true,
   };
 
-  clients[phone] = client;
-  await saveClients(clients);
+  const { data: client, error } = await supabase
+    .from("clients")
+    .upsert(row, { onConflict: "email" })
+    .select()
+    .single();
+
+  if (error) throw new Error(`registerClient: ${error.message}`);
   return client;
-}
-
-export async function getClientByTelegramId(chatId: string): Promise<WhatsAppClient | null> {
-  const clients = await loadClients();
-  for (const client of Object.values(clients)) {
-    if (client.telegramChatId === chatId) return client;
-  }
-  return null;
-}
-
-export async function linkTelegram(code: string, chatId: string): Promise<WhatsAppClient | null> {
-  const clients = await loadClients();
-  for (const [phone, client] of Object.entries(clients)) {
-    if (client.linkingCode === code) {
-      clients[phone] = { ...client, telegramChatId: chatId, linkingCode: undefined };
-      await saveClients(clients);
-      return clients[phone];
-    }
-  }
-  return null;
-}
-
-export async function generateLinkingCode(email: string): Promise<string | null> {
-  const clients = await loadClients();
-  const normalized = email.toLowerCase();
-  for (const [phone, client] of Object.entries(clients)) {
-    if (client.email.toLowerCase() === normalized) {
-      const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-      clients[phone] = { ...client, linkingCode: code };
-      await saveClients(clients);
-      return code;
-    }
-  }
-  return null;
-}
-
-export async function getClientByStripeCustomer(customerId: string): Promise<WhatsAppClient | null> {
-  const clients = await loadClients();
-  for (const client of Object.values(clients)) {
-    if (client.stripeCustomerId === customerId) return client;
-  }
-  return null;
 }
 
 export async function updateClient(
   email: string,
-  updates: Partial<WhatsAppClient>
-): Promise<WhatsAppClient | null> {
-  const clients = await loadClients();
-  const normalized = email.toLowerCase();
+  updates: Partial<Client>
+): Promise<Client | null> {
+  // Map camelCase to snake_case for common fields
+  const mapped: Record<string, unknown> = {};
+  const keyMap: Record<string, string> = {
+    businessName: "business_name",
+    businessDescription: "business_description",
+    botName: "bot_name",
+    telegramChatId: "telegram_chat_id",
+    linkingCode: "linking_code",
+    stripeCustomerId: "stripe_customer_id",
+    stripeSubscriptionId: "stripe_subscription_id",
+    connectedTools: "connected_tools",
+  };
 
-  for (const [phone, client] of Object.entries(clients)) {
-    if (client.email.toLowerCase() === normalized) {
-      clients[phone] = { ...client, ...updates };
-      await saveClients(clients);
-      return clients[phone];
-    }
+  for (const [k, v] of Object.entries(updates)) {
+    if (v === undefined) continue;
+    const dbKey = keyMap[k] || k;
+    mapped[dbKey] = v;
   }
-  return null;
+
+  const { data, error } = await supabase
+    .from("clients")
+    .update(mapped)
+    .eq("email", email.toLowerCase())
+    .select()
+    .single();
+
+  if (error) {
+    console.error("updateClient error:", error);
+    return null;
+  }
+  return data;
+}
+
+export async function linkTelegram(code: string, chatId: string): Promise<Client | null> {
+  // Find client by linking code
+  const { data: client } = await supabase
+    .from("clients")
+    .select("*")
+    .eq("linking_code", code)
+    .single();
+
+  if (!client) return null;
+
+  const { data: updated } = await supabase
+    .from("clients")
+    .update({ telegram_chat_id: chatId, linking_code: null })
+    .eq("id", client.id)
+    .select()
+    .single();
+
+  return updated;
+}
+
+export async function generateLinkingCode(email: string): Promise<string | null> {
+  const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+  const { data, error } = await supabase
+    .from("clients")
+    .update({ linking_code: code })
+    .eq("email", email.toLowerCase())
+    .select()
+    .single();
+
+  if (error || !data) return null;
+  return code;
+}
+
+function normalizePhone(phone: string): string {
+  const cleaned = phone.replace(/[\s\-()]/g, "");
+  return cleaned.startsWith("+") ? cleaned : `+${cleaned}`;
 }

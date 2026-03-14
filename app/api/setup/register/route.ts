@@ -29,16 +29,17 @@ export async function POST(req: NextRequest) {
     const existing = await getClientByEmail(email);
     if (existing) {
       await updateClient(email, {
-        name, businessName, businessDescription, botName, industry,
+        name, business_name: businessName, business_description: businessDescription,
+        bot_name: botName, industry,
         ...(phone ? { phone } : {}),
-        ...(stripeCustomerId ? { stripeCustomerId } : {}),
-        ...(stripeSubscriptionId ? { stripeSubscriptionId } : {}),
+        ...(stripeCustomerId ? { stripe_customer_id: stripeCustomerId } : {}),
+        ...(stripeSubscriptionId ? { stripe_subscription_id: stripeSubscriptionId } : {}),
       });
       return NextResponse.json({ ok: true, updated: true });
     }
 
     // Register new client
-    const client = await registerClient({
+    await registerClient({
       name, email,
       phone: phone || "not-provided",
       businessName, industry: industry || "other",
@@ -47,10 +48,10 @@ export async function POST(req: NextRequest) {
 
     // Update with extra fields
     await updateClient(email, {
-      businessDescription,
-      botName: botName || businessName + " Agent",
-      stripeCustomerId,
-      stripeSubscriptionId,
+      business_description: businessDescription,
+      bot_name: botName || businessName + " Agent",
+      stripe_customer_id: stripeCustomerId || undefined,
+      stripe_subscription_id: stripeSubscriptionId || undefined,
     });
 
     // Send internal notification
@@ -60,7 +61,7 @@ export async function POST(req: NextRequest) {
       body: `New client signed up!\n\nName: ${name}\nEmail: ${email}\nBusiness: ${businessName}\nPlan: ${plan}\nIndustry: ${industry}\n\nBot Name: ${botName || businessName + " Agent"}\nDescription: ${businessDescription || "Not provided"}`,
     }).catch(() => {});
 
-    return NextResponse.json({ ok: true, client });
+    return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("[Setup Register]", err);
     return NextResponse.json({ error: "Registration failed" }, { status: 500 });

@@ -14,16 +14,19 @@ import {
   sendWhatsAppMessage,
 } from "./composio-tools";
 import { loadWidgetChats } from "./widget-store";
+import { getRecentMessages, saveMessage } from "./messages";
 
 function buildSystemPrompt(client: WhatsAppClient, connectedTools: string[]): string {
   const toolsList = connectedTools.length > 0
     ? connectedTools.join(", ")
     : "None connected yet";
 
-  const agentName = client.botName || client.businessName + " Agent";
-  const desc = client.businessDescription ? `\n\nAbout the business: ${client.businessDescription}` : "";
+  const agentName = (client as Record<string, unknown>).bot_name || (client as Record<string, unknown>).botName || client.business_name || "Agent";
+  const bizName = client.business_name || (client as Record<string, unknown>).businessName || "your business";
+  const bizDesc = (client as Record<string, unknown>).business_description || (client as Record<string, unknown>).businessDescription;
+  const desc = bizDesc ? `\n\nAbout the business: ${bizDesc}` : "";
 
-  return `You are ${agentName}, an AI assistant for ${client.businessName}, a ${client.industry} business. You communicate with the business owner via messaging.${desc}
+  return `You are ${agentName}, an AI assistant for ${bizName}, a ${client.industry} business. You communicate with the business owner via messaging.${desc}
 
 Your connected tools: ${toolsList}
 
@@ -166,15 +169,23 @@ export async function handleWhatsAppMessage(
 
   const entityId = client.email;
   const connectedTools = await getConnectedTools(entityId);
-
   const systemPrompt = buildSystemPrompt(client, connectedTools);
 
+  // Load conversation history
+  const history = client.id ? await getRecentMessages(client.id, 20) : [];
+
   try {
+    // Build message array with history
+    const messages = [
+      ...history.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
+      { role: "user" as const, content: messageBody },
+    ];
+
+    // Save user message
+    if (client.id) await saveMessage(client.id, "user", messageBody);
+
     // First pass: let the AI decide what to do
-    const firstResponse = await chatCompletion(
-      [{ role: "user", content: messageBody }],
-      systemPrompt
-    );
+    const firstResponse = await chatCompletion(messages, systemPrompt);
 
     const actions = parseActions(firstResponse.content);
     let textResponse = cleanResponse(firstResponse.content);
@@ -185,11 +196,11 @@ export async function handleWhatsAppMessage(
 
       const secondResponse = await chatCompletion(
         [
-          { role: "user", content: messageBody },
-          { role: "assistant", content: firstResponse.content },
+          ...messages,
+          { role: "assistant" as const, content: firstResponse.content },
           {
-            role: "user",
-            content: `Here are the results from the actions you requested:\n\n${actionResults.join("\n\n")}\n\nNow summarize these results conversationally for the business owner. Be concise — this is WhatsApp.`,
+            role: "user" as const,
+            content: `Here are the results from the actions you requested:\n\n${actionResults.join("\n\n")}\n\nNow summarize these results conversationally for the business owner. Be concise.`,
           },
         ],
         systemPrompt
@@ -202,6 +213,9 @@ export async function handleWhatsAppMessage(
     if (!textResponse) {
       textResponse = "Let me look into that for you. One moment...";
     }
+
+    // Save assistant response
+    if (client.id) await saveMessage(client.id, "assistant", textResponse);
 
     return textResponse;
   } catch (err) {
