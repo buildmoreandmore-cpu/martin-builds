@@ -20,14 +20,6 @@ interface Message {
 
 const CTA_APPEND = "\n\nBy the way — this is just the demo version. The full agent captures every lead, books appointments directly into your calendar, follows up automatically, and integrates with your existing tools. Want to see what the full setup looks like?";
 
-const FALLBACK_VARIANTS = [
-  (name: string) => `That's a great question! For the most specific answer, I'd recommend speaking with the team at ${name} directly. Want me to help you schedule that?`,
-  (name: string) => `I want to make sure I give you accurate info on that. The team at ${name} can give you the details — would you like to book a quick call?`,
-  (name: string) => `Good question. I don't have that specific detail right now, but I can connect you with someone at ${name} who does. Want to schedule a time?`,
-  (name: string) => `I appreciate you asking! That's something the team at ${name} handles directly. Can I help you set up a time to chat with them?`,
-  (name: string) => `Let me make sure you get the right answer on that. Would you like to schedule a consultation with ${name}? I can help with that right now.`,
-];
-
 export default function DemoChat({ config }: { config: DemoConfig }) {
   const [messages, setMessages] = useState<Message[]>([
     { role: "agent", text: config.welcomeMessage },
@@ -37,75 +29,68 @@ export default function DemoChat({ config }: { config: DemoConfig }) {
   const [promptsUsed, setPromptsUsed] = useState(false);
   const [userMsgCount, setUserMsgCount] = useState(0);
   const [ctaShown, setCTAShown] = useState(false);
-  const usedResponseKeys = useRef<Set<string>>(new Set());
-  const fallbackIndex = useRef(0);
   const chatRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
   }, [messages, typing]);
 
-  function findResponse(text: string): string {
-    const lower = text.toLowerCase();
-
-    // Score each response key by how many keywords match
-    const scored: { key: string; response: string; score: number; matchCount: number }[] = [];
-
-    for (const [keys, response] of Object.entries(config.responses)) {
-      const keywords = keys.split("|").map(k => k.trim().toLowerCase());
-      const matchCount = keywords.filter(k => lower.includes(k)).length;
-      if (matchCount > 0) {
-        // Penalize already-used responses so we prefer fresh ones
-        const usedPenalty = usedResponseKeys.current.has(keys) ? -0.5 : 0;
-        scored.push({ key: keys, response, score: matchCount + usedPenalty, matchCount });
+  async function getAIResponse(allMessages: Message[]): Promise<string> {
+    try {
+      const res = await fetch("/api/demo-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: allMessages.map(m => ({ role: m.role, text: m.text })),
+          config: {
+            businessName: config.businessName,
+            industry: config.industry,
+            responses: config.responses,
+            fallback: config.fallback,
+          },
+        }),
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      return data.reply;
+    } catch {
+      // Fallback to simple keyword match if API fails
+      const lower = allMessages[allMessages.length - 1].text.toLowerCase();
+      for (const [keys, response] of Object.entries(config.responses)) {
+        if (keys.split("|").some(k => lower.includes(k.trim().toLowerCase()))) return response;
       }
+      return config.fallback;
     }
-
-    // Sort by score descending
-    scored.sort((a, b) => b.score - a.score);
-
-    // Try to find an unused response first
-    const unused = scored.find(s => !usedResponseKeys.current.has(s.key));
-    if (unused) {
-      usedResponseKeys.current.add(unused.key);
-      return unused.response;
-    }
-
-    // If all matching responses have been used, return the best match anyway
-    if (scored.length > 0) {
-      return scored[0].response;
-    }
-
-    // Rotate through fallback variants
-    const idx = fallbackIndex.current % FALLBACK_VARIANTS.length;
-    fallbackIndex.current++;
-    return FALLBACK_VARIANTS[idx](config.businessName);
   }
 
-  function sendMessage(text: string) {
+  async function sendMessage(text: string) {
     const newCount = userMsgCount + 1;
     setUserMsgCount(newCount);
     setPromptsUsed(true);
-    setMessages((prev) => [...prev, { role: "user", text }]);
+
+    const userMsg: Message = { role: "user", text };
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
     setInput("");
     setTyping(true);
 
-    setTimeout(() => {
-      let response = findResponse(text);
-      const shouldCTA = newCount >= 4 && !ctaShown;
-      if (shouldCTA) {
-        response += CTA_APPEND;
-        setCTAShown(true);
-      }
-      const buttons: Message["buttons"] = shouldCTA
-        ? [
-            { label: "Book a Discovery Call", href: "/discovery-call" },
-            { label: "Tell Me More", action: "tellmore" },
-          ]
-        : undefined;
-      setMessages((prev) => [...prev, { role: "agent", text: response, buttons }]);
-      setTyping(false);
-    }, 1000 + Math.random() * 1000);
+    let response = await getAIResponse(updatedMessages);
+
+    const shouldCTA = newCount >= 4 && !ctaShown;
+    if (shouldCTA) {
+      response += CTA_APPEND;
+      setCTAShown(true);
+    }
+
+    const buttons: Message["buttons"] = shouldCTA
+      ? [
+          { label: "Book a Discovery Call", href: "/discovery-call" },
+          { label: "Tell Me More", action: "tellmore" },
+        ]
+      : undefined;
+
+    setMessages(prev => [...prev, { role: "agent", text: response, buttons }]);
+    setTyping(false);
   }
 
   function handleTellMore() {
@@ -166,11 +151,11 @@ export default function DemoChat({ config }: { config: DemoConfig }) {
                 <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem", flexWrap: "wrap" }}>
                   {msg.buttons.map((btn, j) =>
                     btn.href ? (
-                      <a key={j} href={btn.href} style={{ padding: "0.55rem 1.2rem", borderRadius: 10, background: "#c8ff00", color: "#0a0a0a", fontWeight: 700, fontSize: "0.8rem", textDecoration: "none", transition: "transform 0.2s" }}>
+                      <a key={j} href={btn.href} style={{ padding: "0.55rem 1.2rem", borderRadius: 10, background: "#c8ff00", color: "#0a0a0a", fontWeight: 700, fontSize: "0.8rem", textDecoration: "none" }}>
                         {btn.label}
                       </a>
                     ) : (
-                      <button key={j} onClick={() => btn.action === "tellmore" && handleTellMore()} style={{ padding: "0.55rem 1.2rem", borderRadius: 10, background: "transparent", border: "1.5px solid #c8ff00", color: "#c8ff00", fontWeight: 700, fontSize: "0.8rem", cursor: "pointer", fontFamily: "'Outfit', sans-serif", transition: "all 0.2s" }}>
+                      <button key={j} onClick={() => btn.action === "tellmore" && handleTellMore()} style={{ padding: "0.55rem 1.2rem", borderRadius: 10, background: "transparent", border: "1.5px solid #c8ff00", color: "#c8ff00", fontWeight: 700, fontSize: "0.8rem", cursor: "pointer", fontFamily: "'Outfit', sans-serif" }}>
                         {btn.label}
                       </button>
                     )
@@ -201,7 +186,7 @@ export default function DemoChat({ config }: { config: DemoConfig }) {
         {!promptsUsed && !typing && messages.length === 1 && (
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "0.5rem", marginLeft: 40 }}>
             {config.quickPrompts.map((qp, i) => (
-              <button key={i} onClick={() => sendMessage(qp.question)} style={{ padding: "0.5rem 1rem", borderRadius: 100, background: "transparent", border: "1.5px solid #c8ff00", color: "#c8ff00", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer", fontFamily: "'Outfit', sans-serif", transition: "all 0.2s", whiteSpace: "nowrap" }}>
+              <button key={i} onClick={() => sendMessage(qp.question)} style={{ padding: "0.5rem 1rem", borderRadius: 100, background: "transparent", border: "1.5px solid #c8ff00", color: "#c8ff00", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer", fontFamily: "'Outfit', sans-serif", whiteSpace: "nowrap" }}>
                 {qp.label}
               </button>
             ))}
