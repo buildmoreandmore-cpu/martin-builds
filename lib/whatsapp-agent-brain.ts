@@ -20,7 +20,10 @@ function buildSystemPrompt(client: WhatsAppClient, connectedTools: string[]): st
     ? connectedTools.join(", ")
     : "None connected yet";
 
-  return `You are an AI assistant for ${client.businessName}, a ${client.industry} business. You communicate with the business owner via WhatsApp.
+  const agentName = client.botName || client.businessName + " Agent";
+  const desc = client.businessDescription ? `\n\nAbout the business: ${client.businessDescription}` : "";
+
+  return `You are ${agentName}, an AI assistant for ${client.businessName}, a ${client.industry} business. You communicate with the business owner via messaging.${desc}
 
 Your connected tools: ${toolsList}
 
@@ -153,7 +156,12 @@ export async function handleWhatsAppMessage(
 ): Promise<string> {
   const client = await getClientByPhone(phone);
   if (!client) {
-    return "Hey! It looks like you don't have an active NewHyer agent yet. Visit newhyer.com to get started.";
+    return "Hey! It looks like you don't have an active agent yet. Visit martinbuilds.ai/ai-agent to get started.";
+  }
+
+  // Kill switch — payment failed or subscription canceled
+  if (client.active === false) {
+    return "Your agent is currently paused. Please update your payment at martinbuilds.ai to reactivate.";
   }
 
   const entityId = client.email;

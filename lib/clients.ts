@@ -15,12 +15,17 @@ export interface WhatsAppClient {
   name: string;
   phone: string;
   businessName: string;
+  businessDescription?: string;
+  botName?: string;
   industry: string;
   plan: string;
   connectedTools: string[];
   createdAt: string;
   telegramChatId?: string;
   linkingCode?: string;
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
+  active: boolean;
 }
 
 type ClientsMap = Record<string, WhatsAppClient>;
@@ -89,6 +94,7 @@ export async function registerClient(data: {
     plan: data.plan || "starter",
     connectedTools: [],
     createdAt: new Date().toISOString(),
+    active: true,
   };
 
   clients[phone] = client;
@@ -126,6 +132,14 @@ export async function generateLinkingCode(email: string): Promise<string | null>
       await saveClients(clients);
       return code;
     }
+  }
+  return null;
+}
+
+export async function getClientByStripeCustomer(customerId: string): Promise<WhatsAppClient | null> {
+  const clients = await loadClients();
+  for (const client of Object.values(clients)) {
+    if (client.stripeCustomerId === customerId) return client;
   }
   return null;
 }

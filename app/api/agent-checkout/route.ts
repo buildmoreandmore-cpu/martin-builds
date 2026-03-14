@@ -20,8 +20,8 @@ export async function POST(req: NextRequest) {
       customer_email: email || undefined,
       line_items: [{ price: priceId, quantity: 1 }],
       metadata: { plan },
-      success_url: `https://newhyer.com/onboarding?session_id={CHECKOUT_SESSION_ID}&plan=${plan}`,
-      cancel_url: `${req.nextUrl.origin}/ai-agent?canceled=1`,
+      success_url: `https://martinbuilds.ai/setup?session_id={CHECKOUT_SESSION_ID}&plan=${plan}`,
+      cancel_url: `https://martinbuilds.ai/ai-agent?canceled=1`,
     });
 
     return NextResponse.json({ url: session.url });

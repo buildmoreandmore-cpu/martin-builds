@@ -73,6 +73,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
+    // Kill switch
+    if (client.active === false) {
+      await sendTelegramMessage(chatId, `Your agent is currently paused. Please update your payment at martinbuilds.ai to reactivate.`);
+      return NextResponse.json({ ok: true });
+    }
+
     // Route through agent brain
     const reply = await handleWhatsAppMessage(client.phone, text);
     await sendTelegramMessage(chatId, reply);
