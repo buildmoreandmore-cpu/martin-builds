@@ -30,11 +30,35 @@ async function appendToSheet(row: string[]) {
   }
 }
 
+async function checkEmailExists(email: string): Promise<boolean> {
+  try {
+    const res = await fetch("https://backend.composio.dev/api/v2/actions/GOOGLESHEETS_BATCH_GET/execute", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-api-key": COMPOSIO_API_KEY },
+      body: JSON.stringify({
+        connectedAccountId: SHEETS_CONNECTION_ID,
+        input: { spreadsheet_id: "Demo Requests", range: "Sheet1!C:C" },
+      }),
+    });
+    const data = await res.json();
+    const values = data?.data?.values || data?.data?.response_data?.values || [];
+    return values.some((row: string[]) => row[0]?.toLowerCase() === email.toLowerCase());
+  } catch {
+    return false; // If check fails, allow the request through
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { name, email, businessName, websiteUrl, industry } = await req.json();
     if (!name || !email || !businessName || !industry) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+
+    // Check if email already requested a demo
+    const exists = await checkEmailExists(email);
+    if (exists) {
+      return NextResponse.json({ error: "already_requested", message: "A demo has already been requested with this email address." }, { status: 409 });
     }
 
     const timestamp = new Date().toISOString();

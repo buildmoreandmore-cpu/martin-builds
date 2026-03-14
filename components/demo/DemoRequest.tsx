@@ -34,6 +34,11 @@ export default function DemoRequest() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
+      if (res.status === 409) {
+        const data = await res.json();
+        setError(data.message || "A demo has already been requested with this email address.");
+        return;
+      }
       if (!res.ok) throw new Error();
       setSubmitted(true);
     } catch {
