@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     case "invoice.paid": {
       if (client) {
         await updateClient(client.email, { active: true });
-        console.log(`[Stripe] ${client.businessName} payment received — agent active`);
+        console.log(`[Stripe] ${client.business_name} payment received — agent active`);
       }
       break;
     }
@@ -37,13 +37,13 @@ export async function POST(req: NextRequest) {
     case "invoice.payment_failed": {
       if (client) {
         await updateClient(client.email, { active: false });
-        console.log(`[Stripe] ${client.businessName} payment FAILED — agent DEACTIVATED`);
+        console.log(`[Stripe] ${client.business_name} payment FAILED — agent DEACTIVATED`);
 
         // Notify Francis
         await sendEmail({
           to: "agent@martinbuilds.ai",
-          subject: `⚠️ Payment Failed: ${client.businessName}`,
-          body: `${client.name} (${client.email}) payment failed.\nAgent has been automatically deactivated.\nBusiness: ${client.businessName}\nPlan: ${client.plan}`,
+          subject: `⚠️ Payment Failed: ${client.business_name}`,
+          body: `${client.name} (${client.email}) payment failed.\nAgent has been automatically deactivated.\nBusiness: ${client.business_name}\nPlan: ${client.plan}`,
         }).catch(() => {});
       }
       break;
@@ -53,12 +53,12 @@ export async function POST(req: NextRequest) {
     case "customer.subscription.deleted": {
       if (client) {
         await updateClient(client.email, { active: false });
-        console.log(`[Stripe] ${client.businessName} subscription canceled — agent DEACTIVATED`);
+        console.log(`[Stripe] ${client.business_name} subscription canceled — agent DEACTIVATED`);
 
         await sendEmail({
           to: "agent@martinbuilds.ai",
-          subject: `❌ Subscription Canceled: ${client.businessName}`,
-          body: `${client.name} (${client.email}) canceled their subscription.\nAgent has been deactivated.\nBusiness: ${client.businessName}`,
+          subject: `❌ Subscription Canceled: ${client.business_name}`,
+          body: `${client.name} (${client.email}) canceled their subscription.\nAgent has been deactivated.\nBusiness: ${client.business_name}`,
         }).catch(() => {});
       }
       break;
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
       const sub = event.data.object as Stripe.Subscription;
       if (client && sub.status === "active") {
         await updateClient(client.email, { active: true });
-        console.log(`[Stripe] ${client.businessName} subscription reactivated`);
+        console.log(`[Stripe] ${client.business_name} subscription reactivated`);
       }
       break;
     }

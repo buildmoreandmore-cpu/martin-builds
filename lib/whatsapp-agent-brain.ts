@@ -21,10 +21,9 @@ function buildSystemPrompt(client: WhatsAppClient, connectedTools: string[]): st
     ? connectedTools.join(", ")
     : "None connected yet";
 
-  const agentName = (client as Record<string, unknown>).bot_name || (client as Record<string, unknown>).botName || client.business_name || "Agent";
-  const bizName = client.business_name || (client as Record<string, unknown>).businessName || "your business";
-  const bizDesc = (client as Record<string, unknown>).business_description || (client as Record<string, unknown>).businessDescription;
-  const desc = bizDesc ? `\n\nAbout the business: ${bizDesc}` : "";
+  const agentName = client.bot_name || client.business_name + " Agent";
+  const bizName = client.business_name || "your business";
+  const desc = client.business_description ? `\n\nAbout the business: ${client.business_description}` : "";
 
   return `You are ${agentName}, an AI assistant for ${bizName}, a ${client.industry} business. You communicate with the business owner via messaging.${desc}
 

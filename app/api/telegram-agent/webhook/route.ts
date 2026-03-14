@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
         if (client) {
           await sendTelegramMessage(
             chatId,
-            `✅ Connected! Hey ${client.name}, I'm your AI agent for ${client.businessName}.\n\nYou can message me anytime — I'll check your emails, calendar, and anything else you've connected.\n\nTry: "Any new emails today?" or "What's on my calendar?"`
+            `✅ Connected! Hey ${client.name}, I'm your AI agent for ${client.business_name}.\n\nYou can message me anytime — I'll check your emails, calendar, and anything else you've connected.\n\nTry: "Any new emails today?" or "What's on my calendar?"`
           );
           return NextResponse.json({ ok: true });
         } else {
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       // Plain /start
       const existing = await getClientByTelegramId(chatId);
       if (existing) {
-        await sendTelegramMessage(chatId, `Hey ${existing.name}! 👋 Your agent for ${existing.businessName} is ready. Just message me anything.`);
+        await sendTelegramMessage(chatId, `Hey ${existing.name}! 👋 Your agent for ${existing.business_name} is ready. Just message me anything.`);
       } else {
         await sendTelegramMessage(chatId, `Hey ${firstName}! 👋 I'm your martin.builds AI agent.\n\nTo get started, use the linking code from your setup email:\n\n/start YOUR_CODE`);
       }
