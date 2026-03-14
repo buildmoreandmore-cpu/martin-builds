@@ -19,6 +19,8 @@ export interface WhatsAppClient {
   plan: string;
   connectedTools: string[];
   createdAt: string;
+  telegramChatId?: string;
+  linkingCode?: string;
 }
 
 type ClientsMap = Record<string, WhatsAppClient>;
@@ -92,6 +94,40 @@ export async function registerClient(data: {
   clients[phone] = client;
   await saveClients(clients);
   return client;
+}
+
+export async function getClientByTelegramId(chatId: string): Promise<WhatsAppClient | null> {
+  const clients = await loadClients();
+  for (const client of Object.values(clients)) {
+    if (client.telegramChatId === chatId) return client;
+  }
+  return null;
+}
+
+export async function linkTelegram(code: string, chatId: string): Promise<WhatsAppClient | null> {
+  const clients = await loadClients();
+  for (const [phone, client] of Object.entries(clients)) {
+    if (client.linkingCode === code) {
+      clients[phone] = { ...client, telegramChatId: chatId, linkingCode: undefined };
+      await saveClients(clients);
+      return clients[phone];
+    }
+  }
+  return null;
+}
+
+export async function generateLinkingCode(email: string): Promise<string | null> {
+  const clients = await loadClients();
+  const normalized = email.toLowerCase();
+  for (const [phone, client] of Object.entries(clients)) {
+    if (client.email.toLowerCase() === normalized) {
+      const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+      clients[phone] = { ...client, linkingCode: code };
+      await saveClients(clients);
+      return code;
+    }
+  }
+  return null;
 }
 
 export async function updateClient(
