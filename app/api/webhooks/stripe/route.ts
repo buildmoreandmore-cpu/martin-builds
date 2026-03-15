@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getClientByStripeCustomer, updateClient } from "@/lib/clients";
 import { sendEmail } from "@/lib/send-email";
+import { releaseBot, configureBot } from "@/lib/bot-pool";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const WEBHOOK_SECRET = process.env.STRIPE_AGENT_WEBHOOK_SECRET || "";
@@ -49,16 +50,25 @@ export async function POST(req: NextRequest) {
       break;
     }
 
-    // Subscription canceled
+    // Subscription canceled — release bot back to pool
     case "customer.subscription.deleted": {
       if (client) {
         await updateClient(client.email, { active: false });
         console.log(`[Stripe] ${client.business_name} subscription canceled — agent DEACTIVATED`);
 
+        // Release bot back to pool and reset its name
+        if (client.id && client.bot_token) {
+          await releaseBot(client.id);
+          // Reset bot name to generic
+          await configureBot(client.bot_token, "MB Agent (Available)", "martin.builds", "Available agent — pending assignment.");
+          await updateClient(client.email, { bot_token: undefined, bot_username: undefined });
+          console.log(`[Stripe] Bot released back to pool for ${client.business_name}`);
+        }
+
         await sendEmail({
           to: "agent@martinbuilds.ai",
           subject: `❌ Subscription Canceled: ${client.business_name}`,
-          body: `${client.name} (${client.email}) canceled their subscription.\nAgent has been deactivated.\nBusiness: ${client.business_name}`,
+          body: `${client.name} (${client.email}) canceled their subscription.\nAgent deactivated. Bot released back to pool.\nBusiness: ${client.business_name}`,
         }).catch(() => {});
       }
       break;
