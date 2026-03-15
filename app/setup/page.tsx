@@ -41,21 +41,40 @@ function SetupInner() {
   const [telegramLink, setTelegramLink] = useState("");
   const [linkingCode, setLinkingCode] = useState("");
 
-  // On mount, verify the Stripe session
+  const [verified, setVerified] = useState(false);
+
+  // On mount, verify the Stripe session is paid
   useEffect(() => {
-    if (!sessionId) {
+    // Allow resume via magic link (email param)
+    const resumeEmail = searchParams.get("email");
+    if (resumeEmail) {
+      setEmail(resumeEmail);
+      setVerified(true);
       setStep("profile");
+      return;
+    }
+
+    if (!sessionId) {
+      setError("No payment found. Please purchase an agent plan first.");
+      setStep("loading");
       return;
     }
     fetch(`/api/setup/verify?session_id=${sessionId}`)
       .then((r) => r.json())
       .then((data) => {
+        if (data.error || !data.email) {
+          setError("Payment not verified. Please try again or contact support.");
+          return;
+        }
         if (data.email) setEmail(data.email);
         if (data.name) setName(data.name);
+        setVerified(true);
         setStep("profile");
       })
-      .catch(() => setStep("profile"));
-  }, [sessionId]);
+      .catch(() => {
+        setError("Payment verification failed. Please try again.");
+      });
+  }, [sessionId, searchParams]);
 
   const handleProfileSubmit = async () => {
     if (!name || !email || !businessName) {
@@ -142,7 +161,21 @@ function SetupInner() {
     return (
       <div style={styles.container}>
         <div style={styles.card}>
-          <p style={{ color: "#999", textAlign: "center" }}>Setting things up...</p>
+          {error ? (
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 32, marginBottom: 12 }}>🔒</div>
+              <h1 style={styles.h1}>Setup Requires Payment</h1>
+              <p style={{ color: "#999", fontSize: 14, margin: "12px 0 20px" }}>{error}</p>
+              <a
+                href="/ai-agent"
+                style={{ ...styles.button, display: "inline-block", textDecoration: "none", textAlign: "center" as const }}
+              >
+                View Plans →
+              </a>
+            </div>
+          ) : (
+            <p style={{ color: "#999", textAlign: "center" }}>Verifying payment...</p>
+          )}
         </div>
       </div>
     );

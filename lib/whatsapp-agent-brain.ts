@@ -15,6 +15,7 @@ import {
 } from "./composio-tools";
 import { loadWidgetChats } from "./widget-store";
 import { getRecentMessages, saveMessage } from "./messages";
+import { checkRateLimit } from "./rate-limit";
 
 function buildSystemPrompt(client: WhatsAppClient, connectedTools: string[]): string {
   const toolsList = connectedTools.length > 0
@@ -164,6 +165,14 @@ export async function handleWhatsAppMessage(
   // Kill switch — payment failed or subscription canceled
   if (client.active === false) {
     return "Your agent is currently paused. Please update your payment at martinbuilds.ai to reactivate.";
+  }
+
+  // Rate limiting
+  if (client.id) {
+    const rateCheck = await checkRateLimit(client.id, client.plan);
+    if (!rateCheck.allowed) {
+      return rateCheck.reason || "You've hit your message limit. Please try again later.";
+    }
   }
 
   const entityId = client.email;

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateLinkingCode, getClientByEmail, updateClient } from "@/lib/clients";
 import { sendEmail } from "@/lib/send-email";
-import { assignBot, configureBot } from "@/lib/bot-pool";
+import { assignBot, configureBot, getPoolStats } from "@/lib/bot-pool";
 
 export async function POST(req: NextRequest) {
   try {
@@ -76,13 +76,33 @@ If you need help, reply to this email.
 — martin.builds`,
     }).catch((err) => console.error("[Welcome email failed]", err));
 
-    // Notify me (Alex) about new client + pool status
+    // Check pool and alert if low
+    const poolStats = await getPoolStats();
+    const poolWarning = poolStats.available <= 2
+      ? `\n\n🚨 POOL LOW: Only ${poolStats.available} bots remaining! Create more via @BotFather.`
+      : `\n\nPool: ${poolStats.available} available, ${poolStats.assigned} assigned.`;
+
+    // Notify Francis via Telegram if pool critical
+    if (poolStats.available <= 2) {
+      const FRANCIS_BOT_TOKEN = process.env.AGENT_TELEGRAM_BOT_TOKEN || "";
+      const FRANCIS_CHAT_ID = "7348962993";
+      await fetch(`https://api.telegram.org/bot${FRANCIS_BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: FRANCIS_CHAT_ID,
+          text: `🚨 Bot pool low! Only ${poolStats.available} bots left.\n\nNew client just used one: ${client.business_name}\n\nCreate more via @BotFather and add with /addbot`,
+        }),
+      }).catch(() => {});
+    }
+
+    // Notify via email
     await sendEmail({
       to: "agent@martinbuilds.ai",
       subject: hasDedicatedBot
         ? `✅ Bot auto-assigned: ${botName} → ${client.business_name}`
         : `⚠️ No bots in pool — ${client.business_name} needs a bot`,
-      body: `Client: ${client.name} (${email})\nBusiness: ${client.business_name}\nBot Name: ${botName}\n${hasDedicatedBot ? `Bot: @${client.bot_username || "assigned"}\nLink: ${telegramLink}` : "POOL EMPTY — create more bots via BotFather"}`,
+      body: `Client: ${client.name} (${email})\nBusiness: ${client.business_name}\nBot Name: ${botName}\n${hasDedicatedBot ? `Bot: @${client.bot_username || "assigned"}\nLink: ${telegramLink}` : "POOL EMPTY — create more bots via BotFather"}${poolWarning}`,
     }).catch(() => {});
 
     return NextResponse.json({
