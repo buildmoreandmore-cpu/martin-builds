@@ -117,7 +117,7 @@ export async function POST(req: Request) {
 
     // Add to scan funnel and send Day 0 email
     try {
-      const entry = addToScanFunnel({
+      const entry = await addToScanFunnel({
         email,
         name: email.split("@")[0], // best we have; scan form may not capture name
         businessName: url,
@@ -126,10 +126,12 @@ export async function POST(req: Request) {
         leaks: leaks.map(l => ({ title: l.title, severity: l.severity })),
       });
 
+      if (!entry) throw new Error("Failed to add to scan funnel");
+
       const template = getScanEmailTemplate(0, {
         name: entry.name,
-        businessName: entry.businessName,
-        websiteUrl: entry.websiteUrl,
+        businessName: entry.business_name,
+        websiteUrl: entry.website_url,
         score: entry.score,
         leaks: entry.leaks,
       });
@@ -137,7 +139,7 @@ export async function POST(req: Request) {
       if (template) {
         const sent = await sendEmail({ to: email, subject: template.subject, body: template.body });
         if (sent) {
-          updateScanFunnelEntry(email, { emailsSent: [0] });
+          await updateScanFunnelEntry(email, { emails_sent: [0] });
         }
       }
     } catch (e) {

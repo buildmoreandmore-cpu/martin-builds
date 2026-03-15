@@ -16,14 +16,14 @@ export async function GET(req: NextRequest) {
   const summary: { email: string; day: number; sent: boolean }[] = [];
 
   for (const day of EMAIL_SCHEDULE) {
-    const due = getEntriesDueForEmail(day);
+    const due = await getEntriesDueForEmail(day);
     for (const { email, entry } of due) {
-      const template = getEmailTemplate(day, { name: entry.name, businessName: entry.businessName, industry: entry.industry, email });
+      const template = getEmailTemplate(day, { name: entry.name, businessName: entry.business_name, industry: entry.industry, email });
       if (!template) continue;
 
       const sent = await sendEmail({ to: email, subject: template.subject, body: template.body });
       if (sent) {
-        updateFunnelEntry(email, { emailsSent: [...entry.emailsSent, day] });
+        await updateFunnelEntry(email, { emails_sent: [...entry.emails_sent, day] });
       }
       summary.push({ email, day, sent });
     }
@@ -31,12 +31,12 @@ export async function GET(req: NextRequest) {
 
   // Process scan funnel entries
   for (const day of SCAN_EMAIL_SCHEDULE) {
-    const due = getScanEntriesDueForEmail(day);
+    const due = await getScanEntriesDueForEmail(day);
     for (const { email, entry } of due) {
       const template = getScanEmailTemplate(day, {
         name: entry.name,
-        businessName: entry.businessName,
-        websiteUrl: entry.websiteUrl,
+        businessName: entry.business_name,
+        websiteUrl: entry.website_url,
         score: entry.score,
         leaks: entry.leaks,
       });
@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
 
       const sent = await sendEmail({ to: email, subject: template.subject, body: template.body });
       if (sent) {
-        updateScanFunnelEntry(email, { emailsSent: [...entry.emailsSent, day] });
+        await updateScanFunnelEntry(email, { emails_sent: [...entry.emails_sent, day] });
       }
       summary.push({ email, day, sent });
     }

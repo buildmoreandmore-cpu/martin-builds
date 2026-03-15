@@ -10,23 +10,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing email or dayNumber" }, { status: 400 });
     }
 
-    const entry = getFunnelEntry(email);
+    const entry = await getFunnelEntry(email);
     if (!entry) {
       return NextResponse.json({ error: "Entry not found" }, { status: 404 });
     }
 
-    if (entry.emailsSent.includes(dayNumber)) {
+    if (entry.emails_sent.includes(dayNumber)) {
       return NextResponse.json({ error: "Email already sent", dayNumber }, { status: 409 });
     }
 
-    const template = getEmailTemplate(dayNumber, { name: entry.name, businessName: entry.businessName, industry: entry.industry, email });
+    const template = getEmailTemplate(dayNumber, { name: entry.name, businessName: entry.business_name, industry: entry.industry, email });
     if (!template) {
       return NextResponse.json({ error: "No template for this day" }, { status: 400 });
     }
 
     const sent = await sendEmail({ to: email, subject: template.subject, body: template.body });
     if (sent) {
-      updateFunnelEntry(email, { emailsSent: [...entry.emailsSent, dayNumber] });
+      await updateFunnelEntry(email, { emails_sent: [...entry.emails_sent, dayNumber] });
     }
 
     return NextResponse.json({ ok: true, sent, dayNumber });

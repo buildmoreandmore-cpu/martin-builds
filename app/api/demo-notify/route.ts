@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
 
     // Add to funnel and send Day 0 email if we have their email
     if (email) {
-      addToFunnel({ email, name, businessName, industry, slug });
+      await addToFunnel({ email, name, businessName, industry, slug });
 
       const template = getEmailTemplate(0, { name, businessName, industry, email });
       if (template) {

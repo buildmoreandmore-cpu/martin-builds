@@ -9,15 +9,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing email or answers" }, { status: 400 });
     }
 
-    const entry = getFunnelEntry(email);
-    updateFunnelEntry(email, { surveyCompleted: true, surveyAnswers: answers });
+    const entry = await getFunnelEntry(email);
+    await updateFunnelEntry(email, { survey_completed: true, survey_answers: answers });
 
     // Email notification
     await sendEmail({
-      subject: `Survey Response: ${entry?.businessName || email}`,
+      subject: `Survey Response: ${entry?.business_name || email}`,
       body: [
         `Survey response from ${entry?.name || "Unknown"} (${email})`,
-        `Business: ${entry?.businessName || "Unknown"}`,
+        `Business: ${entry?.business_name || "Unknown"}`,
         ``,
         `1. Biggest time drain: ${answers.timeDrain || "—"}`,
         `2. AI experience: ${answers.aiExperience || "—"}`,
