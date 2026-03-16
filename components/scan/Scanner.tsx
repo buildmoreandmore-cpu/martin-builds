@@ -36,13 +36,26 @@ interface Leak {
   fix: string;
 }
 
-function computeLeaks(q1: string, q2: string, q3: string): Leak[] {
+function computeLeaks(q1: string, q2: string, q3: string, site?: { mobileScore: number; fcp: number; lcp: number; cls: number; tbt: number; hasHttps: boolean; speedRating: string } | null): Leak[] {
   const leak1Severity: Severity =
     q3 === "Nothing" ? "CRITICAL" : q3 === "Contact form" ? "WARNING" : "OK";
   const leak3Severity: Severity =
     q1 === "No" ? "CRITICAL" : q1 === "Manually sometimes" ? "WARNING" : "OK";
   const leak4Severity: Severity =
     q2 === "No" ? "CRITICAL" : q2 === "Not easily" ? "WARNING" : "OK";
+
+  // Use real mobile data if available
+  const mobileSeverity: Severity = site
+    ? site.mobileScore < 50 ? "CRITICAL" : site.mobileScore < 75 ? "WARNING" : "OK"
+    : "WARNING";
+
+  const mobileDescription = site
+    ? site.mobileScore < 50
+      ? `Your site scores ${site.mobileScore}/100 on mobile. It takes ${site.fcp}s before anything appears and ${site.lcp}s for the main content to load. On a phone, that's an eternity — most visitors bounce after 3 seconds. You're losing over half your mobile traffic before they even see your offer.`
+      : site.mobileScore < 75
+        ? `Your site scores ${site.mobileScore}/100 on mobile — not terrible, but not competitive. First paint takes ${site.fcp}s and full content loads in ${site.lcp}s. Your competitors with faster sites are converting the visitors you're losing to impatience.`
+        : `Your site scores ${site.mobileScore}/100 on mobile — solid performance. Content loads in ${site.fcp}s with main content at ${site.lcp}s. There's still room to optimize for conversion, but speed isn't your bottleneck.`
+    : "60%+ of your visitors are on their phone. If your site is slow, hard to navigate, or doesn't work smoothly on mobile — they bounce in 3 seconds and don't come back.";
 
   return [
     {
@@ -81,9 +94,8 @@ function computeLeaks(q1: string, q2: string, q3: string): Leak[] {
     },
     {
       title: "Mobile Experience Gap",
-      severity: "WARNING",
-      description:
-        "60%+ of your visitors are on their phone. If your site is slow, hard to navigate, or doesn't work smoothly on mobile — they bounce in 3 seconds and don't come back.",
+      severity: mobileSeverity,
+      description: mobileDescription,
       fix: "A mobile-optimized site with AI tools built in — fast, clean, and conversion-focused.",
     },
   ];
@@ -162,30 +174,42 @@ export default function Scanner() {
   const [leaks, setLeaks] = useState<Leak[]>([]);
   const [score, setScore] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [siteData, setSiteData] = useState<{
+    mobileScore: number; fcp: number; lcp: number; cls: number; tbt: number; hasHttps: boolean; speedRating: string;
+  } | null>(null);
+  const [scanResponse, setScanResponse] = useState<any>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  /* scanning animation */
+  /* scanning animation — waits for real API data */
   useEffect(() => {
     if (step !== 3) return;
     let frame = 0;
-    const totalMs = 4500;
+    const totalMs = 6000; // slightly longer to allow PageSpeed API
     const stepMs = totalMs / SCAN_STEPS.length;
+    let finished = false;
     const interval = setInterval(() => {
       frame++;
-      const pct = Math.min((frame / (totalMs / 50)) * 100, 100);
+      // Cap at 90% until API responds, then jump to 100
+      const rawPct = (frame / (totalMs / 50)) * 100;
+      const pct = (!submitting) ? Math.min(rawPct, 100) : Math.min(rawPct, 90);
       setProgress(pct);
       const idx = Math.min(Math.floor(frame / (stepMs / 50)), SCAN_STEPS.length - 1);
       setScanText(SCAN_STEPS[idx]);
-      if (pct >= 100) {
+      if (pct >= 90 && !submitting && !finished) {
+        finished = true;
+        setProgress(100);
         clearInterval(interval);
-        const computed = computeLeaks(q1, q2, q3);
-        setLeaks(computed);
-        setScore(computeScore(computed));
-        setStep(4);
+        // Use siteData from API response if available
+        setTimeout(() => {
+          const computed = computeLeaks(q1, q2, q3, siteData);
+          setLeaks(computed);
+          setScore(computeScore(computed));
+          setStep(4);
+        }, 300);
       }
     }, 50);
     return () => clearInterval(interval);
-  }, [step, q1, q2, q3]);
+  }, [step, q1, q2, q3, submitting, siteData]);
 
   /* scroll to results */
   useEffect(() => {
@@ -205,11 +229,16 @@ export default function Scanner() {
     setStep(3);
     setSubmitting(true);
     try {
-      await fetch("/api/scan", {
+      const res = await fetch("/api/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url, email, industry, q1, q2, q3 }),
       });
+      const data = await res.json();
+      if (data.siteData) {
+        setSiteData(data.siteData);
+        setScanResponse(data);
+      }
     } catch {
       /* non-blocking */
     } finally {
@@ -465,6 +494,43 @@ export default function Scanner() {
               </p>
             </div>
           </ScrollReveal>
+
+          {/* Real Site Data Card */}
+          {siteData && (
+            <ScrollReveal>
+              <div
+                style={{
+                  background: "#1a1a1a",
+                  borderRadius: 16,
+                  padding: "2rem",
+                  marginBottom: "2rem",
+                  borderTop: "3px solid #c8ff00",
+                }}
+              >
+                <h3 style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", color: "#c8ff00", marginBottom: "1.25rem" }}>
+                  Real Performance Data — {url}
+                </h3>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }}>
+                  {[
+                    { label: "Mobile Score", value: `${siteData.mobileScore}/100`, color: siteData.mobileScore >= 90 ? "#c8ff00" : siteData.mobileScore >= 50 ? "#ffaa00" : "#ff4444" },
+                    { label: "First Paint", value: `${siteData.fcp}s`, color: siteData.fcp <= 1.8 ? "#c8ff00" : siteData.fcp <= 3 ? "#ffaa00" : "#ff4444" },
+                    { label: "Content Load", value: `${siteData.lcp}s`, color: siteData.lcp <= 2.5 ? "#c8ff00" : siteData.lcp <= 4 ? "#ffaa00" : "#ff4444" },
+                    { label: "Layout Shift", value: `${siteData.cls}`, color: siteData.cls <= 0.1 ? "#c8ff00" : siteData.cls <= 0.25 ? "#ffaa00" : "#ff4444" },
+                    { label: "Blocking Time", value: `${siteData.tbt}ms`, color: siteData.tbt <= 200 ? "#c8ff00" : siteData.tbt <= 600 ? "#ffaa00" : "#ff4444" },
+                    { label: "HTTPS", value: siteData.hasHttps ? "Yes ✓" : "No ✕", color: siteData.hasHttps ? "#c8ff00" : "#ff4444" },
+                  ].map((item, i) => (
+                    <div key={i} style={{ textAlign: "center" }}>
+                      <div style={{ fontSize: "1.5rem", fontWeight: 800, color: item.color }}>{item.value}</div>
+                      <div style={{ fontSize: "0.7rem", color: "#888", marginTop: 4, textTransform: "uppercase", letterSpacing: "0.5px" }}>{item.label}</div>
+                    </div>
+                  ))}
+                </div>
+                <p style={{ fontSize: "0.75rem", color: "#555", marginTop: "1rem", textAlign: "center" }}>
+                  Measured on mobile via Google PageSpeed Insights
+                </p>
+              </div>
+            </ScrollReveal>
+          )}
 
           {/* Leak cards */}
           {leaks.map((leak, i) => (
