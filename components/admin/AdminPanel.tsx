@@ -26,6 +26,8 @@ interface InvoiceEntry {
   payment_type: string;
   stripe_url: string;
   pay_url: string | null;
+  description: string | null;
+  line_items: { id: string; description: string; amount: number }[];
 }
 
 interface SubscriptionEntry {
@@ -349,6 +351,18 @@ export default function AdminPanel() {
   const [projectsLoading, setProjectsLoading] = useState(false);
   const [releasingId, setReleasingId] = useState<string | null>(null);
 
+  // Expandable project cards
+  const [selectedProject, setSelectedProject] = useState<number | null>(null);
+  const [editingMemo, setEditingMemo] = useState<string | null>(null); // invoice id being edited
+  const [memoDraft, setMemoDraft] = useState("");
+  const [memoSaving, setMemoSaving] = useState(false);
+  const [addItemInvoice, setAddItemInvoice] = useState<string | null>(null);
+  const [newItemDesc, setNewItemDesc] = useState("");
+  const [newItemAmount, setNewItemAmount] = useState("");
+  const [addingItem, setAddingItem] = useState(false);
+  const [removingItemId, setRemovingItemId] = useState<string | null>(null);
+  const [voidingId, setVoidingId] = useState<string | null>(null);
+
   // Check sessionStorage on mount
   useEffect(() => {
     const stored = sessionStorage.getItem("mb_admin_auth");
@@ -488,6 +502,87 @@ export default function AdminPanel() {
       setFormError(err instanceof Error ? err.message : "Something went wrong");
     }
     setFormLoading(false);
+  }
+
+  /* ─── Invoice edit actions ─── */
+  async function handleSaveMemo(invoiceId: string) {
+    setMemoSaving(true);
+    try {
+      const res = await fetch("/api/admin/invoices/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "update_memo", invoice_id: invoiceId, memo: memoDraft }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setEditingMemo(null);
+      fetchProjects();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to update memo");
+    }
+    setMemoSaving(false);
+  }
+
+  async function handleAddItem(invoiceId: string) {
+    if (!newItemDesc || !newItemAmount) return;
+    setAddingItem(true);
+    try {
+      const res = await fetch("/api/admin/invoices/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "add_item",
+          invoice_id: invoiceId,
+          description: newItemDesc,
+          amount: parseFloat(newItemAmount),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setNewItemDesc("");
+      setNewItemAmount("");
+      setAddItemInvoice(null);
+      fetchProjects();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to add item");
+    }
+    setAddingItem(false);
+  }
+
+  async function handleRemoveItem(invoiceItemId: string, invoiceId: string) {
+    if (!confirm("Remove this line item?")) return;
+    setRemovingItemId(invoiceItemId);
+    try {
+      const res = await fetch("/api/admin/invoices/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "remove_item", invoice_item_id: invoiceItemId, invoice_id: invoiceId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      fetchProjects();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to remove item");
+    }
+    setRemovingItemId(null);
+  }
+
+  async function handleVoidInvoice(invoiceId: string) {
+    if (!confirm("Void this invoice? This action cannot be undone.")) return;
+    setVoidingId(invoiceId);
+    try {
+      const res = await fetch("/api/admin/invoices/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "void", invoice_id: invoiceId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      fetchProjects();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to void invoice");
+    }
+    setVoidingId(null);
   }
 
   /* ─── Release final invoice ─── */
@@ -853,11 +948,19 @@ export default function AdminPanel() {
             <div style={s.emptyState}>No invoices yet. Create one above.</div>
           )}
 
-          {projects.map((p, i) => (
+          {projects.map((p, i) => {
+            const isExpanded = selectedProject === i;
+            return (
             <div key={i} style={s.card}>
-              <div style={s.cardHeader}>
+              <div
+                style={{ ...s.cardHeader, cursor: "pointer" }}
+                onClick={() => setSelectedProject(isExpanded ? null : i)}
+              >
                 <div>
-                  <p style={s.cardTitle}>{p.project_name}</p>
+                  <p style={s.cardTitle}>
+                    <span style={{ marginRight: 6, fontSize: 10, color: DIM }}>{isExpanded ? "\u25BC" : "\u25B6"}</span>
+                    {p.project_name}
+                  </p>
                   <p style={s.cardClient}>
                     {p.client_name}
                     {p.phase && <span style={{ marginLeft: 8 }}>Phase {p.phase}</span>}
@@ -891,6 +994,178 @@ export default function AdminPanel() {
                   </>
                 )}
               </div>
+
+              {/* Expanded invoice details */}
+              {isExpanded && (
+                <div style={{ marginTop: 16, borderTop: `1px solid ${BORDER}`, paddingTop: 12 }}>
+                  {p.invoices.map((inv) => (
+                    <div key={inv.id} style={{ background: "#111", borderRadius: 4, border: `1px solid ${BORDER}`, padding: 12, marginBottom: 10 }}>
+                      {/* Invoice header */}
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                        <div>
+                          <span style={{ fontSize: 13, fontWeight: 600, color: TEXT }}>{inv.description || inv.payment_type}</span>
+                          <span style={{ fontSize: 11, color: DIM, marginLeft: 8, fontFamily: "'Space Mono', monospace" }}>
+                            ${inv.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                          </span>
+                        </div>
+                        <span style={{
+                          ...s.badge,
+                          fontSize: 10,
+                          background: inv.status === "paid" ? "#002200" : inv.status === "draft" ? "#1a1a00" : inv.status === "void" ? "#1a0000" : "#001a33",
+                          color: inv.status === "paid" ? GREEN : inv.status === "draft" ? "#cccc00" : inv.status === "void" ? "#ff4444" : "#4da6ff",
+                        }}>
+                          {inv.status}
+                        </span>
+                      </div>
+
+                      {/* Line items */}
+                      {inv.line_items && inv.line_items.length > 0 && (
+                        <div style={{ marginBottom: 8 }}>
+                          <div style={{ fontSize: 10, color: DIM, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4, fontFamily: "'Space Mono', monospace" }}>Line Items</div>
+                          {inv.line_items.map((li) => (
+                            <div key={li.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "4px 0", borderBottom: `1px solid ${BORDER}` }}>
+                              <span style={{ fontSize: 12, color: TEXT }}>{li.description}</span>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                <span style={{ fontSize: 12, color: DIM, fontFamily: "'Space Mono', monospace" }}>
+                                  ${li.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                                </span>
+                                {inv.status === "draft" && (
+                                  <button
+                                    onClick={() => handleRemoveItem(li.id, inv.id)}
+                                    disabled={removingItemId === li.id}
+                                    style={{ ...s.trashBtn, fontSize: 14, padding: "2px 4px", opacity: removingItemId === li.id ? 0.4 : 1 }}
+                                    title="Remove item"
+                                  >
+                                    &#128465;
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Memo / scope — editable inline */}
+                      <div style={{ marginBottom: 8 }}>
+                        <div style={{ fontSize: 10, color: DIM, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4, fontFamily: "'Space Mono', monospace" }}>Memo / Scope</div>
+                        {editingMemo === inv.id ? (
+                          <div style={{ display: "flex", gap: 6, alignItems: "flex-start" }}>
+                            <textarea
+                              value={memoDraft}
+                              onChange={(e) => setMemoDraft(e.target.value)}
+                              style={{ ...s.textarea, minHeight: 50, fontSize: 12, flex: 1 }}
+                              autoFocus
+                            />
+                            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                              <button
+                                onClick={() => handleSaveMemo(inv.id)}
+                                disabled={memoSaving}
+                                style={{ padding: "4px 10px", background: GREEN, color: BG, border: "none", borderRadius: 3, fontSize: 11, fontWeight: 700, cursor: memoSaving ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: memoSaving ? 0.5 : 1 }}
+                              >
+                                {memoSaving ? "..." : "Save"}
+                              </button>
+                              <button
+                                onClick={() => setEditingMemo(null)}
+                                style={{ padding: "4px 10px", background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 3, fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div
+                            onClick={() => {
+                              if (inv.status === "draft" || inv.status === "open") {
+                                setEditingMemo(inv.id);
+                                setMemoDraft(inv.description || "");
+                              }
+                            }}
+                            style={{
+                              fontSize: 12,
+                              color: inv.description ? TEXT : DIM,
+                              cursor: (inv.status === "draft" || inv.status === "open") ? "pointer" : "default",
+                              padding: "4px 6px",
+                              borderRadius: 3,
+                              border: `1px solid transparent`,
+                              transition: "border-color 0.15s",
+                            }}
+                            onMouseEnter={(e) => { if (inv.status === "draft" || inv.status === "open") (e.currentTarget.style.borderColor = BORDER); }}
+                            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "transparent"; }}
+                          >
+                            {inv.description || (inv.status === "draft" || inv.status === "open" ? "Click to add memo..." : "No memo")}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Add line item (draft only) */}
+                      {inv.status === "draft" && (
+                        <div style={{ marginBottom: 8 }}>
+                          {addItemInvoice === inv.id ? (
+                            <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+                              <input
+                                value={newItemDesc}
+                                onChange={(e) => setNewItemDesc(e.target.value)}
+                                placeholder="Description"
+                                style={{ ...s.input, flex: 2, fontSize: 12, padding: "6px 8px" }}
+                              />
+                              <div style={{ position: "relative", flex: 1 }}>
+                                <span style={{ position: "absolute", left: 8, top: "50%", transform: "translateY(-50%)", color: DIM, fontSize: 12, pointerEvents: "none" }}>$</span>
+                                <input
+                                  value={newItemAmount}
+                                  onChange={(e) => setNewItemAmount(e.target.value)}
+                                  placeholder="0.00"
+                                  type="number"
+                                  step="0.01"
+                                  min="0"
+                                  style={{ ...s.input, paddingLeft: 18, fontSize: 12, padding: "6px 8px 6px 18px" }}
+                                />
+                              </div>
+                              <button
+                                onClick={() => handleAddItem(inv.id)}
+                                disabled={addingItem || !newItemDesc || !newItemAmount}
+                                style={{ padding: "6px 12px", background: GREEN, color: BG, border: "none", borderRadius: 3, fontSize: 11, fontWeight: 700, cursor: (addingItem || !newItemDesc || !newItemAmount) ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: (addingItem || !newItemDesc || !newItemAmount) ? 0.5 : 1 }}
+                              >
+                                {addingItem ? "..." : "Add"}
+                              </button>
+                              <button
+                                onClick={() => { setAddItemInvoice(null); setNewItemDesc(""); setNewItemAmount(""); }}
+                                style={{ padding: "6px 8px", background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 3, fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => setAddItemInvoice(inv.id)}
+                              style={{ ...s.addBtn, fontSize: 11, padding: "6px 12px" }}
+                            >
+                              + Add Line Item
+                            </button>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Void button (open only) */}
+                      {inv.status === "open" && (
+                        <button
+                          onClick={() => handleVoidInvoice(inv.id)}
+                          disabled={voidingId === inv.id}
+                          style={{ padding: "5px 12px", background: "transparent", border: "1px solid #ff4444", color: "#ff4444", borderRadius: 3, fontSize: 11, cursor: voidingId === inv.id ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: voidingId === inv.id ? 0.5 : 1 }}
+                        >
+                          {voidingId === inv.id ? "Voiding..." : "Void Invoice"}
+                        </button>
+                      )}
+
+                      {/* Stripe link per invoice */}
+                      <div style={{ marginTop: 6, textAlign: "right" }}>
+                        <a href={inv.stripe_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 10, color: DIM, textDecoration: "none" }}>
+                          View in Stripe &rarr;
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Actions bar */}
               <div style={{ marginTop: 12, paddingTop: 10, borderTop: `1px solid ${BORDER}`, display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
@@ -929,7 +1204,7 @@ export default function AdminPanel() {
                       key={`pay-${inv.id}`}
                       onClick={() => {
                         navigator.clipboard.writeText(
-                          `${window.location.origin}${inv.pay_url}`
+                          inv.pay_url!.startsWith("http") ? inv.pay_url! : `${window.location.origin}${inv.pay_url}`
                         );
                         alert("Payment link copied!");
                       }}
@@ -965,7 +1240,8 @@ export default function AdminPanel() {
                 </a>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

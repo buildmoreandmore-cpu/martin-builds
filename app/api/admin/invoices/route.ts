@@ -64,6 +64,12 @@ export async function GET() {
         stripe_url: `https://dashboard.stripe.com/invoices/${inv.id}`,
         customer_email: customer?.email || inv.customer_email || null,
         pay_url: inv.metadata?.pay_url || null,
+        description: inv.description || null,
+        line_items: (inv.lines?.data || []).map((li) => ({
+          id: li.id,
+          description: li.description || "",
+          amount: (li.amount || 0) / 100,
+        })),
       });
 
       projectMap[key].total_amount += inv.amount_due / 100;
@@ -225,7 +231,7 @@ export async function POST(req: NextRequest) {
           ...baseMeta,
           payment_type: "full",
           payment_intent_id: paymentIntent.id,
-          pay_url: `${baseUrl}/pay/${paymentIntent.id}`,
+          pay_url: `/pay/${paymentIntent.id}`,
         },
         description: invoiceTitle,
       });
@@ -283,7 +289,7 @@ export async function POST(req: NextRequest) {
           ...baseMeta,
           payment_type: "deposit",
           payment_intent_id: depositPI.id,
-          pay_url: `${baseUrl}/pay/${depositPI.id}`,
+          pay_url: `/pay/${depositPI.id}`,
         },
         description: `${invoiceTitle} — Deposit (1 of 2)`,
       });
@@ -390,6 +396,8 @@ interface InvoiceEntry {
   stripe_url: string;
   customer_email: string | null;
   pay_url: string | null;
+  description: string | null;
+  line_items: { id: string; description: string; amount: number }[];
 }
 
 interface SubscriptionEntry {
