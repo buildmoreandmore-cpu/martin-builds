@@ -4,12 +4,16 @@ import { getClientByStripeCustomer, updateClient } from "@/lib/clients";
 import { sendEmail } from "@/lib/send-email";
 import { releaseBot, configureBot } from "@/lib/bot-pool";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-const WEBHOOK_SECRET = process.env.STRIPE_AGENT_WEBHOOK_SECRET || "";
+function getStripe() {
+  return new Stripe(process.env.STRIPE_SECRET_KEY!);
+}
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
   const sig = req.headers.get("stripe-signature") || "";
+
+  const stripe = getStripe();
+  const WEBHOOK_SECRET = process.env.STRIPE_AGENT_WEBHOOK_SECRET || process.env.STRIPE_WEBHOOK_SECRET || "";
 
   let event: Stripe.Event;
   try {
@@ -20,13 +24,16 @@ export async function POST(req: NextRequest) {
   }
 
   const customerId = getCustomerId(event.data.object);
-  if (!customerId) return NextResponse.json({ ok: true });
-
-  const client = await getClientByStripeCustomer(customerId);
+  const client = customerId ? await getClientByStripeCustomer(customerId) : null;
 
   switch (event.type) {
-    // Payment succeeded — ensure active
+    // Payment succeeded — ensure active + log metadata
     case "invoice.paid": {
+      const invoice = event.data.object as Stripe.Invoice;
+      console.log(
+        `[PAYMENT] Invoice paid — ${invoice.id} | $${(invoice.amount_paid / 100).toFixed(2)} | Customer: ${invoice.customer_email || invoice.customer}`,
+        invoice.metadata
+      );
       if (client) {
         await updateClient(client.email, { active: true });
         console.log(`[Stripe] ${client.business_name} payment received — agent active`);
@@ -34,13 +41,26 @@ export async function POST(req: NextRequest) {
       break;
     }
 
+    case "payment_intent.succeeded": {
+      const intent = event.data.object as Stripe.PaymentIntent;
+      console.log(
+        `[PAYMENT] PaymentIntent succeeded — ${intent.id} | $${(intent.amount / 100).toFixed(2)}`,
+        intent.metadata
+      );
+      break;
+    }
+
     // Payment failed — kill switch
     case "invoice.payment_failed": {
+      const invoice = event.data.object as Stripe.Invoice;
+      console.error(
+        `[PAYMENT] Invoice payment failed — ${invoice.id} | Customer: ${invoice.customer_email || invoice.customer}`,
+        invoice.metadata
+      );
       if (client) {
         await updateClient(client.email, { active: false });
         console.log(`[Stripe] ${client.business_name} payment FAILED — agent DEACTIVATED`);
 
-        // Notify Francis
         await sendEmail({
           to: "agent@martinbuilds.ai",
           subject: `⚠️ Payment Failed: ${client.business_name}`,
@@ -50,16 +70,24 @@ export async function POST(req: NextRequest) {
       break;
     }
 
+    // New subscription created
+    case "customer.subscription.created": {
+      const sub = event.data.object as Stripe.Subscription;
+      console.log(
+        `[SUBSCRIPTION] New subscription — ${sub.id} | Customer: ${sub.customer}`,
+        sub.metadata
+      );
+      break;
+    }
+
     // Subscription canceled — release bot back to pool
     case "customer.subscription.deleted": {
       if (client) {
         await updateClient(client.email, { active: false });
         console.log(`[Stripe] ${client.business_name} subscription canceled — agent DEACTIVATED`);
 
-        // Release bot back to pool and reset its name
         if (client.id && client.bot_token) {
           await releaseBot(client.id);
-          // Reset bot name to generic
           await configureBot(client.bot_token, "MB Agent (Available)", "martin.builds", "Available agent — pending assignment.");
           await updateClient(client.email, { bot_token: undefined, bot_username: undefined });
           console.log(`[Stripe] Bot released back to pool for ${client.business_name}`);
@@ -83,9 +111,12 @@ export async function POST(req: NextRequest) {
       }
       break;
     }
+
+    default:
+      console.log(`[STRIPE] Unhandled event: ${event.type}`);
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ received: true });
 }
 
 function getCustomerId(obj: unknown): string | null {
