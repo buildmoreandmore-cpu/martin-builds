@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
 const PROJECT_TYPES = [
   "Select project type...",
@@ -9,12 +10,21 @@ const PROJECT_TYPES = [
   "Full Product / SaaS",
   "AI Power Hour",
   "Community Outreach",
+  "Payment Question",
   "Just a Question",
 ];
 
 export default function ContactForm() {
+  const searchParams = useSearchParams();
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", biz: "", type: "", message: "" });
+
+  useEffect(() => {
+    const typeParam = searchParams.get("type");
+    if (typeParam && PROJECT_TYPES.includes(typeParam)) {
+      setForm((prev) => ({ ...prev, type: typeParam }));
+    }
+  }, [searchParams]);
 
   const valid = form.name.trim() && form.email.includes("@") && form.message.trim();
 

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Nav from "@/components/Nav";
 import ContactForm from "@/components/contact/ContactForm";
 import ContactInfo from "@/components/contact/ContactInfo";
@@ -71,7 +72,7 @@ export default function ContactPage() {
               <p style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.7rem", color: "#c8ff00", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "1.5rem" }}>
                 Send a Message
               </p>
-              <ContactForm />
+              <Suspense><ContactForm /></Suspense>
             </div>
           </ScrollReveal>
 

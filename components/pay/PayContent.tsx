@@ -298,7 +298,7 @@ export default function PayContent() {
             Ready to build? Reach out to get started.
           </p>
           <a
-            href="/contact"
+            href="/contact?type=Payment+Question"
             style={{
               display: "inline-block",
               padding: "0.75rem 2rem",
