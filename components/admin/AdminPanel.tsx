@@ -281,26 +281,6 @@ const s: Record<string, CSSProperties> = {
     marginTop: 8,
     flexWrap: "wrap" as const,
   },
-  releaseBtn: {
-    background: "transparent",
-    border: `1px solid ${GREEN}`,
-    color: GREEN,
-    padding: "6px 14px",
-    borderRadius: 4,
-    cursor: "pointer",
-    fontSize: 11,
-    fontFamily: "inherit",
-    fontWeight: 600,
-    marginTop: 8,
-    marginRight: 8,
-  },
-  stripeLink: {
-    color: DIM,
-    fontSize: 11,
-    textDecoration: "underline",
-    marginTop: 10,
-    display: "inline-block",
-  },
   error: {
     color: "#ff4444",
     fontSize: 12,
@@ -912,8 +892,9 @@ export default function AdminPanel() {
                 )}
               </div>
 
-              <div style={{ marginTop: 10 }}>
-                {/* Release button for split payments where deposit is paid */}
+              {/* Actions bar */}
+              <div style={{ marginTop: 12, paddingTop: 10, borderTop: `1px solid ${BORDER}`, display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+                {/* Primary action: Release Final Invoice (only when applicable) */}
                 {p.status === "deposit_paid" &&
                   p.invoices
                     .filter((inv) => inv.payment_type === "final" && inv.status === "draft")
@@ -923,17 +904,26 @@ export default function AdminPanel() {
                         onClick={() => handleRelease(inv.id)}
                         disabled={releasingId === inv.id}
                         style={{
-                          ...s.releaseBtn,
-                          ...(releasingId === inv.id ? s.btnDisabled : {}),
+                          padding: "6px 12px",
+                          background: GREEN,
+                          color: BG,
+                          border: "none",
+                          borderRadius: 4,
+                          fontSize: 11,
+                          fontWeight: 700,
+                          cursor: releasingId === inv.id ? "not-allowed" : "pointer",
+                          fontFamily: "inherit",
+                          opacity: releasingId === inv.id ? 0.5 : 1,
                         }}
                       >
-                        {releasingId === inv.id ? "Releasing..." : "Release Final Invoice"}
+                        {releasingId === inv.id ? "Releasing..." : "Release Final"}
                       </button>
                     ))}
 
-                {/* Payment links */}
+                {/* Copy payment link */}
                 {p.invoices
                   .filter((inv) => inv.pay_url && inv.status === "open")
+                  .slice(0, 1)
                   .map((inv) => (
                     <button
                       key={`pay-${inv.id}`}
@@ -944,38 +934,35 @@ export default function AdminPanel() {
                         alert("Payment link copied!");
                       }}
                       style={{
-                        ...s.releaseBtn,
-                        background: GREEN,
-                        color: BG,
-                        borderColor: GREEN,
+                        padding: "6px 12px",
+                        background: "transparent",
+                        border: `1px solid ${GREEN}`,
+                        color: GREEN,
+                        borderRadius: 4,
+                        fontSize: 11,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        fontFamily: "inherit",
                       }}
                     >
-                      Copy Payment Link
+                      Copy Link
                     </button>
                   ))}
 
-                {/* Stripe links */}
-                {p.invoices.map((inv) => (
-                  <a
-                    key={inv.id}
-                    href={inv.stripe_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ ...s.stripeLink, marginRight: 12 }}
-                  >
-                    View {inv.payment_type} in Stripe &rarr;
-                  </a>
-                ))}
-                {p.subscription && (
-                  <a
-                    href={p.subscription.stripe_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={s.stripeLink}
-                  >
-                    View subscription in Stripe &rarr;
-                  </a>
-                )}
+                {/* Stripe link — single link for the project */}
+                <a
+                  href={p.subscription?.stripe_url || p.invoices[0]?.stripe_url || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontSize: 11,
+                    color: DIM,
+                    textDecoration: "none",
+                    marginLeft: "auto",
+                  }}
+                >
+                  Stripe &rarr;
+                </a>
               </div>
             </div>
           ))}
