@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import ProjectPaymentsAdmin from "./ProjectPaymentsAdmin";
 
 const SB_URL = "https://lnvzvmjhulntglbjyryz.supabase.co";
 const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxudnp2bWpodWxudGdsYmp5cnl6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzQ1Mzk4MywiZXhwIjoyMDg5MDI5OTgzfQ.FBIT5IoBUNxQGHvHEBW-m_ss-9jbR88T72-Y1ulOyj4";
@@ -43,7 +44,7 @@ const PASSWORD = "martinbuilds2026";
 export default function AdminDashboard() {
   const [authed, setAuthed] = useState(false);
   const [pw, setPw] = useState("");
-  const [tab, setTab] = useState<"scans" | "demos" | "requests">("scans");
+  const [tab, setTab] = useState<"scans" | "demos" | "requests" | "payments">("scans");
   const [scans, setScans] = useState<Scan[]>([]);
   const [requests, setRequests] = useState<DemoRequest[]>([]);
   const [demos, setDemos] = useState<Demo[]>([]);
@@ -126,9 +127,9 @@ export default function AdminDashboard() {
 
       {/* Tabs */}
       <div style={{ padding: "0 clamp(1rem,4vw,2rem)", display: "flex", gap: "0.5rem", borderBottom: "1px solid rgba(245,245,240,0.06)" }}>
-        {(["scans", "requests", "demos"] as const).map((t) => (
+        {(["scans", "requests", "demos", "payments"] as const).map((t) => (
           <button key={t} onClick={() => setTab(t)} style={{ padding: "0.75rem 1.25rem", background: "transparent", border: "none", borderBottom: tab === t ? "2px solid #c8ff00" : "2px solid transparent", color: tab === t ? "#c8ff00" : "#888", fontWeight: 600, fontSize: "0.9rem", cursor: "pointer", fontFamily: "'Outfit', sans-serif", textTransform: "capitalize" }}>
-            {t === "scans" ? `Scans (${scans.length})` : t === "requests" ? `Demo Requests (${requests.length})` : `Demos (${demos.length})`}
+            {t === "scans" ? `Scans (${scans.length})` : t === "requests" ? `Demo Requests (${requests.length})` : t === "demos" ? `Demos (${demos.length})` : "Project Payments"}
           </button>
         ))}
       </div>
@@ -225,6 +226,10 @@ export default function AdminDashboard() {
               </tbody>
             </table>
           </div>
+        )}
+
+        {tab === "payments" && (
+          <ProjectPaymentsAdmin />
         )}
       </div>
     </div>

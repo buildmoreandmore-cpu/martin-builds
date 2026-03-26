@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { getClientByStripeCustomer, updateClient } from "@/lib/clients";
 import { sendEmail } from "@/lib/send-email";
 import { releaseBot, configureBot } from "@/lib/bot-pool";
+import { supabase } from "@/lib/supabase";
 
 function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -47,6 +48,81 @@ export async function POST(req: NextRequest) {
         `[PAYMENT] PaymentIntent succeeded — ${intent.id} | $${(intent.amount / 100).toFixed(2)}`,
         intent.metadata
       );
+
+      // Handle two-phase project payments
+      if (intent.metadata?.payment_type === "two_phase") {
+        const phase = intent.metadata.phase;
+
+        if (phase === "1") {
+          // Phase 1 payment succeeded - update project status
+          const { data: projects } = await supabase
+            .from("project_payments")
+            .select("*")
+            .eq("phase_1_payment_intent_id", intent.id)
+            .single();
+
+          if (projects) {
+            await supabase
+              .from("project_payments")
+              .update({
+                phase_1_status: "paid",
+                phase_1_paid_at: new Date().toISOString(),
+                project_status: "in_progress",
+              })
+              .eq("id", projects.id);
+
+            console.log(`[TWO-PHASE] Phase 1 paid for project: ${projects.project_name}`);
+
+            // Send confirmation email
+            await sendEmail({
+              to: projects.client_email,
+              subject: `Payment Received: ${projects.project_name}`,
+              body: `Hi ${projects.client_name},\n\nYour deposit payment of $${(intent.amount / 100).toFixed(2)} has been received for ${projects.project_name}.\n\nI'll start working on your project right away. You'll receive a link for the final 50% payment when the project is ready for review.\n\nThanks,\nMartin\nmartin.builds`,
+            }).catch((e) => console.error("Email send failed:", e));
+
+            // Alert me
+            await sendEmail({
+              to: "agent@martinbuilds.ai",
+              subject: `✅ Phase 1 Paid: ${projects.project_name}`,
+              body: `${projects.client_name} (${projects.client_email}) paid Phase 1.\nProject: ${projects.project_name}\nAmount: $${(intent.amount / 100).toFixed(2)}\nTotal: $${(projects.total_amount / 100).toFixed(2)}\n\nProject ID: ${projects.id}`,
+            }).catch(() => {});
+          }
+        } else if (phase === "2") {
+          // Phase 2 payment succeeded - project complete
+          const { data: projects } = await supabase
+            .from("project_payments")
+            .select("*")
+            .eq("phase_2_payment_intent_id", intent.id)
+            .single();
+
+          if (projects) {
+            await supabase
+              .from("project_payments")
+              .update({
+                phase_2_status: "paid",
+                phase_2_paid_at: new Date().toISOString(),
+                project_status: "completed",
+              })
+              .eq("id", projects.id);
+
+            console.log(`[TWO-PHASE] Phase 2 paid - project completed: ${projects.project_name}`);
+
+            // Send confirmation email
+            await sendEmail({
+              to: projects.client_email,
+              subject: `Final Payment Received: ${projects.project_name}`,
+              body: `Hi ${projects.client_name},\n\nYour final payment of $${(intent.amount / 100).toFixed(2)} has been received for ${projects.project_name}.\n\nYour project is now complete! I'll follow up shortly with delivery details and all project files.\n\nThanks for working with martin.builds!\n\nMartin`,
+            }).catch((e) => console.error("Email send failed:", e));
+
+            // Alert me
+            await sendEmail({
+              to: "agent@martinbuilds.ai",
+              subject: `🎉 Phase 2 Paid - Project Complete: ${projects.project_name}`,
+              body: `${projects.client_name} (${projects.client_email}) paid Phase 2.\nProject: ${projects.project_name}\nAmount: $${(intent.amount / 100).toFixed(2)}\nTotal project value: $${(projects.total_amount / 100).toFixed(2)}\n\nProject ID: ${projects.id}\n\nREADY FOR DELIVERY!`,
+            }).catch(() => {});
+          }
+        }
+      }
       break;
     }
 
