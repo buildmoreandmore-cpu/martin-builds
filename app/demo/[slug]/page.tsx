@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import DemoChat from "@/components/demo/DemoChat";
 
-const SUPABASE_URL = "https://lnvzvmjhulntglbjyryz.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxudnp2bWpodWxudGdsYmp5cnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NTM5ODMsImV4cCI6MjA4OTAyOTk4M30._FuAxrSwfeSUR-9aLb3N1M0fTIm_Q4wENXe63IE8-Is";
+const SUPABASE_URL = "https://szedjomnmwnbkwolegiw.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN6ZWRqb21ubXduYmt3b2xlZ2l3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMzQzMzEsImV4cCI6MjA4OTgxMDMzMX0.OyoGOqC-K95_rjXTl8_Nxit97E7EJ43CDgSrcOPQGkY";
 
 interface DemoRow {
   slug: string;

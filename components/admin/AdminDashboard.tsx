@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import ProjectPaymentsAdmin from "./ProjectPaymentsAdmin";
 
-const SB_URL = "https://lnvzvmjhulntglbjyryz.supabase.co";
-const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxudnp2bWpodWxudGdsYmp5cnl6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzQ1Mzk4MywiZXhwIjoyMDg5MDI5OTgzfQ.FBIT5IoBUNxQGHvHEBW-m_ss-9jbR88T72-Y1ulOyj4";
+const SB_URL = "https://szedjomnmwnbkwolegiw.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN6ZWRqb21ubXduYmt3b2xlZ2l3Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDIzNDMzMSwiZXhwIjoyMDg5ODEwMzMxfQ.TyAGSwho5BIU8qydtOoMswXRZepnWDK0nIu2Jz3zZEc";
 
 interface Scan {
   id: string;

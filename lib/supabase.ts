@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 
-const SUPABASE_URL = process.env.SUPABASE_URL || "https://lnvzvmjhulntglbjyryz.supabase.co";
+const SUPABASE_URL = process.env.SUPABASE_URL || "https://szedjomnmwnbkwolegiw.supabase.co";
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
 let _client: ReturnType<typeof createClient> | null = null;
