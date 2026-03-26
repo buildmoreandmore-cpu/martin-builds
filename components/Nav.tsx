@@ -60,7 +60,6 @@ export default function Nav() {
             <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#c8ff00", display: "inline-block" }} />
             Free Scan
           </a>
-          <NavLink href="/pay">Pay</NavLink>
           <NavLink href="/contact">Contact</NavLink>
           <a
             href="/discovery-call"
@@ -114,7 +113,6 @@ export default function Nav() {
           { href: "/demo", label: "Demo" },
           { href: "/power-hour", label: "Power Hour" },
           { href: "/scan", label: "Free Scan" },
-          { href: "/pay", label: "Pay" },
           { href: "/contact", label: "Contact" },
         ].map((link) => (
           <a
