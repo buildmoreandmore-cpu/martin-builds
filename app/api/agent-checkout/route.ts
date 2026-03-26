@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+function getStripe() {
+  return new Stripe(process.env.STRIPE_SECRET_KEY!);
+}
 
 const PRICES: Record<string, string> = {
   starter: "price_1TArH5H8PIRJCA4G7BFgxEJR",
@@ -10,6 +12,7 @@ const PRICES: Record<string, string> = {
 
 export async function POST(req: NextRequest) {
   try {
+    const stripe = getStripe();
     const { plan, email } = await req.json();
     const priceId = PRICES[plan];
     if (!priceId) return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
