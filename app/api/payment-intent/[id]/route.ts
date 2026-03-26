@@ -21,6 +21,14 @@ export async function GET(
       );
     }
 
+    // Only serve payment intents created by martin.builds admin
+    if (paymentIntent.metadata?.created_by !== "martin.builds admin") {
+      return NextResponse.json(
+        { error: "Payment not found" },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json({
       client_secret: paymentIntent.client_secret,
       amount: paymentIntent.amount,

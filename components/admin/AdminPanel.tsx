@@ -321,6 +321,136 @@ const s: Record<string, CSSProperties> = {
   },
 };
 
+/* ─── Service Presets ─── */
+interface ServicePreset {
+  id: string;
+  category: string;
+  name: string;
+  projectName: string;
+  lineItems: { description: string; amount: string }[];
+  paymentType: "full" | "split" | "retainer";
+  memo: string;
+}
+
+const SERVICE_PRESETS: ServicePreset[] = [
+  // WEBSITES
+  {
+    id: "landing-page",
+    category: "Websites",
+    name: "Landing Page",
+    projectName: "Landing Page",
+    lineItems: [{ description: "Landing Page — single conversion page, Stripe or form integration, mobile-first, branded", amount: "750" }],
+    paymentType: "full",
+    memo: "Remove payment integration −$150",
+  },
+  {
+    id: "starter-website",
+    category: "Websites",
+    name: "Starter Website",
+    projectName: "Starter Website",
+    lineItems: [{ description: "Starter Website — up to 5 pages, mobile-optimized, branded, contact form, basic SEO", amount: "1200" }],
+    paymentType: "full",
+    memo: "Remove SEO −$200",
+  },
+  {
+    id: "business-website",
+    category: "Websites",
+    name: "Business Website",
+    projectName: "Business Website",
+    lineItems: [{ description: "Business Website — up to 10 pages, blog, lead capture, analytics, trust signals", amount: "2200" }],
+    paymentType: "full",
+    memo: "Remove blog −$300 | Remove analytics −$150",
+  },
+  // WORKFLOWS & PORTALS
+  {
+    id: "intake-workflow",
+    category: "Workflows & Portals",
+    name: "Intake + Payment + Consent Workflow",
+    projectName: "Intake + Payment + Consent Workflow",
+    lineItems: [{ description: "Intake + Payment + Consent Workflow — multi-step flow, intake form, Stripe payment, e-sign consent, mobile-first", amount: "1800" }],
+    paymentType: "full",
+    memo: "Remove e-sign −$300 | Remove Stripe −$250",
+  },
+  {
+    id: "client-portal",
+    category: "Workflows & Portals",
+    name: "Client Portal",
+    projectName: "Client Portal",
+    lineItems: [{ description: "Client Portal — login-protected portal, dashboard, document access, order or status tracking", amount: "3500" }],
+    paymentType: "full",
+    memo: "Remove docs −$400 | Remove tracking −$300",
+  },
+  {
+    id: "custom-platform",
+    category: "Workflows & Portals",
+    name: "Full Custom Platform",
+    projectName: "Full Custom Platform",
+    lineItems: [{ description: "Full Custom Platform — admin panel, user roles, billing, reporting, data migration", amount: "5500" }],
+    paymentType: "split",
+    memo: "Range: $5,500–$7,500 | Remove reporting −$750 | Remove migration −$500",
+  },
+  // AI BUILD SPRINT
+  {
+    id: "ai-tool",
+    category: "AI Build Sprint",
+    name: "AI-Powered Tool or Website",
+    projectName: "AI-Powered Tool or Website",
+    lineItems: [{ description: "AI-Powered Tool or Website — Claude API, custom UI, deployed", amount: "5000" }],
+    paymentType: "split",
+    memo: "Range: $5,000–$7,000 | Remove custom UI −$500",
+  },
+  // AI PLATFORM BUILD
+  {
+    id: "ai-platform",
+    category: "AI Platform Build",
+    name: "Full-Stack AI Platform",
+    projectName: "Full-Stack AI Platform",
+    lineItems: [{ description: "Full-Stack AI Platform — AI logic, admin dashboard, workflows, integrations", amount: "8000" }],
+    paymentType: "split",
+    memo: "Range: $8,000–$12,000 | Remove integrations −$1,000 | Remove workflows −$750",
+  },
+  // RETAINERS
+  {
+    id: "maintenance-retainer",
+    category: "Retainers",
+    name: "Maintenance Retainer",
+    projectName: "Maintenance Retainer",
+    lineItems: [{ description: "Maintenance Retainer — monthly updates, fixes, content changes, monitoring, priority support", amount: "350" }],
+    paymentType: "retainer",
+    memo: "Remove priority −$100 | Cancel anytime",
+  },
+  {
+    id: "ai-growth-retainer",
+    category: "Retainers",
+    name: "AI Growth Retainer",
+    projectName: "AI Growth Retainer",
+    lineItems: [{ description: "AI Growth Retainer — new features, iterations, AI upgrades", amount: "1500" }],
+    paymentType: "retainer",
+    memo: "Remove AI upgrades −$200 | Cancel anytime",
+  },
+  // LEAD GENERATION
+  {
+    id: "targeted-outreach",
+    category: "Lead Generation",
+    name: "Targeted Outreach Program",
+    projectName: "Targeted Outreach Program",
+    lineItems: [{ description: "Targeted Outreach Program — verified prospect contacts, 3-step email sequence, monthly report", amount: "650" }],
+    paymentType: "retainer",
+    memo: "Remove report −$100 | Cancel anytime",
+  },
+  {
+    id: "full-growth-package",
+    category: "Lead Generation",
+    name: "Full Growth Package",
+    projectName: "Full Growth Package",
+    lineItems: [{ description: "Full Growth Package — retainer + outreach combined, maintenance, leads, sequences", amount: "900" }],
+    paymentType: "retainer",
+    memo: "Save $100/mo vs separate | Cancel anytime",
+  },
+];
+
+const PRESET_CATEGORIES = [...new Set(SERVICE_PRESETS.map((p) => p.category))];
+
 /* ─── Component ─── */
 export default function AdminPanel() {
   const [authed, setAuthed] = useState(false);
@@ -342,6 +472,8 @@ export default function AdminPanel() {
   const [memo, setMemo] = useState("");
   const [dueDateType, setDueDateType] = useState<"receipt" | "custom">("receipt");
   const [dueDate, setDueDate] = useState("");
+  const [selectedPreset, setSelectedPreset] = useState("");
+  const [presetApplied, setPresetApplied] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState("");
   const [formSuccess, setFormSuccess] = useState("");
@@ -429,6 +561,29 @@ export default function AdminPanel() {
     setLineItems(lineItems.map((li) => (li.id === id ? { ...li, [field]: value } : li)));
   }
 
+  /* ─── Presets ─── */
+  function applyPreset(presetId: string) {
+    if (!presetId) {
+      // Clear / Custom
+      setSelectedPreset("");
+      setPresetApplied(false);
+      setProjectName("");
+      setLineItems([{ id: crypto.randomUUID(), description: "", amount: "" }]);
+      setPaymentType("full");
+      setMemo("");
+      return;
+    }
+    const preset = SERVICE_PRESETS.find((p) => p.id === presetId);
+    if (!preset) return;
+    setSelectedPreset(presetId);
+    setProjectName(preset.projectName);
+    setLineItems(preset.lineItems.map((li) => ({ id: crypto.randomUUID(), ...li })));
+    setPaymentType(preset.paymentType);
+    setMemo(preset.memo);
+    setPresetApplied(true);
+    setTimeout(() => setPresetApplied(false), 3000);
+  }
+
   /* ─── Submit invoice ─── */
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -495,6 +650,8 @@ export default function AdminPanel() {
       setMemo("");
       setDueDateType("receipt");
       setDueDate("");
+      setSelectedPreset("");
+      setPresetApplied(false);
 
       // Refresh projects
       fetchProjects();
@@ -698,6 +855,40 @@ export default function AdminPanel() {
         <div style={s.section}>
           <div style={s.sectionTitle}>Invoice Generator</div>
           <form onSubmit={handleSubmit}>
+            {/* Service Preset Selector */}
+            <div style={s.formGroup}>
+              <label style={s.label}>Service Preset</label>
+              <select
+                value={selectedPreset}
+                onChange={(e) => applyPreset(e.target.value)}
+                style={{
+                  ...s.input,
+                  cursor: "pointer",
+                  appearance: "none",
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M2 4l4 4 4-4'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "right 12px center",
+                  paddingRight: 32,
+                }}
+              >
+                <option value="">Custom — blank form</option>
+                {PRESET_CATEGORIES.map((cat) => (
+                  <optgroup key={cat} label={cat}>
+                    {SERVICE_PRESETS.filter((p) => p.category === cat).map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name} — ${Number(p.lineItems[0].amount).toLocaleString()}{p.paymentType === "retainer" ? "/mo" : ""}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+              {presetApplied && (
+                <div style={{ fontSize: 11, color: GREEN, marginTop: 4 }}>
+                  Preset applied — edit as needed
+                </div>
+              )}
+            </div>
+
             <div style={s.row}>
               <div style={{ ...s.formGroup, ...s.flex1 }}>
                 <label style={s.label}>Client Name *</label>
