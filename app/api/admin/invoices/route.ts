@@ -40,7 +40,7 @@ export async function GET() {
         projectMap[key] = {
           client_name: inv.metadata?.client_name || "Unknown",
           project_name: projectName,
-          payment_type: inv.metadata?.payment_type || "full",
+          payment_type: inv.metadata?.payment_type === "deposit" || inv.metadata?.payment_type === "final" ? "split" : inv.metadata?.payment_type || "full",
           phase: inv.metadata?.phase || null,
           invoices: [],
           status: "awaiting_payment",
