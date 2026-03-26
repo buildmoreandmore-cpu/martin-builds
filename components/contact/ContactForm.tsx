@@ -8,6 +8,7 @@ const PROJECT_TYPES = [
   "AI Build Sprint",
   "Full Product / SaaS",
   "AI Power Hour",
+  "Community Outreach",
   "Just a Question",
 ];
 
