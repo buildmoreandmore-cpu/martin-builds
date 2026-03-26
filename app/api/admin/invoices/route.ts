@@ -63,6 +63,7 @@ export async function GET() {
         payment_type: inv.metadata?.payment_type || "full",
         stripe_url: `https://dashboard.stripe.com/invoices/${inv.id}`,
         customer_email: customer?.email || inv.customer_email || null,
+        pay_url: inv.metadata?.pay_url || null,
       });
 
       projectMap[key].total_amount += inv.amount_due / 100;
@@ -195,7 +196,23 @@ export async function POST(req: NextRequest) {
       ...(phase_number ? { phase: `${phase_number}/${total_phases}` } : {}),
     };
 
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://martinbuilds.ai";
+
     if (payment_type === "full") {
+      // Create payment intent for on-site payment
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: totalCents,
+        currency: "usd",
+        customer: customer.id,
+        receipt_email: client_email,
+        metadata: {
+          ...baseMeta,
+          payment_type: "full",
+          total_amount: totalCents.toString(),
+        },
+        description: invoiceTitle,
+      });
+
       const invoice = await stripe.invoices.create({
         customer: customer.id,
         collection_method: "send_invoice",
@@ -204,7 +221,12 @@ export async function POST(req: NextRequest) {
           due_date && due_date !== "receipt"
             ? Math.floor(new Date(due_date).getTime() / 1000)
             : undefined,
-        metadata: { ...baseMeta, payment_type: "full" },
+        metadata: {
+          ...baseMeta,
+          payment_type: "full",
+          payment_intent_id: paymentIntent.id,
+          pay_url: `${baseUrl}/pay/${paymentIntent.id}`,
+        },
         description: invoiceTitle,
       });
 
@@ -225,11 +247,28 @@ export async function POST(req: NextRequest) {
         success: true,
         type: "full",
         invoice_id: finalized.id,
+        payment_link: `${baseUrl}/pay/${paymentIntent.id}`,
       });
     }
 
     if (payment_type === "split") {
       const halfCents = Math.round(totalCents / 2);
+
+      // Create payment intent for deposit (on-site payment)
+      const depositPI = await stripe.paymentIntents.create({
+        amount: halfCents,
+        currency: "usd",
+        customer: customer.id,
+        receipt_email: client_email,
+        metadata: {
+          ...baseMeta,
+          payment_type: "deposit",
+          phase: "1",
+          total_phases: "2",
+          total_amount: totalCents.toString(),
+        },
+        description: `${invoiceTitle} — Deposit (50%)`,
+      });
 
       // Invoice 1: deposit (finalize + send)
       const depositInvoice = await stripe.invoices.create({
@@ -240,8 +279,13 @@ export async function POST(req: NextRequest) {
           due_date && due_date !== "receipt"
             ? Math.floor(new Date(due_date).getTime() / 1000)
             : undefined,
-        metadata: { ...baseMeta, payment_type: "deposit" },
-        description: `${invoiceTitle} — Deposit (50%)`,
+        metadata: {
+          ...baseMeta,
+          payment_type: "deposit",
+          payment_intent_id: depositPI.id,
+          pay_url: `${baseUrl}/pay/${depositPI.id}`,
+        },
+        description: `${invoiceTitle} — Deposit (1 of 2)`,
       });
 
       await stripe.invoiceItems.create({
@@ -267,7 +311,7 @@ export async function POST(req: NextRequest) {
           payment_type: "final",
           linked_deposit_invoice: finalizedDeposit.id,
         },
-        description: `${invoiceTitle} — Final Payment (50%)`,
+        description: `${invoiceTitle} — Final Balance (2 of 2)`,
       });
 
       await stripe.invoiceItems.create({
@@ -291,6 +335,7 @@ export async function POST(req: NextRequest) {
         type: "split",
         deposit_invoice_id: finalizedDeposit.id,
         final_invoice_id: finalInvoice.id,
+        payment_link: `${baseUrl}/pay/${depositPI.id}`,
       });
     }
 
@@ -344,6 +389,7 @@ interface InvoiceEntry {
   payment_type: string;
   stripe_url: string;
   customer_email: string | null;
+  pay_url: string | null;
 }
 
 interface SubscriptionEntry {

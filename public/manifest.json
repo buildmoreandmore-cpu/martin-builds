@@ -4,7 +4,7 @@
   "start_url": "/admin",
   "display": "standalone",
   "background_color": "#000000",
-  "theme_color": "#00FF41",
+  "theme_color": "#c8ff00",
   "icons": [
     {
       "src": "/icons/admin-192.svg",

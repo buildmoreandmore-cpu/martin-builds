@@ -3,10 +3,10 @@
 import { useState, useEffect, useCallback, type CSSProperties, type FormEvent } from "react";
 
 /* ─── Design tokens ─── */
-const GREEN = "#00FF41";
-const BG = "#000000";
-const CARD_BG = "#0a0f0a";
-const BORDER = "#1a2e1a";
+const GREEN = "#c8ff00";
+const BG = "#0a0a0a";
+const CARD_BG = "#1a1a1a";
+const BORDER = "#2a2a2a";
 const TEXT = "#e0e0e0";
 const DIM = "#888";
 
@@ -25,6 +25,7 @@ interface InvoiceEntry {
   due_date: string | null;
   payment_type: string;
   stripe_url: string;
+  pay_url: string | null;
 }
 
 interface SubscriptionEntry {
@@ -68,7 +69,7 @@ const s: Record<string, CSSProperties> = {
   loginBox: {
     width: "100%",
     maxWidth: 380,
-    padding: 32,
+    padding: "32px clamp(16px, 5vw, 32px)",
   },
   loginTitle: {
     color: GREEN,
@@ -116,7 +117,7 @@ const s: Record<string, CSSProperties> = {
     cursor: "not-allowed",
   },
   header: {
-    padding: "20px 24px",
+    padding: "16px clamp(12px, 4vw, 24px)",
     borderBottom: `1px solid ${BORDER}`,
     display: "flex",
     justifyContent: "space-between",
@@ -141,7 +142,7 @@ const s: Record<string, CSSProperties> = {
   content: {
     maxWidth: 900,
     margin: "0 auto",
-    padding: "24px 16px",
+    padding: "24px clamp(12px, 4vw, 24px)",
   },
   section: {
     marginBottom: 40,
@@ -170,15 +171,18 @@ const s: Record<string, CSSProperties> = {
   row: {
     display: "flex",
     gap: 12,
+    flexWrap: "wrap" as const,
   },
   flex1: {
     flex: 1,
+    minWidth: 200,
   },
   lineItemRow: {
     display: "flex",
     gap: 8,
     alignItems: "center",
     marginBottom: 8,
+    flexWrap: "wrap" as const,
   },
   trashBtn: {
     background: "transparent",
@@ -329,8 +333,9 @@ const s: Record<string, CSSProperties> = {
   },
   dueDateRow: {
     display: "flex",
-    gap: 12,
+    gap: 8,
     alignItems: "center",
+    flexWrap: "wrap" as const,
   },
 };
 
@@ -480,7 +485,10 @@ export default function AdminPanel() {
           ? "Retainer subscription created"
           : "Invoice sent";
 
-      setFormSuccess(`${typeLabel} for ${clientName}`);
+      const linkMsg = data.payment_link
+        ? `\nPayment link: ${data.payment_link}`
+        : "";
+      setFormSuccess(`${typeLabel} for ${clientName}${linkMsg}`);
 
       // Reset form
       setClientName("");
@@ -922,6 +930,29 @@ export default function AdminPanel() {
                         {releasingId === inv.id ? "Releasing..." : "Release Final Invoice"}
                       </button>
                     ))}
+
+                {/* Payment links */}
+                {p.invoices
+                  .filter((inv) => inv.pay_url && inv.status === "open")
+                  .map((inv) => (
+                    <button
+                      key={`pay-${inv.id}`}
+                      onClick={() => {
+                        navigator.clipboard.writeText(
+                          `${window.location.origin}${inv.pay_url}`
+                        );
+                        alert("Payment link copied!");
+                      }}
+                      style={{
+                        ...s.releaseBtn,
+                        background: GREEN,
+                        color: BG,
+                        borderColor: GREEN,
+                      }}
+                    >
+                      Copy Payment Link
+                    </button>
+                  ))}
 
                 {/* Stripe links */}
                 {p.invoices.map((inv) => (
