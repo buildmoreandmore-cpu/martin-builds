@@ -82,14 +82,14 @@ export async function getEntriesDueForEmail(
     .not("emails_sent", "cs", `{${dayNumber}}`);
 
   if (!data) return [];
-  return data.map((entry) => ({ email: entry.email, entry }));
+  return data.map((entry: FunnelEntry & { email: string }) => ({ email: entry.email, entry }));
 }
 
 export async function getAllEntries(): Promise<Record<string, FunnelEntry>> {
   const { data } = await supabase.from("funnel").select("*");
   const result: Record<string, FunnelEntry> = {};
   if (data) {
-    for (const entry of data) {
+    for (const entry of data as (FunnelEntry & { email: string })[]) {
       result[entry.email] = entry;
     }
   }
@@ -174,5 +174,5 @@ export async function getScanEntriesDueForEmail(
     .not("emails_sent", "cs", `{${dayNumber}}`);
 
   if (!data) return [];
-  return data.map((entry) => ({ email: entry.email, entry }));
+  return data.map((entry: ScanFunnelEntry) => ({ email: entry.email, entry }));
 }

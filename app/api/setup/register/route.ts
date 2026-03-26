@@ -3,10 +3,13 @@ import Stripe from "stripe";
 import { registerClient, getClientByEmail, updateClient } from "@/lib/clients";
 import { sendEmail } from "@/lib/send-email";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+function getStripe() {
+  return new Stripe(process.env.STRIPE_SECRET_KEY!);
+}
 
 export async function POST(req: NextRequest) {
   try {
+    const stripe = getStripe();
     const body = await req.json();
     const { name, email, phone, businessName, businessDescription, botName, industry, plan, sessionId } = body;
 

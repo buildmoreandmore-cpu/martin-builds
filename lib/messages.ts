@@ -43,7 +43,7 @@ export async function getRecentMessages(
   if (!data) return [];
 
   // Reverse so oldest first
-  return data.reverse().map((m) => ({
+  return data.reverse().map((m: { role: string; content: string }) => ({
     role: m.role as "user" | "assistant",
     content: m.content,
   }));

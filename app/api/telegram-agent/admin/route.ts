@@ -54,8 +54,8 @@ export async function POST(req: NextRequest) {
         .select("bot_username")
         .eq("status", "assigned");
 
-      const avail = available?.map((b) => `@${b.bot_username}`).join(", ") || "none";
-      const used = assigned?.map((b) => `@${b.bot_username}`).join(", ") || "none";
+      const avail = available?.map((b: { bot_username: string }) => `@${b.bot_username}`).join(", ") || "none";
+      const used = assigned?.map((b: { bot_username: string }) => `@${b.bot_username}`).join(", ") || "none";
 
       await sendMessage(chatId,
         `<b>Bot Pool</b>\n\n` +
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ ok: true });
       }
 
-      const list = clients.map((c) => {
+      const list = clients.map((c: { active: boolean; bot_username: string | null; business_name: string; plan: string }) => {
         const status = c.active ? "✅" : "❌";
         const bot = c.bot_username ? `@${c.bot_username}` : "no bot";
         return `${status} <b>${c.business_name}</b> (${c.plan}) — ${bot}`;
