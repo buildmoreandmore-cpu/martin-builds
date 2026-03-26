@@ -54,7 +54,7 @@ const s: Record<string, CSSProperties> = {
     minHeight: "100vh",
     background: BG,
     color: TEXT,
-    fontFamily: "'SF Mono', 'Fira Code', 'Consolas', monospace",
+    fontFamily: "'Outfit', sans-serif",
     padding: 0,
     margin: 0,
   },
@@ -75,7 +75,7 @@ const s: Record<string, CSSProperties> = {
     fontSize: 20,
     fontWeight: 700,
     marginBottom: 8,
-    fontFamily: "'SF Mono', 'Fira Code', monospace",
+    fontFamily: "'Space Mono', monospace",
     letterSpacing: 1,
   },
   loginSub: {
