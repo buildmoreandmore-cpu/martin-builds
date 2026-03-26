@@ -8,15 +8,16 @@ export const metadata: Metadata = {
   description: "Secure payment portal for martin.builds projects.",
 };
 
-export default function ProjectPaymentPage({
+export default async function ProjectPaymentPage({
   params,
 }: {
-  params: { payment_intent_id: string };
+  params: Promise<{ payment_intent_id: string }>;
 }) {
+  const { payment_intent_id } = await params;
   return (
     <>
       <Nav />
-      <ProjectPaymentForm paymentIntentId={params.payment_intent_id} />
+      <ProjectPaymentForm paymentIntentId={payment_intent_id} />
       <Footer />
     </>
   );

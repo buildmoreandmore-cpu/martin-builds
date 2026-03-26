@@ -7,10 +7,11 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const paymentIntent = await stripe.paymentIntents.retrieve(params.id);
+    const { id } = await params;
+    const paymentIntent = await stripe.paymentIntents.retrieve(id);
 
     if (!paymentIntent) {
       return NextResponse.json(
