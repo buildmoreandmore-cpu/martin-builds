@@ -5,7 +5,7 @@ import ScrollReveal from "../ScrollReveal";
 const beliefs = [
   { title: "Ship first, optimize later.", body: "A live product teaches you more in a week than a roadmap teaches you in a year." },
   { title: "Give before you ask.", body: "I lead with value — a free audit, a teardown, real insight — before a dollar changes hands. That's how trust scales." },
-  { title: "AI is a translator, not a replacement.", body: "I don't replace your team. I give them tools that make them dangerous." },
+  { title: "AI-native, not AI-layered.", body: "I don't bolt AI onto your homepage and call it innovation. Intelligence is built into every layer — your operations, your workflows, your client experience. That's the difference between a feature and a transformation." },
   { title: "Small businesses deserve big tech.", body: "The same AI powering Fortune 500s should be accessible at $5K, not $500K." },
   { title: "Build in public.", body: "I share what I'm working on, what's failing, and what's shipping. Transparency builds trust faster than polish." },
   { title: "Self-taught is an edge, not a gap.", body: "No CS degree. No agency pedigree. I learned by shipping real products for real businesses — 10+ and counting. That's the unconventional angle, and I own it." },

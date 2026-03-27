@@ -4,6 +4,8 @@ import ScrollReveal from "./ScrollReveal";
 
 const testimonials = [
   {
+    before: "Client intake was a mess — proposals took days, follow-ups fell through the cracks, and the team was drowning in manual data entry.",
+    after: "Francis built an AI-powered intake and proposal system that cut turnaround from days to minutes. The team stopped doing admin and started closing deals.",
     quote:
       "Francis didn't just build us a website — he built us a system. The AI tools he integrated have completely changed how we handle client intake and proposals.",
     initials: "RN",
@@ -11,6 +13,8 @@ const testimonials = [
     role: "2KB Energy Engineering — Energy Services",
   },
   {
+    before: "Had a clear vision for the business but no way to translate it into tools the team could use. Previous developers couldn't bridge the gap between strategy and execution.",
+    after: "In under two weeks, her team had a working system they actually use daily — built around how they operate, not how a developer thought they should.",
     quote:
       "He understands the business side and the tech side — that's rare. He translated what I needed into something my team could actually use, in less time than I expected.",
     initials: "CA",
@@ -18,6 +22,8 @@ const testimonials = [
     role: "Kingly Consulting — Business Consulting",
   },
   {
+    before: "Needed a site that matched the experience of being in the shop — warm, intentional, inviting. Previous attempts missed the mark and dragged on for months.",
+    after: "Shipped in two weeks. Clean, fast, on-brand. No back-and-forth, no scope creep — just the finished product, exactly as discussed.",
     quote:
       "Fast, clear communication, and the final product was exactly what we needed. No scope creep, no guessing. Francis ships.",
     initials: "BC",
@@ -81,6 +87,9 @@ export default function Testimonials() {
             grid-template-columns: repeat(2, 1fr) !important;
             gap: 2rem !important;
           }
+          .before-after-grid {
+            grid-template-columns: 1fr !important;
+          }
         }
       `}</style>
 
@@ -94,6 +103,27 @@ export default function Testimonials() {
                 borderBottom: i < testimonials.length - 1 ? "1px solid rgba(245,245,240,0.04)" : "none",
               }}
             >
+              {/* Before / After context */}
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "1rem",
+                  marginBottom: "1.5rem",
+                  textAlign: "left",
+                }}
+                className="before-after-grid"
+              >
+                <div style={{ background: "rgba(255,68,68,0.04)", border: "1px solid rgba(255,68,68,0.1)", borderRadius: "10px", padding: "1rem 1.2rem" }}>
+                  <span style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.65rem", color: "#ff4444", letterSpacing: "2px", textTransform: "uppercase" }}>Before</span>
+                  <p style={{ fontSize: "0.85rem", color: "#888", lineHeight: 1.6, marginTop: "0.4rem", marginBottom: 0 }}>{t.before}</p>
+                </div>
+                <div style={{ background: "rgba(200,255,0,0.04)", border: "1px solid rgba(200,255,0,0.1)", borderRadius: "10px", padding: "1rem 1.2rem" }}>
+                  <span style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.65rem", color: "#c8ff00", letterSpacing: "2px", textTransform: "uppercase" }}>After</span>
+                  <p style={{ fontSize: "0.85rem", color: "#ccc", lineHeight: 1.6, marginTop: "0.4rem", marginBottom: 0 }}>{t.after}</p>
+                </div>
+              </div>
+
               {/* Large quote mark */}
               <span
                 style={{

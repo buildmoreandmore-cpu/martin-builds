@@ -69,6 +69,43 @@ export default function Process() {
         ))}
       </div>
 
+      {/* Transparency strip — information symmetry */}
+      <ScrollReveal>
+        <div
+          className="transparency-grid"
+          style={{
+            marginTop: "3rem",
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: "1px",
+            background: "rgba(245,245,240,0.06)",
+            borderRadius: "12px",
+            overflow: "hidden",
+          }}
+        >
+          {[
+            { label: "What you get", value: "Scope doc, daily updates, deployed product, full walkthrough, source code" },
+            { label: "What it costs", value: "Sprints from $5K, Platforms from $8K. Exact quote after discovery call — no hidden fees" },
+            { label: "How long", value: "2 weeks for sprints. 2-3 weeks for platforms. Locked timeline before we start" },
+            { label: "What success looks like", value: "Your team uses it daily. It saves real hours. You come back for Phase 2" },
+          ].map((item) => (
+            <div key={item.label} style={{ background: "#1a1a1a", padding: "1.5rem" }}>
+              <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.7rem", color: "#c8ff00", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "0.5rem" }}>{item.label}</div>
+              <p style={{ fontSize: "0.85rem", color: "#888", lineHeight: 1.6, margin: 0 }}>{item.value}</p>
+            </div>
+          ))}
+        </div>
+      </ScrollReveal>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .transparency-grid { grid-template-columns: 1fr 1fr !important; }
+        }
+        @media (max-width: 480px) {
+          .transparency-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+
       <ScrollReveal>
         <div style={{ marginTop: "3rem", textAlign: "center" }}>
           <a

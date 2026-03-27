@@ -65,6 +65,26 @@ export default function ObjectionHandler() {
         </ScrollReveal>
       </div>
 
+      {/* Cost of inaction */}
+      <ScrollReveal>
+        <div
+          style={{
+            maxWidth: "1000px",
+            margin: "2.5rem auto 0",
+            padding: "1.5rem 2rem",
+            background: "rgba(255,68,68,0.03)",
+            border: "1px solid rgba(255,68,68,0.08)",
+            borderRadius: "12px",
+            textAlign: "center",
+          }}
+        >
+          <p style={{ fontSize: "0.95rem", color: "#ccc", lineHeight: 1.7, margin: 0 }}>
+            While you&apos;re still deciding, your competitors are already automating their intake, their proposals, their follow-ups. The window to be first in your market is closing.{" "}
+            <span style={{ color: "#c8ff00", fontWeight: 600 }}>Every week you wait is a week they pull ahead.</span>
+          </p>
+        </div>
+      </ScrollReveal>
+
       <style>{`
         @media (max-width: 768px) {
           .objection-grid {
