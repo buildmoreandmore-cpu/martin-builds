@@ -5,10 +5,12 @@ export async function sendEmail({
   to = "agent@martinbuilds.ai",
   subject,
   body,
+  isHtml = false,
 }: {
   to?: string;
   subject: string;
   body: string;
+  isHtml?: boolean;
 }) {
   if (!COMPOSIO_API_KEY) {
     console.log(`[Email skipped - no API key] To: ${to} | Subject: ${subject}`);
@@ -28,6 +30,7 @@ export async function sendEmail({
           recipient_email: to,
           subject,
           body,
+          ...(isHtml ? { is_html: true } : {}),
         },
       }),
     });

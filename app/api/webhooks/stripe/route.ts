@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getClientByStripeCustomer, updateClient } from "@/lib/clients";
 import { sendEmail } from "@/lib/send-email";
+import { buildThankYouEmail, getThankYouSubject } from "@/lib/payment-email-templates";
 import { releaseBot, configureBot } from "@/lib/bot-pool";
 import { supabase } from "@/lib/supabase";
 
@@ -39,6 +40,29 @@ export async function POST(req: NextRequest) {
         await updateClient(client.email, { active: true });
         console.log(`[Stripe] ${client.business_name} payment received — agent active`);
       }
+
+      // Send branded thank-you for admin-created invoices
+      if (invoice.metadata?.created_by === "martin.builds admin") {
+        const paymentType = invoice.metadata.payment_type as "full" | "deposit" | "final";
+        if (paymentType === "full" || paymentType === "deposit" || paymentType === "final") {
+          const recipientEmail = invoice.customer_email || (invoice.customer as Stripe.Customer)?.email;
+          if (recipientEmail) {
+            const html = buildThankYouEmail({
+              type: paymentType,
+              clientName: invoice.metadata.client_name || "there",
+              projectName: invoice.metadata.project_name || "your project",
+              amount: invoice.amount_paid,
+              totalAmount: parseInt(invoice.metadata.total_amount || "0") || undefined,
+            });
+            await sendEmail({
+              to: recipientEmail,
+              subject: getThankYouSubject(paymentType, invoice.metadata.project_name || "your project"),
+              body: html,
+              isHtml: true,
+            }).catch((e) => console.error("Thank-you email failed:", e));
+          }
+        }
+      }
       break;
     }
 
@@ -73,11 +97,19 @@ export async function POST(req: NextRequest) {
 
             console.log(`[TWO-PHASE] Phase 1 paid for project: ${projects.project_name}`);
 
-            // Send confirmation email
+            // Send branded confirmation email
+            const phase1Html = buildThankYouEmail({
+              type: "deposit",
+              clientName: projects.client_name,
+              projectName: projects.project_name,
+              amount: intent.amount,
+              totalAmount: projects.total_amount,
+            });
             await sendEmail({
               to: projects.client_email,
-              subject: `Payment Received: ${projects.project_name}`,
-              body: `Hi ${projects.client_name},\n\nYour deposit payment of $${(intent.amount / 100).toFixed(2)} has been received for ${projects.project_name}.\n\nI'll start working on your project right away. You'll receive a link for the final 50% payment when the project is ready for review.\n\nThanks,\nMartin\nmartin.builds`,
+              subject: getThankYouSubject("deposit", projects.project_name),
+              body: phase1Html,
+              isHtml: true,
             }).catch((e) => console.error("Email send failed:", e));
 
             // Alert me
@@ -107,11 +139,19 @@ export async function POST(req: NextRequest) {
 
             console.log(`[TWO-PHASE] Phase 2 paid - project completed: ${projects.project_name}`);
 
-            // Send confirmation email
+            // Send branded confirmation email
+            const phase2Html = buildThankYouEmail({
+              type: "final",
+              clientName: projects.client_name,
+              projectName: projects.project_name,
+              amount: intent.amount,
+              totalAmount: projects.total_amount,
+            });
             await sendEmail({
               to: projects.client_email,
-              subject: `Final Payment Received: ${projects.project_name}`,
-              body: `Hi ${projects.client_name},\n\nYour final payment of $${(intent.amount / 100).toFixed(2)} has been received for ${projects.project_name}.\n\nYour project is now complete! I'll follow up shortly with delivery details and all project files.\n\nThanks for working with martin.builds!\n\nMartin`,
+              subject: getThankYouSubject("final", projects.project_name),
+              body: phase2Html,
+              isHtml: true,
             }).catch((e) => console.error("Email send failed:", e));
 
             // Alert me
