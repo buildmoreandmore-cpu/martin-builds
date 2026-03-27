@@ -41,9 +41,9 @@ export default function Testimonials() {
       </ScrollReveal>
       <ScrollReveal>
         <h2 style={{ ...sectionTitle, maxWidth: "800px" }}>
-          They had the same question you do.
+          Here&apos;s what their business looked like before.
           <br />
-          Here&apos;s what happened.
+          <span style={{ color: "#c8ff00" }}>Here&apos;s after.</span>
         </h2>
       </ScrollReveal>
 

@@ -30,7 +30,7 @@ export default function Hero() {
       </div>
 
       <p className="animate-fade-up-1" style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 400, fontSize: "1rem", color: "#888", marginBottom: "1rem" }}>
-        For healthcare practices, law firms, contractors, and service businesses ready to stop waiting on AI
+        Growth and comfort can&apos;t coexist. For businesses ready to move, not wait.
       </p>
 
       <h1

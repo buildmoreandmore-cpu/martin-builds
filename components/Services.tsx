@@ -56,14 +56,14 @@ export default function Services() {
       </ScrollReveal>
       <ScrollReveal>
         <h2 style={sectionTitle}>
-          AI systems for businesses
+          I don&apos;t sell deliverables.
           <br />
-          that are ready to scale.
+          I sell outcomes.
         </h2>
       </ScrollReveal>
       <ScrollReveal>
         <p style={sectionSub}>
-          I build AI tools for healthcare practices, law firms, energy companies, real estate teams, and service businesses — the industries where AI makes the biggest immediate impact.
+          Every build starts with your problem — not my tech stack. Healthcare, legal, energy, service businesses — the industries still bleeding hours on manual work. Here&apos;s what changes.
         </p>
       </ScrollReveal>
 

@@ -49,7 +49,7 @@ export default function AboutHero() {
           I&apos;ve always had the drive to build and run businesses. But hiring people to execute — not because of cost, but because nobody works with the intensity I bring — became the bottleneck. AI changed that. It let me work at the speed my mind moves.
         </p>
         <p style={{ fontSize: "1.15rem", fontWeight: 300, color: "#888", lineHeight: 1.75 }}>
-          So I locked in. I taught myself to code. I went deep on AI — not to talk about it, but to build with it. Now I ship AI-powered tools and products for small businesses who need the same edge I found.
+          So I locked in. I taught myself to code. I went deep on AI — not to talk about it, but to build with it. Now I ship AI-powered tools for small businesses who need the same edge I found. And I don&apos;t just deliver and walk away — I&apos;m in the trenches with you through every build, every launch, every late-night fix.
         </p>
       </div>
     </section>

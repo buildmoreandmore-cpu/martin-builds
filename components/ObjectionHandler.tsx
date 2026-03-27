@@ -59,8 +59,8 @@ export default function ObjectionHandler() {
           <div style={solutionCardStyle}>
             <div style={{ ...iconWrapStyle, background: "rgba(200,255,0,0.1)" }}><BoltIcon /></div>
             <h3 style={{ ...painTitleStyle, color: "#f5f5f0" }}>I fix that.</h3>
-            <p style={{ ...painTextStyle, color: "rgba(245,245,240,0.7)" }}>One builder. Clear scope. Live product in 14 days. No vanishing acts.</p>
-            <p style={{ ...painTextStyle, color: "rgba(245,245,240,0.5)", marginTop: "0.8rem", fontSize: "0.85rem" }}>I&apos;ve already built for energy engineering firms, consulting practices, and service businesses across Atlanta and beyond.</p>
+            <p style={{ ...painTextStyle, color: "rgba(245,245,240,0.7)" }}>One builder. Clear scope. Live product in 14 days. I&apos;m in the trenches with you — not just at delivery, but through the entire build.</p>
+            <p style={{ ...painTextStyle, color: "rgba(245,245,240,0.5)", marginTop: "0.8rem", fontSize: "0.85rem" }}>Self-taught. Solo. 10+ shipped products for real businesses — energy, legal, consulting, and more. No agency overhead. No middlemen. Just the work.</p>
           </div>
         </ScrollReveal>
       </div>

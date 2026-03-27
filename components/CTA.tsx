@@ -31,15 +31,14 @@ export default function CTA() {
       </ScrollReveal>
       <ScrollReveal>
         <h2 style={{ ...sectionTitle, margin: "0 auto" }}>
-          Whether you&apos;re doing $500K or $50M —
+          Your competitors aren&apos;t waiting.
           <br />
-          if AI can help,{" "}
-          <span style={{ color: "#c8ff00" }}>I&apos;ll show you how.</span>
+          <span style={{ color: "#c8ff00" }}>Neither should you.</span>
         </h2>
       </ScrollReveal>
       <ScrollReveal>
         <p style={{ ...sectionSub, margin: "1.5rem auto 0" }}>
-          Book a free 30-minute discovery call. I&apos;ll tell you exactly what I&apos;d build, what it costs, and how fast you&apos;d have it. No pitch deck. No follow-up spam. Just a real conversation about what AI can do for your business.
+          I don&apos;t just deliver and disappear. I&apos;m in the trenches with you — from day one through launch and beyond. Book a free 30-minute call. No pitch deck. No follow-up spam. Just a real conversation about what&apos;s bleeding time and how to fix it.
         </p>
       </ScrollReveal>
 

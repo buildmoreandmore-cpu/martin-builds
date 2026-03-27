@@ -11,7 +11,7 @@ const steps = [
   {
     num: "02",
     title: "Blueprint & Scope",
-    desc: "I map out the architecture, features, and AI integrations. You approve. We lock scope so nothing creeps.",
+    desc: "Day 1: You get a locked scope document — features, architecture, timeline. No surprises. No scope creep.",
   },
   {
     num: "03",
@@ -21,7 +21,7 @@ const steps = [
   {
     num: "04",
     title: "Ship & Support",
-    desc: "Deployed, tested, and live. I walk your team through everything. Then we talk about what's next.",
+    desc: "Day 14: Deployed, tested, and live. Your team gets a full walkthrough. I underpromise and overdeliver — every time.",
   },
 ];
 

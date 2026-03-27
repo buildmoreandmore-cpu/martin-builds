@@ -21,14 +21,14 @@ export default function Industries() {
       </ScrollReveal>
       <ScrollReveal>
         <h2 style={sectionTitle}>
-          I build for businesses that
+          We build for the industries
           <br />
-          run on operations.
+          that technology forgot.
         </h2>
       </ScrollReveal>
       <ScrollReveal>
         <p style={sectionSub}>
-          If your team spends hours on repetitive tasks, manual processes, or disconnected tools — that&apos;s where AI creates the most value.
+          Law firms, dental practices, energy companies, contractors — the industries still running on spreadsheets and phone calls. That&apos;s where AI creates the biggest edge.
         </p>
       </ScrollReveal>
 
