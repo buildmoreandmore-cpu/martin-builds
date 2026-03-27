@@ -26,25 +26,25 @@ const RetainerIcon = () => (
 
 const services = [
   {
-    icon: <PlatformIcon />,
-    title: "AI Platform Build",
-    price: "From $8,000",
-    description: "Full-stack AI platforms — client portals, admin dashboards, automated workflows, and integrations. Scoped, built, and live in 2-3 weeks.",
-    tags: "Platforms · Dashboards · Portals",
-  },
-  {
     icon: <SprintIcon />,
     title: "AI Build Sprint",
     price: "From $5,000",
-    description: "A defined AI-powered tool or website — designed, built, and deployed fast. Perfect for your first AI integration or a system your team needs yesterday.",
-    tags: "Websites · Tools · Integrations",
+    description: "Where most relationships start. A defined AI-powered tool or website — scoped, built, and live in 2 weeks. We build trust here first.",
+    tags: "Phase 1 · Websites · Tools",
+  },
+  {
+    icon: <PlatformIcon />,
+    title: "AI Platform Build",
+    price: "From $8,000",
+    description: "Once you've seen what's possible, we go deeper. Full-stack AI platforms — client portals, admin dashboards, automated workflows. The real transformation.",
+    tags: "Phase 2 · Platforms · Dashboards",
   },
   {
     icon: <RetainerIcon />,
     title: "AI Retainer",
     price: "Custom pricing",
-    description: "Your AI builder on call. New features, iterations, and system upgrades every month. Your operations evolve — your tools should too.",
-    tags: "Ongoing · Growth · Priority",
+    description: "The long game. Your AI builder on call — new features, iterations, system upgrades every month. Your operations evolve, your tools evolve with them.",
+    tags: "Phase 3 · Ongoing · Growth",
   },
 ];
 
@@ -63,7 +63,7 @@ export default function Services() {
       </ScrollReveal>
       <ScrollReveal>
         <p style={sectionSub}>
-          Every build starts with your problem — not my tech stack. Healthcare, legal, energy, service businesses — the industries still bleeding hours on manual work. Here&apos;s what changes.
+          Every build starts with your problem — not my tech stack. Intelligence is built into every layer from day one. Not bolted on as a feature. Not layered on top of a template. <span style={{ color: "#c8ff00" }}>AI-native from the ground up.</span>
         </p>
       </ScrollReveal>
 

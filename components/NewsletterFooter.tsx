@@ -65,13 +65,13 @@ export default function NewsletterFooter() {
               marginBottom: "0.75rem",
             }}
           >
-            Newsletter
+            Stay Connected
           </p>
           <h3 style={{ fontSize: "1.5rem", fontWeight: 700, letterSpacing: "-0.5px", marginBottom: "0.5rem" }}>
-            What I&apos;m building this week.
+            One insight a week. No ask.
           </h3>
           <p style={{ fontSize: "0.9rem", color: "#888", lineHeight: 1.6, fontWeight: 300 }}>
-            Tools I&apos;m shipping, AI strategies that work, and lessons from building in public. Sent every Friday.
+            What I&apos;m building, what&apos;s working for clients, and AI moves you can steal. Not a pitch — just value. Every Friday.
           </p>
         </div>
 

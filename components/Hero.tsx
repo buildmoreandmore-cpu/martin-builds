@@ -43,11 +43,11 @@ export default function Hero() {
           maxWidth: "900px",
         }}
       >
-        I build AI systems that save
+        Your team is drowning
         <br />
-        your team{" "}
+        in manual work.{" "}
         <span style={{ color: "#c8ff00", position: "relative", display: "inline-block" }}>
-          thousands of hours.
+          I fix that.
           <span
             style={{
               content: "''",
