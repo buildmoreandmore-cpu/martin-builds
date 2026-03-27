@@ -482,6 +482,7 @@ export default function AdminPanel() {
   const [projects, setProjects] = useState<ProjectCard[]>([]);
   const [projectsLoading, setProjectsLoading] = useState(false);
   const [releasingId, setReleasingId] = useState<string | null>(null);
+  const [resendingId, setResendingId] = useState<string | null>(null);
 
   // Expandable project cards
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
@@ -759,6 +760,25 @@ export default function AdminPanel() {
       alert(err instanceof Error ? err.message : "Failed to release invoice");
     }
     setReleasingId(null);
+  }
+
+  /* ─── Resend invoice ─── */
+  async function handleResend(invoiceId: string) {
+    if (!confirm("Resend the invoice email to the client?")) return;
+    setResendingId(invoiceId);
+    try {
+      const res = await fetch("/api/admin/invoices/resend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ invoice_id: invoiceId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      alert("Invoice resent to client!");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to resend invoice");
+    }
+    setResendingId(null);
   }
 
   /* ─── Status badge ─── */
@@ -1412,6 +1432,32 @@ export default function AdminPanel() {
                       }}
                     >
                       Copy Link
+                    </button>
+                  ))}
+
+                {/* Resend invoice */}
+                {p.invoices
+                  .filter((inv) => inv.status === "open")
+                  .slice(0, 1)
+                  .map((inv) => (
+                    <button
+                      key={`resend-${inv.id}`}
+                      onClick={() => handleResend(inv.id)}
+                      disabled={resendingId === inv.id}
+                      style={{
+                        padding: "6px 12px",
+                        background: "transparent",
+                        border: `1px solid ${DIM}`,
+                        color: TEXT,
+                        borderRadius: 4,
+                        fontSize: 11,
+                        fontWeight: 600,
+                        cursor: resendingId === inv.id ? "not-allowed" : "pointer",
+                        fontFamily: "inherit",
+                        opacity: resendingId === inv.id ? 0.5 : 1,
+                      }}
+                    >
+                      {resendingId === inv.id ? "Sending..." : "Resend"}
                     </button>
                   ))}
 
