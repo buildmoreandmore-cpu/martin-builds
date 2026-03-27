@@ -21,6 +21,7 @@ import Services from "@/components/Services";
 import Process from "@/components/Process";
 import Industries from "@/components/Industries";
 import Testimonials from "@/components/Testimonials";
+import ClientFit from "@/components/ClientFit";
 import CTA from "@/components/CTA";
 import NewsletterFooter from "@/components/NewsletterFooter";
 import Footer from "@/components/Footer";
@@ -38,6 +39,7 @@ export default function Home() {
       <Process />
       <Industries />
       <Testimonials />
+      <ClientFit />
       <CTA />
       <NewsletterFooter />
       <Footer />
