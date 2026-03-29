@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateLinkingCode, getClientByEmail, updateClient } from "@/lib/clients";
 import { sendEmail } from "@/lib/send-email";
 import { assignBot, configureBot, getPoolStats } from "@/lib/bot-pool";
+import { buildAgentWelcomeEmail } from "@/lib/agent-email-templates";
 
 export async function POST(req: NextRequest) {
   try {
@@ -50,30 +51,25 @@ export async function POST(req: NextRequest) {
       telegramLink = "https://t.me/Martinbuilds_bot";
     }
 
-    // Send welcome email
+    // Send branded welcome email
+    const connectLink = hasDedicatedBot
+      ? telegramLink
+      : `${telegramLink}?start=${code}`;
+    const connectInstructions = hasDedicatedBot
+      ? `Tap the button below to open your agent. Hit <strong>Start</strong> — you'll be connected automatically.`
+      : `Your dedicated bot is being created. In the meantime, use the link below with your linking code: <strong>${code}</strong>`;
+
     await sendEmail({
       to: email,
       subject: `${botName} is ready — here's how to connect`,
-      body: `Hey ${client.name || "there"},
-
-Your AI agent "${botName}" for ${client.business_name} is set up and ready to go.
-
-${hasDedicatedBot
-  ? `Open your agent on Telegram:\n${telegramLink}\n\nJust tap Start — you'll be connected automatically.`
-  : `Your dedicated bot is being created. We'll email you the link within 24 hours.\n\nIn the meantime, you can use:\n${telegramLink}?start=${code}`
-}
-
-Things you can ask:
-• "Check my emails"
-• "What's on my calendar today?"
-• "Schedule a meeting for tomorrow at 2pm"
-• "Connect my Google Sheets"
-
-You can connect more tools anytime — just tell your agent.
-
-If you need help, reply to this email.
-
-— martin.builds`,
+      body: buildAgentWelcomeEmail({
+        name: client.name || "there",
+        botName,
+        businessName: client.business_name,
+        telegramLink: connectLink,
+        connectInstructions,
+      }),
+      isHtml: true,
     }).catch((err) => console.error("[Welcome email failed]", err));
 
     // Check pool and alert if low

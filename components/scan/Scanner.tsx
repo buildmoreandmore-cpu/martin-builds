@@ -178,6 +178,9 @@ export default function Scanner() {
     mobileScore: number; fcp: number; lcp: number; cls: number; tbt: number; hasHttps: boolean; speedRating: string;
   } | null>(null);
   const [scanResponse, setScanResponse] = useState<any>(null);
+  const [pageAnalysis, setPageAnalysis] = useState<{
+    headline: string; copyIssues: string[]; ctaIssues: string[]; trustSignals: string[]; diagnosis: string;
+  } | null>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   /* scanning animation — waits for real API data */
@@ -238,6 +241,9 @@ export default function Scanner() {
       if (data.siteData) {
         setSiteData(data.siteData);
         setScanResponse(data);
+      }
+      if (data.pageAnalysis) {
+        setPageAnalysis(data.pageAnalysis);
       }
     } catch {
       /* non-blocking */
@@ -470,7 +476,9 @@ export default function Scanner() {
           <ScrollReveal>
             <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
               <p style={{ fontSize: "1.15rem", fontWeight: 300, color: "#ccc", lineHeight: 1.8, maxWidth: 550, margin: "0 auto" }}>
-                {industry && industry !== "Other" ? (
+                {pageAnalysis?.diagnosis ? (
+                  <>{pageAnalysis.diagnosis}</>
+                ) : industry && industry !== "Other" ? (
                   <>Your {industry.toLowerCase()} business is clearly doing something right — you wouldn&apos;t be here if it wasn&apos;t. But here&apos;s what a stranger sees when they find you online for the first time:</>
                 ) : (
                   <>Your business is clearly doing something right — you wouldn&apos;t be here if it wasn&apos;t. But here&apos;s what a stranger sees when they find you online for the first time:</>
@@ -540,6 +548,57 @@ export default function Scanner() {
                 </div>
                 <p style={{ fontSize: "0.75rem", color: "#555", marginTop: "1rem", textAlign: "center" }}>
                   Measured on mobile via Google PageSpeed Insights
+                </p>
+              </div>
+            </ScrollReveal>
+          )}
+
+          {/* AI Content Analysis */}
+          {pageAnalysis && (pageAnalysis.copyIssues.length > 0 || pageAnalysis.ctaIssues.length > 0 || pageAnalysis.trustSignals.length > 0) && (
+            <ScrollReveal>
+              <div
+                style={{
+                  background: "#1a1a1a",
+                  borderRadius: 16,
+                  padding: "2rem",
+                  marginBottom: "2rem",
+                  borderTop: "3px solid #c8ff00",
+                }}
+              >
+                <h3 style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", color: "#c8ff00", marginBottom: "1.25rem" }}>
+                  AI Content Analysis
+                </h3>
+                {pageAnalysis.headline && (
+                  <p style={{ fontSize: "1rem", fontWeight: 600, color: "#f5f5f0", lineHeight: 1.6, marginBottom: "1.25rem", fontStyle: "italic" }}>
+                    &ldquo;{pageAnalysis.headline}&rdquo;
+                  </p>
+                )}
+                {pageAnalysis.copyIssues.length > 0 && (
+                  <div style={{ marginBottom: "1rem" }}>
+                    <p style={{ fontSize: "0.7rem", fontWeight: 700, color: "#ff4444", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "0.5rem" }}>Copy Issues</p>
+                    {pageAnalysis.copyIssues.map((issue, i) => (
+                      <p key={i} style={{ fontSize: "0.85rem", color: "#aaa", lineHeight: 1.6, margin: "0 0 0.4rem", paddingLeft: "1rem", borderLeft: "2px solid rgba(255,68,68,0.2)" }}>{issue}</p>
+                    ))}
+                  </div>
+                )}
+                {pageAnalysis.ctaIssues.length > 0 && (
+                  <div style={{ marginBottom: "1rem" }}>
+                    <p style={{ fontSize: "0.7rem", fontWeight: 700, color: "#ffaa00", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "0.5rem" }}>CTA Issues</p>
+                    {pageAnalysis.ctaIssues.map((issue, i) => (
+                      <p key={i} style={{ fontSize: "0.85rem", color: "#aaa", lineHeight: 1.6, margin: "0 0 0.4rem", paddingLeft: "1rem", borderLeft: "2px solid rgba(255,170,0,0.2)" }}>{issue}</p>
+                    ))}
+                  </div>
+                )}
+                {pageAnalysis.trustSignals.length > 0 && (
+                  <div>
+                    <p style={{ fontSize: "0.7rem", fontWeight: 700, color: "#888", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "0.5rem" }}>Missing Trust Signals</p>
+                    {pageAnalysis.trustSignals.map((signal, i) => (
+                      <p key={i} style={{ fontSize: "0.85rem", color: "#aaa", lineHeight: 1.6, margin: "0 0 0.4rem", paddingLeft: "1rem", borderLeft: "2px solid rgba(245,245,240,0.1)" }}>{signal}</p>
+                    ))}
+                  </div>
+                )}
+                <p style={{ fontSize: "0.75rem", color: "#555", marginTop: "1rem", textAlign: "center" }}>
+                  Powered by AI content analysis
                 </p>
               </div>
             </ScrollReveal>
@@ -620,7 +679,7 @@ export default function Scanner() {
                 I&apos;ll have your report in front of me on the call. We&apos;ll go through each leak and I&apos;ll tell you exactly what I&apos;d build, what it costs, and how fast you&apos;d have it.
               </p>
               <p style={{ fontSize: "0.8rem", color: "#555", marginTop: "1rem", fontStyle: "italic" }}>
-                Your report has also been sent to your email.
+                Your report has been sent to your email — forward it to your team or partner.
               </p>
             </div>
           </ScrollReveal>

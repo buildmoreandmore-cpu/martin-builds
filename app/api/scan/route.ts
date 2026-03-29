@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { addToScanFunnel, updateScanFunnelEntry } from "@/lib/funnel";
 import { getScanEmailTemplate } from "@/lib/email-templates";
 import { sendEmail } from "@/lib/send-email";
+import { analyzePageContent } from "@/lib/claude-analyze";
 
 type Severity = "CRITICAL" | "WARNING" | "OK";
 
@@ -94,7 +95,7 @@ function leakSeverity(q1: string, q2: string, q3: string, site: SiteAnalysis | n
   ];
 }
 
-function buildEmailHtml(url: string, score: number, leaks: { title: string; severity: Severity }[], site: SiteAnalysis | null) {
+function buildEmailHtml(url: string, score: number, leaks: { title: string; severity: Severity }[], site: SiteAnalysis | null, aiAnalysis?: { headline: string; copyIssues: string[]; ctaIssues: string[]; trustSignals: string[]; diagnosis: string } | null) {
   const sc = score <= 40 ? "#ff4444" : score <= 70 ? "#ffaa00" : "#c8ff00";
   const label =
     score <= 40
@@ -137,6 +138,14 @@ function buildEmailHtml(url: string, score: number, leaks: { title: string; seve
 </div>
 ${siteSection}
 <table style="width:100%;border-collapse:collapse;margin-bottom:32px;">${leakRows}</table>
+${aiAnalysis ? `
+<div style="background:#111;border-radius:8px;padding:20px;margin-bottom:32px;border-top:2px solid #c8ff00;">
+<h3 style="font-size:14px;color:#c8ff00;margin:0 0 12px 0;text-transform:uppercase;letter-spacing:1px;">AI Content Analysis</h3>
+${aiAnalysis.diagnosis ? `<p style="color:#ccc;font-size:14px;line-height:1.6;font-style:italic;margin:0 0 16px 0;">"${aiAnalysis.diagnosis}"</p>` : ''}
+${aiAnalysis.copyIssues.length > 0 ? `<p style="color:#ff4444;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 6px 0;">Copy Issues</p>${aiAnalysis.copyIssues.map(i => `<p style="color:#aaa;font-size:13px;line-height:1.5;margin:0 0 4px 12px;">• ${i}</p>`).join('')}<div style="height:12px;"></div>` : ''}
+${aiAnalysis.ctaIssues.length > 0 ? `<p style="color:#ffaa00;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 6px 0;">CTA Issues</p>${aiAnalysis.ctaIssues.map(i => `<p style="color:#aaa;font-size:13px;line-height:1.5;margin:0 0 4px 12px;">• ${i}</p>`).join('')}<div style="height:12px;"></div>` : ''}
+${aiAnalysis.trustSignals.length > 0 ? `<p style="color:#888;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 6px 0;">Missing Trust Signals</p>${aiAnalysis.trustSignals.map(i => `<p style="color:#aaa;font-size:13px;line-height:1.5;margin:0 0 4px 12px;">• ${i}</p>`).join('')}` : ''}
+</div>` : ''}
 <div style="text-align:center;"><a href="https://martinbuilds.ai/discovery-call" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;border-radius:8px;text-decoration:none;">Book a Free Discovery Call</a></div>
 <p style="color:#666;font-size:12px;text-align:center;margin-top:24px;">martin.builds — martinbuilds.ai</p>
 </div></body></html>`;
@@ -159,8 +168,11 @@ export async function POST(req: Request) {
   try {
     const { url, email, industry, q1, q2, q3 } = await req.json();
 
-    // Actually scan the site with PageSpeed API
-    const siteAnalysis = await analyzeSite(url);
+    // Analyze site with PageSpeed API + Claude content analysis in parallel
+    const [siteAnalysis, pageAnalysis] = await Promise.all([
+      analyzeSite(url),
+      analyzePageContent(url, industry),
+    ]);
 
     const score = computeScore(q1, q2, q3, siteAnalysis);
     const leaks = leakSeverity(q1, q2, q3, siteAnalysis);
@@ -187,7 +199,7 @@ export async function POST(req: Request) {
       await composioAction("GMAIL_SEND_EMAIL", "b3bc9414-a6c2-4430-8f2b-7998a7f70a3b", {
         recipient_email: email,
         subject: `Your Website Revenue Leak Report — ${url}`,
-        body: buildEmailHtml(url, score, leaks, siteAnalysis),
+        body: buildEmailHtml(url, score, leaks, siteAnalysis, pageAnalysis),
         is_html: true,
       });
     } catch {
@@ -262,6 +274,7 @@ export async function POST(req: Request) {
         hasHttps: siteAnalysis.hasHttps,
         speedRating: siteAnalysis.speedRating,
       } : null,
+      pageAnalysis: pageAnalysis || null,
     });
   } catch (err) {
     console.error("Scan API error:", err);
