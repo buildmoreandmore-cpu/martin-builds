@@ -466,6 +466,19 @@ export default function Scanner() {
       {/* Step 4 — Results */}
       {step === 4 && (
         <div ref={resultsRef} style={{ maxWidth: 650, margin: "0 auto", padding: "0 1.25rem" }}>
+          {/* Trust-first diagnosis intro */}
+          <ScrollReveal>
+            <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+              <p style={{ fontSize: "1.15rem", fontWeight: 300, color: "#ccc", lineHeight: 1.8, maxWidth: 550, margin: "0 auto" }}>
+                {industry && industry !== "Other" ? (
+                  <>Your {industry.toLowerCase()} business is clearly doing something right — you wouldn&apos;t be here if it wasn&apos;t. But here&apos;s what a stranger sees when they find you online for the first time:</>
+                ) : (
+                  <>Your business is clearly doing something right — you wouldn&apos;t be here if it wasn&apos;t. But here&apos;s what a stranger sees when they find you online for the first time:</>
+                )}
+              </p>
+            </div>
+          </ScrollReveal>
+
           {/* Score circle */}
           <ScrollReveal>
             <div style={{ textAlign: "center", marginBottom: "3rem" }}>

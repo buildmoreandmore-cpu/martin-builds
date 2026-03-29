@@ -90,7 +90,7 @@ export default function Hero() {
           lineHeight: 1.7,
         }}
       >
-        Custom AI platforms, internal tools, and automation systems for businesses doing $1M+. From client portals to AI-powered operations — designed, built, and deployed in 2-3 weeks.
+        Built for the businesses that have been doing this for 20 years — but still run on spreadsheets, phone calls, and manual follow-ups. I close the gap between how good you actually are and how you look online.
       </p>
 
       <div

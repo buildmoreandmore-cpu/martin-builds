@@ -14,10 +14,8 @@ export const metadata: Metadata = {
 };
 import Hero from "@/components/Hero";
 import ObjectionHandler from "@/components/ObjectionHandler";
-import TwoPaths from "@/components/TwoPaths";
-import BuiltWith from "@/components/BuiltWith";
+import ScanCTA from "@/components/ScanCTA";
 import Services from "@/components/Services";
-// GuaranteeStrip removed
 import Process from "@/components/Process";
 import Industries from "@/components/Industries";
 import Testimonials from "@/components/Testimonials";
@@ -33,8 +31,7 @@ export default function Home() {
       <Nav />
       <Hero />
       <ObjectionHandler />
-      <TwoPaths />
-      <BuiltWith />
+      <ScanCTA />
       <Services />
       <Process />
       <Industries />

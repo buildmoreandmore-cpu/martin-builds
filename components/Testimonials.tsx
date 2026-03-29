@@ -5,7 +5,8 @@ import ScrollReveal from "./ScrollReveal";
 const testimonials = [
   {
     before: "Client intake was a mess — proposals took days, follow-ups fell through the cracks, and the team was drowning in manual data entry.",
-    after: "Francis built an AI-powered intake and proposal system that cut turnaround from days to minutes. The team stopped doing admin and started closing deals.",
+    after: "AI-powered intake cut proposal turnaround from 3 days to under 10 minutes. Team reclaimed 15+ hours per week of admin time.",
+    metric: "3 days → 10 min turnaround",
     quote:
       "Francis didn't just build us a website — he built us a system. The AI tools he integrated have completely changed how we handle client intake and proposals.",
     initials: "RN",
@@ -14,7 +15,8 @@ const testimonials = [
   },
   {
     before: "Had a clear vision for the business but no way to translate it into tools the team could use. Previous developers couldn't bridge the gap between strategy and execution.",
-    after: "In under two weeks, her team had a working system they actually use daily — built around how they operate, not how a developer thought they should.",
+    after: "Shipped a working system in 12 days that the team adopted same-week — no training needed, built around their existing workflow.",
+    metric: "12-day build, same-week adoption",
     quote:
       "He understands the business side and the tech side — that's rare. He translated what I needed into something my team could actually use, in less time than I expected.",
     initials: "CA",
@@ -23,7 +25,8 @@ const testimonials = [
   },
   {
     before: "Needed a site that matched the experience of being in the shop — warm, intentional, inviting. Previous attempts missed the mark and dragged on for months.",
-    after: "Shipped in two weeks. Clean, fast, on-brand. No back-and-forth, no scope creep — just the finished product, exactly as discussed.",
+    after: "Shipped in 2 weeks flat. Clean, fast, on-brand. Zero revision rounds — the first version was the final version.",
+    metric: "2 weeks, 0 revision rounds",
     quote:
       "Fast, clear communication, and the final product was exactly what we needed. No scope creep, no guessing. Francis ships.",
     initials: "BC",
@@ -103,6 +106,15 @@ export default function Testimonials() {
                 borderBottom: i < testimonials.length - 1 ? "1px solid rgba(245,245,240,0.04)" : "none",
               }}
             >
+              {/* Key metric */}
+              {t.metric && (
+                <div style={{ marginBottom: "1rem" }}>
+                  <span style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.8rem", fontWeight: 700, color: "#c8ff00", background: "rgba(200,255,0,0.08)", padding: "0.35rem 1rem", borderRadius: "100px", letterSpacing: "0.5px" }}>
+                    {t.metric}
+                  </span>
+                </div>
+              )}
+
               {/* Before / After context */}
               <div
                 style={{

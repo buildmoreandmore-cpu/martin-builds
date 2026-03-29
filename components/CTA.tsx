@@ -64,8 +64,34 @@ export default function CTA() {
               send me a message
             </a>
           </p>
+
+          {/* Availability signal */}
+          <div
+            style={{
+              marginTop: "2rem",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.6rem",
+              background: "rgba(200,255,0,0.06)",
+              border: "1px solid rgba(200,255,0,0.12)",
+              borderRadius: "100px",
+              padding: "0.5rem 1.2rem",
+            }}
+          >
+            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#c8ff00", display: "inline-block", animation: "pulse-dot 2s infinite" }} />
+            <span style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", color: "#888", letterSpacing: "0.5px" }}>
+              I take 2 new projects per month — <span style={{ color: "#c8ff00", fontWeight: 600 }}>1 spot open for April</span>
+            </span>
+          </div>
         </div>
       </ScrollReveal>
+
+      <style>{`
+        @keyframes pulse-dot {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+      `}</style>
     </section>
   );
 }

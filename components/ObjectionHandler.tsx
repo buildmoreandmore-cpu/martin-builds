@@ -60,7 +60,7 @@ export default function ObjectionHandler() {
             <div style={{ ...iconWrapStyle, background: "rgba(200,255,0,0.1)" }}><BoltIcon /></div>
             <h3 style={{ ...painTitleStyle, color: "#f5f5f0" }}>I fix that.</h3>
             <p style={{ ...painTextStyle, color: "rgba(245,245,240,0.7)" }}>One builder. Clear scope. Live product in 14 days. I&apos;m in the trenches with you — not just at delivery, but through the entire build.</p>
-            <p style={{ ...painTextStyle, color: "rgba(245,245,240,0.5)", marginTop: "0.8rem", fontSize: "0.85rem" }}>Self-taught. Solo. 10+ shipped products for real businesses — energy, legal, consulting, and more. No agency overhead. No middlemen. Just the work.</p>
+            <p style={{ ...painTextStyle, color: "rgba(245,245,240,0.5)", marginTop: "0.8rem", fontSize: "0.85rem" }}>Your reputation took years to build. Your digital presence should match it. I close the gap between how good you are and how a stranger sees you online.</p>
           </div>
         </ScrollReveal>
       </div>
