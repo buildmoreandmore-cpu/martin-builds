@@ -12,6 +12,7 @@ export default function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Close menu on resize to desktop
   useEffect(() => {
     const onResize = () => { if (window.innerWidth > 768) setMenuOpen(false); };
     window.addEventListener("resize", onResize);
@@ -45,8 +46,11 @@ export default function Nav() {
 
         {/* Desktop links */}
         <div className="nav-desktop" style={{ display: "flex", gap: "2.5rem", alignItems: "center" }}>
-          <NavLink href="/work-with-me">Services</NavLink>
-          <NavLink href="/demo">Work</NavLink>
+          <NavLink href="/about">About</NavLink>
+          <NavLink href="/#services">Services</NavLink>
+          <NavLink href="/ai-agent">AI Agent</NavLink>
+          <NavLink href="/demo">Demo</NavLink>
+          <NavLink href="/power-hour">Power Hour</NavLink>
           <a
             href="/scan"
             style={{ fontSize: "0.85rem", fontWeight: 500, letterSpacing: "0.5px", textTransform: "uppercase", color: "#c8ff00", transition: "color 0.3s", textDecoration: "none", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "0.35rem" }}
@@ -103,8 +107,11 @@ export default function Nav() {
         }}
       >
         {[
-          { href: "/work-with-me", label: "Services" },
-          { href: "/demo", label: "Work" },
+          { href: "/about", label: "About" },
+          { href: "/#services", label: "Services" },
+          { href: "/ai-agent", label: "AI Agent" },
+          { href: "/demo", label: "Demo" },
+          { href: "/power-hour", label: "Power Hour" },
           { href: "/scan", label: "Free Scan" },
           { href: "/contact", label: "Contact" },
         ].map((link) => (
