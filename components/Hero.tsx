@@ -90,7 +90,21 @@ export default function Hero() {
           lineHeight: 1.7,
         }}
       >
-        Built for the businesses that have been doing this for 20 years — but still run on spreadsheets, phone calls, and manual follow-ups. I close the gap between how good you actually are and how you look online.
+        Built for the businesses that have been doing this for 20 years — but still run on spreadsheets, phone calls, and manual follow-ups. Leads are finding you. They&apos;re just dying before your team ever gets to talk to them.
+      </p>
+
+      <p
+        className="animate-fade-up-3"
+        style={{
+          fontSize: "clamp(1rem, 1.8vw, 1.2rem)",
+          fontWeight: 400,
+          color: "#ccc",
+          maxWidth: "600px",
+          marginTop: "0.75rem",
+          lineHeight: 1.7,
+        }}
+      >
+        The human element still closes. I build everything that happens between the lead arriving and the conversation starting.
       </p>
 
       <div

@@ -29,21 +29,21 @@ const services = [
     icon: <SprintIcon />,
     title: "AI Build Sprint",
     price: "From $5,000",
-    description: "Where most relationships start. A defined AI-powered tool or website — scoped, built, and live in 2 weeks. We build trust here first.",
+    description: "Where most relationships start. A defined AI-powered tool or website — scoped, built, and live in 2 weeks. This is where leads stop bouncing and start converting.",
     tags: "Phase 1 · Websites · Tools",
   },
   {
     icon: <PlatformIcon />,
     title: "AI Platform Build",
     price: "From $8,000",
-    description: "Once you've seen what's possible, we go deeper. Full-stack AI platforms — client portals, admin dashboards, automated workflows. The real transformation.",
+    description: "Once you've seen what's possible, we go deeper. Client portals, admin dashboards, automated intake-to-close workflows. The full conversion infrastructure — from first click to signed deal.",
     tags: "Phase 2 · Platforms · Dashboards",
   },
   {
     icon: <RetainerIcon />,
     title: "AI Retainer",
     price: "Custom pricing",
-    description: "The long game. Your AI builder on call — new features, iterations, system upgrades every month. Your operations evolve, your tools evolve with them.",
+    description: "The long game. Your AI builder on call — new features, iterations, conversion optimization every month. As your pipeline grows, your systems grow with it.",
     tags: "Phase 3 · Ongoing · Growth",
   },
 ];
@@ -81,6 +81,29 @@ export default function Services() {
           </ScrollReveal>
         ))}
       </div>
+
+      {/* Dashboard ownership callout */}
+      <ScrollReveal>
+        <div
+          style={{
+            marginTop: "2.5rem",
+            background: "#111",
+            borderLeft: "3px solid #c8ff00",
+            borderRadius: "12px",
+            padding: "1.5rem 2rem",
+          }}
+        >
+          <p style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.65rem", color: "#c8ff00", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "0.5rem" }}>
+            Every Build Includes
+          </p>
+          <p style={{ fontSize: "1.1rem", fontWeight: 700, color: "#f5f5f0", marginBottom: "0.5rem", letterSpacing: "-0.5px" }}>
+            Your data. Your dashboard. Built for how you actually work.
+          </p>
+          <p style={{ fontSize: "0.9rem", color: "#888", lineHeight: 1.7, margin: 0 }}>
+            Every platform ships with a custom admin dashboard — not a generic template, not a no-code embed. A real interface built around your workflow, your metrics, and your team. You own everything.
+          </p>
+        </div>
+      </ScrollReveal>
 
       <ScrollReveal>
         <div style={{ marginTop: "3rem", textAlign: "center" }}>

@@ -35,7 +35,7 @@ export default function ScanCTA() {
                 marginBottom: "0.75rem",
               }}
             >
-              Free Tool
+              Free Conversion Audit
             </p>
             <h3
               style={{
@@ -46,7 +46,7 @@ export default function ScanCTA() {
                 marginBottom: "0.75rem",
               }}
             >
-              See where your site is leaking leads.
+              See where leads go to die after they find you.
             </h3>
             <p
               style={{
@@ -57,7 +57,7 @@ export default function ScanCTA() {
                 maxWidth: "500px",
               }}
             >
-              Free AI-powered site audit. Takes 30 seconds. No email required. See exactly what&apos;s costing you customers — before we ever talk.
+              Free AI-powered conversion audit. Takes 30 seconds. No email required. See exactly where the gap is between your first impression and your first conversation.
             </p>
           </div>
 
@@ -90,7 +90,7 @@ export default function ScanCTA() {
               }}
             >
               <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#0a0a0a", display: "inline-block" }} />
-              Run Free Scan
+              Run Conversion Audit
             </a>
           </div>
         </div>

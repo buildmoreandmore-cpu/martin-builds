@@ -38,7 +38,7 @@ export default function CTA() {
       </ScrollReveal>
       <ScrollReveal>
         <p style={{ ...sectionSub, margin: "1.5rem auto 0" }}>
-          I don&apos;t just deliver and disappear. I&apos;m in the trenches with you — from day one through launch and beyond. Book a free 30-minute call. No pitch deck. No follow-up spam. Just a real conversation about what&apos;s bleeding time and how to fix it.
+          I don&apos;t just deliver and disappear. I&apos;m in the trenches with you — from day one through launch and beyond. Book a free 30-minute call. No pitch deck. No follow-up spam. Just a real conversation about what&apos;s bleeding time, losing leads, and how to fix both.
         </p>
       </ScrollReveal>
 

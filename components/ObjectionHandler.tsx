@@ -60,7 +60,7 @@ export default function ObjectionHandler() {
             <div style={{ ...iconWrapStyle, background: "rgba(200,255,0,0.1)" }}><BoltIcon /></div>
             <h3 style={{ ...painTitleStyle, color: "#f5f5f0" }}>I fix that.</h3>
             <p style={{ ...painTextStyle, color: "rgba(245,245,240,0.7)" }}>One builder. Clear scope. Live product in 14 days. I&apos;m in the trenches with you — not just at delivery, but through the entire build.</p>
-            <p style={{ ...painTextStyle, color: "rgba(245,245,240,0.5)", marginTop: "0.8rem", fontSize: "0.85rem" }}>Your reputation took years to build. Your digital presence should match it. I close the gap between how good you are and how a stranger sees you online.</p>
+            <p style={{ ...painTextStyle, color: "rgba(245,245,240,0.5)", marginTop: "0.8rem", fontSize: "0.85rem" }}>Your reputation took years to build. Your digital presence should match it. I close the gap between how good you are and how a stranger sees you online — so leads convert before your competitor even picks up the phone.</p>
           </div>
         </ScrollReveal>
       </div>
@@ -79,8 +79,8 @@ export default function ObjectionHandler() {
           }}
         >
           <p style={{ fontSize: "0.95rem", color: "#ccc", lineHeight: 1.7, margin: 0 }}>
-            While you&apos;re still deciding, your competitors are already automating their intake, their proposals, their follow-ups. The window to be first in your market is closing.{" "}
-            <span style={{ color: "#c8ff00", fontWeight: 600 }}>Every week you wait is a week they pull ahead.</span>
+            While you&apos;re still deciding, your competitors are already automating their intake, their proposals, their follow-ups. Every lead that bounces from your site lands on theirs.{" "}
+            <span style={{ color: "#c8ff00", fontWeight: 600 }}>Every week you wait is revenue you&apos;re handing to someone else.</span>
           </p>
         </div>
       </ScrollReveal>
