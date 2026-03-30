@@ -27,18 +27,14 @@ export default function CTA() {
       />
 
       <ScrollReveal>
-        <p style={sectionTag}>Let&apos;s Build</p>
-      </ScrollReveal>
-      <ScrollReveal>
-        <h2 style={{ ...sectionTitle, margin: "0 auto" }}>
-          Your competitors aren&apos;t waiting.
-          <br />
-          <span style={{ color: "#c8ff00" }}>Neither should you.</span>
+        <h2 style={titleStyle}>
+          Ready to build?
         </h2>
       </ScrollReveal>
+
       <ScrollReveal>
-        <p style={{ ...sectionSub, margin: "1.5rem auto 0" }}>
-          I don&apos;t just deliver and disappear. I&apos;m in the trenches with you — from day one through launch and beyond. Book a free 30-minute call. No pitch deck. No follow-up spam. Just a real conversation about what&apos;s bleeding time, losing leads, and how to fix both.
+        <p style={subStyle}>
+          30-minute call. No pitch deck. No follow-up spam. Just a real conversation about what you need.
         </p>
       </ScrollReveal>
 
@@ -80,7 +76,7 @@ export default function CTA() {
           >
             <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#c8ff00", display: "inline-block", animation: "pulse-dot 2s infinite" }} />
             <span style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", color: "#888", letterSpacing: "0.5px" }}>
-              I take 2 new projects per month — <span style={{ color: "#c8ff00", fontWeight: 600 }}>1 spot open for April</span>
+              2 spots per month — <span style={{ color: "#c8ff00", fontWeight: 600 }}>1 open for April</span>
             </span>
           </div>
         </div>
@@ -96,29 +92,22 @@ export default function CTA() {
   );
 }
 
-const sectionTag: React.CSSProperties = {
-  fontFamily: "'Space Mono', monospace",
-  fontSize: "0.75rem",
-  color: "#c8ff00",
-  letterSpacing: "3px",
-  textTransform: "uppercase",
-  marginBottom: "1.5rem",
-};
-
-const sectionTitle: React.CSSProperties = {
+const titleStyle: React.CSSProperties = {
   fontSize: "clamp(2rem, 5vw, 3.5rem)",
   fontWeight: 800,
   lineHeight: 1.1,
   letterSpacing: "-2px",
-  maxWidth: "800px",
+  maxWidth: "600px",
+  margin: "0 auto",
 };
 
-const sectionSub: React.CSSProperties = {
+const subStyle: React.CSSProperties = {
   fontSize: "1.15rem",
   fontWeight: 300,
   color: "#888",
-  maxWidth: "550px",
+  maxWidth: "450px",
   lineHeight: 1.7,
+  margin: "1.5rem auto 0",
 };
 
 const primaryBtnStyle: React.CSSProperties = {
