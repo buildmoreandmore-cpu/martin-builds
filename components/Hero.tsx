@@ -62,20 +62,6 @@ export default function Hero() {
         </span>
       </h1>
 
-      <div
-        className="animate-fade-up-3"
-        style={{
-          fontFamily: "'Space Mono', monospace",
-          fontSize: "1rem",
-          color: "#c8ff00",
-          letterSpacing: "2px",
-          textTransform: "uppercase",
-          marginTop: "1.5rem",
-        }}
-      >
-        $5K. 2 WEEKS. YOU OWN EVERYTHING.
-      </div>
-
       <p
         className="animate-fade-up-3"
         style={{
