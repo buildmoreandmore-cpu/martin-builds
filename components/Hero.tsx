@@ -56,10 +56,6 @@ export default function Hero() {
             }}
           />
         </span>
-        <br />
-        <span style={{ color: "#888", fontSize: "clamp(1.8rem, 5vw, 4rem)", fontWeight: 700 }}>
-          Owned forever.
-        </span>
       </h1>
 
       <p

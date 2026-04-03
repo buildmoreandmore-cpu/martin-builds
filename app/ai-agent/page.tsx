@@ -1,17 +1,9 @@
 import type { Metadata } from "next";
 import Nav from "@/components/Nav";
 import { FAQJsonLd, AIAgentServiceJsonLd } from "@/components/JsonLd";
-import AgentHero from "@/components/ai-agent/AgentHero";
-import UseCases from "@/components/ai-agent/UseCases";
-import Deliverables from "@/components/ai-agent/Deliverables";
-import AgentStats from "@/components/ai-agent/AgentStats";
-import IndustryGrid from "@/components/ai-agent/IndustryGrid";
-import HowItWorks from "@/components/ai-agent/HowItWorks";
 import UtilityBilling from "@/components/ai-agent/UtilityBilling";
 import AgentFAQ from "@/components/ai-agent/AgentFAQ";
-import ScanCTA from "@/components/ai-agent/ScanCTA";
 import AgentFinalCTA from "@/components/ai-agent/AgentFinalCTA";
-import NewsletterFooter from "@/components/NewsletterFooter";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -48,17 +40,9 @@ export default function AIAgentPage() {
       <FAQJsonLd faqs={agentFaqs} />
       <AIAgentServiceJsonLd />
       <Nav />
-      <AgentHero />
-      <UseCases />
-      <Deliverables />
-      <AgentStats />
-      <IndustryGrid />
-      <HowItWorks />
       <UtilityBilling />
       <AgentFAQ />
-      <ScanCTA />
       <AgentFinalCTA />
-      <NewsletterFooter />
       <Footer />
     </>
   );
