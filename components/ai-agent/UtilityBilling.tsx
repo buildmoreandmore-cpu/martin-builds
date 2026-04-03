@@ -4,32 +4,119 @@ import { useState, useEffect, useRef } from "react";
 import ScrollReveal from "../ScrollReveal";
 
 /*
-  Animated utility billing demo.
-  Shows: setup fee → agent goes live → usage meter ticks → monthly bill generated.
-  Compares flat SaaS pricing vs pay-for-what-you-use.
+  Tiered AI agent billing — like choosing a carrier.
+  Pick your tier (model quality), low setup, monthly auto-pay for usage.
 */
 
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
-const USAGE_DATA = [
-  { month: "Jan", conversations: 120, tokens: "82K", tokenCost: "$1.64", margin: "$4.92", total: "$6.56" },
-  { month: "Feb", conversations: 340, tokens: "228K", tokenCost: "$4.56", margin: "$13.68", total: "$18.24" },
-  { month: "Mar", conversations: 580, tokens: "412K", tokenCost: "$8.24", margin: "$24.72", total: "$32.96" },
-  { month: "Apr", conversations: 890, tokens: "634K", tokenCost: "$12.68", margin: "$38.04", total: "$50.72" },
-  { month: "May", conversations: 1240, tokens: "892K", tokenCost: "$17.84", margin: "$53.52", total: "$71.36" },
-  { month: "Jun", conversations: 1680, tokens: "1.2M", tokenCost: "$24.00", margin: "$72.00", total: "$96.00" },
-];
+type TierKey = "essential" | "professional" | "enterprise";
 
-// What they'd pay with flat SaaS
+interface TierConfig {
+  name: string;
+  tagline: string;
+  model: string;
+  setup: string;
+  tokenRate: string;
+  ratePerK: number;
+  marginMultiplier: number;
+  color: string;
+  bestFor: string;
+  features: string[];
+}
+
+const tiers: Record<TierKey, TierConfig> = {
+  essential: {
+    name: "Essential",
+    tagline: "Reliable coverage for everyday conversations",
+    model: "MiniMax-Text-01",
+    setup: "$49",
+    tokenRate: "$0.02 / 1K tokens",
+    ratePerK: 0.02,
+    marginMultiplier: 3,
+    color: "#c8ff00",
+    bestFor: "FAQs, booking, basic support",
+    features: [
+      "Custom-trained on your business",
+      "24/7 customer support agent",
+      "Lead capture & notifications",
+      "48-hour setup",
+      "Auto-pay monthly",
+    ],
+  },
+  professional: {
+    name: "Professional",
+    tagline: "Smarter conversations that close deals",
+    model: "Claude Haiku 4.5",
+    setup: "$99",
+    tokenRate: "$0.05 / 1K tokens",
+    ratePerK: 0.05,
+    marginMultiplier: 3,
+    color: "#64b4ff",
+    bestFor: "Lead qualifying, consultations, complex support",
+    features: [
+      "Everything in Essential",
+      "Nuanced conversation handling",
+      "Multi-step lead qualification",
+      "CRM & calendar integration",
+      "Auto-pay monthly",
+    ],
+  },
+  enterprise: {
+    name: "Enterprise",
+    tagline: "Premium intelligence for high-value interactions",
+    model: "Claude Sonnet 4.6",
+    setup: "$149",
+    tokenRate: "$0.15 / 1K tokens",
+    ratePerK: 0.15,
+    marginMultiplier: 2.5,
+    color: "#b482ff",
+    bestFor: "Sales, legal intake, consulting, high-stakes conversations",
+    features: [
+      "Everything in Professional",
+      "Best-in-class AI reasoning",
+      "Complex workflow automation",
+      "Priority support & monitoring",
+      "Auto-pay monthly",
+    ],
+  },
+};
+
+const tierOrder: TierKey[] = ["essential", "professional", "enterprise"];
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+
+function getUsageData(tier: TierConfig) {
+  const convos = [120, 340, 580, 890, 1240, 1680];
+  const tokensPerConvo = 680;
+  return convos.map((c, i) => {
+    const totalTokens = c * tokensPerConvo;
+    const tokenCost = (totalTokens / 1000) * tier.ratePerK;
+    const margin = tokenCost * (tier.marginMultiplier - 1);
+    const total = tokenCost + margin;
+    return {
+      month: MONTHS[i],
+      conversations: c,
+      tokens: totalTokens >= 1000000 ? `${(totalTokens / 1000000).toFixed(1)}M` : `${Math.round(totalTokens / 1000)}K`,
+      tokenCost: `$${tokenCost.toFixed(2)}`,
+      margin: `$${margin.toFixed(2)}`,
+      total: `$${total.toFixed(2)}`,
+      totalNum: total,
+    };
+  });
+}
+
 const FLAT_MONTHLY = 300;
 
 export default function UtilityBilling() {
+  const [activeTier, setActiveTier] = useState<TierKey>("essential");
   const [activeMonth, setActiveMonth] = useState(0);
   const [meterValue, setMeterValue] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [autoCycle, setAutoCycle] = useState(true);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Intersection observer
+  const tier = tiers[activeTier];
+  const usageData = getUsageData(tier);
+
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -40,7 +127,6 @@ export default function UtilityBilling() {
     return () => observer.disconnect();
   }, []);
 
-  // Auto-cycle months
   useEffect(() => {
     if (!isVisible || !autoCycle) return;
     const interval = setInterval(() => {
@@ -49,13 +135,11 @@ export default function UtilityBilling() {
     return () => clearInterval(interval);
   }, [isVisible, autoCycle]);
 
-  // Animate meter
   useEffect(() => {
-    const target = USAGE_DATA[activeMonth].conversations;
+    const target = usageData[activeMonth].conversations;
     const duration = 600;
     const start = meterValue;
     const startTime = performance.now();
-
     const animate = (now: number) => {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
@@ -64,48 +148,120 @@ export default function UtilityBilling() {
       if (progress < 1) requestAnimationFrame(animate);
     };
     requestAnimationFrame(animate);
-  }, [activeMonth]);
+  }, [activeMonth, activeTier]);
 
-  const data = USAGE_DATA[activeMonth];
-  const flatTotal = FLAT_MONTHLY;
-  const utilityTotal = parseFloat(data.total.replace("$", ""));
-  const savings = flatTotal - utilityTotal;
-  const savingsPct = Math.round((savings / flatTotal) * 100);
+  const data = usageData[activeMonth];
+  const utilityTotal = data.totalNum;
+  const savings = FLAT_MONTHLY - utilityTotal;
   const meterPct = Math.min((meterValue / 2000) * 100, 100);
 
   return (
     <section ref={ref} style={{ padding: "clamp(5rem,8vw,8rem) clamp(1.25rem,5vw,3rem)", background: "#0a0a0a", borderTop: "1px solid rgba(200,255,0,0.08)" }}>
       <ScrollReveal>
         <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-          <p style={tagStyle}>How Billing Works</p>
+          <p style={tagStyle}>Choose Your Plan</p>
           <h2 style={titleStyle}>
-            Pay for what you use.
+            Pick your network.
             <br />
-            <span style={{ color: "#c8ff00" }}>Like a utility bill.</span>
+            <span style={{ color: "#c8ff00" }}>Pay for what you use.</span>
           </h2>
           <p style={subStyle}>
-            One-time setup fee to build and deploy your agent. After that, you only pay for actual usage — tokens in, tokens out. No flat monthly fee eating into your margins on slow months.
+            Low setup fee. Monthly auto-pay based on actual usage. Pick the AI model that fits your business — upgrade or downgrade anytime.
           </p>
         </div>
       </ScrollReveal>
 
-      <div className="utility-desktop" style={{ maxWidth: "900px", margin: "0 auto" }}>
-        {/* Setup fee callout */}
+      <div className="utility-desktop" style={{ maxWidth: "960px", margin: "0 auto" }}>
+        {/* Tier selector — carrier style */}
         <ScrollReveal>
-          <div style={{ display: "flex", gap: "1.5rem", marginBottom: "2rem", flexWrap: "wrap" }}>
-            <div style={{ flex: 1, minWidth: "200px", padding: "1.5rem", background: "#1a1a1a", borderRadius: "16px", border: "1px solid rgba(200,255,0,0.15)" }}>
-              <div style={{ fontSize: "0.65rem", color: "#c8ff00", fontFamily: "'Space Mono', monospace", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "0.5rem" }}>One-Time Setup</div>
-              <div style={{ fontSize: "2rem", fontWeight: 800, color: "#c8ff00" }}>$500</div>
-              <p style={{ fontSize: "0.8rem", color: "#888", marginTop: "0.5rem", lineHeight: 1.5 }}>
-                Custom-trained agent, deployed on your site, connected to your tools. Live in 48 hours.
-              </p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem", marginBottom: "2rem" }}>
+            {tierOrder.map((key) => {
+              const t = tiers[key];
+              const isActive = activeTier === key;
+              return (
+                <button
+                  key={key}
+                  onClick={() => { setActiveTier(key); setActiveMonth(0); }}
+                  style={{
+                    padding: "1.5rem",
+                    background: isActive ? "rgba(245,245,240,0.03)" : "#1a1a1a",
+                    border: `2px solid ${isActive ? t.color : "rgba(245,245,240,0.06)"}`,
+                    borderRadius: "16px",
+                    cursor: "pointer",
+                    transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+                    textAlign: "left",
+                    transform: isActive ? "scale(1.02)" : "scale(1)",
+                    position: "relative",
+                    overflow: "hidden",
+                  }}
+                >
+                  {/* Top accent bar */}
+                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: t.color, opacity: isActive ? 1 : 0, transition: "opacity 0.3s" }} />
+
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
+                    <div style={{ fontSize: "1.1rem", fontWeight: 700, color: isActive ? t.color : "#f5f5f0" }}>{t.name}</div>
+                    <div style={{ fontSize: "0.55rem", color: isActive ? t.color : "#555", fontFamily: "'Space Mono', monospace", letterSpacing: "0.5px", textTransform: "uppercase", opacity: 0.8 }}>{t.model}</div>
+                  </div>
+                  <p style={{ fontSize: "0.75rem", color: "#888", lineHeight: 1.4, marginBottom: "0.75rem" }}>{t.tagline}</p>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: "0.3rem" }}>
+                    <span style={{ fontSize: "1.5rem", fontWeight: 800, color: isActive ? t.color : "#f5f5f0" }}>{t.setup}</span>
+                    <span style={{ fontSize: "0.7rem", color: "#666" }}>setup</span>
+                  </div>
+                  <div style={{ fontSize: "0.65rem", color: "#555", marginTop: "0.3rem", fontFamily: "'Space Mono', monospace" }}>then {t.tokenRate} + margin</div>
+                </button>
+              );
+            })}
+          </div>
+        </ScrollReveal>
+
+        {/* Auto-pay badge */}
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "1.5rem" }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem 1.2rem", background: "rgba(200,255,0,0.04)", border: "1px solid rgba(200,255,0,0.1)", borderRadius: "100px" }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={tier.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            <span style={{ fontSize: "0.7rem", color: "#888", fontFamily: "'Space Mono', monospace", letterSpacing: "0.5px" }}>
+              Auto-pay monthly • Card on file • Cancel anytime
+            </span>
+          </div>
+        </div>
+
+        {/* What's included */}
+        <ScrollReveal>
+          <div
+            key={activeTier}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "1.5rem",
+              marginBottom: "2rem",
+              animation: "utilFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+          >
+            <div style={{ padding: "1.5rem", background: "#1a1a1a", borderRadius: "16px", border: `1px solid ${tier.color}22` }}>
+              <div style={{ fontSize: "0.65rem", color: tier.color, fontFamily: "'Space Mono', monospace", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "0.75rem" }}>{tier.name} Plan Includes</div>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                {tier.features.map((f) => (
+                  <li key={f} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", color: "#f5f5f0" }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={tier.color} strokeWidth="2.5"><polyline points="20,6 9,17 4,12"/></svg>
+                    {f}
+                  </li>
+                ))}
+              </ul>
             </div>
-            <div style={{ flex: 1, minWidth: "200px", padding: "1.5rem", background: "#1a1a1a", borderRadius: "16px", border: "1px solid rgba(245,245,240,0.06)" }}>
-              <div style={{ fontSize: "0.65rem", color: "#888", fontFamily: "'Space Mono', monospace", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "0.5rem" }}>Monthly Usage</div>
-              <div style={{ fontSize: "2rem", fontWeight: 800, color: "#f5f5f0" }}>Token Cost + Margin</div>
-              <p style={{ fontSize: "0.8rem", color: "#888", marginTop: "0.5rem", lineHeight: 1.5 }}>
-                You pay the actual AI cost plus a transparent margin. Scales with your business.
-              </p>
+            <div style={{ padding: "1.5rem", background: "#1a1a1a", borderRadius: "16px", border: "1px solid rgba(245,245,240,0.06)" }}>
+              <div style={{ fontSize: "0.65rem", color: "#888", fontFamily: "'Space Mono', monospace", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "0.75rem" }}>Best For</div>
+              <p style={{ fontSize: "0.9rem", color: "#f5f5f0", lineHeight: 1.6, marginBottom: "1rem" }}>{tier.bestFor}</p>
+              <div style={{ padding: "1rem", background: "rgba(245,245,240,0.02)", borderRadius: "10px", border: "1px solid rgba(245,245,240,0.06)" }}>
+                <div style={{ fontSize: "0.6rem", color: "#555", fontFamily: "'Space Mono', monospace", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "0.3rem" }}>Billing Model</div>
+                <div style={{ fontSize: "0.8rem", color: "#f5f5f0", lineHeight: 1.5 }}>
+                  <span style={{ color: tier.color, fontWeight: 700 }}>{tier.setup}</span> setup → agent goes live in 48h
+                  <br />
+                  Then <span style={{ color: tier.color, fontWeight: 600 }}>{tier.tokenRate}</span> × {tier.marginMultiplier}x margin
+                  <br />
+                  <span style={{ color: "#888", fontSize: "0.7rem" }}>Billed monthly to your card on file</span>
+                </div>
+              </div>
             </div>
           </div>
         </ScrollReveal>
@@ -115,14 +271,14 @@ export default function UtilityBilling() {
           style={{
             background: "#1a1a1a",
             borderRadius: "16px",
-            border: "1px solid rgba(200,255,0,0.12)",
+            border: `1px solid ${tier.color}20`,
             overflow: "hidden",
           }}
           onMouseEnter={() => setAutoCycle(false)}
           onMouseLeave={() => setAutoCycle(true)}
         >
           {/* Month selector */}
-          <div style={{ display: "flex", borderBottom: "1px solid rgba(200,255,0,0.06)", padding: "0 1rem" }}>
+          <div style={{ display: "flex", borderBottom: `1px solid ${tier.color}10`, padding: "0 1rem" }}>
             {MONTHS.map((m, i) => (
               <button
                 key={m}
@@ -132,8 +288,8 @@ export default function UtilityBilling() {
                   padding: "0.75rem 0.5rem",
                   background: "transparent",
                   border: "none",
-                  borderBottom: i === activeMonth ? "2px solid #c8ff00" : "2px solid transparent",
-                  color: i === activeMonth ? "#c8ff00" : "#555",
+                  borderBottom: i === activeMonth ? `2px solid ${tier.color}` : "2px solid transparent",
+                  color: i === activeMonth ? tier.color : "#555",
                   fontFamily: "'Space Mono', monospace",
                   fontSize: "0.7rem",
                   letterSpacing: "1px",
@@ -152,7 +308,7 @@ export default function UtilityBilling() {
             <div style={{ marginBottom: "1.5rem" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
                 <div style={{ fontSize: "0.65rem", color: "#666", fontFamily: "'Space Mono', monospace", letterSpacing: "1px", textTransform: "uppercase" }}>Usage Meter</div>
-                <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "#c8ff00", fontFamily: "'Space Mono', monospace" }}>
+                <div style={{ fontSize: "0.8rem", fontWeight: 700, color: tier.color, fontFamily: "'Space Mono', monospace" }}>
                   {meterValue.toLocaleString()} conversations
                 </div>
               </div>
@@ -161,7 +317,7 @@ export default function UtilityBilling() {
                   style={{
                     width: `${meterPct}%`,
                     height: "100%",
-                    background: "linear-gradient(90deg, rgba(200,255,0,0.4), #c8ff00)",
+                    background: `linear-gradient(90deg, ${tier.color}66, ${tier.color})`,
                     borderRadius: "6px",
                     transition: "width 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
                     position: "relative",
@@ -174,9 +330,9 @@ export default function UtilityBilling() {
                     transform: "translateY(-50%)",
                     width: "4px",
                     height: "18px",
-                    background: "#c8ff00",
+                    background: tier.color,
                     borderRadius: "2px",
-                    boxShadow: "0 0 8px rgba(200,255,0,0.4)",
+                    boxShadow: `0 0 8px ${tier.color}66`,
                   }} />
                 </div>
               </div>
@@ -188,18 +344,18 @@ export default function UtilityBilling() {
 
             {/* Bill breakdown */}
             <div
-              key={activeMonth}
+              key={`${activeTier}-${activeMonth}`}
               style={{ animation: "utilFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)" }}
             >
               <div style={{ fontSize: "0.65rem", color: "#666", fontFamily: "'Space Mono', monospace", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "1rem" }}>
-                {data.month} Invoice Breakdown
+                {data.month} Statement — {tier.name} Plan
               </div>
 
               <div style={{ background: "rgba(245,245,240,0.02)", borderRadius: "12px", border: "1px solid rgba(245,245,240,0.06)", overflow: "hidden" }}>
                 {[
                   { label: "Conversations", value: data.conversations.toLocaleString(), detail: `${data.tokens} tokens processed` },
-                  { label: "Token Cost (AI processing)", value: data.tokenCost, detail: "MiniMax-Text-01 @ $0.02/1K tokens" },
-                  { label: "Service Margin (3x)", value: data.margin, detail: "Infrastructure, monitoring, support" },
+                  { label: `Token Cost (${tier.model})`, value: data.tokenCost, detail: tier.tokenRate },
+                  { label: `Service Margin (${tier.marginMultiplier}x)`, value: data.margin, detail: "Infrastructure, monitoring, support" },
                 ].map((row, i) => (
                   <div
                     key={row.label}
@@ -220,9 +376,12 @@ export default function UtilityBilling() {
                   </div>
                 ))}
                 {/* Total */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 1.25rem", background: "rgba(200,255,0,0.04)", borderTop: "1px solid rgba(200,255,0,0.1)" }}>
-                  <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#c8ff00" }}>Monthly Total</div>
-                  <div style={{ fontSize: "1.3rem", fontWeight: 800, color: "#c8ff00", fontFamily: "'Space Mono', monospace" }}>{data.total}</div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 1.25rem", background: `${tier.color}08`, borderTop: `1px solid ${tier.color}1a` }}>
+                  <div>
+                    <div style={{ fontSize: "0.85rem", fontWeight: 700, color: tier.color }}>Auto-Pay Total</div>
+                    <div style={{ fontSize: "0.55rem", color: "#555", marginTop: "0.1rem" }}>Charged to card on file</div>
+                  </div>
+                  <div style={{ fontSize: "1.3rem", fontWeight: 800, color: tier.color, fontFamily: "'Space Mono', monospace" }}>{data.total}</div>
                 </div>
               </div>
             </div>
@@ -230,55 +389,52 @@ export default function UtilityBilling() {
             {/* Comparison */}
             <div style={{ marginTop: "1.5rem", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
               <div style={{ padding: "1.25rem", borderRadius: "12px", background: "rgba(255,107,107,0.04)", border: "1px solid rgba(255,107,107,0.1)" }}>
-                <div style={{ fontSize: "0.6rem", color: "#ff6b6b", fontFamily: "'Space Mono', monospace", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "0.3rem" }}>Flat SaaS Plan</div>
+                <div style={{ fontSize: "0.6rem", color: "#ff6b6b", fontFamily: "'Space Mono', monospace", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "0.3rem" }}>Typical SaaS</div>
                 <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#ff6b6b", fontFamily: "'Space Mono', monospace", textDecoration: "line-through", opacity: 0.7 }}>${FLAT_MONTHLY}</div>
                 <div style={{ fontSize: "0.65rem", color: "#888", marginTop: "0.2rem" }}>Same price whether you use it or not</div>
               </div>
-              <div style={{ padding: "1.25rem", borderRadius: "12px", background: "rgba(200,255,0,0.04)", border: "1px solid rgba(200,255,0,0.15)" }}>
-                <div style={{ fontSize: "0.6rem", color: "#c8ff00", fontFamily: "'Space Mono', monospace", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "0.3rem" }}>Your Utility Bill</div>
-                <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#c8ff00", fontFamily: "'Space Mono', monospace" }}>{data.total}</div>
-                <div style={{ fontSize: "0.65rem", color: "#c8ff00", marginTop: "0.2rem" }}>
-                  {savings > 0 ? `Save $${savings.toFixed(0)}/mo (${savingsPct}% less)` : `Scales with growth — only ${savingsPct > 0 ? "" : ""}$${Math.abs(savings).toFixed(0)} more at ${data.conversations.toLocaleString()} convos`}
+              <div style={{ padding: "1.25rem", borderRadius: "12px", background: `${tier.color}08`, border: `1px solid ${tier.color}25` }}>
+                <div style={{ fontSize: "0.6rem", color: tier.color, fontFamily: "'Space Mono', monospace", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "0.3rem" }}>Your {tier.name} Bill</div>
+                <div style={{ fontSize: "1.5rem", fontWeight: 800, color: tier.color, fontFamily: "'Space Mono', monospace" }}>{data.total}</div>
+                <div style={{ fontSize: "0.65rem", color: savings > 0 ? tier.color : "#888", marginTop: "0.2rem" }}>
+                  {savings > 0 ? `Save $${savings.toFixed(0)}/mo` : `Only $${Math.abs(savings).toFixed(0)} more at ${data.conversations.toLocaleString()} convos`}
                 </div>
               </div>
             </div>
 
-            {/* Growth chart */}
+            {/* 6-month chart */}
             <div style={{ marginTop: "1.5rem", background: "rgba(245,245,240,0.02)", borderRadius: "12px", border: "1px solid rgba(245,245,240,0.06)", padding: "1.25rem" }}>
               <div style={{ fontSize: "0.65rem", color: "#666", fontFamily: "'Space Mono', monospace", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "1rem" }}>
-                Cost Comparison Over 6 Months
+                6-Month Cost — {tier.name}
               </div>
               <div style={{ display: "flex", alignItems: "flex-end", gap: "8px", height: "100px" }}>
-                {USAGE_DATA.map((d, i) => {
-                  const utilHeight = (parseFloat(d.total.replace("$", "")) / FLAT_MONTHLY) * 100;
+                {usageData.map((d, i) => {
+                  const utilHeight = (d.totalNum / FLAT_MONTHLY) * 100;
                   const isActive = i === activeMonth;
                   return (
-                    <div key={d.month} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
-                      {/* Flat line */}
-                      <div style={{ position: "relative", width: "100%", display: "flex", gap: "3px", alignItems: "flex-end", height: "100px" }}>
-                        <div
-                          style={{
-                            flex: 1,
-                            height: "100%",
-                            background: isActive ? "rgba(255,107,107,0.15)" : "rgba(255,107,107,0.06)",
-                            borderRadius: "3px 3px 0 0",
-                            transition: "all 0.3s",
-                            position: "relative",
-                          }}
-                        >
-                          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "#ff6b6b", opacity: 0.4, borderRadius: "1px" }} />
-                        </div>
-                        <div
-                          style={{
-                            flex: 1,
-                            height: `${Math.min(utilHeight, 100)}%`,
-                            background: isActive ? "#c8ff00" : "rgba(200,255,0,0.15)",
-                            borderRadius: "3px 3px 0 0",
-                            transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-                            ...(isActive ? { boxShadow: "0 0 8px rgba(200,255,0,0.15)" } : {}),
-                          }}
-                        />
+                    <div key={d.month} style={{ flex: 1, position: "relative", display: "flex", gap: "3px", alignItems: "flex-end", height: "100px" }}>
+                      <div
+                        style={{
+                          flex: 1,
+                          height: "100%",
+                          background: isActive ? "rgba(255,107,107,0.15)" : "rgba(255,107,107,0.06)",
+                          borderRadius: "3px 3px 0 0",
+                          transition: "all 0.3s",
+                          position: "relative",
+                        }}
+                      >
+                        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "#ff6b6b", opacity: 0.4, borderRadius: "1px" }} />
                       </div>
+                      <div
+                        style={{
+                          flex: 1,
+                          height: `${Math.min(utilHeight, 100)}%`,
+                          background: isActive ? tier.color : `${tier.color}25`,
+                          borderRadius: "3px 3px 0 0",
+                          transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                          ...(isActive ? { boxShadow: `0 0 8px ${tier.color}25` } : {}),
+                        }}
+                      />
                     </div>
                   );
                 })}
@@ -291,11 +447,11 @@ export default function UtilityBilling() {
               <div style={{ display: "flex", gap: "1.5rem", marginTop: "0.75rem", justifyContent: "center" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
                   <div style={{ width: "10px", height: "3px", background: "#ff6b6b", borderRadius: "1px", opacity: 0.6 }} />
-                  <span style={{ fontSize: "0.6rem", color: "#888" }}>Flat $300/mo</span>
+                  <span style={{ fontSize: "0.6rem", color: "#888" }}>Flat $300/mo SaaS</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                  <div style={{ width: "10px", height: "10px", background: "rgba(200,255,0,0.3)", borderRadius: "2px" }} />
-                  <span style={{ fontSize: "0.6rem", color: "#888" }}>Your actual cost</span>
+                  <div style={{ width: "10px", height: "10px", background: `${tier.color}50`, borderRadius: "2px" }} />
+                  <span style={{ fontSize: "0.6rem", color: "#888" }}>Your {tier.name} cost</span>
                 </div>
               </div>
             </div>
@@ -305,42 +461,76 @@ export default function UtilityBilling() {
         {/* Bottom message */}
         <div style={{ textAlign: "center", marginTop: "2rem" }}>
           <p style={{ fontSize: "0.85rem", color: "#888", lineHeight: 1.6, maxWidth: "550px", margin: "0 auto" }}>
-            Low usage months? Low bill. Growth months? Your agent scales with you. No penalties, no overage charges — just transparent, honest pricing.
+            Low setup. Auto-pay monthly. Upgrade your model anytime. No contracts, no overage charges — just your agent working 24/7 and a transparent bill at the end of the month.
           </p>
           <a
             href="/discovery-call"
             style={{
               display: "inline-block",
               marginTop: "1.5rem",
-              color: "#c8ff00",
-              fontWeight: 600,
-              fontSize: "0.95rem",
-              textDecoration: "none",
+              background: tier.color,
+              color: "#0a0a0a",
+              padding: "1rem 2.5rem",
+              borderRadius: "100px",
+              fontWeight: 700,
+              fontSize: "1rem",
+              letterSpacing: "0.5px",
               transition: "all 0.3s",
+              textDecoration: "none",
             }}
-            onMouseEnter={e => { const arrow = e.currentTarget.querySelector("span"); if (arrow) (arrow as HTMLSpanElement).style.transform = "translateX(3px)"; }}
-            onMouseLeave={e => { const arrow = e.currentTarget.querySelector("span"); if (arrow) (arrow as HTMLSpanElement).style.transform = "translateX(0)"; }}
+            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-3px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = `0 8px 30px ${tier.color}40`; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
           >
-            See what your agent would cost →{" "}
-            <span style={{ transition: "transform 0.3s", display: "inline-block" }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </span>
+            Get Your Agent
           </a>
         </div>
       </div>
 
       {/* Mobile version */}
       <div className="utility-mobile" style={{ display: "none", maxWidth: "400px", margin: "0 auto" }}>
-        <div style={{ background: "#1a1a1a", borderRadius: "12px", border: "1px solid rgba(200,255,0,0.12)", padding: "1.25rem" }}>
-          <div style={{ fontSize: "0.65rem", color: "#c8ff00", fontFamily: "'Space Mono', monospace", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "0.75rem" }}>How It Works</div>
+        {/* Tier pills */}
+        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
+          {tierOrder.map((key) => {
+            const t = tiers[key];
+            const isActive = activeTier === key;
+            return (
+              <button
+                key={key}
+                onClick={() => { setActiveTier(key); setActiveMonth(0); }}
+                style={{
+                  flex: 1,
+                  padding: "0.6rem 0.5rem",
+                  borderRadius: "10px",
+                  border: `1px solid ${isActive ? t.color : "rgba(245,245,240,0.1)"}`,
+                  background: isActive ? `${t.color}10` : "transparent",
+                  color: isActive ? t.color : "#888",
+                  fontFamily: "'Space Mono', monospace",
+                  fontSize: "0.6rem",
+                  letterSpacing: "0.5px",
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                }}
+              >
+                {t.name}
+              </button>
+            );
+          })}
+        </div>
+
+        <div style={{ background: "#1a1a1a", borderRadius: "12px", border: `1px solid ${tier.color}20`, padding: "1.25rem" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+            <div style={{ fontSize: "1rem", fontWeight: 700, color: tier.color }}>{tier.name}</div>
+            <div style={{ fontSize: "0.55rem", color: "#555", fontFamily: "'Space Mono', monospace" }}>{tier.model}</div>
+          </div>
 
           {[
-            { step: "1", label: "Setup", detail: "$500 one-time — your agent built & deployed" },
-            { step: "2", label: "Usage", detail: "Your agent handles conversations 24/7" },
-            { step: "3", label: "Bill", detail: "Monthly invoice for actual token usage + margin" },
+            { step: "1", label: "Setup", detail: `${tier.setup} one-time — agent live in 48h` },
+            { step: "2", label: "Usage", detail: "Agent handles conversations 24/7" },
+            { step: "3", label: "Auto-Pay", detail: `Monthly bill for ${tier.tokenRate} × ${tier.marginMultiplier}x` },
           ].map((s, i) => (
             <div key={s.step} style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start", padding: "0.75rem 0", borderBottom: i < 2 ? "1px solid rgba(245,245,240,0.06)" : "none" }}>
-              <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "rgba(200,255,0,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "0.65rem", fontWeight: 700, color: "#c8ff00", fontFamily: "'Space Mono', monospace" }}>{s.step}</div>
+              <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `${tier.color}15`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "0.65rem", fontWeight: 700, color: tier.color, fontFamily: "'Space Mono', monospace" }}>{s.step}</div>
               <div>
                 <div style={{ fontSize: "0.8rem", color: "#f5f5f0", fontWeight: 600 }}>{s.label}</div>
                 <div style={{ fontSize: "0.7rem", color: "#888", marginTop: "0.15rem" }}>{s.detail}</div>
@@ -348,11 +538,29 @@ export default function UtilityBilling() {
             </div>
           ))}
 
-          <div style={{ marginTop: "1rem", padding: "1rem", background: "rgba(200,255,0,0.04)", borderRadius: "10px", border: "1px solid rgba(200,255,0,0.15)" }}>
+          <div style={{ marginTop: "1rem", padding: "1rem", background: `${tier.color}08`, borderRadius: "10px", border: `1px solid ${tier.color}25` }}>
             <div style={{ fontSize: "0.6rem", color: "#666", fontFamily: "'Space Mono', monospace", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "0.3rem" }}>Example Month</div>
-            <div style={{ fontSize: "0.75rem", color: "#888" }}>340 conversations → <span style={{ color: "#c8ff00", fontWeight: 700 }}>$18.24</span></div>
-            <div style={{ fontSize: "0.6rem", color: "#555", marginTop: "0.2rem" }}>vs $300/mo flat → save 94%</div>
+            <div style={{ fontSize: "0.75rem", color: "#888" }}>340 conversations → <span style={{ color: tier.color, fontWeight: 700 }}>{getUsageData(tier)[1].total}</span></div>
+            <div style={{ fontSize: "0.6rem", color: "#555", marginTop: "0.2rem" }}>vs $300/mo flat SaaS</div>
           </div>
+
+          <a
+            href="/discovery-call"
+            style={{
+              display: "block",
+              marginTop: "1rem",
+              padding: "0.9rem",
+              background: tier.color,
+              color: "#0a0a0a",
+              borderRadius: "10px",
+              fontWeight: 700,
+              fontSize: "0.85rem",
+              textAlign: "center",
+              textDecoration: "none",
+            }}
+          >
+            Get Your Agent
+          </a>
         </div>
       </div>
 
@@ -381,6 +589,7 @@ const tagStyle: React.CSSProperties = {
   letterSpacing: "3px",
   textTransform: "uppercase",
   marginBottom: "1.5rem",
+  textAlign: "center",
 };
 
 const titleStyle: React.CSSProperties = {
@@ -390,6 +599,7 @@ const titleStyle: React.CSSProperties = {
   letterSpacing: "-2px",
   maxWidth: "700px",
   margin: "0 auto",
+  textAlign: "center",
 };
 
 const subStyle: React.CSSProperties = {
@@ -400,4 +610,5 @@ const subStyle: React.CSSProperties = {
   lineHeight: 1.7,
   maxWidth: "600px",
   margin: "1.5rem auto 0",
+  textAlign: "center",
 };
