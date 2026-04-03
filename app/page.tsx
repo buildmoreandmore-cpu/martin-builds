@@ -16,7 +16,6 @@ import Hero from "@/components/Hero";
 import ObjectionHandler from "@/components/ObjectionHandler";
 import ScanCTA from "@/components/ScanCTA";
 import Services from "@/components/Services";
-import DeclutterAnimation from "@/components/DeclutterAnimation";
 import SaaSComparison from "@/components/SaaSComparison";
 import DashboardsContent from "@/components/DashboardsContent";
 import Process from "@/components/Process";
@@ -33,9 +32,8 @@ export default function Home() {
       <ObjectionHandler />
       <ScanCTA />
       <Services />
-      <DeclutterAnimation />
-      <SaaSComparison />
       <DashboardsContent embedded />
+      <SaaSComparison />
       <Process />
       <Testimonials />
       <CTA />
