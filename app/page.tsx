@@ -29,11 +29,11 @@ export default function Home() {
       <ProfessionalServiceJsonLd />
       <Nav />
       <Hero />
-      <ObjectionHandler />
-      <ScanCTA />
-      <Services />
       <DashboardsContent embedded />
       <SaaSComparison />
+      <ScanCTA />
+      <Services />
+      <ObjectionHandler />
       <Process />
       <Testimonials />
       <CTA />
