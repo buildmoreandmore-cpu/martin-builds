@@ -15,18 +15,6 @@ const ToolIcon = () => (
   </svg>
 );
 
-const TargetIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" />
-  </svg>
-);
-
-const SearchIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-);
-
 const included = [
   {
     icon: <ChartIcon />,
@@ -43,29 +31,10 @@ const included = [
   },
 ];
 
-const addons = [
-  {
-    icon: <TargetIcon />,
-    title: "Lead Generation List",
-    price: "$200/mo",
-    desc: "Fresh prospects in your area that match your ideal customer. Names, contacts, and why they're a fit. Delivered monthly.",
-    example: "\"12 new homeowners within 5 miles who haven't chosen an HVAC provider yet.\""
-  },
-  {
-    icon: <SearchIcon />,
-    title: "Market Research Report",
-    price: "$150/mo",
-    desc: "What your competitors charge, what customers in your area search for, and where the gaps are. Monthly intel so you stay ahead.",
-    example: "\"3 dental offices within 2 miles don't offer Saturday hours. You do.\""
-  },
-];
-
 export default function Deliverables() {
   const [visibleIncluded, setVisibleIncluded] = useState(0);
-  const [visibleAddons, setVisibleAddons] = useState(0);
   const [showIntro, setShowIntro] = useState(false);
   const [showTyping, setShowTyping] = useState(false);
-  const [showAddonIntro, setShowAddonIntro] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -86,10 +55,6 @@ export default function Deliverables() {
     timers.push(setTimeout(() => { setShowTyping(false); setShowIntro(true); }, 900));
     included.forEach((_, i) => {
       timers.push(setTimeout(() => setVisibleIncluded(i + 1), 1400 + i * 250));
-    });
-    timers.push(setTimeout(() => setShowAddonIntro(true), 2200));
-    addons.forEach((_, i) => {
-      timers.push(setTimeout(() => setVisibleAddons(i + 1), 2700 + i * 250));
     });
     return () => timers.forEach(clearTimeout);
   }, [isVisible]);
@@ -142,36 +107,6 @@ export default function Deliverables() {
             ))}
           </div>
 
-          {/* Add-on intro bubble */}
-          {showAddonIntro && (
-            <div style={{ maxWidth: "650px", margin: "2.5rem auto", display: "flex", gap: "0.6rem", alignItems: "flex-start", animation: "delFadeUp 0.4s ease-out forwards" }}>
-              <div style={agentDot}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/></svg>
-              </div>
-              <div style={bubble}>Want even more? Add these to any plan:</div>
-            </div>
-          )}
-
-          {/* Add-on cards */}
-          {showAddonIntro && (
-            <div className="deliverables-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "1.5rem" }}>
-              {addons.map((d, i) => (
-                <div key={d.title} style={{ ...cardBase, opacity: visibleAddons > i ? 1 : 0, transform: visibleAddons > i ? "translateY(0)" : "translateY(16px)" }}
-                  onMouseEnter={(e) => { const el = e.currentTarget as HTMLDivElement; el.style.borderColor = "rgba(200,255,0,0.15)"; el.style.transform = "translateY(-4px)"; const bar = el.querySelector(".del-bar") as HTMLDivElement; if (bar) bar.style.transform = "scaleX(1)"; }}
-                  onMouseLeave={(e) => { const el = e.currentTarget as HTMLDivElement; el.style.borderColor = "rgba(245,245,240,0.06)"; el.style.transform = "translateY(0)"; const bar = el.querySelector(".del-bar") as HTMLDivElement; if (bar) bar.style.transform = "scaleX(0)"; }}
-                >
-                  <div className="del-bar" style={barStyle} />
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.2rem" }}>
-                    <div style={iconBox}>{d.icon}</div>
-                    <span style={{ ...labelStyle, color: "#888" }}>ADD-ON · {d.price}</span>
-                  </div>
-                  <h3 style={{ fontSize: "1.15rem", fontWeight: 700, marginBottom: "0.5rem" }}>{d.title}</h3>
-                  <p style={{ fontSize: "0.9rem", color: "#888", lineHeight: 1.6, flex: 1 }}>{d.desc}</p>
-                  <div style={exampleStyle}>{d.example}</div>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
 
