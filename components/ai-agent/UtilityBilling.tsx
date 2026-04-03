@@ -189,7 +189,6 @@ export default function UtilityBilling() {
 
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
                     <div style={{ fontSize: "1.1rem", fontWeight: 700, color: isActive ? t.color : "#f5f5f0" }}>{t.name}</div>
-                    <div style={{ fontSize: "0.55rem", color: isActive ? t.color : "#555", fontFamily: "'Space Mono', monospace", letterSpacing: "0.5px", textTransform: "uppercase", opacity: 0.8 }}>{t.model}</div>
                   </div>
                   <p style={{ fontSize: "0.75rem", color: "#888", lineHeight: 1.4, marginBottom: "0.75rem" }}>{t.tagline}</p>
                   <div style={{ display: "flex", alignItems: "baseline", gap: "0.3rem" }}>
@@ -342,7 +341,7 @@ export default function UtilityBilling() {
 
               <div style={{ background: "rgba(245,245,240,0.02)", borderRadius: "12px", border: "1px solid rgba(245,245,240,0.06)", overflow: "hidden" }}>
                 {[
-                  { label: "Conversations", value: data.conversations.toLocaleString(), detail: `${tier.name} plan — ${tier.model}` },
+                  { label: "Conversations", value: data.conversations.toLocaleString(), detail: `${tier.name} plan` },
                   { label: "Rate", value: `${tier.perConvo} each`, detail: "AI processing, infrastructure, monitoring, support" },
                 ].map((row, i) => (
                   <div
@@ -509,7 +508,6 @@ export default function UtilityBilling() {
         <div style={{ background: "#1a1a1a", borderRadius: "12px", border: `1px solid ${tier.color}20`, padding: "1.25rem" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
             <div style={{ fontSize: "1rem", fontWeight: 700, color: tier.color }}>{tier.name}</div>
-            <div style={{ fontSize: "0.55rem", color: "#555", fontFamily: "'Space Mono', monospace" }}>{tier.model}</div>
           </div>
 
           {[
