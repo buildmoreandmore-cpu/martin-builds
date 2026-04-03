@@ -16,7 +16,7 @@ import Hero from "@/components/Hero";
 import ObjectionHandler from "@/components/ObjectionHandler";
 import ScanCTA from "@/components/ScanCTA";
 import Services from "@/components/Services";
-import SaaSComparison from "@/components/SaaSComparison";
+import AppAudit from "@/components/AppAudit";
 import DashboardsContent from "@/components/DashboardsContent";
 import Process from "@/components/Process";
 import Testimonials from "@/components/Testimonials";
@@ -30,7 +30,7 @@ export default function Home() {
       <Nav />
       <Hero />
       <DashboardsContent embedded />
-      <SaaSComparison />
+      <AppAudit />
       <ScanCTA />
       <Services />
       <ObjectionHandler />
