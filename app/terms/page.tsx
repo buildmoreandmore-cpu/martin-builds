@@ -136,7 +136,16 @@ export default function TermsPage() {
           </P>
         </Section>
 
-        <Section num="10" title="Entire Agreement" last>
+        <Section num="10" title="Intellectual Property & Pre-Payment Rights">
+          <Ul>
+            <Li>All work product — including but not limited to designs, wireframes, technical architecture, code, strategy documents, scope documents, and system blueprints — remains the sole intellectual property of Martin Builds until full payment is received and cleared.</Li>
+            <Li>Any concepts, strategies, designs, technical architecture, or proprietary methodologies shared during discovery, scoping, or the build process are confidential. Client agrees not to use, reproduce, or engage a third party to recreate work based on these materials without prior written consent from Martin Builds.</Li>
+            <Li>Client shall not engage a third party to build, replicate, or substantially recreate the system, design, or technical approach presented by Martin Builds for a period of twelve (12) months following the last communication between the parties.</Li>
+            <Li>In the event of a violation of this section, Client agrees to pay liquidated damages equal to the full quoted project value as compensation for the unauthorized use of Martin Builds&apos; proprietary work product. Both parties agree this amount is a reasonable estimate of damages and not a penalty.</Li>
+          </Ul>
+        </Section>
+
+        <Section num="11" title="Entire Agreement" last>
           <P>
             This document, combined with the project scope and invoice details communicated prior to payment, constitutes the entire agreement between the parties. No verbal agreements or prior communications override these terms.
           </P>
