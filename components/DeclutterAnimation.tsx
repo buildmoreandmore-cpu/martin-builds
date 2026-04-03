@@ -36,8 +36,8 @@ export default function DeclutterAnimation() {
       ([entry]) => {
         if (entry.isIntersecting && !hasTriggered.current) {
           hasTriggered.current = true;
-          setTimeout(() => setPhase("transitioning"), 500);
-          setTimeout(() => setPhase("clean"), 3000);
+          setTimeout(() => setPhase("transitioning"), 400);
+          setTimeout(() => setPhase("clean"), 2200);
         }
       },
       { threshold: 0.3 }
@@ -71,9 +71,9 @@ export default function DeclutterAnimation() {
           style={{
             borderRadius: "16px",
             overflow: "hidden",
-            border: "1px solid rgba(245,245,240,0.08)",
-            background: phase === "clean" ? "#ffffff" : "#1e2a3a",
-            transition: "background 0.8s ease",
+            border: `1px solid ${phase === "clean" ? "rgba(200,255,0,0.12)" : "rgba(255,255,255,0.06)"}`,
+            background: phase === "clean" ? "#1a1a1a" : "#1e2a3a",
+            transition: "all 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
             display: "flex",
             minHeight: "420px",
           }}
@@ -81,11 +81,11 @@ export default function DeclutterAnimation() {
           {/* Sidebar */}
           <div
             style={{
-              width: phase === "clean" ? "180px" : "200px",
-              background: phase === "clean" ? "#f8f9fa" : "#162030",
-              borderRight: `1px solid ${phase === "clean" ? "#e5e7eb" : "rgba(255,255,255,0.06)"}`,
+              width: phase === "clean" ? "170px" : "200px",
+              background: phase === "clean" ? "#111" : "#162030",
+              borderRight: `1px solid ${phase === "clean" ? "rgba(200,255,0,0.06)" : "rgba(255,255,255,0.06)"}`,
               padding: "1rem 0",
-              transition: "all 0.8s ease",
+              transition: "all 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
               flexShrink: 0,
             }}
           >
@@ -94,10 +94,11 @@ export default function DeclutterAnimation() {
                 padding: "0 1rem 1rem",
                 fontSize: "0.7rem",
                 fontWeight: 700,
-                color: phase === "clean" ? "#1d9e75" : "#5a7a9a",
+                color: phase === "clean" ? "#c8ff00" : "#5a7a9a",
                 letterSpacing: "1px",
                 textTransform: "uppercase",
                 fontFamily: "'Space Mono', monospace",
+                transition: "color 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
               }}
             >
               {phase === "clean" ? "your.app" : "MEGACRM PRO"}
@@ -112,17 +113,18 @@ export default function DeclutterAnimation() {
                     padding: "0.45rem 1rem",
                     fontSize: "0.75rem",
                     color: phase === "clean"
-                      ? (i === 0 ? "#1d9e75" : "#555")
+                      ? (i === 0 ? "#c8ff00" : "#888")
                       : isRemoving ? "transparent" : (isKept ? "#c8d8e8" : "#5a7a9a"),
                     fontWeight: i === 0 ? 600 : 400,
                     background: i === 0
-                      ? (phase === "clean" ? "rgba(29,158,117,0.08)" : "rgba(255,255,255,0.04)")
+                      ? (phase === "clean" ? "rgba(200,255,0,0.06)" : "rgba(255,255,255,0.04)")
                       : "transparent",
                     borderRadius: "6px",
                     margin: "0 0.5rem",
-                    transition: `all 0.5s ease ${isRemoving ? i * 0.08 : 0}s`,
+                    transition: `all 0.35s cubic-bezier(0.16, 1, 0.3, 1) ${isRemoving ? i * 0.06 : 0}s`,
                     opacity: isRemoving ? 0 : 1,
                     maxHeight: isRemoving ? "0px" : "36px",
+                    transform: isRemoving ? "translateX(-10px)" : "translateX(0)",
                     overflow: "hidden",
                     marginBottom: phase === "clean" ? "0.25rem" : "0",
                   }}
@@ -139,22 +141,27 @@ export default function DeclutterAnimation() {
             <div
               style={{
                 padding: "0.75rem 1.25rem",
-                borderBottom: `1px solid ${phase === "clean" ? "#e5e7eb" : "rgba(255,255,255,0.06)"}`,
+                borderBottom: `1px solid ${phase === "clean" ? "rgba(200,255,0,0.06)" : "rgba(255,255,255,0.06)"}`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                transition: "all 0.8s ease",
+                transition: "all 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
               }}
             >
-              <div style={{ fontSize: "0.8rem", fontWeight: 600, color: phase === "clean" ? "#333" : "#8aa0b8" }}>
+              <div style={{
+                fontSize: "0.8rem",
+                fontWeight: 600,
+                color: phase === "clean" ? "#f5f5f0" : "#8aa0b8",
+                transition: "color 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+              }}>
                 {phase === "clean" ? "Good morning, Marcus" : "Dashboard"}
               </div>
               <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
                 {phase !== "clean" && (
                   <>
-                    <TopBarIcon opacity={phase === "transitioning" ? 0 : 0.4} />
-                    <TopBarIcon opacity={phase === "transitioning" ? 0 : 0.4} />
-                    <TopBarIcon opacity={phase === "transitioning" ? 0 : 0.4} />
+                    <TopBarIcon opacity={phase === "transitioning" ? 0 : 0.4} delay={0} />
+                    <TopBarIcon opacity={phase === "transitioning" ? 0 : 0.4} delay={0.05} />
+                    <TopBarIcon opacity={phase === "transitioning" ? 0 : 0.4} delay={0.1} />
                   </>
                 )}
                 <div
@@ -162,8 +169,8 @@ export default function DeclutterAnimation() {
                     width: "28px",
                     height: "28px",
                     borderRadius: "50%",
-                    background: phase === "clean" ? "#1d9e75" : "#3a5a7a",
-                    transition: "all 0.8s ease",
+                    background: phase === "clean" ? "#c8ff00" : "#3a5a7a",
+                    transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
                   }}
                 />
               </div>
@@ -172,7 +179,6 @@ export default function DeclutterAnimation() {
             {/* Widgets */}
             <div style={{ padding: "1.25rem", flex: 1 }}>
               {phase === "clean" ? (
-                /* Clean state */
                 <>
                   <div
                     style={{
@@ -187,21 +193,21 @@ export default function DeclutterAnimation() {
                         key={w.label}
                         style={{
                           padding: "1.25rem",
-                          background: w.accent ? "rgba(29,158,117,0.08)" : "#f8f9fa",
+                          background: w.accent ? "rgba(200,255,0,0.04)" : "rgba(245,245,240,0.02)",
                           borderRadius: "12px",
-                          border: `1px solid ${w.accent ? "rgba(29,158,117,0.2)" : "#e5e7eb"}`,
-                          animation: `slideUpClean 0.5s ease ${i * 0.1}s both`,
+                          border: `1px solid ${w.accent ? "rgba(200,255,0,0.15)" : "rgba(245,245,240,0.06)"}`,
+                          animation: `dcSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.08}s both`,
                         }}
                       >
-                        <div style={{ fontSize: "0.65rem", color: "#888", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "0.4rem" }}>{w.label}</div>
-                        <div style={{ fontSize: "1.5rem", fontWeight: 700, color: w.accent ? "#1d9e75" : "#333" }}>{w.value}</div>
-                        <div style={{ fontSize: "0.7rem", color: "#aaa", marginTop: "0.2rem" }}>{w.sub}</div>
+                        <div style={{ fontSize: "0.65rem", color: "#666", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "0.4rem", fontFamily: "'Space Mono', monospace" }}>{w.label}</div>
+                        <div style={{ fontSize: "1.5rem", fontWeight: 700, color: w.accent ? "#c8ff00" : "#f5f5f0" }}>{w.value}</div>
+                        <div style={{ fontSize: "0.7rem", color: "#666", marginTop: "0.2rem" }}>{w.sub}</div>
                       </div>
                     ))}
                   </div>
-                  {/* Clean chart */}
-                  <div style={{ background: "#f8f9fa", borderRadius: "12px", border: "1px solid #e5e7eb", padding: "1.25rem", animation: "slideUpClean 0.5s ease 0.3s both" }}>
-                    <div style={{ fontSize: "0.7rem", color: "#888", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "1rem" }}>Weekly Revenue</div>
+                  {/* Chart */}
+                  <div style={{ background: "rgba(245,245,240,0.02)", borderRadius: "12px", border: "1px solid rgba(245,245,240,0.06)", padding: "1.25rem", animation: "dcSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both" }}>
+                    <div style={{ fontSize: "0.7rem", color: "#666", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "1rem", fontFamily: "'Space Mono', monospace" }}>Weekly Revenue</div>
                     <div style={{ display: "flex", alignItems: "flex-end", gap: "6px", height: "80px" }}>
                       {[45, 62, 38, 71, 55, 82, 68].map((h, i) => (
                         <div
@@ -209,26 +215,26 @@ export default function DeclutterAnimation() {
                           style={{
                             flex: 1,
                             height: `${h}%`,
-                            background: i === 5 ? "#1d9e75" : "rgba(29,158,117,0.2)",
+                            background: i === 5 ? "#c8ff00" : "rgba(200,255,0,0.12)",
                             borderRadius: "4px 4px 0 0",
-                            animation: `growBar 0.6s ease ${0.4 + i * 0.05}s both`,
+                            animation: `dcGrowBar 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${0.3 + i * 0.04}s both`,
                           }}
                         />
                       ))}
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.4rem" }}>
                       {["M", "T", "W", "T", "F", "S", "S"].map((d, i) => (
-                        <div key={i} style={{ flex: 1, textAlign: "center", fontSize: "0.6rem", color: "#bbb" }}>{d}</div>
+                        <div key={i} style={{ flex: 1, textAlign: "center", fontSize: "0.6rem", color: "#555" }}>{d}</div>
                       ))}
                     </div>
                   </div>
-                  {/* Clean table */}
-                  <div style={{ marginTop: "1rem", background: "#f8f9fa", borderRadius: "12px", border: "1px solid #e5e7eb", padding: "1rem 1.25rem", animation: "slideUpClean 0.5s ease 0.5s both" }}>
-                    <div style={{ fontSize: "0.7rem", color: "#888", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "0.75rem" }}>Recent Activity</div>
+                  {/* Activity table */}
+                  <div style={{ marginTop: "1rem", background: "rgba(245,245,240,0.02)", borderRadius: "12px", border: "1px solid rgba(245,245,240,0.06)", padding: "1rem 1.25rem", animation: "dcSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both" }}>
+                    <div style={{ fontSize: "0.7rem", color: "#666", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "0.75rem", fontFamily: "'Space Mono', monospace" }}>Recent Activity</div>
                     {["New lead — Marcus Johnson", "Proposal sent — $12K", "Invoice paid — $4,500"].map((row, i) => (
-                      <div key={i} style={{ padding: "0.5rem 0", borderBottom: i < 2 ? "1px solid #eee" : "none", fontSize: "0.75rem", color: "#555", display: "flex", justifyContent: "space-between" }}>
+                      <div key={i} style={{ padding: "0.5rem 0", borderBottom: i < 2 ? "1px solid rgba(245,245,240,0.04)" : "none", fontSize: "0.75rem", color: "#888", display: "flex", justifyContent: "space-between" }}>
                         <span>{row}</span>
-                        <span style={{ color: "#bbb", fontSize: "0.65rem" }}>{["2m ago", "1h ago", "3h ago"][i]}</span>
+                        <span style={{ color: "#555", fontSize: "0.65rem" }}>{["2m ago", "1h ago", "3h ago"][i]}</span>
                       </div>
                     ))}
                   </div>
@@ -252,9 +258,9 @@ export default function DeclutterAnimation() {
                           background: "rgba(255,255,255,0.03)",
                           borderRadius: "8px",
                           border: "1px solid rgba(255,255,255,0.06)",
-                          transition: `all 0.5s ease ${isRemoving ? (i - 3) * 0.15 : 0}s`,
+                          transition: `all 0.35s cubic-bezier(0.55, 0, 1, 0.45) ${isRemoving ? (i - 3) * 0.1 : 0}s`,
                           opacity: isRemoving ? 0 : 1,
-                          transform: isRemoving ? "scale(0.9)" : "scale(1)",
+                          transform: isRemoving ? "scale(0.85) translateY(8px)" : "scale(1) translateY(0)",
                         }}
                       >
                         <div style={{ fontSize: "0.6rem", color: "#5a7a9a", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "0.4rem" }}>{w.label}</div>
@@ -272,12 +278,12 @@ export default function DeclutterAnimation() {
         {/* Labels */}
         <div style={{ display: "flex", justifyContent: "center", gap: "3rem", marginTop: "1.5rem" }}>
           <div style={{ textAlign: "center" }}>
-            <p style={{ fontSize: "0.85rem", color: phase === "clean" ? "#555" : "#888", fontWeight: 500, transition: "color 0.5s" }}>
+            <p style={{ fontSize: "0.85rem", color: phase === "clean" ? "#555" : "#888", fontWeight: 500, transition: "color 0.4s" }}>
               What you&apos;re paying for
             </p>
           </div>
           <div style={{ textAlign: "center" }}>
-            <p style={{ fontSize: "0.85rem", color: phase === "clean" ? "#1d9e75" : "#555", fontWeight: 600, transition: "color 0.5s" }}>
+            <p style={{ fontSize: "0.85rem", color: phase === "clean" ? "#c8ff00" : "#555", fontWeight: 600, transition: "color 0.4s" }}>
               What you actually need
             </p>
           </div>
@@ -299,13 +305,13 @@ export default function DeclutterAnimation() {
           </div>
           {/* After */}
           <div>
-            <p style={{ fontSize: "0.7rem", color: "#1d9e75", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "0.5rem", textAlign: "center", fontWeight: 600 }}>After</p>
-            <div style={{ background: "#ffffff", borderRadius: "12px", padding: "1rem", border: "1px solid #e5e7eb" }}>
+            <p style={{ fontSize: "0.7rem", color: "#c8ff00", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "0.5rem", textAlign: "center", fontWeight: 600 }}>After</p>
+            <div style={{ background: "#1a1a1a", borderRadius: "12px", padding: "1rem", border: "1px solid rgba(200,255,0,0.12)" }}>
               {sidebarItemsClean.map((item) => (
-                <div key={item} style={{ fontSize: "0.6rem", color: "#555", padding: "0.3rem 0", fontWeight: 500 }}>{item}</div>
+                <div key={item} style={{ fontSize: "0.6rem", color: "#888", padding: "0.3rem 0", fontWeight: 500 }}>{item}</div>
               ))}
-              <div style={{ marginTop: "0.5rem", fontSize: "0.7rem", fontWeight: 700, color: "#1d9e75" }}>$48.2K</div>
-              <div style={{ fontSize: "0.5rem", color: "#aaa" }}>revenue this month</div>
+              <div style={{ marginTop: "0.5rem", fontSize: "0.7rem", fontWeight: 700, color: "#c8ff00" }}>$48.2K</div>
+              <div style={{ fontSize: "0.5rem", color: "#666" }}>revenue this month</div>
             </div>
           </div>
         </div>
@@ -327,12 +333,13 @@ export default function DeclutterAnimation() {
       </div>
 
       <style>{`
-        @keyframes slideUpClean {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
+        @keyframes dcSlideUp {
+          from { opacity: 0; transform: translateY(12px) scale(0.97); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
         }
-        @keyframes growBar {
-          from { height: 0; }
+        @keyframes dcGrowBar {
+          from { transform: scaleY(0); transform-origin: bottom; }
+          to { transform: scaleY(1); transform-origin: bottom; }
         }
         @media (max-width: 768px) {
           .declutter-desktop { display: none !important; }
@@ -343,7 +350,7 @@ export default function DeclutterAnimation() {
   );
 }
 
-function TopBarIcon({ opacity }: { opacity: number }) {
+function TopBarIcon({ opacity, delay }: { opacity: number; delay: number }) {
   return (
     <div
       style={{
@@ -351,7 +358,7 @@ function TopBarIcon({ opacity }: { opacity: number }) {
         height: "20px",
         borderRadius: "4px",
         background: "rgba(255,255,255,0.08)",
-        transition: "opacity 0.5s ease",
+        transition: `opacity 0.3s cubic-bezier(0.55, 0, 1, 0.45) ${delay}s`,
         opacity,
       }}
     />
