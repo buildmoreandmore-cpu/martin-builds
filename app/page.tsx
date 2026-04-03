@@ -17,6 +17,7 @@ import ObjectionHandler from "@/components/ObjectionHandler";
 import ScanCTA from "@/components/ScanCTA";
 import Services from "@/components/Services";
 import ConversionFlow from "@/components/ConversionFlow";
+import DeclutterAnimation from "@/components/DeclutterAnimation";
 import Process from "@/components/Process";
 import Industries from "@/components/Industries";
 import Testimonials from "@/components/Testimonials";
@@ -35,6 +36,7 @@ export default function Home() {
       <ScanCTA />
       <Services />
       <ConversionFlow />
+      <DeclutterAnimation />
       <Process />
       <Industries />
       <Testimonials />

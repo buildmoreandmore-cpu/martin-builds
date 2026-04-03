@@ -24,6 +24,15 @@ const RetainerIcon = () => (
   </svg>
 );
 
+const DashboardIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="7" height="7" rx="1" />
+    <rect x="14" y="3" width="7" height="4" rx="1" />
+    <rect x="14" y="10" width="7" height="7" rx="1" />
+    <rect x="3" y="13" width="7" height="4" rx="1" />
+  </svg>
+);
+
 const services = [
   {
     icon: <SprintIcon />,
@@ -33,10 +42,17 @@ const services = [
     tags: "Phase 1 · Websites · Tools",
   },
   {
+    icon: <DashboardIcon />,
+    title: "Custom Dashboard",
+    price: "From $4,500",
+    description: "Stop paying monthly for software your team barely uses. Get one dashboard built exactly for how you work — your data, your metrics, your layout. Owned forever.",
+    tags: "Phase 1.5 · Dashboards · Portals",
+  },
+  {
     icon: <PlatformIcon />,
     title: "AI Platform Build",
     price: "From $8,000",
-    description: "Once you've seen what's possible, we go deeper. Client portals, admin dashboards, automated intake-to-close workflows. The full conversion infrastructure — from first click to signed deal.",
+    description: "Once you've seen what's possible, we go deeper. Client portals, admin dashboards, automated intake-to-close workflows. The full conversion infrastructure — from first click to signed deal. Includes AWS infrastructure setup and management available.",
     tags: "Phase 2 · Platforms · Dashboards",
   },
   {
@@ -63,7 +79,7 @@ export default function Services() {
       </ScrollReveal>
       <ScrollReveal>
         <p style={sectionSub}>
-          Every build starts with your problem — not my tech stack. Intelligence is built into every layer from day one. Not bolted on as a feature. Not layered on top of a template. <span style={{ color: "#c8ff00" }}>AI-native from the ground up.</span>
+          Every build starts with your problem — not my tech stack. <span style={{ color: "#c8ff00" }}>You own everything.</span>
         </p>
       </ScrollReveal>
 
