@@ -15,9 +15,8 @@ interface TierConfig {
   tagline: string;
   model: string;
   setup: string;
-  tokenRate: string;
-  ratePerK: number;
-  marginMultiplier: number;
+  perConvo: string;
+  perConvoNum: number;
   color: string;
   bestFor: string;
   features: string[];
@@ -29,9 +28,8 @@ const tiers: Record<TierKey, TierConfig> = {
     tagline: "Reliable coverage for everyday conversations",
     model: "MiniMax-Text-01",
     setup: "$49",
-    tokenRate: "$0.02 / 1K tokens",
-    ratePerK: 0.02,
-    marginMultiplier: 3,
+    perConvo: "$0.04",
+    perConvoNum: 0.04,
     color: "#c8ff00",
     bestFor: "FAQs, booking, basic support",
     features: [
@@ -47,9 +45,8 @@ const tiers: Record<TierKey, TierConfig> = {
     tagline: "Smarter conversations that close deals",
     model: "Claude Haiku 4.5",
     setup: "$99",
-    tokenRate: "$0.05 / 1K tokens",
-    ratePerK: 0.05,
-    marginMultiplier: 3,
+    perConvo: "$0.12",
+    perConvoNum: 0.12,
     color: "#64b4ff",
     bestFor: "Lead qualifying, consultations, complex support",
     features: [
@@ -65,9 +62,8 @@ const tiers: Record<TierKey, TierConfig> = {
     tagline: "Premium intelligence for high-value interactions",
     model: "Claude Sonnet 4.6",
     setup: "$149",
-    tokenRate: "$0.15 / 1K tokens",
-    ratePerK: 0.15,
-    marginMultiplier: 2.5,
+    perConvo: "$0.35",
+    perConvoNum: 0.35,
     color: "#b482ff",
     bestFor: "Sales, legal intake, consulting, high-stakes conversations",
     features: [
@@ -86,18 +82,11 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
 
 function getUsageData(tier: TierConfig) {
   const convos = [120, 340, 580, 890, 1240, 1680];
-  const tokensPerConvo = 680;
   return convos.map((c, i) => {
-    const totalTokens = c * tokensPerConvo;
-    const tokenCost = (totalTokens / 1000) * tier.ratePerK;
-    const margin = tokenCost * (tier.marginMultiplier - 1);
-    const total = tokenCost + margin;
+    const total = c * tier.perConvoNum;
     return {
       month: MONTHS[i],
       conversations: c,
-      tokens: totalTokens >= 1000000 ? `${(totalTokens / 1000000).toFixed(1)}M` : `${Math.round(totalTokens / 1000)}K`,
-      tokenCost: `$${tokenCost.toFixed(2)}`,
-      margin: `$${margin.toFixed(2)}`,
       total: `$${total.toFixed(2)}`,
       totalNum: total,
     };
@@ -207,7 +196,7 @@ export default function UtilityBilling() {
                     <span style={{ fontSize: "1.5rem", fontWeight: 800, color: isActive ? t.color : "#f5f5f0" }}>{t.setup}</span>
                     <span style={{ fontSize: "0.7rem", color: "#666" }}>setup</span>
                   </div>
-                  <div style={{ fontSize: "0.65rem", color: "#555", marginTop: "0.3rem", fontFamily: "'Space Mono', monospace" }}>then {t.tokenRate} + margin</div>
+                  <div style={{ fontSize: "0.65rem", color: "#555", marginTop: "0.3rem", fontFamily: "'Space Mono', monospace" }}>then {t.perConvo} / conversation</div>
                 </button>
               );
             })}
@@ -257,7 +246,7 @@ export default function UtilityBilling() {
                 <div style={{ fontSize: "0.8rem", color: "#f5f5f0", lineHeight: 1.5 }}>
                   <span style={{ color: tier.color, fontWeight: 700 }}>{tier.setup}</span> setup → agent goes live in 48h
                   <br />
-                  Then <span style={{ color: tier.color, fontWeight: 600 }}>{tier.tokenRate}</span> × {tier.marginMultiplier}x margin
+                  Then <span style={{ color: tier.color, fontWeight: 600 }}>{tier.perConvo} per conversation</span>
                   <br />
                   <span style={{ color: "#888", fontSize: "0.7rem" }}>Billed monthly to your card on file</span>
                 </div>
@@ -353,9 +342,8 @@ export default function UtilityBilling() {
 
               <div style={{ background: "rgba(245,245,240,0.02)", borderRadius: "12px", border: "1px solid rgba(245,245,240,0.06)", overflow: "hidden" }}>
                 {[
-                  { label: "Conversations", value: data.conversations.toLocaleString(), detail: `${data.tokens} tokens processed` },
-                  { label: `Token Cost (${tier.model})`, value: data.tokenCost, detail: tier.tokenRate },
-                  { label: `Service Margin (${tier.marginMultiplier}x)`, value: data.margin, detail: "Infrastructure, monitoring, support" },
+                  { label: "Conversations", value: data.conversations.toLocaleString(), detail: `${tier.name} plan — ${tier.model}` },
+                  { label: "Rate", value: `${tier.perConvo} each`, detail: "AI processing, infrastructure, monitoring, support" },
                 ].map((row, i) => (
                   <div
                     key={row.label}
@@ -364,7 +352,7 @@ export default function UtilityBilling() {
                       justifyContent: "space-between",
                       alignItems: "center",
                       padding: "0.85rem 1.25rem",
-                      borderBottom: i < 2 ? "1px solid rgba(245,245,240,0.04)" : "none",
+                      borderBottom: i < 1 ? "1px solid rgba(245,245,240,0.04)" : "none",
                       animation: `utilRowSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1) ${i * 50}ms both`,
                     }}
                   >
@@ -527,7 +515,7 @@ export default function UtilityBilling() {
           {[
             { step: "1", label: "Setup", detail: `${tier.setup} one-time — agent live in 48h` },
             { step: "2", label: "Usage", detail: "Agent handles conversations 24/7" },
-            { step: "3", label: "Auto-Pay", detail: `Monthly bill for ${tier.tokenRate} × ${tier.marginMultiplier}x` },
+            { step: "3", label: "Auto-Pay", detail: `Monthly bill at ${tier.perConvo}/conversation` },
           ].map((s, i) => (
             <div key={s.step} style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start", padding: "0.75rem 0", borderBottom: i < 2 ? "1px solid rgba(245,245,240,0.06)" : "none" }}>
               <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `${tier.color}15`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "0.65rem", fontWeight: 700, color: tier.color, fontFamily: "'Space Mono', monospace" }}>{s.step}</div>
