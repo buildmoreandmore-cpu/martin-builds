@@ -26,7 +26,7 @@ export default function Hero() {
       />
 
       <div className="animate-fade-up-1" style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.8rem", color: "#c8ff00", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "2rem" }}>
-        Custom Websites &amp; Dashboards for Small Business
+        Custom Websites &amp; Dashboards That Work
       </div>
 
       <h1

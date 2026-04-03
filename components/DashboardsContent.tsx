@@ -115,7 +115,7 @@ const industryOrder: IndustryKey[] = ["staffing", "restaurant", "realestate", "c
    Main Component
    ══════════════════════════════════════════════ */
 
-export default function DashboardsContent() {
+export default function DashboardsContent({ embedded = false }: { embedded?: boolean }) {
   const [activeIndustry, setActiveIndustry] = useState<IndustryKey>("staffing");
   const [activePage, setActivePage] = useState("Dashboard");
   const [animKey, setAnimKey] = useState(0);
@@ -135,8 +135,8 @@ export default function DashboardsContent() {
 
   return (
     <main>
-      {/* Hero */}
-      <section
+      {/* Hero — hidden when embedded on homepage */}
+      {!embedded && <section
         style={{
           minHeight: "60vh",
           display: "flex",
@@ -199,7 +199,7 @@ export default function DashboardsContent() {
             Book a Free Discovery Call
           </a>
         </div>
-      </section>
+      </section>}
 
       {/* Industry Dashboards */}
       <section
@@ -387,8 +387,8 @@ export default function DashboardsContent() {
         </div>
       </section>
 
-      {/* Bottom CTA */}
-      <section
+      {/* Bottom CTA — hidden when embedded */}
+      {!embedded && <section
         style={{
           padding: "clamp(5rem,10vw,8rem) clamp(1.25rem,5vw,3rem)",
           textAlign: "center",
@@ -424,7 +424,7 @@ export default function DashboardsContent() {
             Start a Project
           </a>
         </ScrollReveal>
-      </section>
+      </section>}
 
       <style>{`
         @keyframes dashFadeIn {
