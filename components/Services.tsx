@@ -2,17 +2,17 @@
 
 import ScrollReveal from "./ScrollReveal";
 
+const SprintIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+  </svg>
+);
+
 const PlatformIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
     <line x1="8" y1="21" x2="16" y2="21" />
     <line x1="12" y1="17" x2="12" y2="21" />
-  </svg>
-);
-
-const SprintIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
   </svg>
 );
 
@@ -24,42 +24,26 @@ const RetainerIcon = () => (
   </svg>
 );
 
-const DashboardIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="3" width="7" height="7" rx="1" />
-    <rect x="14" y="3" width="7" height="4" rx="1" />
-    <rect x="14" y="10" width="7" height="7" rx="1" />
-    <rect x="3" y="13" width="7" height="4" rx="1" />
-  </svg>
-);
-
 const services = [
   {
     icon: <SprintIcon />,
-    title: "AI Build Sprint",
+    title: "Website + Dashboard",
     price: "From $5,000",
-    description: "Where most relationships start. A defined AI-powered tool or website — scoped, built, and live in 2 weeks. This is where leads stop bouncing and start converting.",
-    tags: "Phase 1 · Websites · Tools",
-  },
-  {
-    icon: <DashboardIcon />,
-    title: "Custom Dashboard",
-    price: "From $4,500",
-    description: "Stop paying monthly for software your team barely uses. Get one dashboard built exactly for how you work — your data, your metrics, your layout. Owned forever.",
-    tags: "Phase 1.5 · Dashboards · Portals",
+    description: "Custom website with a built-in admin dashboard — scoped, built, and live in 2 weeks. Your data, your metrics, your layout. No templates. No monthly fees.",
+    tags: "Phase 1 · Website · Dashboard · 2 Weeks",
   },
   {
     icon: <PlatformIcon />,
-    title: "AI Platform Build",
+    title: "Full Platform",
     price: "From $8,000",
-    description: "Once you've seen what's possible, we go deeper. Client portals, admin dashboards, automated intake-to-close workflows. The full conversion infrastructure — from first click to signed deal. Includes AWS infrastructure setup and management available.",
-    tags: "Phase 2 · Platforms · Dashboards",
+    description: "Everything in Phase 1, plus client portals, automated workflows, integrations, and AWS infrastructure. The full system — from first click to signed deal.",
+    tags: "Phase 2 · Portals · Workflows · Integrations",
   },
   {
     icon: <RetainerIcon />,
-    title: "AI Retainer",
+    title: "Retainer",
     price: "Custom pricing",
-    description: "The long game. Your AI builder on call — new features, iterations, conversion optimization every month. As your pipeline grows, your systems grow with it.",
+    description: "Your builder on call. New features, iterations, and optimization every month. As your business grows, your systems grow with it.",
     tags: "Phase 3 · Ongoing · Growth",
   },
 ];
@@ -72,15 +56,12 @@ export default function Services() {
       </ScrollReveal>
       <ScrollReveal>
         <h2 style={sectionTitle}>
-          I don&apos;t sell deliverables.
+          A custom website.
           <br />
-          I sell outcomes.
+          A custom dashboard.
+          <br />
+          <span style={{ color: "#c8ff00" }}>One builder. One price.</span>
         </h2>
-      </ScrollReveal>
-      <ScrollReveal>
-        <p style={sectionSub}>
-          Every build starts with your problem — not my tech stack. <span style={{ color: "#c8ff00" }}>You own everything.</span>
-        </p>
       </ScrollReveal>
 
       <div
@@ -97,29 +78,6 @@ export default function Services() {
           </ScrollReveal>
         ))}
       </div>
-
-      {/* Dashboard ownership callout */}
-      <ScrollReveal>
-        <div
-          style={{
-            marginTop: "2.5rem",
-            background: "#111",
-            borderLeft: "3px solid #c8ff00",
-            borderRadius: "12px",
-            padding: "1.5rem 2rem",
-          }}
-        >
-          <p style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.65rem", color: "#c8ff00", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "0.5rem" }}>
-            Every Build Includes
-          </p>
-          <p style={{ fontSize: "1.1rem", fontWeight: 700, color: "#f5f5f0", marginBottom: "0.5rem", letterSpacing: "-0.5px" }}>
-            Your data. Your dashboard. Built for how you actually work.
-          </p>
-          <p style={{ fontSize: "0.9rem", color: "#888", lineHeight: 1.7, margin: 0 }}>
-            Every platform ships with a custom admin dashboard — not a generic template, not a no-code embed. A real interface built around your workflow, your metrics, and your team. You own everything.
-          </p>
-        </div>
-      </ScrollReveal>
 
       <ScrollReveal>
         <div style={{ marginTop: "3rem", textAlign: "center" }}>
@@ -142,18 +100,6 @@ export default function Services() {
           >
             Book a Free Discovery Call
           </a>
-        </div>
-      </ScrollReveal>
-
-      <ScrollReveal>
-        <div style={{ maxWidth: "600px", margin: "3rem auto 0", textAlign: "center" }}>
-          <p style={{ fontSize: "0.9rem", color: "#888", lineHeight: 1.7 }}>
-            Running a small business and just getting started with AI? Check out the{" "}
-            <a href="/power-hour" style={{ color: "#c8ff00", textDecoration: "none" }}>AI Power Hour ($500)</a>
-            {" "}or{" "}
-            <a href="/ai-agent" style={{ color: "#c8ff00", textDecoration: "none" }}>AI Agent ($300/mo)</a>
-            {" "}— built for businesses that want results without a big upfront investment.
-          </p>
         </div>
       </ScrollReveal>
     </section>
@@ -263,13 +209,4 @@ const sectionTitle: React.CSSProperties = {
   lineHeight: 1.1,
   letterSpacing: "-2px",
   maxWidth: "700px",
-};
-
-const sectionSub: React.CSSProperties = {
-  fontSize: "clamp(0.95rem, 2vw, 1.15rem)",
-  fontWeight: 300,
-  color: "#888",
-  maxWidth: "600px",
-  marginTop: "1.5rem",
-  lineHeight: 1.7,
 };

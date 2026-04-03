@@ -26,12 +26,8 @@ export default function Hero() {
       />
 
       <div className="animate-fade-up-1" style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.8rem", color: "#c8ff00", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "2rem" }}>
-        AI Tools for Healthcare, Legal, Energy &amp; Service Businesses
+        Custom Websites &amp; Dashboards for Small Business
       </div>
-
-      <p className="animate-fade-up-1" style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 400, fontSize: "1rem", color: "#888", marginBottom: "1rem" }}>
-        Growth and comfort can&apos;t coexist. For businesses ready to move, not wait.
-      </p>
 
       <h1
         className="animate-fade-up-2"
@@ -43,14 +39,11 @@ export default function Hero() {
           maxWidth: "900px",
         }}
       >
-        Your team is drowning
-        <br />
-        in manual work.{" "}
+        Your site.{" "}
         <span style={{ color: "#c8ff00", position: "relative", display: "inline-block" }}>
-          I fix that.
+          Your dashboard.
           <span
             style={{
-              content: "''",
               position: "absolute",
               bottom: "5px",
               left: 0,
@@ -63,6 +56,10 @@ export default function Hero() {
             }}
           />
         </span>
+        <br />
+        <span style={{ color: "#888", fontSize: "clamp(1.8rem, 5vw, 4rem)", fontWeight: 700 }}>
+          Owned forever.
+        </span>
       </h1>
 
       <div
@@ -73,10 +70,10 @@ export default function Hero() {
           color: "#c8ff00",
           letterSpacing: "2px",
           textTransform: "uppercase",
-          marginTop: "1rem",
+          marginTop: "1.5rem",
         }}
       >
-        BUILT BY FRIDAY.
+        $5K. 2 WEEKS. YOU OWN EVERYTHING.
       </div>
 
       <p
@@ -85,26 +82,12 @@ export default function Hero() {
           fontSize: "clamp(1.1rem, 2vw, 1.4rem)",
           fontWeight: 300,
           color: "#888",
-          maxWidth: "600px",
-          marginTop: "2rem",
+          maxWidth: "560px",
+          marginTop: "1.5rem",
           lineHeight: 1.7,
         }}
       >
-        Built for the businesses that have been doing this for 20 years — but still run on spreadsheets, phone calls, and manual follow-ups. Leads are finding you. They&apos;re just dying before your team ever gets to talk to them.
-      </p>
-
-      <p
-        className="animate-fade-up-3"
-        style={{
-          fontSize: "clamp(1rem, 1.8vw, 1.2rem)",
-          fontWeight: 400,
-          color: "#ccc",
-          maxWidth: "600px",
-          marginTop: "0.75rem",
-          lineHeight: 1.7,
-        }}
-      >
-        The human element still closes. I build everything that happens between the lead arriving and the conversation starting.
+        Every site ships with a custom admin dashboard — not a template, not a no-code embed. Built around your workflow, your metrics, your team.
       </p>
 
       <div
@@ -117,25 +100,13 @@ export default function Hero() {
         >
           Book a Free Discovery Call
         </a>
-        <a href="#services" style={secondaryBtnStyle}
+        <a href="/scan" style={secondaryBtnStyle}
           onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "#c8ff00"; (e.currentTarget as HTMLAnchorElement).style.color = "#c8ff00"; }}
           onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(245,245,240,0.2)"; (e.currentTarget as HTMLAnchorElement).style.color = "#f5f5f0"; }}
         >
-          See the Work
+          Free Site Audit
         </a>
       </div>
-
-      <p
-        className="animate-fade-up-4"
-        style={{
-          fontSize: "0.85rem",
-          color: "#888",
-          marginTop: "1.2rem",
-        }}
-      >
-        What agencies charge $50K+ for — I build for $5K.{" "}
-        <a href="/work-with-me" style={{ color: "#c8ff00", textDecoration: "none" }}>See how →</a>
-      </p>
     </section>
   );
 }
@@ -150,6 +121,7 @@ const primaryBtnStyle: React.CSSProperties = {
   letterSpacing: "0.5px",
   transition: "all 0.3s",
   display: "inline-block",
+  textDecoration: "none",
 };
 
 const secondaryBtnStyle: React.CSSProperties = {
@@ -162,4 +134,5 @@ const secondaryBtnStyle: React.CSSProperties = {
   border: "1px solid rgba(245,245,240,0.2)",
   transition: "all 0.3s",
   display: "inline-block",
+  textDecoration: "none",
 };

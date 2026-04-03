@@ -31,14 +31,14 @@ export default function CTA() {
       </ScrollReveal>
       <ScrollReveal>
         <h2 style={{ ...sectionTitle, margin: "0 auto" }}>
-          Your competitors aren&apos;t waiting.
+          Your website and dashboard.
           <br />
-          <span style={{ color: "#c8ff00" }}>Neither should you.</span>
+          <span style={{ color: "#c8ff00" }}>Ready in 2 weeks.</span>
         </h2>
       </ScrollReveal>
       <ScrollReveal>
         <p style={{ ...sectionSub, margin: "1.5rem auto 0" }}>
-          I don&apos;t just deliver and disappear. I&apos;m in the trenches with you — from day one through launch and beyond. Book a free 30-minute call. No pitch deck. No follow-up spam. Just a real conversation about what&apos;s bleeding time, losing leads, and how to fix both.
+          30-minute call. No pitch deck. No follow-up spam. Just a real conversation about what you need built.
         </p>
       </ScrollReveal>
 
