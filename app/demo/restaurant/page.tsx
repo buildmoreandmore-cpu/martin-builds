@@ -420,12 +420,12 @@ function SmsStat({
 export default function RestaurantDashboard() {
   return (
     <>
+      <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
       <style>{`
   body { background: #1C1917 !important; color: #1c1917 !important; }
   body::before { display: none !important; }
   section { padding-left: unset !important; padding-right: unset !important; }
   h1, h2 { font-size: unset !important; letter-spacing: unset !important; }
-  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=DM+Sans:wght@400;500;600;700&display=swap');
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: translateY(0); }
