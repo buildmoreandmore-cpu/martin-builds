@@ -422,7 +422,7 @@ export default function RestaurantDashboard() {
     <>
       <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
       <style>{`
-  body { background: #1C1917 !important; color: #1c1917 !important; }
+  html body { background: #1C1917 !important; background-color: #1C1917 !important; color: #FAFAF8 !important; }
   body::before { display: none !important; }
   section { padding-left: unset !important; padding-right: unset !important; }
   h1, h2 { font-size: unset !important; letter-spacing: unset !important; }
