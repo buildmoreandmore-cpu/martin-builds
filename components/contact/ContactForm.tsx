@@ -5,13 +5,10 @@ import { useSearchParams } from "next/navigation";
 
 const PROJECT_TYPES = [
   "Select project type...",
-  "AI-Powered Website",
-  "AI Build Sprint",
-  "Full Product / SaaS",
-  "AI Power Hour",
-  "Community Outreach",
-  "Payment Question",
-  "Just a Question",
+  "Custom Website + Dashboard",
+  "AI Agent for My Site",
+  "Full Platform Build",
+  "General Question",
 ];
 
 export default function ContactForm() {

@@ -46,9 +46,9 @@ export default function DiscoveryCallPage() {
               className="animate-fade-up-2 discovery-h1"
               style={{ fontSize: "clamp(1.8rem, 5vw, 4rem)", fontWeight: 900, lineHeight: 1.05, letterSpacing: "-2px" }}
             >
-              Not sure what you need?
+              Ready to build?
               <br />
-              <span style={{ color: "#c8ff00" }}>Let&apos;s figure it out.</span>
+              <span style={{ color: "#c8ff00" }}>Let&apos;s talk.</span>
             </h1>
             <p
               className="animate-fade-up-3 discovery-sub"

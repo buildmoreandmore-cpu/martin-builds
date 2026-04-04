@@ -406,7 +406,7 @@ export default function DashboardsContent({ embedded = false }: { embedded?: boo
             </div>
 
             {/* Content */}
-            <div style={{ padding: "1rem", minHeight: "300px" }}>
+            <div className="dash-mobile-content" style={{ padding: "1rem", minHeight: "300px" }}>
               <div key={`mobile-${activeIndustry}-${activePage}-${animKey}`} style={{ animation: "dashContentIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)" }}>
                 {config.pages[activePage]}
               </div>
@@ -494,6 +494,9 @@ export default function DashboardsContent({ embedded = false }: { embedded?: boo
         @media (max-width: 768px) {
           .dash-demo-desktop { display: none !important; }
           .dash-demo-mobile { display: block !important; }
+          .industry-tabs { gap: 0.35rem !important; }
+          .industry-tabs button { font-size: 0.6rem !important; padding: 0.45rem 0.9rem !important; }
+          .dash-mobile-content { overflow-x: hidden !important; }
         }
       `}</style>
     </main>

@@ -47,16 +47,6 @@ export default function Nav() {
         <div className="nav-desktop" style={{ display: "flex", gap: "2.5rem", alignItems: "center" }}>
           <NavLink href="/#services">Services</NavLink>
           <NavLink href="/ai-agent">AI Agent</NavLink>
-          <NavLink href="/demo">Work</NavLink>
-          <a
-            href="/scan"
-            style={{ fontSize: "0.85rem", fontWeight: 500, letterSpacing: "0.5px", textTransform: "uppercase", color: "#c8ff00", transition: "color 0.3s", textDecoration: "none", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "0.35rem" }}
-            onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#f5f5f0")}
-            onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#c8ff00")}
-          >
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#c8ff00", display: "inline-block" }} />
-            Free Scan
-          </a>
           <NavLink href="/contact">Contact</NavLink>
           <a
             href="/discovery-call"
@@ -106,8 +96,6 @@ export default function Nav() {
         {[
           { href: "/#services", label: "Services" },
           { href: "/ai-agent", label: "AI Agent" },
-          { href: "/demo", label: "Work" },
-          { href: "/scan", label: "Free Scan" },
           { href: "/contact", label: "Contact" },
         ].map((link) => (
           <a

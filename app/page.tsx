@@ -14,7 +14,6 @@ export const metadata: Metadata = {
 };
 import Hero from "@/components/Hero";
 import ObjectionHandler from "@/components/ObjectionHandler";
-import ScanCTA from "@/components/ScanCTA";
 import Services from "@/components/Services";
 import AppAudit from "@/components/AppAudit";
 import DashboardsContent from "@/components/DashboardsContent";
@@ -31,7 +30,6 @@ export default function Home() {
       <Hero />
       <DashboardsContent embedded />
       <AppAudit />
-      <ScanCTA />
       <Services />
       <ObjectionHandler />
       <Process />

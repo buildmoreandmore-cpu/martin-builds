@@ -83,7 +83,7 @@ export default function AgentFinalCTA() {
                 onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-3px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 30px rgba(200,255,0,0.25)"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 4px 20px rgba(200,255,0,0.15)"; }}
               >
-                Get Your AI Employee — From $300/mo
+                Get Your AI Agent
               </a>
               <a
                 href="/contact"
@@ -96,7 +96,7 @@ export default function AgentFinalCTA() {
             </div>
 
             <div style={{ display: "flex", justifyContent: "center", gap: "2rem", flexWrap: "wrap", fontSize: "0.9rem", color: "#666" }}>
-              {["48-hour setup", "Cancel anytime", "No setup fees"].map((badge) => (
+              {["48-hour setup", "Cancel anytime", "Pay based on usage"].map((badge) => (
                 <div key={badge} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2"><polyline points="20,6 9,17 4,12"/></svg>
                   <span>{badge}</span>

@@ -5,7 +5,7 @@ import ScrollReveal from "../ScrollReveal";
 
 /*
   Tiered AI agent billing — like choosing a carrier.
-  Pick your tier (model quality), low setup, monthly auto-pay for usage.
+  Pick your tier (model quality), low setup, pay based on usage.
 */
 
 type TierKey = "essential" | "professional" | "enterprise";
@@ -37,7 +37,7 @@ const tiers: Record<TierKey, TierConfig> = {
       "24/7 customer support agent",
       "Lead capture & notifications",
       "48-hour setup",
-      "Auto-pay monthly",
+      "Pay as you go",
     ],
   },
   professional: {
@@ -54,7 +54,7 @@ const tiers: Record<TierKey, TierConfig> = {
       "Nuanced conversation handling",
       "Multi-step lead qualification",
       "CRM & calendar integration",
-      "Auto-pay monthly",
+      "Pay as you go",
     ],
   },
   enterprise: {
@@ -71,7 +71,7 @@ const tiers: Record<TierKey, TierConfig> = {
       "Best-in-class AI reasoning",
       "Complex workflow automation",
       "Priority support & monitoring",
-      "Auto-pay monthly",
+      "Pay as you go",
     ],
   },
 };
@@ -155,7 +155,7 @@ export default function UtilityBilling() {
             <span style={{ color: "#c8ff00" }}>Pay for what you use.</span>
           </h2>
           <p style={subStyle}>
-            Low setup fee. Monthly auto-pay based on actual usage. Pick the AI model that fits your business — upgrade or downgrade anytime.
+            Low setup fee. Pay based on actual usage. Pick the AI model that fits your business — upgrade or downgrade anytime.
           </p>
         </div>
       </ScrollReveal>
@@ -209,7 +209,7 @@ export default function UtilityBilling() {
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
             <span style={{ fontSize: "0.7rem", color: "#888", fontFamily: "'Space Mono', monospace", letterSpacing: "0.5px" }}>
-              Auto-pay monthly • Card on file • Cancel anytime
+              Pay as you go • Card on file • Cancel anytime
             </span>
           </div>
         </div>
@@ -448,7 +448,7 @@ export default function UtilityBilling() {
         {/* Bottom message */}
         <div style={{ textAlign: "center", marginTop: "2rem" }}>
           <p style={{ fontSize: "0.85rem", color: "#888", lineHeight: 1.6, maxWidth: "550px", margin: "0 auto" }}>
-            Low setup. Auto-pay monthly. Upgrade your model anytime. No contracts, no overage charges — just your agent working 24/7 and a transparent bill at the end of the month.
+            Low setup. Pay as you go. Upgrade your model anytime. No contracts, no overage charges — just your agent working 24/7 and a transparent bill at the end of the month.
           </p>
           <a
             href="/discovery-call"
