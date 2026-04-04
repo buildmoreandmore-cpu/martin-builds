@@ -7,20 +7,20 @@ import AgentFinalCTA from "@/components/ai-agent/AgentFinalCTA";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "AI Agent — martin.builds",
+  title: "Automate — martin.builds",
   description:
-    "Custom AI employee trained on your business. Handles emails, scheduling, follow-ups 24/7. From $300/mo. Live in 48 hours.",
-  alternates: { canonical: "https://martinbuilds.ai/ai-agent" },
+    "Add an AI-powered agent to your website or dashboard. Handles leads, support, and scheduling 24/7. Pay based on usage. Live in 48 hours.",
+  alternates: { canonical: "https://martinbuilds.ai/automate" },
   openGraph: {
-    title: "AI Agent — martin.builds",
-    description: "Custom AI chat agent trained on your business. 24/7 lead capture. Live in 48 hours. From $300/mo.",
-    url: "https://martinbuilds.ai/ai-agent",
+    title: "Automate — martin.builds",
+    description: "AI automation for your website. 24/7 lead capture and support. Pay based on usage. Live in 48 hours.",
+    url: "https://martinbuilds.ai/automate",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Agent — martin.builds",
-    description: "Custom AI chat agent trained on your business. From $300/mo.",
+    title: "Automate — martin.builds",
+    description: "AI automation for your website. Pay based on usage. Live in 48 hours.",
     images: ["/og-image.png"],
   },
 };

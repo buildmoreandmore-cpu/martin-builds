@@ -12,7 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
     {
-      url: `${base}/ai-agent`,
+      url: `${base}/automate`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.9,
