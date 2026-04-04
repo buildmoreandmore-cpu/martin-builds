@@ -1,3 +1,5 @@
+import Nav from "@/components/Nav";
+
 export default function DemoLayout({
   children,
 }: {
@@ -10,6 +12,7 @@ export default function DemoLayout({
         section { padding-left: unset !important; padding-right: unset !important; }
         h1, h2 { font-size: unset !important; letter-spacing: unset !important; }
       `}</style>
+      <Nav />
       {children}
     </>
   );

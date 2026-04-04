@@ -59,25 +59,10 @@ export default function DemoIndex() {
         style={{
           maxWidth: 900,
           margin: "0 auto",
-          padding: "clamp(3rem, 8vw, 6rem) clamp(1.25rem, 5vw, 3rem) 2rem",
+          padding: "clamp(6rem, 10vw, 8rem) clamp(1.25rem, 5vw, 3rem) 2rem",
           textAlign: "center",
         }}
       >
-        <Link
-          href="/"
-          style={{
-            display: "inline-block",
-            fontFamily: "'Space Mono', monospace",
-            fontSize: "0.75rem",
-            color: "#c8ff00",
-            letterSpacing: "3px",
-            textTransform: "uppercase",
-            textDecoration: "none",
-            marginBottom: "1.5rem",
-          }}
-        >
-          martin.builds
-        </Link>
         <h1
           style={{
             fontSize: "clamp(2rem, 5vw, 3.5rem)",

@@ -154,7 +154,7 @@ const tdStyle: React.CSSProperties = {
 
 export default function InspectionDemoPage() {
   return (
-    <div className={ibmPlex.variable} style={{ minHeight: "100vh", background: "#ffffff", color: "#111827", fontFamily: "var(--font-ibm-plex), sans-serif" }}>
+    <div className={ibmPlex.variable} style={{ minHeight: "100vh", background: "#ffffff", color: "#111827", fontFamily: "var(--font-ibm-plex), sans-serif", paddingTop: 64 }}>
 
       <style>{`
   body { background: #ffffff !important; color: #111827 !important; font-family: var(--font-ibm-plex), sans-serif !important; }
@@ -481,9 +481,7 @@ export default function InspectionDemoPage() {
 
       {/* ── Fixed CTA ── */}
       <a
-        href="https://martinbuilds.ai"
-        target="_blank"
-        rel="noopener noreferrer"
+        href="/discovery-call"
         style={{
           position: "fixed",
           right: 20,

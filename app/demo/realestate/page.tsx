@@ -204,7 +204,7 @@ export default function RealEstateCommandCenter() {
   return (
     <div
       className={`${playfair.variable} ${dmSans.variable} ${dmMono.variable}`}
-      style={{ minHeight: "100vh", background: "#FAFAF8", fontFamily: "var(--font-dm-sans)" }}
+      style={{ minHeight: "100vh", background: "#FAFAF8", fontFamily: "var(--font-dm-sans)", paddingTop: 64 }}
     >
       <style>{`
   body { background: #FAFAF8 !important; color: #1a1a1a !important; font-family: var(--font-dm-sans), sans-serif !important; }
@@ -975,7 +975,7 @@ export default function RealEstateCommandCenter() {
 
       {/* ═══════════════ FIXED CTA ═══════════════ */}
       <a
-        href="https://martinbuilds.ai"
+        href="/discovery-call"
         style={{
           position: "fixed",
           bottom: 24,

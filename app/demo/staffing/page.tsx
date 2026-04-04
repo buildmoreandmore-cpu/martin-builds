@@ -82,7 +82,7 @@ function fillTextColor(pct: number) {
 
 export default function CoverageCommandPage() {
   return (
-    <div className={dmSans.variable} style={{ minHeight: "100vh", background: "#F8F7F5", color: "#1a1a1a", fontFamily: "var(--font-dm-sans), sans-serif" }}>
+    <div className={dmSans.variable} style={{ minHeight: "100vh", background: "#F8F7F5", color: "#1a1a1a", fontFamily: "var(--font-dm-sans), sans-serif", paddingTop: 64 }}>
       <style>{`
         body { background: #F8F7F5 !important; color: #1a1a1a !important; font-family: var(--font-dm-sans), sans-serif !important; }
         body::before { display: none !important; }
@@ -286,9 +286,7 @@ export default function CoverageCommandPage() {
 
       {/* ── Fixed CTA ── */}
       <a
-        href="https://martinbuilds.ai"
-        target="_blank"
-        rel="noopener noreferrer"
+        href="/discovery-call"
         style={{ position: "fixed", bottom: 24, right: 24, zIndex: 50, borderRadius: 9999, background: "#1f2937", padding: "12px 20px", fontSize: 14, fontWeight: 600, color: "#ffffff", textDecoration: "none", boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)", animation: "fadeInUp 0.5s ease-out 0.5s forwards", opacity: 0 }}
       >
         Book a walkthrough &rarr;

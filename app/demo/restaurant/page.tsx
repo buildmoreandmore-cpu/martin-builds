@@ -448,6 +448,7 @@ export default function RestaurantDashboard() {
           backgroundColor: bg,
           color: textDark,
           minHeight: "100vh",
+          paddingTop: 64,
           position: "relative" as const,
           fontFamily: fontBody,
         }}
@@ -849,9 +850,7 @@ export default function RestaurantDashboard() {
 
         {/* ── FIXED CTA ── */}
         <a
-          href="https://martinbuilds.ai"
-          target="_blank"
-          rel="noopener noreferrer"
+          href="/discovery-call"
           style={{
             position: "fixed" as const,
             bottom: 24,
