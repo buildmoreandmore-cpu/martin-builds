@@ -7,19 +7,19 @@ import AgentFinalCTA from "@/components/ai-agent/AgentFinalCTA";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Automate — martin.builds",
+  title: "Utility — martin.builds",
   description:
     "Add an AI-powered agent to your website or dashboard. Handles leads, support, and scheduling 24/7. Pay based on usage. Live in 48 hours.",
-  alternates: { canonical: "https://martinbuilds.ai/automate" },
+  alternates: { canonical: "https://martinbuilds.ai/utility" },
   openGraph: {
-    title: "Automate — martin.builds",
+    title: "Utility — martin.builds",
     description: "AI automation for your website. 24/7 lead capture and support. Pay based on usage. Live in 48 hours.",
-    url: "https://martinbuilds.ai/automate",
+    url: "https://martinbuilds.ai/utility",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Automate — martin.builds",
+    title: "Utility — martin.builds",
     description: "AI automation for your website. Pay based on usage. Live in 48 hours.",
     images: ["/og-image.png"],
   },

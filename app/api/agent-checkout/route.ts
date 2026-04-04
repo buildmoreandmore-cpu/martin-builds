@@ -13,15 +13,15 @@ function getStripe() {
 const TIERS: Record<string, { setup: string; usage: string }> = {
   essential: {
     setup: "price_1TIKh4H8PIRJCA4GyWeDl4M1",   // $49 one-time
-    usage: "price_1TIKh5H8PIRJCA4GjpdHCJUq",   // $0.04/conversation metered
+    usage: "price_1TILDJH8PIRJCA4GkDZbYlQT",   // $0.04/convo metered (meter-backed)
   },
   professional: {
     setup: "price_1TIKh6H8PIRJCA4GUZD9Ovq5",   // $99 one-time
-    usage: "price_1TIKh7H8PIRJCA4G85sUv6pP",   // $0.12/conversation metered
+    usage: "price_1TILDTH8PIRJCA4GPa9Vqelv",   // $0.12/convo metered (meter-backed)
   },
   enterprise: {
     setup: "price_1TIKh7H8PIRJCA4GfAFJWNqt",   // $149 one-time
-    usage: "price_1TIKh9H8PIRJCA4GoSb5sBCY",   // $0.35/conversation metered
+    usage: "price_1TILDTH8PIRJCA4Go2Akhsr6",   // $0.35/convo metered (meter-backed)
   },
 };
 
@@ -43,11 +43,11 @@ export async function POST(req: NextRequest) {
         { price: tier.usage },
       ],
       subscription_data: {
-        metadata: { plan, tier: plan },
+        metadata: { agent_plan: plan, tier: plan },
       },
-      metadata: { plan },
+      metadata: { agent_plan: plan },
       success_url: `https://martinbuilds.ai/setup?session_id={CHECKOUT_SESSION_ID}&plan=${plan}`,
-      cancel_url: `https://martinbuilds.ai/automate?canceled=1`,
+      cancel_url: `https://martinbuilds.ai/utility?canceled=1`,
     });
 
     return NextResponse.json({ url: session.url });

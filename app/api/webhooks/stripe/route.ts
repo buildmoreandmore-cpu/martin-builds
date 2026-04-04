@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     // Checkout completed — new agent signup via /automate
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
-      const plan = session.metadata?.plan;
+      const plan = session.metadata?.agent_plan || session.metadata?.plan;
       const customerEmail = session.customer_email || session.customer_details?.email;
       const stripeCustomerId = typeof session.customer === "string" ? session.customer : null;
       const subscriptionId = typeof session.subscription === "string" ? session.subscription : null;
