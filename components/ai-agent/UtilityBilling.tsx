@@ -107,13 +107,16 @@ export default function UtilityBilling() {
   const tier = tiers[activeTier];
   const usageData = getUsageData(tier);
 
-  const handleCheckout = useCallback(async () => {
+  const [checkoutTier, setCheckoutTier] = useState<TierKey | null>(null);
+
+  const handleCheckout = useCallback(async (plan: TierKey) => {
     setCheckoutLoading(true);
+    setCheckoutTier(plan);
     try {
       const res = await fetch("/api/agent-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: activeTier }),
+        body: JSON.stringify({ plan }),
       });
       const data = await res.json();
       if (data.url) {
@@ -121,12 +124,14 @@ export default function UtilityBilling() {
       } else {
         console.error("Checkout error:", data.error);
         setCheckoutLoading(false);
+        setCheckoutTier(null);
       }
     } catch (err) {
       console.error("Checkout failed:", err);
       setCheckoutLoading(false);
+      setCheckoutTier(null);
     }
-  }, [activeTier]);
+  }, []);
 
   useEffect(() => {
     const el = ref.current;
@@ -218,6 +223,24 @@ export default function UtilityBilling() {
                     <span style={{ fontSize: "0.7rem", color: "#666" }}>setup</span>
                   </div>
                   <div style={{ fontSize: "0.65rem", color: "#555", marginTop: "0.3rem", fontFamily: "'Space Mono', monospace" }}>then {t.perConvo} / conversation</div>
+                  <div
+                    onClick={(e) => { e.stopPropagation(); setActiveTier(key); handleCheckout(key); }}
+                    style={{
+                      marginTop: "1rem",
+                      padding: "0.6rem 0",
+                      background: isActive ? t.color : "rgba(245,245,240,0.06)",
+                      color: isActive ? "#0a0a0a" : "#888",
+                      borderRadius: "8px",
+                      fontWeight: 700,
+                      fontSize: "0.75rem",
+                      textAlign: "center",
+                      cursor: checkoutLoading ? "wait" : "pointer",
+                      transition: "all 0.3s",
+                      opacity: checkoutLoading ? 0.6 : 1,
+                    }}
+                  >
+                    {checkoutLoading && checkoutTier === key ? "Loading..." : "Get Your Agent"}
+                  </div>
                 </button>
               );
             })}
@@ -472,29 +495,6 @@ export default function UtilityBilling() {
           <p style={{ fontSize: "0.85rem", color: "#888", lineHeight: 1.6, maxWidth: "550px", margin: "0 auto" }}>
             Low setup. Pay as you go. Upgrade your model anytime. No contracts, no overage charges — just your agent working 24/7 and a transparent bill at the end of the month.
           </p>
-          <button
-            onClick={handleCheckout}
-            disabled={checkoutLoading}
-            style={{
-              display: "inline-block",
-              marginTop: "1.5rem",
-              background: checkoutLoading ? "#666" : tier.color,
-              color: "#0a0a0a",
-              padding: "1rem 2.5rem",
-              borderRadius: "100px",
-              fontWeight: 700,
-              fontSize: "1rem",
-              letterSpacing: "0.5px",
-              transition: "all 0.3s",
-              border: "none",
-              cursor: checkoutLoading ? "wait" : "pointer",
-              opacity: checkoutLoading ? 0.7 : 1,
-            }}
-            onMouseEnter={e => { if (!checkoutLoading) { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-3px)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = `0 8px 30px ${tier.color}40`; } }}
-            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "none"; }}
-          >
-            {checkoutLoading ? "Loading..." : "Get Your Agent"}
-          </button>
         </div>
       </div>
 
@@ -556,7 +556,7 @@ export default function UtilityBilling() {
           </div>
 
           <button
-            onClick={handleCheckout}
+            onClick={() => handleCheckout(activeTier)}
             disabled={checkoutLoading}
             style={{
               display: "block",
