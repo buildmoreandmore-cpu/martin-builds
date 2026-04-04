@@ -367,21 +367,49 @@ export default function DashboardsContent({ embedded = false }: { embedded?: boo
         </div>
 
         {/* Mobile: stacked cards */}
-        <div className="dash-demo-mobile" style={{ display: "none", maxWidth: "400px", margin: "0 auto" }}>
-          <div style={{ background: "#1a1a1a", borderRadius: "12px", border: "1px solid rgba(200,255,0,0.12)", padding: "1.25rem" }}>
-            <div style={{ fontSize: "0.7rem", fontWeight: 700, color: "#c8ff00", letterSpacing: "1px", textTransform: "uppercase", fontFamily: "'Space Mono', monospace", marginBottom: "1rem" }}>
-              {config.label}
+        <div className="dash-demo-mobile" style={{ display: "none", maxWidth: "500px", margin: "0 auto" }}>
+          <div style={{ background: "#1a1a1a", borderRadius: "14px", border: "1px solid rgba(200,255,0,0.12)", overflow: "hidden" }}>
+            {/* Top bar */}
+            <div style={{ padding: "0.75rem 1rem", borderBottom: "1px solid rgba(200,255,0,0.06)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#c8ff00", letterSpacing: "1px", textTransform: "uppercase", fontFamily: "'Space Mono', monospace" }}>
+                {config.label}
+              </div>
+              <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "#c8ff00" }} />
             </div>
-            <div style={{ fontSize: "0.8rem", color: "#f5f5f0", fontWeight: 600, marginBottom: "1rem" }}>{config.greeting}</div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1rem" }}>
-              {config.sidebar.map((item) => (
-                <span key={item} style={{ fontSize: "0.6rem", color: "#888", padding: "0.3rem 0.6rem", background: "rgba(245,245,240,0.03)", borderRadius: "6px", border: "1px solid rgba(245,245,240,0.06)" }}>{item}</span>
-              ))}
+
+            {/* Page tabs */}
+            <div style={{ display: "flex", gap: "0.35rem", padding: "0.75rem 1rem", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+              {config.sidebar.map((item) => {
+                const isActive = item === activePage;
+                return (
+                  <button
+                    key={item}
+                    onClick={() => switchPage(item)}
+                    style={{
+                      padding: "0.4rem 0.8rem",
+                      borderRadius: "100px",
+                      border: "1px solid",
+                      borderColor: isActive ? "rgba(200,255,0,0.3)" : "rgba(245,245,240,0.08)",
+                      background: isActive ? "rgba(200,255,0,0.08)" : "transparent",
+                      color: isActive ? "#c8ff00" : "#888",
+                      fontSize: "0.65rem",
+                      fontWeight: isActive ? 600 : 400,
+                      whiteSpace: "nowrap",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    {item}
+                  </button>
+                );
+              })}
             </div>
-            <div style={{ padding: "1rem", background: "rgba(200,255,0,0.04)", borderRadius: "10px", border: "1px solid rgba(200,255,0,0.15)" }}>
-              <div style={{ fontSize: "0.6rem", color: "#666", fontFamily: "'Space Mono', monospace", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "0.3rem" }}>Preview</div>
-              <div style={{ fontSize: "1.3rem", fontWeight: 700, color: "#c8ff00" }}>Live Demo</div>
-              <div style={{ fontSize: "0.65rem", color: "#888", marginTop: "0.2rem" }}>View on desktop for full interactive experience</div>
+
+            {/* Content */}
+            <div style={{ padding: "1rem", minHeight: "300px" }}>
+              <div key={`mobile-${activeIndustry}-${activePage}-${animKey}`} style={{ animation: "dashContentIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)" }}>
+                {config.pages[activePage]}
+              </div>
             </div>
           </div>
         </div>
