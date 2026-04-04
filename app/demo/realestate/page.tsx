@@ -247,9 +247,10 @@ export default function RealEstateCommandCenter() {
           }}
         >
           <div>
+            <a href="/" style={{ fontSize: 12, fontWeight: 700, color: "#6b7280", textDecoration: "none", letterSpacing: -0.5 }}>martin<span style={{ color: "#14532d" }}>.builds</span></a>
             <h1
               style={{
-                margin: 0,
+                margin: "4px 0 0 0",
                 fontSize: 28,
                 fontWeight: 700,
                 color: "#14532d",
@@ -960,7 +961,7 @@ export default function RealEstateCommandCenter() {
           <p style={{ margin: 0, fontSize: 12, color: "#9ca3af" }}>
             Built by{" "}
             <a
-              href="https://martinbuilds.ai"
+              href="/discovery-call"
               style={{
                 fontWeight: 600,
                 textDecoration: "underline",
@@ -975,7 +976,7 @@ export default function RealEstateCommandCenter() {
 
       {/* ═══════════════ FIXED CTA ═══════════════ */}
       <a
-        href="https://martinbuilds.ai"
+        href="/discovery-call"
         style={{
           position: "fixed",
           bottom: 24,

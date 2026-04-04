@@ -189,7 +189,8 @@ export default function InspectionDemoPage() {
       >
         <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#1e3a5f", margin: 0 }}>
+            <a href="/" style={{ fontSize: 12, fontWeight: 700, color: "#6b7280", textDecoration: "none", letterSpacing: -0.5 }}>martin<span style={{ color: "#1e3a5f" }}>.builds</span></a>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#1e3a5f", margin: "4px 0 0 0" }}>
               Inspection &amp; Compliance Portal
             </h1>
             <p style={{ marginTop: 4, fontSize: 14, color: "#6b7280" }}>
@@ -481,7 +482,7 @@ export default function InspectionDemoPage() {
 
       {/* ── Fixed CTA ── */}
       <a
-        href="https://martinbuilds.ai"
+        href="/discovery-call"
         target="_blank"
         rel="noopener noreferrer"
         style={{

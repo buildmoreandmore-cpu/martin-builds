@@ -109,6 +109,8 @@ export default function CoverageCommandPage() {
       <header style={{ background: "#ffffff", borderBottom: "1px solid #e5e5e5", animation: "fadeInUp 0.5s ease-out forwards" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+            <a href="/" style={{ fontSize: 12, fontWeight: 700, color: "#6b7280", textDecoration: "none", letterSpacing: -0.5 }}>martin<span style={{ color: "#16a34a" }}>.builds</span></a>
+            <span style={{ color: "#e5e5e5" }}>|</span>
             <h1 style={{ fontSize: 20, fontWeight: 700, color: "#1a1a1a", margin: 0 }}>Coverage Command</h1>
             <span style={{ fontSize: 14, color: "#6b7280" }}>Friday, April 4 &middot; 3 shifts at risk</span>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#fef3c7", color: "#92400e", fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 9999 }}>
@@ -286,7 +288,7 @@ export default function CoverageCommandPage() {
 
       {/* ── Fixed CTA ── */}
       <a
-        href="https://martinbuilds.ai"
+        href="/discovery-call"
         target="_blank"
         rel="noopener noreferrer"
         style={{ position: "fixed", bottom: 24, right: 24, zIndex: 50, borderRadius: 9999, background: "#1f2937", padding: "12px 20px", fontSize: 14, fontWeight: 600, color: "#ffffff", textDecoration: "none", boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)", animation: "fadeInUp 0.5s ease-out 0.5s forwards", opacity: 0 }}

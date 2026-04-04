@@ -494,13 +494,14 @@ export default function RestaurantDashboard() {
             }}
           >
             <div>
+              <a href="/" style={{ fontSize: 12, fontWeight: 700, color: "#a8a29e", textDecoration: "none", letterSpacing: -0.5, fontFamily: fontBody }}>martin<span style={{ color: "#16a34a" }}>.builds</span></a>
               <h1
                 style={{
                   fontFamily: fontDisplay,
                   fontSize: 36,
                   fontWeight: 700,
                   color: "#FAFAF8",
-                  margin: 0,
+                  margin: "4px 0 0 0",
                 }}
               >
                 Restaurant Owner Dashboard
@@ -849,7 +850,7 @@ export default function RestaurantDashboard() {
 
         {/* ── FIXED CTA ── */}
         <a
-          href="https://martinbuilds.ai"
+          href="/discovery-call"
           target="_blank"
           rel="noopener noreferrer"
           style={{
