@@ -54,91 +54,215 @@ const revenue = [
 
 /* ── helpers ── */
 
-function resultColor(r: "Passed" | "Failed" | "Pending") {
-  if (r === "Passed") return "bg-green-50 text-green-700";
-  if (r === "Failed") return "bg-red-50 text-red-700";
-  return "bg-amber-50 text-amber-700";
+function resultPillStyle(r: "Passed" | "Failed" | "Pending"): React.CSSProperties {
+  const base: React.CSSProperties = { borderRadius: 100, padding: "2px 10px", fontSize: 12, fontWeight: 600, display: "inline-block" };
+  if (r === "Passed") return { ...base, background: "#f0fdf4", color: "#16a34a" };
+  if (r === "Failed") return { ...base, background: "#fef2f2", color: "#dc2626" };
+  return { ...base, background: "#fffbeb", color: "#d97706" };
 }
 
-function expiryPill(days: number) {
-  if (days <= 14) return "bg-red-100 text-red-700";
-  if (days <= 30) return "bg-amber-100 text-amber-700";
-  return "bg-green-100 text-green-700";
+function expiryPillStyle(days: number): React.CSSProperties {
+  const base: React.CSSProperties = { borderRadius: 100, padding: "2px 10px", fontSize: 12, fontWeight: 600, flexShrink: 0 };
+  if (days <= 14) return { ...base, background: "#fef2f2", color: "#dc2626" };
+  if (days <= 30) return { ...base, background: "#fffbeb", color: "#d97706" };
+  return { ...base, background: "#f0fdf4", color: "#16a34a" };
 }
 
-function loadBarColor(status: "Full" | "Active" | "Open") {
-  if (status === "Full") return "bg-red-500";
-  if (status === "Active") return "bg-amber-500";
-  return "bg-green-500";
+function statusPillStyle(status: "Full" | "Active" | "Open"): React.CSSProperties {
+  const base: React.CSSProperties = { borderRadius: 100, padding: "2px 10px", fontSize: 12, fontWeight: 600 };
+  if (status === "Full") return { ...base, background: "#fef2f2", color: "#dc2626" };
+  if (status === "Active") return { ...base, background: "#fffbeb", color: "#d97706" };
+  return { ...base, background: "#f0fdf4", color: "#16a34a" };
 }
 
-function violationDot(color: "red" | "amber" | "green") {
-  if (color === "red") return "bg-red-500";
-  if (color === "amber") return "bg-amber-500";
-  return "bg-green-500";
+function loadBarColor(status: "Full" | "Active" | "Open"): string {
+  if (status === "Full") return "#dc2626";
+  if (status === "Active") return "#d97706";
+  return "#16a34a";
 }
+
+function violationAccent(color: "red" | "amber" | "green"): string {
+  if (color === "red") return "#dc2626";
+  if (color === "amber") return "#d97706";
+  return "#16a34a";
+}
+
+function violationStatusColor(color: "red" | "amber" | "green"): string {
+  if (color === "red") return "#dc2626";
+  if (color === "amber") return "#d97706";
+  return "#16a34a";
+}
+
+/* ── shared styles ── */
+
+const card: React.CSSProperties = {
+  background: "#ffffff",
+  border: "1px solid #E2E8F0",
+  borderRadius: 8,
+  padding: 0, // cards with internal sections handle their own padding
+};
+
+const cardPadded: React.CSSProperties = {
+  background: "#ffffff",
+  border: "1px solid #E2E8F0",
+  borderRadius: 8,
+  padding: 20,
+};
+
+const cardHeader: React.CSSProperties = {
+  borderBottom: "1px solid #f3f4f6",
+  padding: "16px 20px",
+};
+
+const sectionTitle: React.CSSProperties = {
+  fontSize: 16,
+  fontWeight: 600,
+  color: "#1e3a5f",
+  margin: 0,
+};
+
+const avatar: React.CSSProperties = {
+  width: 28,
+  height: 28,
+  borderRadius: "50%",
+  background: "#1e3a5f",
+  color: "#fff",
+  fontSize: 11,
+  fontWeight: 600,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flexShrink: 0,
+};
+
+const thStyle: React.CSSProperties = {
+  padding: "12px 20px",
+  fontSize: 12,
+  fontWeight: 500,
+  color: "#6b7280",
+  textAlign: "left" as const,
+  borderBottom: "1px solid #f3f4f6",
+};
+
+const tdStyle: React.CSSProperties = {
+  padding: "12px 20px",
+  fontSize: 14,
+  borderBottom: "1px solid #f9fafb",
+};
 
 /* ── page ── */
 
 export default function InspectionDemoPage() {
   return (
-    <div className={`${ibmPlex.variable} font-[family-name:var(--font-ibm-plex)] min-h-screen bg-white text-gray-900`}>
+    <div className={ibmPlex.variable} style={{ minHeight: "100vh", background: "#ffffff", color: "#111827", fontFamily: "var(--font-ibm-plex), sans-serif" }}>
+
+      <style>{`
+  body { background: #ffffff !important; color: #111827 !important; font-family: var(--font-ibm-plex), sans-serif !important; }
+  body::before { display: none !important; }
+  section { padding-left: unset !important; padding-right: unset !important; }
+  h1, h2 { font-size: unset !important; letter-spacing: unset !important; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .insp-kpi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .insp-two { display: grid; grid-template-columns: 3fr 2fr; gap: 24px; }
+  .insp-three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  @media (max-width: 768px) {
+    .insp-kpi { grid-template-columns: repeat(2, 1fr) !important; }
+    .insp-two { grid-template-columns: 1fr !important; }
+    .insp-three { grid-template-columns: 1fr !important; }
+  }
+  @media (max-width: 480px) {
+    .insp-kpi { grid-template-columns: 1fr !important; }
+  }
+`}</style>
 
       {/* ── Top bar ── */}
       <header
-        className="animate-[fadeIn_0.4s_ease-out_both] border-b border-gray-200 bg-white px-4 py-5 sm:px-8"
+        style={{
+          borderBottom: "1px solid #E2E8F0",
+          background: "#ffffff",
+          padding: "20px 32px",
+          animation: "fadeIn 0.4s ease-out both",
+        }}
       >
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
           <div>
-            <h1 className="text-2xl font-bold" style={{ color: "#1e3a5f" }}>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#1e3a5f", margin: 0 }}>
               Inspection &amp; Compliance Portal
             </h1>
-            <p className="mt-0.5 text-sm text-gray-500">
+            <p style={{ marginTop: 4, fontSize: 14, color: "#6b7280" }}>
               Friday, April 4 &middot; 3 certifications expiring within 30 days
             </p>
           </div>
-          <div className="flex gap-2">
-            <span className="inline-flex items-center rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+          <div style={{ display: "flex", gap: 8 }}>
+            <span style={{ display: "inline-flex", alignItems: "center", borderRadius: 100, background: "#f0fdf4", padding: "4px 12px", fontSize: 12, fontWeight: 600, color: "#16a34a" }}>
               14 passed this month
             </span>
-            <span className="inline-flex items-center rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700">
+            <span style={{ display: "inline-flex", alignItems: "center", borderRadius: 100, background: "#fef2f2", padding: "4px 12px", fontSize: 12, fontWeight: 600, color: "#dc2626" }}>
               2 failed &middot; remediation open
             </span>
           </div>
         </div>
       </header>
 
-      <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-8">
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
 
         {/* ── Amber alert banner ── */}
         <div
-          className="animate-[fadeIn_0.5s_ease-out_0.1s_both] flex flex-col gap-3 rounded-lg border border-amber-300 bg-amber-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
-          style={{ borderLeft: "3px solid #d97706" }}
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+            borderRadius: 8,
+            border: "1px solid #fcd34d",
+            borderLeft: "3px solid #d97706",
+            background: "#fffbeb",
+            padding: "16px 20px",
+            animation: "fadeIn 0.5s ease-out 0.1s both",
+          }}
         >
-          <p className="text-sm text-amber-900">
-            <span className="font-semibold">Halcyon Medical&apos;s</span> fire suppression certificate expires in 8 days. Re-inspection not yet scheduled.
+          <p style={{ fontSize: 14, color: "#78350f", margin: 0 }}>
+            <span style={{ fontWeight: 600 }}>Halcyon Medical&apos;s</span> fire suppression certificate expires in 8 days. Re-inspection not yet scheduled.
           </p>
-          <button className="shrink-0 rounded-md px-4 py-2 text-sm font-semibold text-white" style={{ backgroundColor: "#1e3a5f" }}>
+          <button
+            style={{
+              flexShrink: 0,
+              borderRadius: 6,
+              padding: "8px 16px",
+              fontSize: 14,
+              fontWeight: 600,
+              color: "#ffffff",
+              backgroundColor: "#1e3a5f",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
             Schedule now
           </button>
         </div>
 
         {/* ── KPI row ── */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="insp-kpi">
           {[
-            { value: "42", label: "Active clients", sub: "7 inspections today", accent: false },
-            { value: "87%", label: "Pass rate (30d)", sub: "\u21914% vs last month", accent: "green" },
-            { value: "6", label: "Open violations", sub: "2 escalated", accent: "red" },
-            { value: "$18,400", label: "Revenue (MTD)", sub: "\u219112% vs last month", accent: "green" },
+            { value: "42", label: "Active clients", sub: "7 inspections today", accent: undefined },
+            { value: "87%", label: "Pass rate (30d)", sub: "\u21914% vs last month", accent: "#16a34a" },
+            { value: "6", label: "Open violations", sub: "2 escalated", accent: "#dc2626" },
+            { value: "$18,400", label: "Revenue (MTD)", sub: "\u219112% vs last month", accent: "#16a34a" },
           ].map((kpi, i) => (
             <div
               key={kpi.label}
-              className="animate-[fadeIn_0.5s_ease-out_both] rounded-lg border border-[#E2E8F0] bg-white p-5"
-              style={{ animationDelay: `${0.15 + i * 0.07}s` }}
+              style={{
+                ...cardPadded,
+                animation: `fadeIn 0.5s ease-out ${0.15 + i * 0.07}s both`,
+              }}
             >
-              <p className="text-2xl font-bold" style={{ color: "#1e3a5f" }}>{kpi.value}</p>
-              <p className="mt-1 text-sm font-medium text-gray-700">{kpi.label}</p>
-              <p className={`mt-0.5 text-xs ${kpi.accent === "green" ? "text-green-600" : kpi.accent === "red" ? "text-red-600" : "text-gray-500"}`}>
+              <p style={{ fontSize: 28, fontWeight: 700, color: "#1e3a5f", margin: 0 }}>{kpi.value}</p>
+              <p style={{ marginTop: 4, fontSize: 14, fontWeight: 500, color: "#374151" }}>{kpi.label}</p>
+              <p style={{ marginTop: 2, fontSize: 12, color: kpi.accent || "#6b7280" }}>
                 {kpi.sub}
               </p>
             </div>
@@ -146,44 +270,45 @@ export default function InspectionDemoPage() {
         </div>
 
         {/* ── Two-column: Recent inspections + Certificate expiry ── */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
+        <div className="insp-two">
           {/* Recent inspections */}
           <div
-            className="animate-[fadeIn_0.5s_ease-out_0.4s_both] overflow-hidden rounded-lg border border-[#E2E8F0] bg-white lg:col-span-3"
+            style={{
+              ...card,
+              animation: "fadeIn 0.5s ease-out 0.4s both",
+              overflow: "hidden",
+            }}
           >
-            <div className="border-b border-gray-100 px-5 py-4">
-              <h2 className="text-base font-semibold" style={{ color: "#1e3a5f" }}>Recent inspections</h2>
+            <div style={cardHeader}>
+              <h2 style={sectionTitle}>Recent inspections</h2>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
                 <thead>
-                  <tr className="border-b border-gray-100 text-xs font-medium text-gray-500">
-                    <th className="px-5 py-3">Client / Site</th>
-                    <th className="px-5 py-3">Type</th>
-                    <th className="px-5 py-3">Inspector</th>
-                    <th className="px-5 py-3">Date</th>
-                    <th className="px-5 py-3">Result</th>
+                  <tr>
+                    <th style={thStyle}>Client / Site</th>
+                    <th style={thStyle}>Type</th>
+                    <th style={thStyle}>Inspector</th>
+                    <th style={thStyle}>Date</th>
+                    <th style={thStyle}>Result</th>
                   </tr>
                 </thead>
                 <tbody>
                   {recentInspections.map((row, i) => (
-                    <tr key={i} className="border-b border-gray-50 last:border-0">
-                      <td className="px-5 py-3 font-medium text-gray-900">{row.client}</td>
-                      <td className="px-5 py-3 text-gray-600">{row.type}</td>
-                      <td className="px-5 py-3">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold text-white"
-                            style={{ backgroundColor: "#1e3a5f" }}
-                          >
+                    <tr key={i}>
+                      <td style={{ ...tdStyle, fontWeight: 500, color: "#111827" }}>{row.client}</td>
+                      <td style={{ ...tdStyle, color: "#6b7280" }}>{row.type}</td>
+                      <td style={tdStyle}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <span style={avatar}>
                             {row.inspector}
                           </span>
-                          <span className="text-gray-600">{row.inspectorName}</span>
+                          <span style={{ color: "#6b7280" }}>{row.inspectorName}</span>
                         </div>
                       </td>
-                      <td className="px-5 py-3 text-gray-500">{row.date}</td>
-                      <td className="px-5 py-3">
-                        <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${resultColor(row.result)}`}>
+                      <td style={{ ...tdStyle, color: "#6b7280" }}>{row.date}</td>
+                      <td style={tdStyle}>
+                        <span style={resultPillStyle(row.result)}>
                           {row.result}
                         </span>
                       </td>
@@ -196,19 +321,31 @@ export default function InspectionDemoPage() {
 
           {/* Certificate expiry tracker */}
           <div
-            className="animate-[fadeIn_0.5s_ease-out_0.5s_both] rounded-lg border border-[#E2E8F0] bg-white lg:col-span-2"
+            style={{
+              ...card,
+              animation: "fadeIn 0.5s ease-out 0.5s both",
+            }}
           >
-            <div className="border-b border-gray-100 px-5 py-4">
-              <h2 className="text-base font-semibold" style={{ color: "#1e3a5f" }}>Certificate expiry tracker</h2>
+            <div style={cardHeader}>
+              <h2 style={sectionTitle}>Certificate expiry tracker</h2>
             </div>
-            <div className="divide-y divide-gray-50">
+            <div>
               {certExpiry.map((c, i) => (
-                <div key={i} className="flex items-center justify-between px-5 py-3.5">
+                <div
+                  key={i}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "14px 20px",
+                    borderBottom: i < certExpiry.length - 1 ? "1px solid #f9fafb" : "none",
+                  }}
+                >
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{c.client}</p>
-                    <p className="text-xs text-gray-500">{c.cert} &middot; {c.expiry}</p>
+                    <p style={{ fontSize: 14, fontWeight: 500, color: "#111827", margin: 0 }}>{c.client}</p>
+                    <p style={{ fontSize: 12, color: "#6b7280", margin: 0 }}>{c.cert} &middot; {c.expiry}</p>
                   </div>
-                  <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${expiryPill(c.days)}`}>
+                  <span style={expiryPillStyle(c.days)}>
                     {c.days}d
                   </span>
                 </div>
@@ -218,44 +355,47 @@ export default function InspectionDemoPage() {
         </div>
 
         {/* ── Three-column: Workload + Violations + Revenue ── */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="insp-three">
 
           {/* Inspector workload */}
-          <div className="animate-[fadeIn_0.5s_ease-out_0.55s_both] rounded-lg border border-[#E2E8F0] bg-white">
-            <div className="border-b border-gray-100 px-5 py-4">
-              <h2 className="text-base font-semibold" style={{ color: "#1e3a5f" }}>Inspector workload today</h2>
+          <div style={{ ...card, animation: "fadeIn 0.5s ease-out 0.55s both" }}>
+            <div style={cardHeader}>
+              <h2 style={sectionTitle}>Inspector workload today</h2>
             </div>
-            <div className="divide-y divide-gray-50">
+            <div>
               {inspectors.map((ins, i) => (
-                <div key={i} className="px-5 py-3.5">
-                  <div className="flex items-center gap-3">
-                    <span
-                      className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold text-white"
-                      style={{ backgroundColor: "#1e3a5f" }}
-                    >
+                <div
+                  key={i}
+                  style={{
+                    padding: "14px 20px",
+                    borderBottom: i < inspectors.length - 1 ? "1px solid #f9fafb" : "none",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <span style={{ ...avatar, width: 32, height: 32 }}>
                       {ins.initials}
                     </span>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">{ins.name}</p>
-                      <p className="text-xs text-gray-500">{ins.specialty}</p>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ fontSize: 14, fontWeight: 500, color: "#111827", margin: 0 }}>{ins.name}</p>
+                      <p style={{ fontSize: 12, color: "#6b7280", margin: 0 }}>{ins.specialty}</p>
                     </div>
-                    <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
-                      ins.status === "Full" ? "bg-red-50 text-red-700" :
-                      ins.status === "Active" ? "bg-amber-50 text-amber-700" :
-                      "bg-green-50 text-green-700"
-                    }`}>
+                    <span style={statusPillStyle(ins.status)}>
                       {ins.status}
                     </span>
                   </div>
                   {/* load bar */}
-                  <div className="mt-2 flex items-center gap-2">
-                    <div className="h-2 flex-1 rounded-full bg-gray-100">
+                  <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ height: 8, flex: 1, borderRadius: 100, background: "#f3f4f6" }}>
                       <div
-                        className={`h-2 rounded-full ${loadBarColor(ins.status)}`}
-                        style={{ width: `${(ins.jobs / ins.capacity) * 100}%` }}
+                        style={{
+                          height: 8,
+                          borderRadius: 100,
+                          background: loadBarColor(ins.status),
+                          width: `${(ins.jobs / ins.capacity) * 100}%`,
+                        }}
                       />
                     </div>
-                    <span className="text-xs text-gray-500">{ins.jobs}/{ins.capacity}</span>
+                    <span style={{ fontSize: 12, color: "#6b7280" }}>{ins.jobs}/{ins.capacity}</span>
                   </div>
                 </div>
               ))}
@@ -263,27 +403,35 @@ export default function InspectionDemoPage() {
           </div>
 
           {/* Open violations */}
-          <div className="animate-[fadeIn_0.5s_ease-out_0.6s_both] rounded-lg border border-[#E2E8F0] bg-white">
-            <div className="border-b border-gray-100 px-5 py-4">
-              <h2 className="text-base font-semibold" style={{ color: "#1e3a5f" }}>Open violations / Remediation tracking</h2>
+          <div style={{ ...card, animation: "fadeIn 0.5s ease-out 0.6s both" }}>
+            <div style={cardHeader}>
+              <h2 style={sectionTitle}>Open violations / Remediation tracking</h2>
             </div>
-            <div className="divide-y divide-gray-50">
+            <div>
               {violations.map((v, i) => (
                 <div
                   key={i}
-                  className="px-5 py-3.5"
                   style={{
-                    borderLeft: `3px solid ${v.color === "red" ? "#dc2626" : v.color === "amber" ? "#d97706" : "#16a34a"}`,
+                    padding: "14px 20px",
+                    borderLeft: `3px solid ${violationAccent(v.color)}`,
+                    borderBottom: i < violations.length - 1 ? "1px solid #f9fafb" : "none",
                   }}
                 >
-                  <div className="flex items-start gap-2.5">
-                    <span className={`mt-1 h-2.5 w-2.5 shrink-0 rounded-full ${violationDot(v.color)}`} />
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                    <span
+                      style={{
+                        marginTop: 5,
+                        width: 10,
+                        height: 10,
+                        borderRadius: "50%",
+                        background: violationAccent(v.color),
+                        flexShrink: 0,
+                      }}
+                    />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{v.description}</p>
-                      <p className="text-xs text-gray-500">{v.client}</p>
-                      <p className={`mt-1 text-xs ${
-                        v.color === "red" ? "text-red-600" : v.color === "amber" ? "text-amber-600" : "text-green-600"
-                      }`}>
+                      <p style={{ fontSize: 14, fontWeight: 500, color: "#111827", margin: 0 }}>{v.description}</p>
+                      <p style={{ fontSize: 12, color: "#6b7280", margin: 0 }}>{v.client}</p>
+                      <p style={{ marginTop: 4, fontSize: 12, color: violationStatusColor(v.color) }}>
                         {v.status} &middot; {v.date}
                       </p>
                     </div>
@@ -294,21 +442,37 @@ export default function InspectionDemoPage() {
           </div>
 
           {/* Revenue by service type */}
-          <div className="animate-[fadeIn_0.5s_ease-out_0.65s_both] rounded-lg border border-[#E2E8F0] bg-white">
-            <div className="border-b border-gray-100 px-5 py-4">
-              <h2 className="text-base font-semibold" style={{ color: "#1e3a5f" }}>Revenue by service type</h2>
+          <div style={{ ...card, animation: "fadeIn 0.5s ease-out 0.65s both" }}>
+            <div style={cardHeader}>
+              <h2 style={sectionTitle}>Revenue by service type</h2>
             </div>
-            <div className="divide-y divide-gray-50">
+            <div>
               {revenue.map((r, i) => (
-                <div key={i} className="flex items-center justify-between px-5 py-3.5">
-                  <span className="text-sm text-gray-700">{r.label}</span>
-                  <span className="text-sm font-medium text-gray-900">{r.amount}</span>
+                <div
+                  key={i}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "14px 20px",
+                    borderBottom: "1px solid #f9fafb",
+                  }}
+                >
+                  <span style={{ fontSize: 14, color: "#374151" }}>{r.label}</span>
+                  <span style={{ fontSize: 14, fontWeight: 500, color: "#111827" }}>{r.amount}</span>
                 </div>
               ))}
               {/* Total */}
-              <div className="flex items-center justify-between px-5 py-4">
-                <span className="text-sm font-bold" style={{ color: "#1e3a5f" }}>Total MTD</span>
-                <span className="text-base font-bold text-green-700">$18,400</span>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "16px 20px",
+                }}
+              >
+                <span style={{ fontSize: 14, fontWeight: 700, color: "#1e3a5f" }}>Total MTD</span>
+                <span style={{ fontSize: 16, fontWeight: 700, color: "#16a34a" }}>$18,400</span>
               </div>
             </div>
           </div>
@@ -320,20 +484,23 @@ export default function InspectionDemoPage() {
         href="https://martinbuilds.ai"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed right-5 bottom-5 z-50 rounded-full px-5 py-3 text-sm font-semibold text-white shadow-lg transition-transform hover:scale-105"
-        style={{ backgroundColor: "#1e3a5f" }}
+        style={{
+          position: "fixed",
+          right: 20,
+          bottom: 20,
+          zIndex: 50,
+          borderRadius: 100,
+          padding: "12px 20px",
+          fontSize: 14,
+          fontWeight: 600,
+          color: "#ffffff",
+          backgroundColor: "#1e3a5f",
+          textDecoration: "none",
+          boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)",
+        }}
       >
         Book a walkthrough &rarr;
       </a>
-
-      {/* Inline keyframes for fade-in */}
-      <style>{`
-        body { background: #ffffff !important; color: #111827 !important; }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(8px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>
   );
 }

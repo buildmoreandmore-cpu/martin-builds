@@ -16,6 +16,8 @@ const blue = "#2563eb";
 const purple = "#7c3aed";
 const muted = "#78716c";
 const textDark = "#1c1917";
+const fontDisplay = "'Fraunces', serif";
+const fontBody = "'DM Sans', sans-serif";
 
 /* ── tiny helpers ── */
 function Pill({
@@ -25,13 +27,20 @@ function Pill({
   label: string;
   color: "green" | "amber";
 }) {
-  const cls =
-    color === "green"
-      ? "bg-green-100 text-green-800"
-      : "bg-amber-100 text-amber-800";
+  const pillBg = color === "green" ? "#dcfce7" : "#fef3c7";
+  const pillText = color === "green" ? "#166534" : "#92400e";
   return (
     <span
-      className={`${cls} text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap`}
+      style={{
+        backgroundColor: pillBg,
+        color: pillText,
+        fontSize: 12,
+        fontWeight: 600,
+        padding: "4px 12px",
+        borderRadius: 9999,
+        whiteSpace: "nowrap" as const,
+        fontFamily: fontBody,
+      }}
     >
       {label}
     </span>
@@ -53,20 +62,26 @@ function KpiCard({
 }) {
   return (
     <div
-      className="rounded-2xl p-5 flex flex-col gap-1 animate-fade-up"
       style={{
         backgroundColor: card,
+        borderRadius: 16,
+        padding: 20,
+        display: "flex",
+        flexDirection: "column" as const,
+        gap: 4,
+        animation: "fadeUp 0.5s ease-out",
         animationDelay: delay,
-        animationFillMode: "both",
+        animationFillMode: "both" as const,
+        fontFamily: fontBody,
       }}
     >
-      <span className="text-2xl font-bold" style={{ color: textDark }}>
+      <span style={{ fontSize: 28, fontWeight: 700, color: textDark }}>
         {value}
       </span>
-      <span className="text-sm font-medium" style={{ color: muted }}>
+      <span style={{ fontSize: 14, fontWeight: 500, color: muted }}>
         {label}
       </span>
-      <span className="text-xs font-medium" style={{ color: accent }}>
+      <span style={{ fontSize: 12, fontWeight: 500, color: accent }}>
         {sub}
       </span>
     </div>
@@ -86,22 +101,32 @@ function CogRow({
   color: string;
 }) {
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex justify-between items-baseline">
-        <span className="text-sm font-semibold" style={{ color: textDark }}>
+    <div style={{ display: "flex", flexDirection: "column" as const, gap: 4, fontFamily: fontBody }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+        <span style={{ fontSize: 14, fontWeight: 600, color: textDark }}>
           {category}
         </span>
-        <span className="text-xs font-semibold" style={{ color: muted }}>
+        <span style={{ fontSize: 12, fontWeight: 600, color: muted }}>
           {pct}%
         </span>
       </div>
-      <span className="text-[11px]" style={{ color: muted }}>
-        {note}
-      </span>
-      <div className="w-full h-2 rounded-full bg-stone-200 overflow-hidden">
+      <span style={{ fontSize: 11, color: muted }}>{note}</span>
+      <div
+        style={{
+          width: "100%",
+          height: 8,
+          borderRadius: 9999,
+          backgroundColor: "#e7e5e4",
+          overflow: "hidden",
+        }}
+      >
         <div
-          className="h-full rounded-full"
-          style={{ width: `${pct}%`, backgroundColor: color }}
+          style={{
+            height: "100%",
+            borderRadius: 9999,
+            width: `${pct}%`,
+            backgroundColor: color,
+          }}
         />
       </div>
     </div>
@@ -123,37 +148,76 @@ function WeekBar({
   const pct = (value / maxValue) * 100;
   const barColor =
     variant === "actual" ? blue : variant === "live" ? green : "#a8a29e";
-  const tagColor =
+  const tagBg =
     variant === "actual"
-      ? "bg-blue-100 text-blue-700"
+      ? "#dbeafe"
       : variant === "live"
-        ? "bg-green-100 text-green-700"
-        : "bg-stone-200 text-stone-500";
+        ? "#dcfce7"
+        : "#e7e5e4";
+  const tagText =
+    variant === "actual"
+      ? "#1d4ed8"
+      : variant === "live"
+        ? "#15803d"
+        : "#78716c";
   const tagLabel =
-    variant === "actual" ? "Actual" : variant === "live" ? "Live ↑" : "Proj.";
+    variant === "actual" ? "Actual" : variant === "live" ? "Live \u2191" : "Proj.";
 
   return (
-    <div className="flex items-center gap-3">
+    <div style={{ display: "flex", alignItems: "center", gap: 12, fontFamily: fontBody }}>
       <span
-        className="w-8 text-xs font-medium shrink-0"
-        style={{ color: muted }}
+        style={{
+          width: 32,
+          fontSize: 12,
+          fontWeight: 500,
+          color: muted,
+          flexShrink: 0,
+        }}
       >
         {day}
       </span>
-      <div className="flex-1 h-3 rounded-full bg-stone-200 overflow-hidden">
+      <div
+        style={{
+          flex: 1,
+          height: 12,
+          borderRadius: 9999,
+          backgroundColor: "#e7e5e4",
+          overflow: "hidden",
+        }}
+      >
         <div
-          className="h-full rounded-full"
-          style={{ width: `${pct}%`, backgroundColor: barColor }}
+          style={{
+            height: "100%",
+            borderRadius: 9999,
+            width: `${pct}%`,
+            backgroundColor: barColor,
+          }}
         />
       </div>
       <span
-        className="text-xs font-semibold w-14 text-right shrink-0"
-        style={{ color: textDark }}
+        style={{
+          fontSize: 12,
+          fontWeight: 600,
+          width: 56,
+          textAlign: "right" as const,
+          color: textDark,
+          flexShrink: 0,
+        }}
       >
         ${value.toLocaleString()}
       </span>
       <span
-        className={`${tagColor} text-[10px] font-semibold px-2 py-0.5 rounded-full w-14 text-center shrink-0`}
+        style={{
+          backgroundColor: tagBg,
+          color: tagText,
+          fontSize: 10,
+          fontWeight: 600,
+          padding: "2px 8px",
+          borderRadius: 9999,
+          width: 56,
+          textAlign: "center" as const,
+          flexShrink: 0,
+        }}
       >
         {tagLabel}
       </span>
@@ -189,13 +253,24 @@ function NightRow({
         : "#e7e5e4";
   return (
     <div
-      className="flex items-center justify-between rounded-xl px-4 py-3 border"
-      style={{ backgroundColor: bgColor, borderColor }}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        borderRadius: 12,
+        padding: "12px 16px",
+        border: `1px solid ${borderColor}`,
+        backgroundColor: bgColor,
+        fontFamily: fontBody,
+      }}
     >
-      <div className="flex items-center gap-3">
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <span
-          className="text-xs font-bold w-6 text-center"
           style={{
+            fontSize: 12,
+            fontWeight: 700,
+            width: 24,
+            textAlign: "center" as const,
             color:
               variant === "best"
                 ? green
@@ -206,19 +281,14 @@ function NightRow({
         >
           {rank}
         </span>
-        <div className="flex flex-col">
-          <span
-            className="text-sm font-semibold"
-            style={{ color: textDark }}
-          >
+        <div style={{ display: "flex", flexDirection: "column" as const }}>
+          <span style={{ fontSize: 14, fontWeight: 600, color: textDark }}>
             {date}
           </span>
-          <span className="text-[11px]" style={{ color: muted }}>
-            {note}
-          </span>
+          <span style={{ fontSize: 11, color: muted }}>{note}</span>
         </div>
       </div>
-      <span className="text-sm font-bold" style={{ color: textDark }}>
+      <span style={{ fontSize: 14, fontWeight: 700, color: textDark }}>
         {revenue}
       </span>
     </div>
@@ -232,48 +302,80 @@ function ContactRow({
   detail,
   tags,
   avatarBg,
+  isLast,
 }: {
   initials: string;
   name: string;
   detail: string;
   tags: string[];
   avatarBg: string;
+  isLast?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between py-3 border-b border-stone-200 last:border-0">
-      <div className="flex items-center gap-3">
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "12px 0",
+        borderBottom: isLast ? "none" : "1px solid #e7e5e4",
+        fontFamily: fontBody,
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <div
-          className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
-          style={{ backgroundColor: avatarBg }}
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#fff",
+            fontSize: 12,
+            fontWeight: 700,
+            backgroundColor: avatarBg,
+            flexShrink: 0,
+          }}
         >
           {initials}
         </div>
-        <div className="flex flex-col">
-          <span
-            className="text-sm font-semibold"
-            style={{ color: textDark }}
-          >
+        <div style={{ display: "flex", flexDirection: "column" as const }}>
+          <span style={{ fontSize: 14, fontWeight: 600, color: textDark }}>
             {name}
           </span>
-          <span className="text-[11px]" style={{ color: muted }}>
-            {detail}
-          </span>
+          <span style={{ fontSize: 11, color: muted }}>{detail}</span>
         </div>
       </div>
-      <div className="flex gap-1.5 flex-wrap justify-end">
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" as const, justifyContent: "flex-end" }}>
         {tags.map((t) => {
-          const cls =
+          const tBg =
             t === "VIP"
-              ? "bg-amber-100 text-amber-700"
+              ? "#fef3c7"
               : t === "SMS"
-                ? "bg-blue-100 text-blue-700"
+                ? "#dbeafe"
                 : t === "No SMS"
-                  ? "bg-stone-200 text-stone-500"
-                  : "bg-green-100 text-green-700";
+                  ? "#e7e5e4"
+                  : "#dcfce7";
+          const tColor =
+            t === "VIP"
+              ? "#b45309"
+              : t === "SMS"
+                ? "#1d4ed8"
+                : t === "No SMS"
+                  ? "#78716c"
+                  : "#15803d";
           return (
             <span
               key={t}
-              className={`${cls} text-[10px] font-semibold px-2 py-0.5 rounded-full`}
+              style={{
+                backgroundColor: tBg,
+                color: tColor,
+                fontSize: 10,
+                fontWeight: 600,
+                padding: "2px 8px",
+                borderRadius: 9999,
+              }}
             >
               {t}
             </span>
@@ -285,13 +387,28 @@ function ContactRow({
 }
 
 /* ── SMS stat row ── */
-function SmsStat({ label, value }: { label: string; value: string }) {
+function SmsStat({
+  label,
+  value,
+  isLast,
+}: {
+  label: string;
+  value: string;
+  isLast?: boolean;
+}) {
   return (
-    <div className="flex items-center justify-between py-2.5 border-b border-stone-100 last:border-0">
-      <span className="text-sm" style={{ color: muted }}>
-        {label}
-      </span>
-      <span className="text-sm font-bold" style={{ color: textDark }}>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "10px 0",
+        borderBottom: isLast ? "none" : "1px solid #f5f5f4",
+        fontFamily: fontBody,
+      }}
+    >
+      <span style={{ fontSize: 14, color: muted }}>{label}</span>
+      <span style={{ fontSize: 14, fontWeight: 700, color: textDark }}>
         {value}
       </span>
     </div>
@@ -303,65 +420,103 @@ function SmsStat({ label, value }: { label: string; value: string }) {
 export default function RestaurantDashboard() {
   return (
     <>
-      {/* grain overlay + animations */}
       <style>{`
-        body { background: #1C1917 !important; color: #1c1917 !important; }
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=DM+Sans:wght@400;500;600;700&display=swap');
-
-        .font-display { font-family: 'Fraunces', serif; }
-        .font-body   { font-family: 'DM Sans', sans-serif; }
-
-        .grain::before {
-          content: '';
-          position: fixed;
-          inset: 0;
-          z-index: 0;
-          pointer-events: none;
-          opacity: 0.04;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-          background-repeat: repeat;
-          background-size: 180px;
-        }
-
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(16px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-up {
-          animation: fadeUp 0.5s ease-out;
-        }
-      `}</style>
+  body { background: #1C1917 !important; color: #1c1917 !important; }
+  body::before { display: none !important; }
+  section { padding-left: unset !important; padding-right: unset !important; }
+  h1, h2 { font-size: unset !important; letter-spacing: unset !important; }
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=DM+Sans:wght@400;500;600;700&display=swap');
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .restaurant-kpi { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+  .restaurant-three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .restaurant-two { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  @media (max-width: 768px) {
+    .restaurant-kpi { grid-template-columns: repeat(2, 1fr) !important; }
+    .restaurant-three { grid-template-columns: 1fr !important; }
+    .restaurant-two { grid-template-columns: 1fr !important; }
+  }
+  @media (max-width: 480px) {
+    .restaurant-kpi { grid-template-columns: 1fr !important; }
+  }
+`}</style>
 
       <div
-        className="grain font-body min-h-screen relative"
-        style={{ backgroundColor: bg, color: textDark }}
+        style={{
+          backgroundColor: bg,
+          color: textDark,
+          minHeight: "100vh",
+          position: "relative" as const,
+          fontFamily: fontBody,
+        }}
       >
+        {/* grain overlay */}
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 0,
+            pointerEvents: "none" as const,
+            opacity: 0.04,
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+            backgroundRepeat: "repeat",
+            backgroundSize: "180px",
+          }}
+        />
+
         {/* content sits above grain */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-28 flex flex-col gap-8">
+        <div
+          style={{
+            position: "relative" as const,
+            zIndex: 10,
+            maxWidth: 1200,
+            margin: "0 auto",
+            padding: "32px 24px 112px 24px",
+            display: "flex",
+            flexDirection: "column" as const,
+            gap: 32,
+          }}
+        >
           {/* ── TOP BAR ── */}
           <div
-            className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 animate-fade-up"
-            style={{ animationDelay: "0s", animationFillMode: "both" }}
+            style={{
+              display: "flex",
+              flexWrap: "wrap" as const,
+              alignItems: "flex-end",
+              justifyContent: "space-between",
+              gap: 16,
+              animation: "fadeUp 0.5s ease-out",
+              animationDelay: "0s",
+              animationFillMode: "both" as const,
+            }}
           >
             <div>
               <h1
-                className="font-display text-3xl sm:text-4xl font-bold"
-                style={{ color: "#FAFAF8" }}
+                style={{
+                  fontFamily: fontDisplay,
+                  fontSize: 36,
+                  fontWeight: 700,
+                  color: "#FAFAF8",
+                  margin: 0,
+                }}
               >
                 Restaurant Owner Dashboard
               </h1>
-              <p className="text-sm mt-1" style={{ color: "#a8a29e" }}>
+              <p style={{ fontSize: 14, marginTop: 4, color: "#a8a29e", margin: "4px 0 0 0" }}>
                 Friday, April 4 &middot; Dinner service in 4 hrs
               </p>
             </div>
-            <div className="flex gap-2">
+            <div style={{ display: "flex", gap: 8 }}>
               <Pill label="Food cost 28.4% ✓" color="green" />
               <Pill label="Labor 34.1% ↑" color="amber" />
             </div>
           </div>
 
           {/* ── KPI ROW ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="restaurant-kpi">
             <KpiCard
               value="$4,820"
               label="Sales today"
@@ -400,19 +555,29 @@ export default function RestaurantDashboard() {
           </div>
 
           {/* ── THREE-COL GRID ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="restaurant-three">
             {/* Cost of goods breakdown */}
             <div
-              className="rounded-2xl p-6 flex flex-col gap-5 animate-fade-up"
               style={{
                 backgroundColor: card,
+                borderRadius: 16,
+                padding: 24,
+                display: "flex",
+                flexDirection: "column" as const,
+                gap: 20,
+                animation: "fadeUp 0.5s ease-out",
                 animationDelay: "0.15s",
-                animationFillMode: "both",
+                animationFillMode: "both" as const,
               }}
             >
               <h2
-                className="font-display text-lg font-bold"
-                style={{ color: textDark }}
+                style={{
+                  fontFamily: fontDisplay,
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: textDark,
+                  margin: 0,
+                }}
               >
                 Cost of goods breakdown
               </h2>
@@ -450,20 +615,30 @@ export default function RestaurantDashboard() {
 
             {/* Weekly projection */}
             <div
-              className="rounded-2xl p-6 flex flex-col gap-4 animate-fade-up"
               style={{
                 backgroundColor: card,
+                borderRadius: 16,
+                padding: 24,
+                display: "flex",
+                flexDirection: "column" as const,
+                gap: 16,
+                animation: "fadeUp 0.5s ease-out",
                 animationDelay: "0.2s",
-                animationFillMode: "both",
+                animationFillMode: "both" as const,
               }}
             >
               <h2
-                className="font-display text-lg font-bold"
-                style={{ color: textDark }}
+                style={{
+                  fontFamily: fontDisplay,
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: textDark,
+                  margin: 0,
+                }}
               >
                 Weekly projection
               </h2>
-              <div className="flex flex-col gap-3">
+              <div style={{ display: "flex", flexDirection: "column" as const, gap: 12 }}>
                 <WeekBar day="Mon" value={2980} maxValue={5800} variant="actual" />
                 <WeekBar day="Tue" value={3120} maxValue={5800} variant="actual" />
                 <WeekBar day="Wed" value={3540} maxValue={5800} variant="actual" />
@@ -476,23 +651,33 @@ export default function RestaurantDashboard() {
 
             {/* Best vs worst nights */}
             <div
-              className="rounded-2xl p-6 flex flex-col gap-4 animate-fade-up"
               style={{
                 backgroundColor: card,
+                borderRadius: 16,
+                padding: 24,
+                display: "flex",
+                flexDirection: "column" as const,
+                gap: 16,
+                animation: "fadeUp 0.5s ease-out",
                 animationDelay: "0.25s",
-                animationFillMode: "both",
+                animationFillMode: "both" as const,
               }}
             >
               <h2
-                className="font-display text-lg font-bold"
-                style={{ color: textDark }}
+                style={{
+                  fontFamily: fontDisplay,
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: textDark,
+                  margin: 0,
+                }}
               >
                 Best vs worst nights
               </h2>
-              <p className="text-[11px] -mt-2" style={{ color: muted }}>
+              <p style={{ fontSize: 11, color: muted, margin: "-8px 0 0 0" }}>
                 Last 90 days
               </p>
-              <div className="flex flex-col gap-3">
+              <div style={{ display: "flex", flexDirection: "column" as const, gap: 12 }}>
                 <NightRow
                   rank="#1"
                   date="Sat, Feb 14"
@@ -526,23 +711,30 @@ export default function RestaurantDashboard() {
           </div>
 
           {/* ── TWO-COL GRID ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="restaurant-two">
             {/* Customer contacts */}
             <div
-              className="rounded-2xl p-6 animate-fade-up"
               style={{
                 backgroundColor: card,
+                borderRadius: 16,
+                padding: 24,
+                animation: "fadeUp 0.5s ease-out",
                 animationDelay: "0.3s",
-                animationFillMode: "both",
+                animationFillMode: "both" as const,
               }}
             >
               <h2
-                className="font-display text-lg font-bold mb-1"
-                style={{ color: textDark }}
+                style={{
+                  fontFamily: fontDisplay,
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: textDark,
+                  margin: "0 0 4px 0",
+                }}
               >
                 Customer contacts
               </h2>
-              <p className="text-[11px] mb-4" style={{ color: muted }}>
+              <p style={{ fontSize: 11, color: muted, margin: "0 0 16px 0" }}>
                 SMS + loyalty list
               </p>
               <ContactRow
@@ -579,21 +771,32 @@ export default function RestaurantDashboard() {
                 detail="Last visit yesterday · 6 visits"
                 tags={["No SMS"]}
                 avatarBg="#78716c"
+                isLast
               />
             </div>
 
             {/* SMS ordering program */}
             <div
-              className="rounded-2xl p-6 flex flex-col gap-4 animate-fade-up"
               style={{
                 backgroundColor: card,
+                borderRadius: 16,
+                padding: 24,
+                display: "flex",
+                flexDirection: "column" as const,
+                gap: 16,
+                animation: "fadeUp 0.5s ease-out",
                 animationDelay: "0.35s",
-                animationFillMode: "both",
+                animationFillMode: "both" as const,
               }}
             >
               <h2
-                className="font-display text-lg font-bold"
-                style={{ color: textDark }}
+                style={{
+                  fontFamily: fontDisplay,
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: textDark,
+                  margin: 0,
+                }}
               >
                 SMS ordering program
               </h2>
@@ -602,18 +805,40 @@ export default function RestaurantDashboard() {
                 <SmsStat label="Total subscribers" value="312" />
                 <SmsStat label="Orders via SMS" value="87" />
                 <SmsStat label="Avg. order" value="$64 (vs $48 walk-in)" />
-                <SmsStat label="Last campaign open rate" value="71%" />
+                <SmsStat label="Last campaign open rate" value="71%" isLast />
               </div>
 
               {/* suggestion banner */}
-              <div className="rounded-xl border border-green-200 bg-green-50 px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <p className="text-sm" style={{ color: green }}>
-                  <span className="font-semibold">4 new guests tonight</span>{" "}
+              <div
+                style={{
+                  borderRadius: 12,
+                  border: "1px solid #bbf7d0",
+                  backgroundColor: "#f0fdf4",
+                  padding: "16px 20px",
+                  display: "flex",
+                  flexWrap: "wrap" as const,
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 12,
+                }}
+              >
+                <p style={{ fontSize: 14, color: green, margin: 0 }}>
+                  <span style={{ fontWeight: 600 }}>4 new guests tonight</span>{" "}
                   — send SMS signup after service?
                 </p>
                 <button
-                  className="text-sm font-semibold text-white px-4 py-2 rounded-lg shrink-0 cursor-pointer hover:opacity-90 transition-opacity"
-                  style={{ backgroundColor: green }}
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: "#fff",
+                    padding: "8px 16px",
+                    borderRadius: 8,
+                    backgroundColor: green,
+                    border: "none",
+                    cursor: "pointer",
+                    flexShrink: 0,
+                    fontFamily: fontBody,
+                  }}
                 >
                   Draft message
                 </button>
@@ -627,8 +852,21 @@ export default function RestaurantDashboard() {
           href="https://martinbuilds.ai"
           target="_blank"
           rel="noopener noreferrer"
-          className="fixed bottom-6 right-6 z-50 text-sm font-semibold text-white px-5 py-3 rounded-full shadow-lg hover:opacity-90 transition-opacity"
-          style={{ backgroundColor: green }}
+          style={{
+            position: "fixed" as const,
+            bottom: 24,
+            right: 24,
+            zIndex: 50,
+            fontSize: 14,
+            fontWeight: 600,
+            color: "#fff",
+            padding: "12px 20px",
+            borderRadius: 9999,
+            backgroundColor: green,
+            textDecoration: "none",
+            boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)",
+            fontFamily: fontBody,
+          }}
         >
           Book a walkthrough &rarr;
         </a>

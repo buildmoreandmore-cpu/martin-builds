@@ -32,10 +32,10 @@ const WORKERS = [
 ];
 
 const ACTIVITY = [
-  { time: "2:14 PM", text: "Marcus Johnson confirmed for Apex Fulfillment 6 AM shift", color: "bg-green-500" },
-  { time: "1:48 PM", text: "Riverside Manor night shift escalated — 2 gaps remaining", color: "bg-red-500" },
-  { time: "12:30 PM", text: "Lisa Denton moved to on-call for Halcyon Medical", color: "bg-amber-500" },
-  { time: "11:05 AM", text: "NorthStar Logistics fully staffed — all 5 slots filled", color: "bg-green-500" },
+  { time: "2:14 PM", text: "Marcus Johnson confirmed for Apex Fulfillment 6 AM shift", dotColor: "#16a34a" },
+  { time: "1:48 PM", text: "Riverside Manor night shift escalated — 2 gaps remaining", dotColor: "#dc2626" },
+  { time: "12:30 PM", text: "Lisa Denton moved to on-call for Halcyon Medical", dotColor: "#d97706" },
+  { time: "11:05 AM", text: "NorthStar Logistics fully staffed — all 5 slots filled", dotColor: "#16a34a" },
 ];
 
 const REVENUE_ITEMS = [
@@ -54,16 +54,10 @@ const FILL_RATE = [
 
 /* ─── helpers ─── */
 
-function statusBorder(s: "red" | "amber" | "green") {
-  if (s === "red") return "border-l-red-600";
-  if (s === "amber") return "border-l-amber-500";
-  return "border-l-green-600";
-}
-
-function statusBg(s: "red" | "amber" | "green") {
-  if (s === "red") return "bg-red-50";
-  if (s === "amber") return "bg-amber-50";
-  return "bg-green-50";
+function statusColors(s: "red" | "amber" | "green") {
+  if (s === "red") return { border: "#dc2626", bg: "#fef2f2", labelBg: "#fee2e2", labelColor: "#b91c1c" };
+  if (s === "amber") return { border: "#d97706", bg: "#fffbeb", labelBg: "#fef3c7", labelColor: "#92400e" };
+  return { border: "#16a34a", bg: "#f0fdf4", labelBg: "#dcfce7", labelColor: "#15803d" };
 }
 
 function statusLabel(s: "red" | "amber" | "green") {
@@ -72,88 +66,78 @@ function statusLabel(s: "red" | "amber" | "green") {
   return "Covered";
 }
 
-function statusLabelColor(s: "red" | "amber" | "green") {
-  if (s === "red") return "text-red-700 bg-red-100";
-  if (s === "amber") return "text-amber-700 bg-amber-100";
-  return "text-green-700 bg-green-100";
-}
-
-function fillColor(pct: number) {
-  if (pct >= 95) return "text-green-700";
-  if (pct >= 90) return "text-amber-700";
-  return "text-red-700";
-}
-
 function fillBarColor(pct: number) {
-  if (pct >= 95) return "bg-green-500";
-  if (pct >= 90) return "bg-amber-500";
-  return "bg-red-500";
+  if (pct >= 95) return "#16a34a";
+  if (pct >= 90) return "#d97706";
+  return "#dc2626";
+}
+
+function fillTextColor(pct: number) {
+  if (pct >= 95) return "#15803d";
+  if (pct >= 90) return "#92400e";
+  return "#b91c1c";
 }
 
 /* ─── page ─── */
 
 export default function CoverageCommandPage() {
   return (
-    <div
-      className={`${dmSans.variable} font-[family-name:var(--font-dm-sans)] min-h-screen`}
-      style={{
-        background: "#F8F7F5",
-        color: "#1a1a1a",
-        fontFamily: "var(--font-dm-sans), sans-serif",
-      }}
-    >
-      {/* CSS keyframes for staggered fade-in */}
+    <div className={dmSans.variable} style={{ minHeight: "100vh", background: "#F8F7F5", color: "#1a1a1a", fontFamily: "var(--font-dm-sans), sans-serif" }}>
       <style>{`
-        body { background: #F8F7F5 !important; color: #1a1a1a !important; }
+        body { background: #F8F7F5 !important; color: #1a1a1a !important; font-family: var(--font-dm-sans), sans-serif !important; }
+        body::before { display: none !important; }
+        section { padding-left: unset !important; padding-right: unset !important; }
+        h1, h2 { font-size: unset !important; letter-spacing: unset !important; }
         @keyframes fadeInUp {
           from { opacity: 0; transform: translateY(12px); }
-          to   { opacity: 1; transform: translateY(0); }
+          to { opacity: 1; transform: translateY(0); }
         }
-        .fade-section {
-          opacity: 0;
-          animation: fadeInUp 0.5s ease-out forwards;
+        .staffing-kpi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+        .staffing-main { display: grid; grid-template-columns: 3fr 2fr; gap: 24px; }
+        .staffing-bottom { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        @media (max-width: 768px) {
+          .staffing-kpi { grid-template-columns: repeat(2, 1fr) !important; }
+          .staffing-main { grid-template-columns: 1fr !important; }
+          .staffing-bottom { grid-template-columns: 1fr !important; }
         }
-        .delay-0 { animation-delay: 0ms; }
-        .delay-1 { animation-delay: 100ms; }
-        .delay-2 { animation-delay: 200ms; }
-        .delay-3 { animation-delay: 300ms; }
-        .delay-4 { animation-delay: 400ms; }
-        .delay-5 { animation-delay: 500ms; }
+        @media (max-width: 480px) {
+          .staffing-kpi { grid-template-columns: 1fr !important; }
+        }
       `}</style>
 
       {/* ── Top bar ── */}
-      <header className="fade-section delay-0 border-b border-gray-200 bg-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex items-center gap-4 flex-wrap">
-            <h1 className="text-xl font-bold tracking-tight text-gray-900">Coverage Command</h1>
-            <span className="text-sm text-gray-500">Friday, April 4 &middot; 3 shifts at risk</span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
-              <span className="h-2 w-2 rounded-full bg-amber-500" />
+      <header style={{ background: "#ffffff", borderBottom: "1px solid #e5e5e5", animation: "fadeInUp 0.5s ease-out forwards" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+            <h1 style={{ fontSize: 20, fontWeight: 700, color: "#1a1a1a", margin: 0 }}>Coverage Command</h1>
+            <span style={{ fontSize: 14, color: "#6b7280" }}>Friday, April 4 &middot; 3 shifts at risk</span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#fef3c7", color: "#92400e", fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 9999 }}>
+              <span style={{ width: 8, height: 8, borderRadius: 9999, background: "#d97706", display: "inline-block" }} />
               3 gaps open
             </span>
           </div>
-          <button className="self-start sm:self-auto rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">
+          <button style={{ border: "1px solid #d1d5db", borderRadius: 6, padding: "6px 12px", fontSize: 14, fontWeight: 500, color: "#6b7280", background: "transparent", cursor: "pointer" }}>
             Customize layout
           </button>
         </div>
       </header>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 space-y-6">
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 24px 0", display: "flex", flexDirection: "column", gap: 24 }}>
         {/* ── Alert banner ── */}
-        <div className="fade-section delay-1 rounded-lg bg-red-50 border border-red-200 px-4 sm:px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex items-start gap-3">
-            <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-600 text-white text-xs font-bold">!</span>
-            <p className="text-sm text-red-900 leading-snug">
-              <span className="font-semibold">Riverside Manor</span> — Night shift (8 PM – 4 AM) still needs 2 workers. Starts in 6 hours.
+        <div style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 12, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12, animation: "fadeInUp 0.5s ease-out 0.1s forwards", opacity: 0 }}>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+            <span style={{ width: 24, height: 24, borderRadius: 9999, background: "#dc2626", color: "#ffffff", fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 2 }}>!</span>
+            <p style={{ fontSize: 14, color: "#7f1d1d", lineHeight: 1.5, margin: 0 }}>
+              <span style={{ fontWeight: 600 }}>Riverside Manor</span> — Night shift (8 PM – 4 AM) still needs 2 workers. Starts in 6 hours.
             </p>
           </div>
-          <button className="self-start sm:self-auto shrink-0 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition-colors">
+          <button style={{ background: "#dc2626", color: "#ffffff", fontSize: 14, fontWeight: 600, padding: "8px 16px", borderRadius: 6, border: "none", cursor: "pointer", flexShrink: 0 }}>
             Find workers
           </button>
         </div>
 
         {/* ── KPI row ── */}
-        <div className="fade-section delay-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="staffing-kpi" style={{ animation: "fadeInUp 0.5s ease-out 0.2s forwards", opacity: 0 }}>
           <KPICard value="34" label="Shifts today" sub="26 fully covered" />
           <KPICard value="5" label="Open slots unfilled" sub="Across 3 sites" accent="red" />
           <KPICard value="18" label="Workers available now" sub="4 not yet called" />
@@ -161,68 +145,62 @@ export default function CoverageCommandPage() {
         </div>
 
         {/* ── Main two-column ── */}
-        <div className="fade-section delay-3 grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className="staffing-main" style={{ animation: "fadeInUp 0.5s ease-out 0.3s forwards", opacity: 0 }}>
           {/* Left — shift coverage */}
-          <div className="lg:col-span-3">
-            <Card title="Today&rsquo;s shift coverage">
-              <div className="space-y-3">
-                {SHIFTS.map((s) => (
-                  <div
-                    key={s.client}
-                    className={`rounded-lg border border-l-4 ${statusBorder(s.status)} ${statusBg(s.status)} px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2`}
-                  >
-                    <div className="min-w-0">
-                      <p className="font-semibold text-sm text-gray-900 truncate">{s.client}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">{s.time}</p>
-                    </div>
-                    <div className="flex items-center gap-3 shrink-0">
-                      <div className="flex gap-1">
-                        {Array.from({ length: s.needed }).map((_, i) =>
-                          i < s.filled ? (
-                            <span key={i} className="h-5 w-5 rounded bg-green-600" />
-                          ) : (
-                            <span
-                              key={i}
-                              className="h-5 w-5 rounded border-2 border-dashed border-red-400 flex items-center justify-center text-[10px] font-bold text-red-500"
-                            >
-                              !
-                            </span>
-                          )
-                        )}
+          <div>
+            <Card title="Today's shift coverage">
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                {SHIFTS.map((s) => {
+                  const sc = statusColors(s.status);
+                  return (
+                    <div
+                      key={s.client}
+                      style={{ borderRadius: 10, border: "1px solid #e5e5e5", borderLeft: `4px solid ${sc.border}`, background: sc.bg, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}
+                    >
+                      <div style={{ minWidth: 0 }}>
+                        <p style={{ fontWeight: 600, fontSize: 14, color: "#1a1a1a", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.client}</p>
+                        <p style={{ fontSize: 12, color: "#6b7280", margin: "2px 0 0" }}>{s.time}</p>
                       </div>
-                      <span className="text-xs text-gray-500 whitespace-nowrap">
-                        {s.filled}/{s.needed}
-                      </span>
-                      <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${statusLabelColor(s.status)}`}>
-                        {statusLabel(s.status)}
-                      </span>
+                      <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
+                        <div style={{ display: "flex", gap: 4 }}>
+                          {Array.from({ length: s.needed }).map((_, i) =>
+                            i < s.filled ? (
+                              <span key={i} style={{ width: 20, height: 20, borderRadius: 4, background: "#16a34a", display: "inline-block" }} />
+                            ) : (
+                              <span key={i} style={{ width: 20, height: 20, borderRadius: 4, border: "2px dashed #f87171", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, color: "#dc2626" }}>!</span>
+                            )
+                          )}
+                        </div>
+                        <span style={{ fontSize: 12, color: "#6b7280", whiteSpace: "nowrap" }}>{s.filled}/{s.needed}</span>
+                        <span style={{ borderRadius: 9999, padding: "2px 8px", fontSize: 11, fontWeight: 600, background: sc.labelBg, color: sc.labelColor }}>{statusLabel(s.status)}</span>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </Card>
           </div>
 
           {/* Right column */}
-          <div className="lg:col-span-2 space-y-6">
+          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
             {/* Available workers */}
             <Card title="Available workers">
-              <div className="space-y-3">
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 {WORKERS.map((w) => (
-                  <div key={w.name} className="flex items-center gap-3">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-800 text-white text-xs font-bold">
+                  <div key={w.name} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <span style={{ width: 36, height: 36, borderRadius: 9999, background: "#1f2937", color: "#ffffff", fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                       {w.initials}
                     </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-gray-900 truncate">{w.name}</p>
-                      <p className="text-xs text-gray-500 truncate">{w.specialty}</p>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <p style={{ fontSize: 14, fontWeight: 500, color: "#1a1a1a", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{w.name}</p>
+                      <p style={{ fontSize: 12, color: "#6b7280", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{w.specialty}</p>
                     </div>
                     {w.action === "call" ? (
-                      <button className="shrink-0 rounded-md bg-green-600 px-3 py-1 text-xs font-semibold text-white hover:bg-green-700 transition-colors">
+                      <button style={{ background: "#16a34a", color: "#ffffff", fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 6, border: "none", cursor: "pointer", flexShrink: 0 }}>
                         Call now
                       </button>
                     ) : (
-                      <span className="shrink-0 rounded-md bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-500">
+                      <span style={{ background: "#f3f4f6", color: "#6b7280", fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 6, flexShrink: 0 }}>
                         On call
                       </span>
                     )}
@@ -233,13 +211,13 @@ export default function CoverageCommandPage() {
 
             {/* Activity feed */}
             <Card title="Activity feed" subtitle="Dispatch log">
-              <div className="space-y-3">
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 {ACTIVITY.map((a, i) => (
-                  <div key={i} className="flex gap-3 items-start">
-                    <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${a.color}`} />
-                    <div className="min-w-0">
-                      <p className="text-sm text-gray-700 leading-snug">{a.text}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{a.time}</p>
+                  <div key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+                    <span style={{ marginTop: 6, width: 10, height: 10, borderRadius: 9999, background: a.dotColor, flexShrink: 0, display: "inline-block" }} />
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ fontSize: 14, color: "#374151", lineHeight: 1.5, margin: 0 }}>{a.text}</p>
+                      <p style={{ fontSize: 12, color: "#9ca3af", margin: "2px 0 0" }}>{a.time}</p>
                     </div>
                   </div>
                 ))}
@@ -249,20 +227,20 @@ export default function CoverageCommandPage() {
         </div>
 
         {/* ── Bottom 3-column ── */}
-        <div className="fade-section delay-4 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="staffing-bottom" style={{ animation: "fadeInUp 0.5s ease-out 0.4s forwards", opacity: 0 }}>
           {/* Revenue at stake */}
           <Card title="Revenue at stake">
-            <table className="w-full text-sm">
+            <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse" }}>
               <tbody>
                 {REVENUE_ITEMS.map((r) => (
-                  <tr key={r.client} className="border-b border-gray-100 last:border-0">
-                    <td className="py-2 text-gray-700">{r.client}</td>
-                    <td className="py-2 text-right font-medium text-gray-900">${r.amount.toLocaleString()}</td>
+                  <tr key={r.client} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                    <td style={{ padding: "8px 0", color: "#374151" }}>{r.client}</td>
+                    <td style={{ padding: "8px 0", textAlign: "right", fontWeight: 500, color: "#1a1a1a" }}>${r.amount.toLocaleString()}</td>
                   </tr>
                 ))}
                 <tr>
-                  <td className="pt-3 font-semibold text-gray-900">Total if filled</td>
-                  <td className="pt-3 text-right font-bold text-green-700">$1,456</td>
+                  <td style={{ paddingTop: 12, fontWeight: 600, color: "#1a1a1a" }}>Total if filled</td>
+                  <td style={{ paddingTop: 12, textAlign: "right", fontWeight: 700, color: "#15803d" }}>$1,456</td>
                 </tr>
               </tbody>
             </table>
@@ -270,16 +248,16 @@ export default function CoverageCommandPage() {
 
           {/* Fill rate */}
           <Card title="Fill rate this week">
-            <div className="space-y-2.5">
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {FILL_RATE.map((f) => (
-                <div key={f.day} className="flex items-center gap-3">
-                  <span className="w-8 text-xs font-medium text-gray-500">{f.day}</span>
-                  <div className="flex-1 h-3 rounded-full bg-gray-100 overflow-hidden">
-                    <div className={`h-full rounded-full ${fillBarColor(f.pct)}`} style={{ width: `${f.pct}%` }} />
+                <div key={f.day} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <span style={{ width: 32, fontSize: 12, fontWeight: 500, color: "#6b7280" }}>{f.day}</span>
+                  <div style={{ flex: 1, height: 12, borderRadius: 9999, background: "#f3f4f6", overflow: "hidden" }}>
+                    <div style={{ height: "100%", borderRadius: 9999, background: fillBarColor(f.pct), width: `${f.pct}%` }} />
                   </div>
-                  <span className={`w-12 text-right text-sm font-semibold ${fillColor(f.pct)}`}>
+                  <span style={{ width: 48, textAlign: "right", fontSize: 14, fontWeight: 600, color: fillTextColor(f.pct), display: "inline-flex", alignItems: "center", justifyContent: "flex-end", gap: 4 }}>
                     {f.pct}%
-                    {f.live && <span className="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-red-500 align-middle" />}
+                    {f.live && <span style={{ width: 6, height: 6, borderRadius: 9999, background: "#dc2626", display: "inline-block" }} />}
                   </span>
                 </div>
               ))}
@@ -288,13 +266,13 @@ export default function CoverageCommandPage() {
 
           {/* Dispatch log */}
           <Card title="Dispatch log">
-            <div className="space-y-3">
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {ACTIVITY.map((a, i) => (
-                <div key={i} className="flex gap-3 items-start">
-                  <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${a.color}`} />
-                  <div className="min-w-0">
-                    <p className="text-sm text-gray-700 leading-snug">{a.text}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">{a.time}</p>
+                <div key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+                  <span style={{ marginTop: 6, width: 10, height: 10, borderRadius: 9999, background: a.dotColor, flexShrink: 0, display: "inline-block" }} />
+                  <div style={{ minWidth: 0 }}>
+                    <p style={{ fontSize: 14, color: "#374151", lineHeight: 1.5, margin: 0 }}>{a.text}</p>
+                    <p style={{ fontSize: 12, color: "#9ca3af", margin: "2px 0 0" }}>{a.time}</p>
                   </div>
                 </div>
               ))}
@@ -303,7 +281,7 @@ export default function CoverageCommandPage() {
         </div>
 
         {/* spacer for fixed button */}
-        <div className="h-16" />
+        <div style={{ height: 64 }} />
       </div>
 
       {/* ── Fixed CTA ── */}
@@ -311,7 +289,7 @@ export default function CoverageCommandPage() {
         href="https://martinbuilds.ai"
         target="_blank"
         rel="noopener noreferrer"
-        className="fade-section delay-5 fixed bottom-6 right-6 z-50 rounded-full bg-gray-900 px-5 py-3 text-sm font-semibold text-white shadow-lg hover:bg-gray-800 transition-colors"
+        style={{ position: "fixed", bottom: 24, right: 24, zIndex: 50, borderRadius: 9999, background: "#1f2937", padding: "12px 20px", fontSize: 14, fontWeight: 600, color: "#ffffff", textDecoration: "none", boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)", animation: "fadeInUp 0.5s ease-out 0.5s forwards", opacity: 0 }}
       >
         Book a walkthrough &rarr;
       </a>
@@ -331,10 +309,10 @@ function Card({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5">
-      <div className="mb-4">
-        <h2 className="text-sm font-semibold text-gray-900" dangerouslySetInnerHTML={{ __html: title }} />
-        {subtitle && <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>}
+    <div style={{ background: "#ffffff", border: "1px solid #e5e5e5", borderRadius: 12, padding: 20 }}>
+      <div style={{ marginBottom: 16 }}>
+        <h2 style={{ fontSize: 14, fontWeight: 600, color: "#1a1a1a", margin: 0 }}>{title}</h2>
+        {subtitle && <p style={{ fontSize: 12, color: "#9ca3af", margin: "2px 0 0" }}>{subtitle}</p>}
       </div>
       {children}
     </div>
@@ -352,25 +330,15 @@ function KPICard({
   sub: string;
   accent?: "red" | "amber";
 }) {
-  const border =
-    accent === "red"
-      ? "border-red-200 bg-red-50"
-      : accent === "amber"
-      ? "border-amber-200 bg-amber-50"
-      : "border-gray-200 bg-white";
-
-  const valueColor =
-    accent === "red"
-      ? "text-red-700"
-      : accent === "amber"
-      ? "text-amber-700"
-      : "text-gray-900";
+  const bg = accent === "red" ? "#fef2f2" : accent === "amber" ? "#fffbeb" : "#ffffff";
+  const borderColor = accent === "red" ? "#fecaca" : accent === "amber" ? "#fde68a" : "#e5e5e5";
+  const valueColor = accent === "red" ? "#dc2626" : accent === "amber" ? "#d97706" : "#1a1a1a";
 
   return (
-    <div className={`rounded-xl border p-4 ${border}`}>
-      <p className={`text-2xl font-bold ${valueColor}`}>{value}</p>
-      <p className="text-sm font-medium text-gray-700 mt-1">{label}</p>
-      <p className="text-xs text-gray-500 mt-0.5">{sub}</p>
+    <div style={{ background: bg, border: `1px solid ${borderColor}`, borderRadius: 12, padding: 16 }}>
+      <p style={{ fontSize: 28, fontWeight: 700, color: valueColor, margin: 0 }}>{value}</p>
+      <p style={{ fontSize: 14, fontWeight: 500, color: "#374151", margin: "4px 0 0" }}>{label}</p>
+      <p style={{ fontSize: 12, color: "#6b7280", margin: "2px 0 0" }}>{sub}</p>
     </div>
   );
 }
