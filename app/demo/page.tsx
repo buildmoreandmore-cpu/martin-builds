@@ -31,7 +31,7 @@ const demos = [
     description:
       "Certificate expiry tracking, violation remediation, inspector workload, and revenue by service type.",
     href: "/demo/inspection",
-    accent: "#1e3a5f",
+    accent: "#60a5fa",
   },
   {
     title: "Real Estate Command Center",
@@ -39,7 +39,7 @@ const demos = [
     description:
       "Lead pipeline, marketing cost per channel, contract tracking, and deal analysis for agents and brokers.",
     href: "/demo/realestate",
-    accent: "#14532d",
+    accent: "#4ade80",
   },
 ];
 

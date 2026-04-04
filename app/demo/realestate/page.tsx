@@ -62,8 +62,8 @@ const CONTRACTS = [
 const CONVERSION_BY_SOURCE = [
   { channel: "Referrals", leads: 27, rate: 41, color: "#14532d" },
   { channel: "Google Ads", leads: 31, rate: 19, color: "#1e40af" },
-  { channel: "Zillow", leads: 42, rate: 14, color: "#92400e" },
-  { channel: "Facebook", leads: 48, rate: 11, color: "#92400e" },
+  { channel: "Zillow", leads: 42, rate: 14, color: "#b45309" },
+  { channel: "Facebook", leads: 48, rate: 11, color: "#7c3aed" },
 ];
 
 const ACTIVITY = [
@@ -302,8 +302,8 @@ export default function RealEstateCommandCenter() {
             alignItems: "center",
             justifyContent: "space-between",
             gap: 12,
-            background: "#f0fdf4",
-            border: "1px solid #bbf7d0",
+            background: "#fef2f2",
+            border: "1px solid #fecaca",
             borderRadius: 12,
             padding: "14px 20px",
             marginBottom: 24,
@@ -311,14 +311,14 @@ export default function RealEstateCommandCenter() {
             opacity: 0,
           }}
         >
-          <p style={{ margin: 0, fontSize: 14, fontWeight: 500, color: "#14532d" }}>
+          <p style={{ margin: 0, fontSize: 14, fontWeight: 500, color: "#991b1b" }}>
             <span
               style={{
                 display: "inline-block",
                 width: 8,
                 height: 8,
                 borderRadius: "50%",
-                background: "#16a34a",
+                background: "#dc2626",
                 marginRight: 8,
                 verticalAlign: "middle",
               }}
@@ -333,7 +333,7 @@ export default function RealEstateCommandCenter() {
               fontSize: 13,
               fontWeight: 600,
               color: "#fff",
-              background: "#14532d",
+              background: "#dc2626",
               border: "none",
               cursor: "pointer",
             }}
