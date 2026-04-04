@@ -226,175 +226,163 @@ function WeekBar({
   );
 }
 
-/* ── best / worst row ── */
-function NightRow({
-  rank,
-  date,
-  note,
-  revenue,
-  variant,
+/* ── gauge bar ── */
+function GaugeBar({
+  label,
+  value,
+  target,
+  targetLabel,
+  detail,
+  color,
+  maxScale,
 }: {
-  rank: string;
-  date: string;
-  note: string;
-  revenue: string;
-  variant: "best" | "normal" | "worst";
+  label: string;
+  value: number;
+  target: number;
+  targetLabel: string;
+  detail: string;
+  color: string;
+  maxScale: number;
 }) {
-  const bgColor =
-    variant === "best"
-      ? "#f0fdf4"
-      : variant === "worst"
-        ? "#fef2f2"
-        : "#fafaf8";
-  const borderColor =
-    variant === "best"
-      ? "#bbf7d0"
-      : variant === "worst"
-        ? "#fecaca"
-        : "#e7e5e4";
+  const fillPct = Math.min((value / maxScale) * 100, 100);
+  const targetPct = (target / maxScale) * 100;
   return (
     <div
       style={{
         display: "flex",
+        flexDirection: "column" as const,
         alignItems: "center",
-        justifyContent: "space-between",
-        borderRadius: 12,
-        padding: "12px 16px",
-        border: `1px solid ${borderColor}`,
-        backgroundColor: bgColor,
+        gap: 8,
         fontFamily: fontBody,
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <span
-          style={{
-            fontSize: 12,
-            fontWeight: 700,
-            width: 24,
-            textAlign: "center" as const,
-            color:
-              variant === "best"
-                ? green
-                : variant === "worst"
-                  ? red
-                  : muted,
-          }}
-        >
-          {rank}
-        </span>
-        <div style={{ display: "flex", flexDirection: "column" as const }}>
-          <span style={{ fontSize: 14, fontWeight: 600, color: textDark }}>
-            {date}
-          </span>
-          <span style={{ fontSize: 11, color: muted }}>{note}</span>
-        </div>
-      </div>
-      <span style={{ fontSize: 14, fontWeight: 700, color: textDark }}>
-        {revenue}
+      <span style={{ fontSize: 11, fontWeight: 600, color: muted, textTransform: "uppercase" as const, letterSpacing: 0.5 }}>
+        {label}
       </span>
+      <span style={{ fontSize: 32, fontWeight: 700, color }}>{value}%</span>
+      <div
+        style={{
+          width: "100%",
+          height: 10,
+          borderRadius: 9999,
+          backgroundColor: "#e7e5e4",
+          position: "relative" as const,
+          overflow: "visible",
+        }}
+      >
+        <div
+          style={{
+            height: "100%",
+            borderRadius: 9999,
+            width: `${fillPct}%`,
+            backgroundColor: color,
+          }}
+        />
+        {target > 0 && (
+          <div
+            style={{
+              position: "absolute" as const,
+              left: `${targetPct}%`,
+              top: -3,
+              width: 2,
+              height: 16,
+              backgroundColor: textDark,
+              borderRadius: 1,
+            }}
+          />
+        )}
+      </div>
+      <span style={{ fontSize: 12, fontWeight: 600, color }}>{targetLabel}</span>
+      <span style={{ fontSize: 11, color: muted }}>{detail}</span>
     </div>
   );
 }
 
-/* ── contact row ── */
-function ContactRow({
-  initials,
-  name,
-  detail,
-  tags,
-  avatarBg,
+/* ── small tag pill ── */
+function TagPill({ label, color: c }: { label: string; color: string }) {
+  const bgMap: Record<string, string> = {
+    [green]: "#dcfce7",
+    [amber]: "#fef3c7",
+    [red]: "#fef2f2",
+    [blue]: "#dbeafe",
+  };
+  const textMap: Record<string, string> = {
+    [green]: "#166534",
+    [amber]: "#92400e",
+    [red]: "#991b1b",
+    [blue]: "#1d4ed8",
+  };
+  return (
+    <span
+      style={{
+        backgroundColor: bgMap[c] || "#e7e5e4",
+        color: textMap[c] || "#78716c",
+        fontSize: 10,
+        fontWeight: 600,
+        padding: "2px 8px",
+        borderRadius: 9999,
+        whiteSpace: "nowrap" as const,
+      }}
+    >
+      {label}
+    </span>
+  );
+}
+
+/* ── guest row for 3-visit tracker ── */
+function GuestRow({
+  line1,
+  line2,
+  line3,
+  tag,
+  tagColor,
   isLast,
 }: {
-  initials: string;
-  name: string;
-  detail: string;
-  tags: string[];
-  avatarBg: string;
+  line1: string;
+  line2: string;
+  line3?: string;
+  tag: string;
+  tagColor: string;
   isLast?: boolean;
 }) {
   return (
     <div
       style={{
         display: "flex",
-        alignItems: "center",
         justifyContent: "space-between",
-        padding: "12px 0",
-        borderBottom: isLast ? "none" : "1px solid #e7e5e4",
+        alignItems: "center",
+        padding: "10px 0",
+        borderBottom: isLast ? "none" : "1px solid #f5f5f4",
         fontFamily: fontBody,
+        gap: 8,
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <div
-          style={{
-            width: 36,
-            height: 36,
-            borderRadius: 9999,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#fff",
-            fontSize: 12,
-            fontWeight: 700,
-            backgroundColor: avatarBg,
-            flexShrink: 0,
-          }}
-        >
-          {initials}
-        </div>
-        <div style={{ display: "flex", flexDirection: "column" as const }}>
-          <span style={{ fontSize: 14, fontWeight: 600, color: textDark }}>
-            {name}
-          </span>
-          <span style={{ fontSize: 11, color: muted }}>{detail}</span>
-        </div>
+      <div style={{ display: "flex", flexDirection: "column" as const, gap: 2, minWidth: 0 }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: textDark }}>{line1}</span>
+        <span style={{ fontSize: 11, color: muted }}>{line2}</span>
+        {line3 && <span style={{ fontSize: 11, color: amber, fontWeight: 500 }}>{line3}</span>}
       </div>
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" as const, justifyContent: "flex-end" }}>
-        {tags.map((t) => {
-          const tBg =
-            t === "VIP"
-              ? "#fef3c7"
-              : t === "SMS"
-                ? "#dbeafe"
-                : t === "No SMS"
-                  ? "#e7e5e4"
-                  : "#dcfce7";
-          const tColor =
-            t === "VIP"
-              ? "#b45309"
-              : t === "SMS"
-                ? "#1d4ed8"
-                : t === "No SMS"
-                  ? "#78716c"
-                  : "#15803d";
-          return (
-            <span
-              key={t}
-              style={{
-                backgroundColor: tBg,
-                color: tColor,
-                fontSize: 10,
-                fontWeight: 600,
-                padding: "2px 8px",
-                borderRadius: 9999,
-              }}
-            >
-              {t}
-            </span>
-          );
-        })}
-      </div>
+      <TagPill label={tag} color={tagColor} />
     </div>
   );
 }
 
-/* ── SMS stat row ── */
-function SmsStat({
-  label,
-  value,
+/* ── dish row ── */
+function DishRow({
+  name,
+  ordered,
+  repeats,
+  reorderRate,
+  photos,
+  accent,
   isLast,
 }: {
-  label: string;
-  value: string;
+  name: string;
+  ordered: number;
+  repeats: number;
+  reorderRate: number;
+  photos: number;
+  accent: string;
   isLast?: boolean;
 }) {
   return (
@@ -406,12 +394,24 @@ function SmsStat({
         padding: "10px 0",
         borderBottom: isLast ? "none" : "1px solid #f5f5f4",
         fontFamily: fontBody,
+        gap: 12,
       }}
     >
-      <span style={{ fontSize: 14, color: muted }}>{label}</span>
-      <span style={{ fontSize: 14, fontWeight: 700, color: textDark }}>
-        {value}
-      </span>
+      <div style={{ display: "flex", flexDirection: "column" as const, gap: 2, flex: 1, minWidth: 0 }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: textDark }}>{name}</span>
+        <span style={{ fontSize: 11, color: muted }}>
+          {ordered} ordered · {repeats} repeat · {"\uD83D\uDCF8"} {photos} photos
+        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
+          <div style={{ width: 80, height: 6, borderRadius: 9999, backgroundColor: "#e7e5e4", overflow: "hidden" }}>
+            <div style={{ height: "100%", borderRadius: 9999, width: `${reorderRate}%`, backgroundColor: accent }} />
+          </div>
+          <span style={{ fontSize: 11, fontWeight: 600, color: accent }}>{reorderRate}%</span>
+        </div>
+      </div>
+      {reorderRate >= 60 && photos >= 8 && (
+        <TagPill label="Reaction driver" color={green} />
+      )}
     </div>
   );
 }
@@ -432,15 +432,18 @@ export default function RestaurantDashboard() {
     to { opacity: 1; transform: translateY(0); }
   }
   .restaurant-kpi { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+  .restaurant-gauges { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
   .restaurant-three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
   .restaurant-two { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
   @media (max-width: 768px) {
     .restaurant-kpi { grid-template-columns: repeat(2, 1fr) !important; }
+    .restaurant-gauges { grid-template-columns: repeat(2, 1fr) !important; }
     .restaurant-three { grid-template-columns: 1fr !important; }
     .restaurant-two { grid-template-columns: 1fr !important; }
   }
   @media (max-width: 480px) {
     .restaurant-kpi { grid-template-columns: 1fr !important; }
+    .restaurant-gauges { grid-template-columns: 1fr !important; }
   }
 `}</style>
 
@@ -483,7 +486,7 @@ export default function RestaurantDashboard() {
                   fontFamily: fontDisplay,
                   fontSize: 36,
                   fontWeight: 700,
-                  color: "#FAFAF8",
+                  color: textDark,
                   margin: "4px 0 0 0",
                 }}
               >
@@ -495,7 +498,7 @@ export default function RestaurantDashboard() {
             </div>
             <div style={{ display: "flex", gap: 8 }}>
               <Pill label="Food cost 28.4% ✓" color="green" />
-              <Pill label="Labor 34.1% ↑" color="amber" />
+              <Pill label="Labor 36.1% ↑" color="amber" />
             </div>
           </div>
 
@@ -510,36 +513,102 @@ export default function RestaurantDashboard() {
             />
             <KpiCard
               value="28.4%"
-              label="Food cost %"
-              sub="Target is 30%"
+              label="Food cost"
+              sub="Target ≤ 30%"
               accent={green}
               delay="0.1s"
             />
             <KpiCard
-              value="$1,370"
-              label="COGS today"
-              sub="Produce up $84"
-              accent={amber}
+              value="21.0%"
+              label="Beverage cost"
+              sub="↓ 2% vs last month"
+              accent={green}
               delay="0.15s"
+            />
+            <KpiCard
+              value="36.1%"
+              label="Labor cost"
+              sub="↑ 1.8% vs target"
+              accent={amber}
+              delay="0.2s"
             />
             <KpiCard
               value="$24,410"
               label="Projected week"
               sub="↑ $1,200 vs last"
               accent={green}
-              delay="0.2s"
-            />
-            <KpiCard
-              value="312"
-              label="SMS subscribers"
-              sub="+18 this week"
-              accent={blue}
               delay="0.25s"
             />
           </div>
 
-          {/* ── THREE-COL GRID ── */}
-          <div className="restaurant-three">
+          {/* ── LIVE COST CONTROL GAUGES ── */}
+          <div
+            style={{
+              backgroundColor: card,
+              border: "1px solid #E8E3DC",
+              borderRadius: 16,
+              padding: 24,
+              animation: "fadeUp 0.5s ease-out",
+              animationDelay: "0.3s",
+              animationFillMode: "both" as const,
+            }}
+          >
+            <h2
+              style={{
+                fontFamily: fontDisplay,
+                fontSize: 18,
+                fontWeight: 700,
+                color: textDark,
+                margin: "0 0 4px 0",
+              }}
+            >
+              Live Cost Control
+            </h2>
+            <p style={{ fontSize: 12, color: muted, margin: "0 0 20px 0" }}>
+              Real-time P&amp;L snapshot — targets update every 15 min
+            </p>
+            <div className="restaurant-gauges">
+              <GaugeBar
+                label="Food Cost"
+                value={28.4}
+                target={30}
+                targetLabel="Target: ≤ 30%"
+                detail="$1,370 of $4,820 revenue"
+                color={green}
+                maxScale={50}
+              />
+              <GaugeBar
+                label="Beverage Cost"
+                value={21.0}
+                target={25}
+                targetLabel="Target: ≤ 25%"
+                detail="$1,012 of $4,820 revenue"
+                color={green}
+                maxScale={50}
+              />
+              <GaugeBar
+                label="Labor Cost"
+                value={36.1}
+                target={34}
+                targetLabel="Target: ≤ 34%"
+                detail="$1,740 of $4,820 revenue"
+                color={red}
+                maxScale={50}
+              />
+              <GaugeBar
+                label="True Margin"
+                value={2.5}
+                target={0}
+                targetLabel="After food + bev + labor + rent"
+                detail="$121 of $4,820 — you need volume"
+                color={red}
+                maxScale={50}
+              />
+            </div>
+          </div>
+
+          {/* ── TWO-COL: COGS + WEEKLY ── */}
+          <div className="restaurant-two">
             {/* Cost of goods breakdown */}
             <div
               style={{
@@ -551,7 +620,7 @@ export default function RestaurantDashboard() {
                 flexDirection: "column" as const,
                 gap: 20,
                 animation: "fadeUp 0.5s ease-out",
-                animationDelay: "0.15s",
+                animationDelay: "0.35s",
                 animationFillMode: "both" as const,
               }}
             >
@@ -609,7 +678,7 @@ export default function RestaurantDashboard() {
                 flexDirection: "column" as const,
                 gap: 16,
                 animation: "fadeUp 0.5s ease-out",
-                animationDelay: "0.2s",
+                animationDelay: "0.4s",
                 animationFillMode: "both" as const,
               }}
             >
@@ -634,72 +703,208 @@ export default function RestaurantDashboard() {
                 <WeekBar day="Sun" value={3340} maxValue={5800} variant="proj" />
               </div>
             </div>
+          </div>
 
-            {/* Best vs worst nights */}
-            <div
+          {/* ── 3-VISIT CUSTOMER RETURN TRACKER ── */}
+          <div
+            style={{
+              animation: "fadeUp 0.5s ease-out",
+              animationDelay: "0.45s",
+              animationFillMode: "both" as const,
+            }}
+          >
+            <h2
               style={{
-                backgroundColor: card,
-                border: "1px solid #E8E3DC",
-                borderRadius: 16,
-                padding: 24,
-                display: "flex",
-                flexDirection: "column" as const,
-                gap: 16,
-                animation: "fadeUp 0.5s ease-out",
-                animationDelay: "0.25s",
-                animationFillMode: "both" as const,
+                fontFamily: fontDisplay,
+                fontSize: 20,
+                fontWeight: 700,
+                color: textDark,
+                margin: "0 0 4px 0",
               }}
             >
-              <h2
+              3-Visit Conversion Tracker
+            </h2>
+            <p style={{ fontSize: 12, color: muted, margin: "0 0 16px 0" }}>
+              Guests who visit 3x have 72% retention rate
+            </p>
+            <div className="restaurant-three">
+              {/* Column 1: First-Timers */}
+              <div
                 style={{
-                  fontFamily: fontDisplay,
-                  fontSize: 18,
-                  fontWeight: 700,
-                  color: textDark,
-                  margin: 0,
+                  backgroundColor: card,
+                  border: "1px solid #E8E3DC",
+                  borderLeft: `4px solid ${red}`,
+                  borderRadius: 16,
+                  padding: 20,
+                  display: "flex",
+                  flexDirection: "column" as const,
                 }}
               >
-                Best vs worst nights
-              </h2>
-              <p style={{ fontSize: 11, color: muted, margin: "-8px 0 0 0" }}>
-                Last 90 days
-              </p>
-              <div style={{ display: "flex", flexDirection: "column" as const, gap: 12 }}>
-                <NightRow
-                  rank="#1"
-                  date="Sat, Feb 14"
-                  note="Valentine's prix fixe — 94 covers"
-                  revenue="$7,840"
-                  variant="best"
+                <h3 style={{ fontFamily: fontDisplay, fontSize: 15, fontWeight: 700, color: textDark, margin: "0 0 12px 0" }}>
+                  Tonight{"'"}s First-Timers
+                </h3>
+                <GuestRow
+                  line1="Table 14 — Reservation: Martinez, party of 4"
+                  line2="OpenTable · First visit"
+                  tag="Red napkin"
+                  tagColor={red}
                 />
-                <NightRow
-                  rank="#2"
-                  date="Fri, Mar 21"
-                  note="Spring kickoff, patio opened"
-                  revenue="$6,310"
-                  variant="best"
+                <GuestRow
+                  line1="Table 8 — Walk-in: 2 guests"
+                  line2="No profile yet"
+                  tag="Red napkin"
+                  tagColor={red}
                 />
-                <NightRow
-                  rank="—"
-                  date="Wed, Mar 5"
-                  note="Normal midweek dinner"
-                  revenue="$3,220"
-                  variant="normal"
+                <GuestRow
+                  line1="Table 22 — Reservation: Chen, party of 2"
+                  line2="Yelp referral · First visit"
+                  tag="Red napkin"
+                  tagColor={red}
                 />
-                <NightRow
-                  rank="#87"
-                  date="Mon, Jan 20"
-                  note="Snow storm — closed early"
-                  revenue="$1,190"
-                  variant="worst"
+                <GuestRow
+                  line1="Table 5 — Reservation: Okafor, party of 6"
+                  line2="Instagram DM · First visit"
+                  tag="Red napkin"
+                  tagColor={red}
+                  isLast
                 />
+                <div
+                  style={{
+                    marginTop: 12,
+                    borderRadius: 10,
+                    backgroundColor: "#fef2f2",
+                    border: "1px solid #fecaca",
+                    padding: "10px 14px",
+                    fontSize: 12,
+                    color: red,
+                    fontWeight: 500,
+                  }}
+                >
+                  4 first-timers tonight — capture contact info before they leave
+                </div>
+              </div>
+
+              {/* Column 2: One More Visit */}
+              <div
+                style={{
+                  backgroundColor: card,
+                  border: "1px solid #E8E3DC",
+                  borderLeft: `4px solid ${amber}`,
+                  borderRadius: 16,
+                  padding: 20,
+                  display: "flex",
+                  flexDirection: "column" as const,
+                }}
+              >
+                <h3 style={{ fontFamily: fontDisplay, fontSize: 15, fontWeight: 700, color: textDark, margin: "0 0 12px 0" }}>
+                  One More Visit
+                </h3>
+                <GuestRow
+                  line1="Diana Reyes"
+                  line2="2 visits · Last: 3 days ago"
+                  line3="→ 1 more visit = 72% retention"
+                  tag="Send invite"
+                  tagColor={amber}
+                />
+                <GuestRow
+                  line1="Marcus Webb"
+                  line2="2 visits · Last: 11 days ago"
+                  line3="→ Going cold, act now"
+                  tag="Urgent"
+                  tagColor={red}
+                />
+                <GuestRow
+                  line1="Priya Sharma"
+                  line2="2 visits · Last: 6 days ago"
+                  line3="→ Birthday next week"
+                  tag="Send invite"
+                  tagColor={amber}
+                />
+                <GuestRow
+                  line1="Tom Brennan"
+                  line2="2 visits · Last: 2 days ago"
+                  line3="→ Ordered short rib both times"
+                  tag="Send invite"
+                  tagColor={amber}
+                  isLast
+                />
+                <div
+                  style={{
+                    marginTop: 12,
+                    borderRadius: 10,
+                    backgroundColor: "#fef3c7",
+                    border: "1px solid #fde68a",
+                    padding: "10px 14px",
+                    fontSize: 12,
+                    color: "#92400e",
+                    fontWeight: 500,
+                  }}
+                >
+                  4 guests one visit away from loyalty lock-in
+                </div>
+              </div>
+
+              {/* Column 3: Loyal Regulars */}
+              <div
+                style={{
+                  backgroundColor: card,
+                  border: "1px solid #E8E3DC",
+                  borderLeft: `4px solid ${green}`,
+                  borderRadius: 16,
+                  padding: 20,
+                  display: "flex",
+                  flexDirection: "column" as const,
+                }}
+              >
+                <h3 style={{ fontFamily: fontDisplay, fontSize: 15, fontWeight: 700, color: textDark, margin: "0 0 12px 0" }}>
+                  Loyal Regulars
+                </h3>
+                <GuestRow
+                  line1="James Mitchell"
+                  line2="18 visits · Avg $94/visit · Last: 4 days ago"
+                  tag="VIP"
+                  tagColor={green}
+                />
+                <GuestRow
+                  line1="Tanya Williams"
+                  line2="11 visits · Avg $72/visit · Last: 5 days ago"
+                  tag="Active"
+                  tagColor={green}
+                />
+                <GuestRow
+                  line1="Kevin Park"
+                  line2="6 visits · Avg $68/visit · Last: yesterday"
+                  tag="Active"
+                  tagColor={green}
+                />
+                <GuestRow
+                  line1="Raj Chandra"
+                  line2="8 visits · Avg $81/visit · Last: 42 days ago"
+                  tag="⚠ Lapsed"
+                  tagColor={red}
+                  isLast
+                />
+                <div
+                  style={{
+                    marginTop: 12,
+                    borderRadius: 10,
+                    backgroundColor: "#f0fdf4",
+                    border: "1px solid #bbf7d0",
+                    padding: "10px 14px",
+                    fontSize: 12,
+                    color: green,
+                    fontWeight: 500,
+                  }}
+                >
+                  Raj hasn{"'"}t been in 42 days — send a {"\""}we miss you{"\""}  with his usual (braised short rib)
+                </div>
               </div>
             </div>
           </div>
 
-          {/* ── TWO-COL GRID ── */}
+          {/* ── TWO-COL: DISHES + SMS vs ADS ── */}
           <div className="restaurant-two">
-            {/* Customer contacts */}
+            {/* Dishes Driving Return Visits */}
             <div
               style={{
                 backgroundColor: card,
@@ -707,7 +912,7 @@ export default function RestaurantDashboard() {
                 borderRadius: 16,
                 padding: 24,
                 animation: "fadeUp 0.5s ease-out",
-                animationDelay: "0.3s",
+                animationDelay: "0.5s",
                 animationFillMode: "both" as const,
               }}
             >
@@ -720,50 +925,19 @@ export default function RestaurantDashboard() {
                   margin: "0 0 4px 0",
                 }}
               >
-                Customer contacts
+                Menu Items Driving Returns
               </h2>
-              <p style={{ fontSize: 11, color: muted, margin: "0 0 16px 0" }}>
-                SMS + loyalty list
+              <p style={{ fontSize: 12, color: muted, margin: "0 0 12px 0" }}>
+                Which dishes bring people back
               </p>
-              <ContactRow
-                initials="DR"
-                name="Diana Reyes"
-                detail="Last visit 2 days ago · 24 visits"
-                tags={["VIP", "SMS"]}
-                avatarBg={green}
-              />
-              <ContactRow
-                initials="JM"
-                name="James Mitchell"
-                detail="Birthday Apr 9 · 18 visits"
-                tags={["VIP", "SMS"]}
-                avatarBg={blue}
-              />
-              <ContactRow
-                initials="TW"
-                name="Tanya Williams"
-                detail="Last visit 5 days ago · 11 visits"
-                tags={["SMS"]}
-                avatarBg={purple}
-              />
-              <ContactRow
-                initials="RC"
-                name="Raj Chandra"
-                detail="Lapsed 42 days"
-                tags={["SMS"]}
-                avatarBg={amber}
-              />
-              <ContactRow
-                initials="KP"
-                name="Kevin Park"
-                detail="Last visit yesterday · 6 visits"
-                tags={["No SMS"]}
-                avatarBg="#78716c"
-                isLast
-              />
+              <DishRow name="Braised Short Rib" ordered={31} repeats={14} reorderRate={78} photos={12} accent={green} />
+              <DishRow name="Truffle Mushroom Pasta" ordered={24} repeats={9} reorderRate={62} photos={8} accent={green} />
+              <DishRow name="Wagyu Burger" ordered={18} repeats={4} reorderRate={33} photos={3} accent={amber} />
+              <DishRow name="Seasonal Crudo" ordered={15} repeats={2} reorderRate={20} photos={6} accent={amber} />
+              <DishRow name="Chocolate Lava Cake" ordered={22} repeats={11} reorderRate={68} photos={15} accent={green} isLast />
             </div>
 
-            {/* SMS ordering program */}
+            {/* SMS vs Paid Acquisition */}
             <div
               style={{
                 backgroundColor: card,
@@ -774,7 +948,7 @@ export default function RestaurantDashboard() {
                 flexDirection: "column" as const,
                 gap: 16,
                 animation: "fadeUp 0.5s ease-out",
-                animationDelay: "0.35s",
+                animationDelay: "0.55s",
                 animationFillMode: "both" as const,
               }}
             >
@@ -787,52 +961,99 @@ export default function RestaurantDashboard() {
                   margin: 0,
                 }}
               >
-                SMS ordering program
+                Customer Acquisition Cost
               </h2>
+              <p style={{ fontSize: 12, color: muted, margin: "-8px 0 0 0" }}>
+                The math that sells itself
+              </p>
 
-              <div>
-                <SmsStat label="Total subscribers" value="312" />
-                <SmsStat label="Orders via SMS" value="87" />
-                <SmsStat label="Avg. order" value="$64 (vs $48 walk-in)" />
-                <SmsStat label="Last campaign open rate" value="71%" isLast />
-              </div>
-
-              {/* suggestion banner */}
-              <div
-                style={{
-                  borderRadius: 12,
-                  border: "1px solid #bbf7d0",
-                  backgroundColor: "#f0fdf4",
-                  padding: "16px 20px",
-                  display: "flex",
-                  flexWrap: "wrap" as const,
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 12,
-                }}
-              >
-                <p style={{ fontSize: 14, color: green, margin: 0 }}>
-                  <span style={{ fontWeight: 600 }}>4 new guests tonight</span>{" "}
-                  — send SMS signup after service?
-                </p>
-                <button
+              <div style={{ display: "flex", gap: 16 }}>
+                {/* SMS box */}
+                <div
                   style={{
-                    fontSize: 14,
-                    fontWeight: 600,
-                    color: "#fff",
-                    padding: "8px 16px",
-                    borderRadius: 8,
-                    backgroundColor: green,
-                    border: "none",
-                    cursor: "pointer",
-                    flexShrink: 0,
-                    fontFamily: fontBody,
+                    flex: 1,
+                    border: `2px solid ${green}`,
+                    borderRadius: 12,
+                    padding: 20,
+                    display: "flex",
+                    flexDirection: "column" as const,
+                    alignItems: "center",
+                    gap: 6,
+                    textAlign: "center" as const,
                   }}
                 >
-                  Draft message
-                </button>
+                  <span style={{ fontSize: 40, fontWeight: 800, color: green }}>$8</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: textDark }}>Cost per SMS customer</span>
+                  <span style={{ fontSize: 11, color: muted }}>312 subscribers · 87 orders · 71% open rate</span>
+                </div>
+                {/* Media box */}
+                <div
+                  style={{
+                    flex: 1,
+                    border: `2px solid ${red}`,
+                    borderRadius: 12,
+                    padding: 20,
+                    display: "flex",
+                    flexDirection: "column" as const,
+                    alignItems: "center",
+                    gap: 6,
+                    textAlign: "center" as const,
+                  }}
+                >
+                  <span style={{ fontSize: 40, fontWeight: 800, color: red }}>$1,200</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: textDark }}>Cost per media customer</span>
+                  <span style={{ fontSize: 11, color: muted }}>Print, radio, sponsorships</span>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column" as const, gap: 8 }}>
+                <p style={{ fontSize: 13, color: textDark, margin: 0 }}>
+                  <span style={{ fontWeight: 600 }}>SMS customers order 33% more</span>{" "}
+                  ($64 vs $48 avg)
+                </p>
+                <p style={{ fontSize: 13, color: green, fontWeight: 600, margin: 0 }}>
+                  SMS ROI: 150x better than traditional media
+                </p>
+                {/* Cost comparison bar */}
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
+                  <span style={{ fontSize: 11, color: muted, width: 36, flexShrink: 0 }}>SMS</span>
+                  <div style={{ flex: 1, height: 8, borderRadius: 9999, backgroundColor: "#e7e5e4", overflow: "hidden" }}>
+                    <div style={{ height: "100%", borderRadius: 9999, width: "1%", backgroundColor: green }} />
+                  </div>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: green, width: 28, flexShrink: 0 }}>$8</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 11, color: muted, width: 36, flexShrink: 0 }}>Media</span>
+                  <div style={{ flex: 1, height: 8, borderRadius: 9999, backgroundColor: "#e7e5e4", overflow: "hidden" }}>
+                    <div style={{ height: "100%", borderRadius: 9999, width: "100%", backgroundColor: red }} />
+                  </div>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: red, width: 28, flexShrink: 0 }}>$1.2k</span>
+                </div>
               </div>
             </div>
+          </div>
+
+          {/* ── WATERMARK ── */}
+          <div
+            style={{
+              textAlign: "center" as const,
+              padding: "24px 0 0 0",
+              animation: "fadeUp 0.5s ease-out",
+              animationDelay: "0.6s",
+              animationFillMode: "both" as const,
+            }}
+          >
+            <a
+              href="/discovery-call"
+              style={{
+                fontSize: 13,
+                color: muted,
+                textDecoration: "none",
+                fontFamily: fontBody,
+              }}
+            >
+              Built by <span style={{ fontWeight: 600, color: textDark }}>martinbuilds.ai</span>
+            </a>
           </div>
         </div>
 
