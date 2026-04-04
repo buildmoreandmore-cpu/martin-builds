@@ -2,30 +2,40 @@
 
 import ScrollReveal from "./ScrollReveal";
 
-const MoneyIcon = () => (
+const ShieldIcon = () => (
   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="12" y1="1" x2="12" y2="23" />
-    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
   </svg>
 );
 
-const GhostIcon = () => (
+const ChainIcon = () => (
   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 2a8 8 0 0 0-8 8v12l3-3 2 3 3-3 3 3 2-3 3 3V10a8 8 0 0 0-8-8z" />
-    <circle cx="9" cy="10" r="1" fill="#888" stroke="none" />
-    <circle cx="15" cy="10" r="1" fill="#888" stroke="none" />
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
   </svg>
 );
 
-const BoltIcon = () => (
+const UnlockIcon = () => (
   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+    <path d="M7 11V7a5 5 0 0 1 9.9-1" />
   </svg>
 );
 
 export default function ObjectionHandler() {
   return (
     <section style={{ padding: "clamp(3rem,6vw,5rem) clamp(1.25rem,5vw,3rem)" }}>
+      <ScrollReveal>
+        <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+          <p style={tagStyle}>The Real Objection</p>
+          <h2 style={titleStyle}>
+            You don&apos;t stay because it&apos;s good.
+            <br />
+            <span style={{ color: "#c8ff00" }}>You stay because it&apos;s familiar.</span>
+          </h2>
+        </div>
+      </ScrollReveal>
+
       <div
         style={{
           display: "grid",
@@ -36,31 +46,33 @@ export default function ObjectionHandler() {
         }}
         className="objection-grid"
       >
-        {/* Pain 1 */}
+        {/* The Comfort Trap */}
         <ScrollReveal>
           <div style={painCardStyle}>
-            <div style={iconWrapStyle}><MoneyIcon /></div>
-            <h3 style={painTitleStyle}>Agencies</h3>
-            <p style={painTextStyle}>Quote $50K and take 6 months. You get a deck, a timeline, and a Slack channel — but nothing live.</p>
+            <div style={iconWrapStyle}><ShieldIcon /></div>
+            <h3 style={painTitleStyle}>The Comfort Trap</h3>
+            <p style={painTextStyle}>You&apos;ve spent months learning Salesforce. Your team knows where things are. Switching feels risky.</p>
+            <p style={{ ...painTextStyle, marginTop: "0.8rem", fontStyle: "italic", fontSize: "0.85rem" }}>But familiar doesn&apos;t mean efficient. It means you&apos;ve memorized the workarounds.</p>
           </div>
         </ScrollReveal>
 
-        {/* Pain 2 */}
+        {/* The Hidden Cost */}
         <ScrollReveal>
           <div style={painCardStyle}>
-            <div style={iconWrapStyle}><GhostIcon /></div>
-            <h3 style={painTitleStyle}>Freelancers</h3>
-            <p style={painTextStyle}>Ghost after the first call. Or deliver something half-built and disappear when it breaks.</p>
+            <div style={iconWrapStyle}><ChainIcon /></div>
+            <h3 style={painTitleStyle}>The Hidden Cost</h3>
+            <p style={painTextStyle}>Every new hire takes weeks to onboard. Dashboards nobody opens. Features you pay for but ignore. Per-seat pricing that scales against you.</p>
+            <p style={{ ...painTextStyle, marginTop: "0.8rem", fontStyle: "italic", fontSize: "0.85rem" }}>Familiar is expensive when it&apos;s not built for you.</p>
           </div>
         </ScrollReveal>
 
-        {/* Solution */}
+        {/* The Switch */}
         <ScrollReveal>
           <div style={solutionCardStyle}>
-            <div style={{ ...iconWrapStyle, background: "rgba(200,255,0,0.1)" }}><BoltIcon /></div>
-            <h3 style={{ ...painTitleStyle, color: "#f5f5f0" }}>I fix that.</h3>
-            <p style={{ ...painTextStyle, color: "rgba(245,245,240,0.7)" }}>One builder. Clear scope. Live product in 14 days. I&apos;m in the trenches with you — not just at delivery, but through the entire build.</p>
-            <p style={{ ...painTextStyle, color: "rgba(245,245,240,0.5)", marginTop: "0.8rem", fontSize: "0.85rem" }}>Your reputation took years to build. Your digital presence should match it. I close the gap between how good you are and how a stranger sees you online — so leads convert before your competitor even picks up the phone.</p>
+            <div style={{ ...iconWrapStyle, background: "rgba(200,255,0,0.1)" }}><UnlockIcon /></div>
+            <h3 style={{ ...painTitleStyle, color: "#f5f5f0" }}>Custom is familiar on day one.</h3>
+            <p style={{ ...painTextStyle, color: "rgba(245,245,240,0.7)" }}>A dashboard built around your workflow has nothing to learn. Six pages instead of sixty. Your data, your metrics, your language.</p>
+            <p style={{ ...painTextStyle, color: "rgba(245,245,240,0.5)", marginTop: "0.8rem", fontSize: "0.85rem" }}>Your team opens it because it&apos;s useful — not because they have to. That&apos;s the difference between renting a tool and owning one.</p>
           </div>
         </ScrollReveal>
       </div>
@@ -79,8 +91,8 @@ export default function ObjectionHandler() {
           }}
         >
           <p style={{ fontSize: "0.95rem", color: "#ccc", lineHeight: 1.7, margin: 0 }}>
-            While you&apos;re still deciding, your competitors are already automating their intake, their proposals, their follow-ups. Every lead that bounces from your site lands on theirs.{" "}
-            <span style={{ color: "#c8ff00", fontWeight: 600 }}>Every week you wait is revenue you&apos;re handing to someone else.</span>
+            Your competitors already stopped renting. They own their tools, their data, their workflow.{" "}
+            <span style={{ color: "#c8ff00", fontWeight: 600 }}>Every week you stay comfortable is revenue you&apos;re handing to someone who isn&apos;t.</span>
           </p>
         </div>
       </ScrollReveal>
@@ -96,6 +108,24 @@ export default function ObjectionHandler() {
     </section>
   );
 }
+
+const tagStyle: React.CSSProperties = {
+  fontFamily: "'Space Mono', monospace",
+  fontSize: "0.75rem",
+  color: "#c8ff00",
+  letterSpacing: "3px",
+  textTransform: "uppercase",
+  marginBottom: "1.5rem",
+};
+
+const titleStyle: React.CSSProperties = {
+  fontSize: "clamp(2rem, 5vw, 3.5rem)",
+  fontWeight: 800,
+  lineHeight: 1.1,
+  letterSpacing: "-2px",
+  maxWidth: "700px",
+  margin: "0 auto",
+};
 
 const painCardStyle: React.CSSProperties = {
   background: "#1a1a1a",
