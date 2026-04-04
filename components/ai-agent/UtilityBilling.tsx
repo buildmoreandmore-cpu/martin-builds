@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import ScrollReveal from "../ScrollReveal";
 
 /*
@@ -101,10 +101,32 @@ export default function UtilityBilling() {
   const [meterValue, setMeterValue] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [autoCycle, setAutoCycle] = useState(true);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   const tier = tiers[activeTier];
   const usageData = getUsageData(tier);
+
+  const handleCheckout = useCallback(async () => {
+    setCheckoutLoading(true);
+    try {
+      const res = await fetch("/api/agent-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: activeTier }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error("Checkout error:", data.error);
+        setCheckoutLoading(false);
+      }
+    } catch (err) {
+      console.error("Checkout failed:", err);
+      setCheckoutLoading(false);
+    }
+  }, [activeTier]);
 
   useEffect(() => {
     const el = ref.current;
@@ -450,12 +472,13 @@ export default function UtilityBilling() {
           <p style={{ fontSize: "0.85rem", color: "#888", lineHeight: 1.6, maxWidth: "550px", margin: "0 auto" }}>
             Low setup. Pay as you go. Upgrade your model anytime. No contracts, no overage charges — just your agent working 24/7 and a transparent bill at the end of the month.
           </p>
-          <a
-            href="/discovery-call"
+          <button
+            onClick={handleCheckout}
+            disabled={checkoutLoading}
             style={{
               display: "inline-block",
               marginTop: "1.5rem",
-              background: tier.color,
+              background: checkoutLoading ? "#666" : tier.color,
               color: "#0a0a0a",
               padding: "1rem 2.5rem",
               borderRadius: "100px",
@@ -463,13 +486,15 @@ export default function UtilityBilling() {
               fontSize: "1rem",
               letterSpacing: "0.5px",
               transition: "all 0.3s",
-              textDecoration: "none",
+              border: "none",
+              cursor: checkoutLoading ? "wait" : "pointer",
+              opacity: checkoutLoading ? 0.7 : 1,
             }}
-            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-3px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = `0 8px 30px ${tier.color}40`; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
+            onMouseEnter={e => { if (!checkoutLoading) { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-3px)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = `0 8px 30px ${tier.color}40`; } }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "none"; }}
           >
-            Get Your Agent
-          </a>
+            {checkoutLoading ? "Loading..." : "Get Your Agent"}
+          </button>
         </div>
       </div>
 
@@ -530,23 +555,27 @@ export default function UtilityBilling() {
             <div style={{ fontSize: "0.6rem", color: "#555", marginTop: "0.2rem" }}>vs $300/mo flat SaaS</div>
           </div>
 
-          <a
-            href="/discovery-call"
+          <button
+            onClick={handleCheckout}
+            disabled={checkoutLoading}
             style={{
               display: "block",
+              width: "100%",
               marginTop: "1rem",
               padding: "0.9rem",
-              background: tier.color,
+              background: checkoutLoading ? "#666" : tier.color,
               color: "#0a0a0a",
               borderRadius: "10px",
               fontWeight: 700,
               fontSize: "0.85rem",
               textAlign: "center",
-              textDecoration: "none",
+              border: "none",
+              cursor: checkoutLoading ? "wait" : "pointer",
+              opacity: checkoutLoading ? 0.7 : 1,
             }}
           >
-            Get Your Agent
-          </a>
+            {checkoutLoading ? "Loading..." : "Get Your Agent"}
+          </button>
         </div>
       </div>
 

@@ -29,6 +29,52 @@ export async function POST(req: NextRequest) {
   const client = customerId ? await getClientByStripeCustomer(customerId) : null;
 
   switch (event.type) {
+    // Checkout completed — new agent signup via /automate
+    case "checkout.session.completed": {
+      const session = event.data.object as Stripe.Checkout.Session;
+      const plan = session.metadata?.plan;
+      const customerEmail = session.customer_email || session.customer_details?.email;
+      const stripeCustomerId = typeof session.customer === "string" ? session.customer : null;
+      const subscriptionId = typeof session.subscription === "string" ? session.subscription : null;
+
+      console.log(
+        `[CHECKOUT] Session completed — ${session.id} | Plan: ${plan} | Email: ${customerEmail} | Subscription: ${subscriptionId}`
+      );
+
+      // Store the metered subscription item ID for usage reporting
+      if (subscriptionId) {
+        const stripe = getStripe();
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+        const meteredItem = subscription.items.data.find(
+          (item) => (item.price as Stripe.Price).recurring?.usage_type === "metered"
+        );
+
+        if (meteredItem) {
+          // Save to Supabase for usage tracking
+          await supabase.from("agent_subscriptions").upsert({
+            stripe_customer_id: stripeCustomerId,
+            subscription_id: subscriptionId,
+            subscription_item_id: meteredItem.id,
+            plan: plan,
+            customer_email: customerEmail,
+            status: "active",
+            created_at: new Date().toISOString(),
+          }, { onConflict: "stripe_customer_id" });
+
+          console.log(`[CHECKOUT] Stored metered item ${meteredItem.id} for usage tracking`);
+        }
+      }
+
+      // Alert you about new agent signup
+      await sendEmail({
+        to: "agent@martinbuilds.ai",
+        subject: `🚀 New Agent Signup: ${plan?.toUpperCase()} — ${customerEmail}`,
+        body: `New AI agent customer!\n\nPlan: ${plan}\nEmail: ${customerEmail}\nCustomer ID: ${stripeCustomerId}\nSubscription: ${subscriptionId}\n\nSetup fee has been charged. Metered billing is active.\nTime to build their agent! 🏗️`,
+      }).catch(() => {});
+
+      break;
+    }
+
     // Payment succeeded — ensure active + log metadata
     case "invoice.paid": {
       const invoice = event.data.object as Stripe.Invoice;
