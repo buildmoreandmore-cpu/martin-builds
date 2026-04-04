@@ -88,9 +88,9 @@ export default function AppAudit() {
           <div style={{ textAlign: "center", marginBottom: "3rem" }}>
             <p style={tagStyle}>Reality Check</p>
             <h2 style={titleStyle}>
-              How many apps are you
+              How many apps are you paying for
               <br />
-              <span style={{ color: "#c8ff00" }}>paying for?</span>
+              <span style={{ color: "#c8ff00" }}>to run your business?</span>
             </h2>
           </div>
         </ScrollReveal>
