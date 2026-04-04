@@ -162,6 +162,7 @@ export default function RealEstateCommandCenter() {
     >
       {/* ── CSS keyframes for staggered fade-up ── */}
       <style>{`
+        body { background: #FAFAF8 !important; color: #1a1a1a !important; }
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(16px); }
           to { opacity: 1; transform: translateY(0); }

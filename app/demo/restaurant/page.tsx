@@ -305,6 +305,7 @@ export default function RestaurantDashboard() {
     <>
       {/* grain overlay + animations */}
       <style>{`
+        body { background: #1C1917 !important; color: #1c1917 !important; }
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=DM+Sans:wght@400;500;600;700&display=swap');
 
         .font-display { font-family: 'Fraunces', serif; }

@@ -328,6 +328,7 @@ export default function InspectionDemoPage() {
 
       {/* Inline keyframes for fade-in */}
       <style>{`
+        body { background: #ffffff !important; color: #111827 !important; }
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(8px); }
           to   { opacity: 1; transform: translateY(0); }

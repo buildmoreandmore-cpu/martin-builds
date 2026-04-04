@@ -104,6 +104,7 @@ export default function CoverageCommandPage() {
     >
       {/* CSS keyframes for staggered fade-in */}
       <style>{`
+        body { background: #F8F7F5 !important; color: #1a1a1a !important; }
         @keyframes fadeInUp {
           from { opacity: 0; transform: translateY(12px); }
           to   { opacity: 1; transform: translateY(0); }
