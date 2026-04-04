@@ -20,128 +20,148 @@ const dmMono = DM_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Real Estate Command Center — martinbuilds.ai",
+  title: "Investor Command Center — martinbuilds.ai",
   description:
-    "Live sales dashboard for real estate agents. Track leads, conversions, marketing spend, contracts, and deal analysis in one premium command center.",
+    "Real estate investor dashboard with deal analysis, skip tracing, buyer matching, assignment tracking, and marketing ROI — all in one command center.",
 };
 
 /* ─── static demo data ─── */
 
-const FUNNEL = [
-  { stage: "New leads", count: 148, conv: null },
-  { stage: "Contacted", count: 112, conv: 76 },
-  { stage: "Qualified", count: 61, conv: 54 },
-  { stage: "Showing", count: 38, conv: 62 },
-  { stage: "Offer made", count: 18, conv: 47 },
-  { stage: "Closed", count: 14, conv: 78 },
+const PIPELINE = [
+  { stage: "Sourced leads", count: 84, conv: null },
+  { stage: "Skip traced", count: 62, conv: 74 },
+  { stage: "Contacted", count: 41, conv: 66 },
+  { stage: "Under contract", count: 12, conv: 29 },
+  { stage: "Closed/Assigned", count: 8, conv: 67 },
 ];
 
-const CHANNELS = [
-  { name: "Zillow / Realtor.com", leads: 42, spend: 1680, cpl: 40, color: "amber" as const, note: "High intent" },
-  { name: "Google Ads", leads: 31, spend: 3100, cpl: 100, color: "red" as const, note: "Brand awareness" },
-  { name: "Facebook / Instagram", leads: 48, spend: 1680, cpl: 35, color: "green" as const, note: "Best CPL" },
-  { name: "Referrals", leads: 27, spend: 0, cpl: 0, color: "green" as const, note: "Highest close" },
-];
-
-const LEADS = [
-  { initials: "JT", name: "James Torres", interest: "Buy · $300k–$400k", badge: "Hot" as const },
-  { initials: "SL", name: "Sarah Langley", interest: "Sell · Est. $520k", badge: "Warm" as const },
-  { initials: "DP", name: "David Park", interest: "Buy · $200k–$250k", badge: "Contract" as const },
-  { initials: "MR", name: "Maria Rodriguez", interest: "Buy · $450k–$600k", badge: "Nurture" as const },
-  { initials: "KW", name: "Kevin Walsh", interest: "Sell · Est. $310k", badge: "New" as const },
-];
-
-const CONTRACTS = [
-  { property: "142 Birchwood Dr", price: "$349,000", close: "Apr 7", days: 3, status: "Addendum" as const },
-  { property: "88 Commerce Blvd", price: "$520,000", close: "Apr 18", days: 14, status: "In review" as const },
-  { property: "55 Lakeview Ct", price: "$215,000", close: "Apr 22", days: 18, status: "Signed" as const },
-  { property: "310 Hollowbrook Ln", price: "$475,000", close: "May 2", days: 28, status: "Signed" as const },
-  { property: "2204 Maple Ridge", price: "$298,500", close: "May 9", days: 35, status: "Inspection" as const },
-];
-
-const CONVERSION_BY_SOURCE = [
-  { channel: "Referrals", leads: 27, rate: 41, color: "#14532d" },
-  { channel: "Google Ads", leads: 31, rate: 19, color: "#1e40af" },
-  { channel: "Zillow", leads: 42, rate: 14, color: "#92400e" },
-  { channel: "Facebook", leads: 48, rate: 11, color: "#92400e" },
-];
-
-const ACTIVITY = [
-  { time: "3:42 PM", text: "142 Birchwood Dr — contract expires in 3 days, buyer unresponsive", dot: "#dc2626" },
-  { time: "2:15 PM", text: "55 Lakeview Ct — buyer signed final addendum", dot: "#16a34a" },
-  { time: "1:30 PM", text: "New lead: Maria Rodriguez — Buy $450k–$600k via Facebook", dot: "#9333ea" },
-  { time: "12:00 PM", text: "8 leads gone quiet (7+ days) — auto-flagged for follow-up", dot: "#f59e0b" },
-  { time: "10:45 AM", text: "Google Ads monthly budget at 82% — $620 remaining", dot: "#2563eb" },
-  { time: "9:10 AM", text: "Referral from David Park closed — $14,250 commission", dot: "#16a34a" },
-];
+const pipelineColors = ["#dcfce7", "#bbf7d0", "#86efac", "#4ade80", "#16a34a"];
 
 const DEALS = [
   {
     address: "142 Birchwood Dr",
-    list: 359000,
-    offer: 349000,
-    pctDiff: -2.8,
-    dom: 9,
-    grossComm: 10470,
-    marketingCost: 1860,
-    netComm: 8610,
-    source: "Zillow",
+    acq: 185000,
+    arv: 289000,
+    rehab: 45000,
+    spread: 59000,
+    exit: "Wholesale",
   },
   {
     address: "310 Hollowbrook Ln",
-    list: 469000,
-    offer: 475000,
-    pctDiff: 1.3,
-    dom: 4,
-    grossComm: 14250,
-    marketingCost: 0,
-    netComm: 14250,
-    source: "Referral",
+    acq: 340000,
+    arv: 475000,
+    rehab: 62000,
+    spread: 73000,
+    exit: "Fix & Flip",
   },
+  {
+    address: "88 Commerce Blvd",
+    acq: 125000,
+    arv: 198000,
+    rehab: 28000,
+    spread: 45000,
+    exit: "BRRRR",
+  },
+];
+
+const BUYERS = [
+  { initials: "MR", name: "Marcus Reeves", market: "SFH \u00B7 Atlanta Metro", deals: 23, speed: "2hrs", badge: "VIP" as const },
+  { initials: "TB", name: "Tanya Brooks", market: "Multi-family \u00B7 Decatur", deals: 14, speed: "4hrs", badge: "Active" as const },
+  { initials: "DC", name: "David Chen", market: "Wholesale flip \u00B7 Buckhead", deals: 9, speed: "1hr", badge: "Active" as const },
+  { initials: "SM", name: "Sarah Mitchell", market: "Section 8 \u00B7 College Park", deals: 18, speed: "6hrs", badge: "VIP" as const },
+  { initials: "KP", name: "Kevin Park", market: "New construction \u00B7 Marietta", deals: 5, speed: "12hrs", badge: "New" as const },
+];
+
+const ASSIGNMENTS = [
+  { property: "142 Birchwood", contract: "$185K", assignment: "$199K", fee: "$14K", buyer: "M. Reeves", status: "Pending" as const },
+  { property: "2204 Maple Ridge", contract: "$210K", assignment: "$238K", fee: "$28K", buyer: "T. Brooks", status: "Signed" as const },
+  { property: "55 Lakeview", contract: "$125K", assignment: "$148K", fee: "$23K", buyer: "D. Chen", status: "Closing" as const },
+  { property: "901 Pine Valley", contract: "$295K", assignment: "$310K", fee: "$15K", buyer: "S. Mitchell", status: "Sent" as const },
+  { property: "776 Elmwood", contract: "$168K", assignment: "$189K", fee: "$21K", buyer: "K. Park", status: "Expired" as const },
+];
+
+const SKIP_TRACE = [
+  { owner: "Robert Dawson", address: "415 Crescent Ave", phone: "470-***-8821", status: "Not reached" as const },
+  { owner: "Linda Vasquez", address: "1122 Peach Industrial", phone: "678-***-3304", status: "Voicemail" as const },
+  { owner: "James Whitfield", address: "309 Bankhead Hwy", phone: "404-***-1157", status: "Callback scheduled" as const },
+  { owner: "Patricia Odom", address: "88 Collier Rd", phone: "770-***-6642", status: "Interested" as const },
+];
+
+const MARKETING = [
+  { channel: "Driving for dollars", leads: 31, spend: 890, cpl: 28.71, color: "green" as const, note: "Best ROI" },
+  { channel: "Direct mail", leads: 18, spend: 2400, cpl: 133, color: "amber" as const, note: null },
+  { channel: "Cold calling", leads: 22, spend: 1100, cpl: 50, color: "green" as const, note: null },
+  { channel: "PPC/Online", leads: 13, spend: 1800, cpl: 138, color: "red" as const, note: "Highest CPL" },
+];
+
+const SCORECARD = [
+  { name: "Marcus Reeves", sent: 18, accepted: 14, rate: 78, avgFee: "$16.2K", lastDeal: "Mar 28" },
+  { name: "Tanya Brooks", sent: 12, accepted: 7, rate: 58, avgFee: "$22.1K", lastDeal: "Mar 15" },
+  { name: "David Chen", sent: 10, accepted: 4, rate: 40, avgFee: "$18.5K", lastDeal: "Mar 22" },
+  { name: "Kevin Park", sent: 6, accepted: 1, rate: 17, avgFee: "$12.0K", lastDeal: "Feb 10" },
+];
+
+const TIMELINE_STAGES = [
+  { label: "Lead sourced", day: 0 },
+  { label: "Skip traced", day: 2 },
+  { label: "First contact", day: 5 },
+  { label: "Under contract", day: 9 },
+  { label: "Buyer matched", day: 11 },
+  { label: "Closed", day: 14 },
 ];
 
 /* ─── helpers ─── */
 
-function daysStyle(d: number): React.CSSProperties {
-  if (d <= 7) return { color: "#991b1b", background: "#fee2e2" };
-  if (d <= 21) return { color: "#92400e", background: "#fef3c7" };
-  return { color: "#14532d", background: "#dcfce7" };
-}
-
-function statusStyle(s: string): React.CSSProperties {
+function assignmentStatusStyle(s: string): React.CSSProperties {
   switch (s) {
-    case "Addendum": return { color: "#991b1b", background: "#fee2e2" };
-    case "In review": return { color: "#92400e", background: "#fef3c7" };
+    case "Pending": return { color: "#92400e", background: "#fef3c7" };
     case "Signed": return { color: "#14532d", background: "#dcfce7" };
-    case "Inspection": return { color: "#1e40af", background: "#dbeafe" };
+    case "Closing": return { color: "#14532d", background: "#dcfce7" };
+    case "Sent": return { color: "#1e40af", background: "#dbeafe" };
+    case "Expired": return { color: "#991b1b", background: "#fee2e2" };
     default: return { color: "#374151", background: "#f3f4f6" };
   }
 }
 
-function badgeStyle(b: string): React.CSSProperties {
+function skipStatusStyle(s: string): React.CSSProperties {
+  switch (s) {
+    case "Not reached": return { color: "#6b7280", background: "#f3f4f6" };
+    case "Voicemail": return { color: "#92400e", background: "#fef3c7" };
+    case "Callback scheduled": return { color: "#1e40af", background: "#dbeafe" };
+    case "Interested": return { color: "#14532d", background: "#dcfce7" };
+    default: return { color: "#374151", background: "#f3f4f6" };
+  }
+}
+
+function buyerBadgeStyle(b: string): React.CSSProperties {
   switch (b) {
-    case "Hot": return { color: "#991b1b", background: "#fee2e2" };
-    case "Warm": return { color: "#92400e", background: "#fef3c7" };
-    case "Contract": return { color: "#14532d", background: "#dcfce7" };
-    case "Nurture": return { color: "#7e22ce", background: "#f3e8ff" };
-    case "New": return { color: "#1e40af", background: "#dbeafe" };
+    case "VIP": return { color: "#14532d", background: "#dcfce7" };
+    case "Active": return { color: "#1e40af", background: "#dbeafe" };
+    case "New": return { color: "#92400e", background: "#fef3c7" };
     default: return { color: "#374151", background: "#f3f4f6" };
   }
 }
 
-function cplTextColor(c: "green" | "amber" | "red"): string {
+function exitBadgeStyle(e: string): React.CSSProperties {
+  switch (e) {
+    case "Wholesale": return { color: "#14532d", background: "#dcfce7" };
+    case "Fix & Flip": return { color: "#92400e", background: "#fef3c7" };
+    case "BRRRR": return { color: "#1e40af", background: "#dbeafe" };
+    default: return { color: "#374151", background: "#f3f4f6" };
+  }
+}
+
+function cplColor(c: "green" | "amber" | "red"): string {
   if (c === "green") return "#14532d";
   if (c === "amber") return "#92400e";
   return "#991b1b";
 }
 
-function cplBarColor(c: "green" | "amber" | "red"): string {
-  if (c === "green") return "#14532d";
-  if (c === "amber") return "#92400e";
+function scorecardBarColor(rate: number): string {
+  if (rate > 50) return "#14532d";
+  if (rate >= 30) return "#92400e";
   return "#991b1b";
 }
-
-const funnelColors = ["#bfdbfe", "#93c5fd", "#60a5fa", "#3b82f6", "#2563eb", "#1d4ed8"];
 
 function fmtUsd(n: number) {
   return "$" + n.toLocaleString("en-US");
@@ -200,7 +220,7 @@ const barFill = (pct: number, color: string): React.CSSProperties => ({
 
 /* ─── page ─── */
 
-export default function RealEstateCommandCenter() {
+export default function InvestorCommandCenter() {
   return (
     <div
       className={`${playfair.variable} ${dmSans.variable} ${dmMono.variable}`}
@@ -219,13 +239,12 @@ export default function RealEstateCommandCenter() {
   .re-three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .re-two-wide { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
   .re-two-narrow { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; }
-  .re-deals { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .re-timeline-dots { display: flex; align-items: flex-start; justify-content: space-between; position: relative; }
   @media (max-width: 768px) {
     .re-kpi { grid-template-columns: repeat(2, 1fr) !important; }
     .re-three { grid-template-columns: 1fr !important; }
     .re-two-wide { grid-template-columns: 1fr !important; }
     .re-two-narrow { grid-template-columns: 1fr !important; }
-    .re-deals { grid-template-columns: 1fr !important; }
   }
   @media (max-width: 480px) {
     .re-kpi { grid-template-columns: 1fr !important; }
@@ -257,10 +276,10 @@ export default function RealEstateCommandCenter() {
                 fontFamily: "var(--font-playfair)",
               }}
             >
-              Real Estate Command Center
+              Investor Command Center
             </h1>
             <p style={{ margin: "4px 0 0", fontSize: 13, color: "#6b7280", ...mono }}>
-              April 2025 &middot; 6 active deals &middot; $2.31M pipeline
+              April 2025 &middot; 12 active deals &middot; $847K pipeline
             </p>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -276,7 +295,7 @@ export default function RealEstateCommandCenter() {
                 color: "#14532d",
               }}
             >
-              Lead&rarr;close 18.4%
+              Avg spread $28.4K
             </span>
             <span
               style={{
@@ -290,7 +309,7 @@ export default function RealEstateCommandCenter() {
                 color: "#92400e",
               }}
             >
-              Cost per lead $84
+              3 deals closing this week
             </span>
           </div>
         </div>
@@ -324,7 +343,7 @@ export default function RealEstateCommandCenter() {
                 verticalAlign: "middle",
               }}
             />
-            <strong>142 Birchwood Dr</strong> — contract expires in 3 days. Buyer hasn&apos;t signed the addendum. Last contact was 6 days ago.
+            <strong>310 Hollowbrook Ln</strong> — cash buyer Marcus Reeves matched at $485K. Assignment fee: $14,250. Auto-expires in 48 hrs.
           </p>
           <button
             style={{
@@ -339,7 +358,7 @@ export default function RealEstateCommandCenter() {
               cursor: "pointer",
             }}
           >
-            Draft follow-up
+            Send to buyer
           </button>
         </div>
 
@@ -353,11 +372,11 @@ export default function RealEstateCommandCenter() {
           }}
         >
           {[
-            { label: "Leads this month", value: "148", sub: "\u21915 22 vs last month", accent: null },
-            { label: "Active conversations", value: "27", sub: "8 gone quiet 7d+", accent: "amber" },
-            { label: "Lead \u2192 close rate", value: "18.4%", sub: "\u21912.1% vs Q1", accent: "green" },
-            { label: "Cost per lead", value: "$84", sub: "\u2193$12 vs last month", accent: "green" },
-            { label: "Commission pipeline", value: "$41,200", sub: "3 closing this month", accent: "green" },
+            { label: "Active deals", value: "12", sub: "4 under contract", accent: null },
+            { label: "Avg wholesale spread", value: "$28,400", sub: "\u2191$3.2K vs Q1", accent: "green" },
+            { label: "Pipeline value", value: "$847K", sub: "3 closing this week", accent: "green" },
+            { label: "Cost per deal", value: "$1,240", sub: "\u2193$380 vs last quarter", accent: "green" },
+            { label: "Avg deal velocity", value: "14 days", sub: "Lead to close", accent: "blue" },
           ].map((kpi, i) => (
             <div key={i} style={{ ...card }}>
               <p
@@ -393,7 +412,9 @@ export default function RealEstateCommandCenter() {
                       ? "#92400e"
                       : kpi.accent === "green"
                         ? "#14532d"
-                        : "#6b7280",
+                        : kpi.accent === "blue"
+                          ? "#1e40af"
+                          : "#6b7280",
                 }}
               >
                 {kpi.sub}
@@ -411,13 +432,13 @@ export default function RealEstateCommandCenter() {
             opacity: 0,
           }}
         >
-          {/* ── Lead pipeline / Conversion funnel ── */}
+          {/* ── Deal Pipeline ── */}
           <div style={{ ...card }}>
-            <h2 style={{ ...sectionTitle }}>Lead Pipeline</h2>
-            <p style={{ ...sectionSub }}>Conversion funnel</p>
+            <h2 style={{ ...sectionTitle }}>Deal Pipeline</h2>
+            <p style={{ ...sectionSub }}>Sourced to closed funnel</p>
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-              {FUNNEL.map((f, i) => {
-                const pct = (f.count / 148) * 100;
+              {PIPELINE.map((f, i) => {
+                const pct = (f.count / 84) * 100;
                 return (
                   <div key={i}>
                     <div
@@ -438,7 +459,7 @@ export default function RealEstateCommandCenter() {
                       </span>
                     </div>
                     <div style={{ ...barTrack }}>
-                      <div style={barFill(pct, funnelColors[i])} />
+                      <div style={barFill(pct, pipelineColors[i])} />
                     </div>
                   </div>
                 );
@@ -446,80 +467,88 @@ export default function RealEstateCommandCenter() {
             </div>
           </div>
 
-          {/* ── Marketing spend / CPL ── */}
+          {/* ── Deal Analyzer — Active ── */}
           <div style={{ ...card }}>
-            <h2 style={{ ...sectionTitle }}>Marketing Spend</h2>
-            <p style={{ ...sectionSub }}>Cost per lead by channel</p>
+            <h2 style={{ ...sectionTitle }}>Deal Analyzer — Active</h2>
+            <p style={{ ...sectionSub }}>3 deals in analysis</p>
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {CHANNELS.map((ch, i) => (
-                <div key={i}>
+              {DEALS.map((d, i) => {
+                const profitPct = (d.spread / d.arv) * 100;
+                return (
                   <div
+                    key={i}
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      fontSize: 12,
+                      border: "1px solid #E8E3DC",
+                      borderRadius: 10,
+                      padding: 14,
                     }}
                   >
-                    <span style={{ fontWeight: 500, color: "#374151" }}>{ch.name}</span>
-                    <span
-                      style={{
-                        fontWeight: 600,
-                        color: cplTextColor(ch.color),
-                        ...mono,
-                      }}
-                    >
-                      {ch.cpl === 0 ? "$0" : `$${ch.cpl}`}/lead
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                      marginTop: 4,
-                    }}
-                  >
-                    <div style={{ ...barTrack, height: 8, flex: 1 }}>
-                      <div
-                        style={barFill(
-                          (ch.leads / 48) * 100,
-                          cplBarColor(ch.color)
-                        )}
-                      />
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <p
+                        style={{
+                          margin: 0,
+                          fontSize: 14,
+                          fontWeight: 700,
+                          color: "#1a1a1a",
+                        }}
+                      >
+                        {d.address}
+                      </p>
+                      <span style={{ ...pill, ...exitBadgeStyle(d.exit) }}>{d.exit}</span>
                     </div>
-                    <span
+
+                    <div
                       style={{
-                        whiteSpace: "nowrap",
-                        fontSize: 10,
-                        color: "#9ca3af",
-                        ...mono,
+                        display: "flex",
+                        justifyContent: "space-between",
+                        fontSize: 11,
+                        color: "#6b7280",
+                        marginTop: 10,
+                        gap: 4,
+                        flexWrap: "wrap",
                       }}
                     >
-                      {ch.leads} leads &middot; {fmtUsd(ch.spend)}
-                    </span>
+                      <span>Acq: <span style={{ ...mono, color: "#1a1a1a" }}>{fmtUsd(d.acq)}</span></span>
+                      <span>ARV: <span style={{ ...mono, color: "#1a1a1a" }}>{fmtUsd(d.arv)}</span></span>
+                      <span>Rehab: <span style={{ ...mono, color: "#1a1a1a" }}>{fmtUsd(d.rehab)}</span></span>
+                    </div>
+
+                    <div style={{ ...barTrack, marginTop: 8, height: 8 }}>
+                      <div style={barFill(profitPct, "#14532d")} />
+                    </div>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        marginTop: 8,
+                      }}
+                    >
+                      <span style={{ fontSize: 11, color: "#6b7280" }}>Spread</span>
+                      <span
+                        style={{
+                          fontSize: 20,
+                          fontWeight: 700,
+                          color: "#14532d",
+                          ...mono,
+                        }}
+                      >
+                        {fmtUsd(d.spread)}
+                      </span>
+                    </div>
                   </div>
-                  <p
-                    style={{
-                      margin: "2px 0 0",
-                      fontSize: 10,
-                      fontStyle: "italic",
-                      color: "#9ca3af",
-                    }}
-                  >
-                    {ch.note}
-                  </p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
-          {/* ── Active lead contacts ── */}
+          {/* ── Cash Buyer Network ── */}
           <div style={{ ...card }}>
-            <h2 style={{ ...sectionTitle }}>Active Lead Contacts</h2>
-            <p style={{ ...sectionSub }}>5 priority leads</p>
+            <h2 style={{ ...sectionTitle }}>Cash Buyer Network</h2>
+            <p style={{ ...sectionSub }}>5 active buyers</p>
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {LEADS.map((l, i) => (
+              {BUYERS.map((b, i) => (
                 <div
                   key={i}
                   style={{
@@ -543,7 +572,7 @@ export default function RealEstateCommandCenter() {
                       flexShrink: 0,
                     }}
                   >
-                    {l.initials}
+                    {b.initials}
                   </div>
                   <div style={{ minWidth: 0, flex: 1 }}>
                     <p
@@ -557,29 +586,39 @@ export default function RealEstateCommandCenter() {
                         whiteSpace: "nowrap",
                       }}
                     >
-                      {l.name}
+                      {b.name}
                     </p>
                     <p
                       style={{
                         margin: 0,
-                        fontSize: 12,
+                        fontSize: 11,
                         color: "#6b7280",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
                       }}
                     >
-                      {l.interest}
+                      {b.market}
+                    </p>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 10,
+                        color: "#9ca3af",
+                        ...mono,
+                      }}
+                    >
+                      {b.deals} deals &middot; responds in {b.speed}
                     </p>
                   </div>
                   <span
                     style={{
                       ...pill,
-                      ...badgeStyle(l.badge),
+                      ...buyerBadgeStyle(b.badge),
                       flexShrink: 0,
                     }}
                   >
-                    {l.badge}
+                    {b.badge}
                   </span>
                 </div>
               ))}
@@ -596,10 +635,10 @@ export default function RealEstateCommandCenter() {
             opacity: 0,
           }}
         >
-          {/* ── Contract tracker ── */}
+          {/* ── Assignment Tracker ── */}
           <div style={{ ...card }}>
-            <h2 style={{ ...sectionTitle }}>Contract Tracker</h2>
-            <p style={{ ...sectionSub }}>5 active contracts</p>
+            <h2 style={{ ...sectionTitle }}>Assignment Tracker</h2>
+            <p style={{ ...sectionSub }}>5 active assignments</p>
             <div style={{ overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
                 <thead>
@@ -608,11 +647,11 @@ export default function RealEstateCommandCenter() {
                       borderBottom: "1px solid #E8E3DC",
                     }}
                   >
-                    {["Property", "Price", "Close", "Days left", "Status"].map((h) => (
+                    {["Property", "Contract", "Assignment", "Fee", "Buyer", "Status"].map((h) => (
                       <th
                         key={h}
                         style={{
-                          padding: "10px 16px",
+                          padding: "10px 12px",
                           textAlign: "left",
                           fontSize: 11,
                           fontWeight: 500,
@@ -627,51 +666,32 @@ export default function RealEstateCommandCenter() {
                   </tr>
                 </thead>
                 <tbody>
-                  {CONTRACTS.map((c, i) => (
+                  {ASSIGNMENTS.map((a, i) => (
                     <tr
                       key={i}
                       style={{
                         borderBottom:
-                          i < CONTRACTS.length - 1
+                          i < ASSIGNMENTS.length - 1
                             ? "1px solid #E8E3DC"
                             : "none",
                       }}
                     >
                       <td
                         style={{
-                          padding: "10px 16px",
+                          padding: "10px 12px",
                           fontWeight: 500,
                           color: "#1a1a1a",
+                          whiteSpace: "nowrap",
                         }}
                       >
-                        {c.property}
+                        {a.property}
                       </td>
-                      <td style={{ padding: "10px 16px", ...mono }}>
-                        {c.price}
-                      </td>
-                      <td style={{ padding: "10px 16px", color: "#6b7280" }}>
-                        {c.close}
-                      </td>
-                      <td style={{ padding: "10px 16px" }}>
-                        <span
-                          style={{
-                            ...pill,
-                            ...daysStyle(c.days),
-                            ...mono,
-                          }}
-                        >
-                          {c.days}d
-                        </span>
-                      </td>
-                      <td style={{ padding: "10px 16px" }}>
-                        <span
-                          style={{
-                            ...pill,
-                            ...statusStyle(c.status),
-                          }}
-                        >
-                          {c.status}
-                        </span>
+                      <td style={{ padding: "10px 12px", ...mono }}>{a.contract}</td>
+                      <td style={{ padding: "10px 12px", ...mono }}>{a.assignment}</td>
+                      <td style={{ padding: "10px 12px", fontWeight: 600, color: "#14532d", ...mono }}>{a.fee}</td>
+                      <td style={{ padding: "10px 12px", color: "#6b7280" }}>{a.buyer}</td>
+                      <td style={{ padding: "10px 12px" }}>
+                        <span style={{ ...pill, ...assignmentStatusStyle(a.status) }}>{a.status}</span>
                       </td>
                     </tr>
                   ))}
@@ -680,50 +700,57 @@ export default function RealEstateCommandCenter() {
             </div>
           </div>
 
-          {/* ── Conversion by lead source ── */}
+          {/* ── Skip Trace Queue ── */}
           <div style={{ ...card }}>
-            <h2 style={{ ...sectionTitle }}>Conversion by Lead Source</h2>
-            <p style={{ ...sectionSub }}>Close rate by channel</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {CONVERSION_BY_SOURCE.map((s, i) => (
-                <div key={i}>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      fontSize: 14,
-                    }}
-                  >
-                    <span style={{ fontWeight: 500, color: "#374151" }}>
-                      {s.channel}
-                    </span>
-                    <span
-                      style={{
-                        fontWeight: 700,
-                        color: s.color,
-                        ...mono,
-                      }}
-                    >
-                      {s.rate}%
-                    </span>
+            <h2 style={{ ...sectionTitle }}>Skip Trace Queue</h2>
+            <p style={{ ...sectionSub }}>4 pending contacts</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              {SKIP_TRACE.map((s, i) => (
+                <div
+                  key={i}
+                  style={{
+                    border: "1px solid #E8E3DC",
+                    borderRadius: 10,
+                    padding: 12,
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+                    <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "#1a1a1a" }}>{s.owner}</p>
+                    <span style={{ ...pill, ...skipStatusStyle(s.status) }}>{s.status}</span>
                   </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                      marginTop: 4,
-                    }}
-                  >
-                    <div style={{ ...barTrack, height: 8, flex: 1 }}>
-                      <div style={barFill((s.rate / 41) * 100, s.color)} />
+                  <p style={{ margin: 0, fontSize: 11, color: "#6b7280" }}>{s.address}</p>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
+                    <span style={{ fontSize: 12, color: "#374151", ...mono }}>{s.phone}</span>
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <button
+                        style={{
+                          borderRadius: 6,
+                          padding: "4px 10px",
+                          fontSize: 11,
+                          fontWeight: 600,
+                          color: "#14532d",
+                          background: "#dcfce7",
+                          border: "none",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Call
+                      </button>
+                      <button
+                        style={{
+                          borderRadius: 6,
+                          padding: "4px 10px",
+                          fontSize: 11,
+                          fontWeight: 600,
+                          color: "#1e40af",
+                          background: "#dbeafe",
+                          border: "none",
+                          cursor: "pointer",
+                        }}
+                      >
+                        SMS
+                      </button>
                     </div>
-                    <span
-                      style={{ fontSize: 12, color: "#9ca3af", ...mono }}
-                    >
-                      {s.leads} leads
-                    </span>
                   </div>
                 </div>
               ))}
@@ -740,208 +767,238 @@ export default function RealEstateCommandCenter() {
             opacity: 0,
           }}
         >
-          {/* ── Activity feed ── */}
+          {/* ── Marketing ROI ── */}
           <div style={{ ...card }}>
-            <h2 style={{ ...sectionTitle }}>Activity Feed</h2>
-            <p style={{ ...sectionSub }}>Today</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-              {ACTIVITY.map((a, i) => (
-                <div
-                  key={i}
-                  style={{ display: "flex", gap: 12 }}
-                >
+            <h2 style={{ ...sectionTitle }}>Marketing ROI</h2>
+            <p style={{ ...sectionSub }}>Cost per lead by channel</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              {MARKETING.map((ch, i) => (
+                <div key={i}>
                   <div
                     style={{
                       display: "flex",
-                      flexDirection: "column",
                       alignItems: "center",
+                      justifyContent: "space-between",
+                      fontSize: 12,
                     }}
                   >
-                    <div
+                    <span style={{ fontWeight: 500, color: "#374151" }}>{ch.channel}</span>
+                    <span
                       style={{
-                        marginTop: 4,
-                        width: 10,
-                        height: 10,
-                        borderRadius: "50%",
-                        background: a.dot,
-                        flexShrink: 0,
-                      }}
-                    />
-                    {i < ACTIVITY.length - 1 && (
-                      <div
-                        style={{
-                          marginTop: 4,
-                          width: 1,
-                          flex: 1,
-                          background: "#e5e7eb",
-                        }}
-                      />
-                    )}
-                  </div>
-                  <div style={{ paddingBottom: 14 }}>
-                    <p
-                      style={{
-                        margin: 0,
-                        fontSize: 12,
-                        fontWeight: 500,
-                        color: "#1a1a1a",
+                        fontWeight: 600,
+                        color: cplColor(ch.color),
+                        ...mono,
                       }}
                     >
-                      {a.text}
-                    </p>
-                    <p
+                      ${ch.cpl.toFixed(ch.cpl % 1 === 0 ? 0 : 2)}/lead
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      marginTop: 4,
+                    }}
+                  >
+                    <div style={{ ...barTrack, height: 8, flex: 1 }}>
+                      <div
+                        style={barFill(
+                          (ch.spend / 2400) * 100,
+                          cplColor(ch.color)
+                        )}
+                      />
+                    </div>
+                    <span
                       style={{
-                        margin: "2px 0 0",
+                        whiteSpace: "nowrap",
                         fontSize: 10,
                         color: "#9ca3af",
                         ...mono,
                       }}
                     >
-                      {a.time}
-                    </p>
+                      {ch.leads} leads &middot; {fmtUsd(ch.spend)}
+                    </span>
                   </div>
+                  {ch.note && (
+                    <p
+                      style={{
+                        margin: "2px 0 0",
+                        fontSize: 10,
+                        fontStyle: "italic",
+                        color: ch.color === "red" ? "#991b1b" : "#14532d",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {ch.note}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* ── Deal analyzer ── */}
+          {/* ── Buyer Scorecard ── */}
           <div style={{ ...card }}>
-            <h2 style={{ ...sectionTitle }}>Deal Analyzer</h2>
-            <p style={{ ...sectionSub }}>Active negotiations</p>
-            <div className="re-deals">
-              {DEALS.map((d, i) => {
-                const isOver = d.pctDiff > 0;
-                const barPct = isOver ? 100 : (d.offer / d.list) * 100;
+            <h2 style={{ ...sectionTitle }}>Buyer Scorecard</h2>
+            <p style={{ ...sectionSub }}>Top buyer performance</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              {SCORECARD.map((b, i) => (
+                <div key={i}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      fontSize: 14,
+                    }}
+                  >
+                    <span style={{ fontWeight: 600, color: "#1a1a1a" }}>{b.name}</span>
+                    <span style={{ fontSize: 12, color: "#9ca3af", ...mono }}>
+                      {b.sent} sent &middot; {b.accepted} accepted
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      marginTop: 6,
+                    }}
+                  >
+                    <div style={{ ...barTrack, height: 8, flex: 1 }}>
+                      <div style={barFill(b.rate, scorecardBarColor(b.rate))} />
+                    </div>
+                    <span
+                      style={{
+                        whiteSpace: "nowrap",
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: scorecardBarColor(b.rate),
+                        ...mono,
+                      }}
+                    >
+                      {b.rate}%
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      fontSize: 11,
+                      color: "#9ca3af",
+                      marginTop: 4,
+                    }}
+                  >
+                    <span>Avg fee: <span style={{ ...mono, color: "#14532d" }}>{b.avgFee}</span></span>
+                    <span>Last deal: {b.lastDeal}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ═══════════════ 7. DEAL VELOCITY TIMELINE ═══════════════ */}
+        <div
+          style={{
+            ...card,
+            marginBottom: 24,
+            animation: "fadeUp 0.5s ease-out 0.3s forwards",
+            opacity: 0,
+          }}
+        >
+          <h2 style={{ ...sectionTitle }}>Deal Velocity Timeline</h2>
+          <p style={{ ...sectionSub }}>Average days at each stage — 14-day lead to close</p>
+          <div style={{ position: "relative", padding: "20px 0 0" }}>
+            {/* Connecting line */}
+            <div
+              style={{
+                position: "absolute",
+                top: 34,
+                left: "5%",
+                right: "5%",
+                height: 3,
+                background: "#E8E3DC",
+                zIndex: 0,
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                top: 34,
+                left: "5%",
+                right: "5%",
+                height: 3,
+                background: "#14532d",
+                zIndex: 1,
+              }}
+            />
+            <div className="re-timeline-dots">
+              {TIMELINE_STAGES.map((s, i) => {
+                const daysBetween = i < TIMELINE_STAGES.length - 1
+                  ? TIMELINE_STAGES[i + 1].day - s.day
+                  : null;
                 return (
                   <div
                     key={i}
                     style={{
-                      border: "1px solid #E8E3DC",
-                      borderRadius: 10,
-                      padding: 16,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      position: "relative",
+                      zIndex: 2,
+                      flex: 1,
                     }}
                   >
+                    <div
+                      style={{
+                        width: 16,
+                        height: 16,
+                        borderRadius: "50%",
+                        background: "#14532d",
+                        border: "3px solid #fff",
+                        boxShadow: "0 0 0 2px #14532d",
+                      }}
+                    />
                     <p
                       style={{
-                        margin: 0,
-                        fontSize: 14,
-                        fontWeight: 700,
+                        margin: "8px 0 0",
+                        fontSize: 11,
+                        fontWeight: 600,
                         color: "#1a1a1a",
+                        textAlign: "center",
                       }}
                     >
-                      {d.address}
+                      {s.label}
                     </p>
                     <p
                       style={{
                         margin: "2px 0 0",
-                        fontSize: 10,
-                        color: "#9ca3af",
+                        fontSize: 11,
+                        color: "#14532d",
+                        fontWeight: 600,
+                        ...mono,
+                        textAlign: "center",
                       }}
                     >
-                      via {d.source}
+                      Day {s.day}
                     </p>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        fontSize: 12,
-                        color: "#6b7280",
-                        marginTop: 12,
-                      }}
-                    >
-                      <span>
-                        List:{" "}
-                        <span style={{ ...mono }}>{fmtUsd(d.list)}</span>
-                      </span>
-                      <span>
-                        Offer:{" "}
-                        <span
-                          style={{
-                            fontWeight: 600,
-                            color: "#1a1a1a",
-                            ...mono,
-                          }}
-                        >
-                          {fmtUsd(d.offer)}
-                        </span>
-                      </span>
-                    </div>
-
-                    <div style={{ ...barTrack, marginTop: 8 }}>
-                      <div
-                        style={barFill(
-                          barPct,
-                          isOver ? "#14532d" : "#991b1b"
-                        )}
-                      />
-                    </div>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        fontSize: 12,
-                        marginTop: 8,
-                      }}
-                    >
-                      <span
+                    {daysBetween !== null && (
+                      <p
                         style={{
-                          fontWeight: 600,
-                          color: isOver ? "#14532d" : "#991b1b",
+                          position: "absolute",
+                          top: -16,
+                          right: "-30%",
+                          fontSize: 10,
+                          color: "#9ca3af",
+                          ...mono,
+                          whiteSpace: "nowrap",
                         }}
                       >
-                        {isOver ? "+" : ""}
-                        {d.pctDiff}% {isOver ? "over" : "under"} ask
-                      </span>
-                      <span style={{ color: "#9ca3af", ...mono }}>
-                        {d.dom} DOM
-                      </span>
-                    </div>
-
-                    <div
-                      style={{
-                        marginTop: 12,
-                        borderTop: "1px solid #E8E3DC",
-                        paddingTop: 12,
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <span style={{ fontSize: 12, color: "#6b7280" }}>
-                          Net commission
-                        </span>
-                        <span
-                          style={{
-                            fontSize: 20,
-                            fontWeight: 700,
-                            color: "#14532d",
-                            ...mono,
-                          }}
-                        >
-                          {fmtUsd(d.netComm)}
-                        </span>
-                      </div>
-                      {d.marketingCost > 0 && (
-                        <p
-                          style={{
-                            margin: "2px 0 0",
-                            textAlign: "right",
-                            fontSize: 10,
-                            color: "#9ca3af",
-                            ...mono,
-                          }}
-                        >
-                          after {fmtUsd(d.marketingCost)} marketing
-                        </p>
-                      )}
-                    </div>
+                        +{daysBetween}d
+                      </p>
+                    )}
                   </div>
                 );
               })}

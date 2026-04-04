@@ -34,10 +34,10 @@ const demos = [
     accent: "#1e3a5f",
   },
   {
-    title: "Real Estate Command Center",
-    vertical: "Real Estate",
+    title: "Investor Command Center",
+    vertical: "Real Estate Investor",
     description:
-      "Lead pipeline, marketing cost per channel, contract tracking, and deal analysis for agents and brokers.",
+      "Deal pipeline, wholesale spread analysis, skip tracing, cash buyer matching, and assignment tracking for real estate investors.",
     href: "/demo/realestate",
     accent: "#14532d",
   },

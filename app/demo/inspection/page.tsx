@@ -45,6 +45,13 @@ const violations = [
   { color: "green" as const, description: "Overloaded circuit panel — resolved", client: "Whitmore & Sons", status: "Resolved", date: "Mar 25" },
 ];
 
+const photoCaptures = [
+  { id: 1, equipment: "Fire suppression panel — Bldg A", client: "Halcyon Medical", inspector: "AP", date: "Apr 3", status: "Flagged" as const, note: "Pressure gauge reading below threshold — needs servicing" },
+  { id: 2, equipment: "Emergency exit signage — East wing", client: "Crestview Living", inspector: "KM", date: "Apr 2", status: "Violation" as const, note: "Exit sign not illuminated, blocked by storage boxes" },
+  { id: 3, equipment: "Electrical panel — Main breaker", client: "Apex Fulfillment", inspector: "JR", date: "Apr 2", status: "Passed" as const, note: "All breakers labeled, no signs of overheating" },
+  { id: 4, equipment: "GFCI outlet — Kitchen area", client: "Crestview Living", inspector: "KM", date: "Apr 1", status: "Remediation" as const, note: "Missing GFCI protection — electrician scheduled Apr 8" },
+];
+
 const revenue = [
   { label: "Routine inspections", amount: "$9,300" },
   { label: "Re-inspections", amount: "$3,200" },
@@ -91,6 +98,14 @@ function violationStatusColor(color: "red" | "amber" | "green"): string {
   if (color === "red") return "#dc2626";
   if (color === "amber") return "#d97706";
   return "#16a34a";
+}
+
+function photoStatusPillStyle(s: "Flagged" | "Violation" | "Passed" | "Remediation"): React.CSSProperties {
+  const base: React.CSSProperties = { borderRadius: 100, padding: "2px 10px", fontSize: 12, fontWeight: 600, display: "inline-block" };
+  if (s === "Flagged") return { ...base, background: "#fffbeb", color: "#d97706" };
+  if (s === "Violation") return { ...base, background: "#fef2f2", color: "#dc2626" };
+  if (s === "Passed") return { ...base, background: "#f0fdf4", color: "#16a34a" };
+  return { ...base, background: "#eff6ff", color: "#2563eb" };
 }
 
 /* ── shared styles ── */
@@ -168,10 +183,12 @@ export default function InspectionDemoPage() {
   .insp-kpi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
   .insp-two { display: grid; grid-template-columns: 3fr 2fr; gap: 24px; }
   .insp-three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .insp-photo { display: grid; grid-template-columns: 3fr 2fr; gap: 24px; }
   @media (max-width: 768px) {
     .insp-kpi { grid-template-columns: repeat(2, 1fr) !important; }
     .insp-two { grid-template-columns: 1fr !important; }
     .insp-three { grid-template-columns: 1fr !important; }
+    .insp-photo { grid-template-columns: 1fr !important; }
   }
   @media (max-width: 480px) {
     .insp-kpi { grid-template-columns: 1fr !important; }
@@ -355,11 +372,143 @@ export default function InspectionDemoPage() {
           </div>
         </div>
 
+        {/* ── Photo Documentation row ── */}
+        <div className="insp-photo">
+
+          {/* Photo Documentation */}
+          <div
+            style={{
+              ...card,
+              animation: "fadeIn 0.5s ease-out 0.55s both",
+              overflow: "hidden",
+            }}
+          >
+            <div style={cardHeader}>
+              <h2 style={sectionTitle}>Photo Documentation</h2>
+            </div>
+            <div>
+              {photoCaptures.map((p, i) => (
+                <div
+                  key={p.id}
+                  style={{
+                    display: "flex",
+                    gap: 14,
+                    padding: "14px 20px",
+                    borderBottom: i < photoCaptures.length - 1 ? "1px solid #f9fafb" : "none",
+                  }}
+                >
+                  {/* Placeholder thumbnail */}
+                  <div
+                    style={{
+                      width: 60,
+                      height: 60,
+                      borderRadius: 6,
+                      background: "#f3f4f6",
+                      border: "1px solid #e5e7eb",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 22,
+                      flexShrink: 0,
+                    }}
+                  >
+                    📷
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
+                      <p style={{ fontSize: 14, fontWeight: 500, color: "#111827", margin: 0 }}>{p.equipment}</p>
+                      <span style={photoStatusPillStyle(p.status)}>{p.status}</span>
+                    </div>
+                    <p style={{ fontSize: 12, color: "#6b7280", margin: "2px 0 0 0" }}>{p.client}</p>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 6 }}>
+                      <span style={{ ...avatar, width: 22, height: 22, fontSize: 9 }}>{p.inspector}</span>
+                      <span style={{ fontSize: 12, color: "#6b7280" }}>{p.date}</span>
+                    </div>
+                    <p style={{ fontSize: 12, color: "#9ca3af", fontStyle: "italic", margin: "6px 0 0 0" }}>{p.note}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Capture Equipment Photo */}
+          <div
+            style={{
+              ...card,
+              animation: "fadeIn 0.5s ease-out 0.55s both",
+            }}
+          >
+            <div style={cardHeader}>
+              <h2 style={sectionTitle}>Capture Equipment Photo</h2>
+            </div>
+            <div style={{ padding: 20 }}>
+              {/* Camera placeholder */}
+              <div
+                style={{
+                  height: 200,
+                  borderRadius: 8,
+                  border: "2px dashed #d1d5db",
+                  background: "#f9fafb",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  cursor: "pointer",
+                }}
+              >
+                <span style={{ fontSize: 36 }}>📸</span>
+                <span style={{ fontSize: 14, color: "#6b7280" }}>Tap to capture or upload photo</span>
+              </div>
+
+              {/* Mock form fields */}
+              <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 12 }}>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 500, color: "#374151", display: "block", marginBottom: 4 }}>Equipment / Area</label>
+                  <div style={{ padding: "10px 12px", borderRadius: 6, border: "1px solid #e5e7eb", fontSize: 14, color: "#9ca3af", background: "#ffffff" }}>
+                    Select equipment type...
+                  </div>
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 500, color: "#374151", display: "block", marginBottom: 4 }}>Client / Site</label>
+                  <div style={{ padding: "10px 12px", borderRadius: 6, border: "1px solid #e5e7eb", fontSize: 14, color: "#9ca3af", background: "#ffffff" }}>
+                    Select client...
+                  </div>
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 500, color: "#374151", display: "block", marginBottom: 4 }}>Notes</label>
+                  <div style={{ padding: "10px 12px", borderRadius: 6, border: "1px solid #e5e7eb", fontSize: 14, color: "#9ca3af", background: "#ffffff", minHeight: 60 }}>
+                    Add inspection notes...
+                  </div>
+                </div>
+                <button
+                  style={{
+                    width: "100%",
+                    padding: "10px 16px",
+                    borderRadius: 6,
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: "#ffffff",
+                    backgroundColor: "#1e3a5f",
+                    border: "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  Capture &amp; Tag
+                </button>
+                <p style={{ fontSize: 11, color: "#9ca3af", textAlign: "center", margin: 0 }}>
+                  Photos are auto-tagged with GPS, timestamp, and inspector ID
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* ── Three-column: Workload + Violations + Revenue ── */}
         <div className="insp-three">
 
           {/* Inspector workload */}
-          <div style={{ ...card, animation: "fadeIn 0.5s ease-out 0.55s both" }}>
+          <div style={{ ...card, animation: "fadeIn 0.5s ease-out 0.6s both" }}>
             <div style={cardHeader}>
               <h2 style={sectionTitle}>Inspector workload today</h2>
             </div>
@@ -404,7 +553,7 @@ export default function InspectionDemoPage() {
           </div>
 
           {/* Open violations */}
-          <div style={{ ...card, animation: "fadeIn 0.5s ease-out 0.6s both" }}>
+          <div style={{ ...card, animation: "fadeIn 0.5s ease-out 0.65s both" }}>
             <div style={cardHeader}>
               <h2 style={sectionTitle}>Open violations / Remediation tracking</h2>
             </div>
@@ -443,7 +592,7 @@ export default function InspectionDemoPage() {
           </div>
 
           {/* Revenue by service type */}
-          <div style={{ ...card, animation: "fadeIn 0.5s ease-out 0.65s both" }}>
+          <div style={{ ...card, animation: "fadeIn 0.5s ease-out 0.7s both" }}>
             <div style={cardHeader}>
               <h2 style={sectionTitle}>Revenue by service type</h2>
             </div>
