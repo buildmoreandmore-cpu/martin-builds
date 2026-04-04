@@ -7,8 +7,8 @@ export const metadata: Metadata = {
 };
 
 /* ── palette tokens ── */
-const bg = "#1C1917";
-const card = "#FAFAF8";
+const bg = "#FAFAF8";
+const card = "#ffffff";
 const green = "#16a34a";
 const amber = "#d97706";
 const red = "#dc2626";
@@ -64,6 +64,7 @@ function KpiCard({
     <div
       style={{
         backgroundColor: card,
+        border: "1px solid #E8E3DC",
         borderRadius: 16,
         padding: 20,
         display: "flex",
@@ -422,7 +423,7 @@ export default function RestaurantDashboard() {
     <>
       <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
       <style>{`
-  html body { background: #1C1917 !important; background-color: #1C1917 !important; color: #FAFAF8 !important; }
+  html body { background: #FAFAF8 !important; background-color: #FAFAF8 !important; color: #1a1a1a !important; }
   body::before { display: none !important; }
   section { padding-left: unset !important; padding-right: unset !important; }
   h1, h2 { font-size: unset !important; letter-spacing: unset !important; }
@@ -452,26 +453,8 @@ export default function RestaurantDashboard() {
           fontFamily: fontBody,
         }}
       >
-        {/* grain overlay */}
         <div
           style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 0,
-            pointerEvents: "none" as const,
-            opacity: 0.04,
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
-            backgroundRepeat: "repeat",
-            backgroundSize: "180px",
-          }}
-        />
-
-        {/* content sits above grain */}
-        <div
-          style={{
-            position: "relative" as const,
-            zIndex: 10,
             maxWidth: 1200,
             margin: "0 auto",
             padding: "32px 24px 112px 24px",
@@ -561,6 +544,7 @@ export default function RestaurantDashboard() {
             <div
               style={{
                 backgroundColor: card,
+                border: "1px solid #E8E3DC",
                 borderRadius: 16,
                 padding: 24,
                 display: "flex",
@@ -618,6 +602,7 @@ export default function RestaurantDashboard() {
             <div
               style={{
                 backgroundColor: card,
+                border: "1px solid #E8E3DC",
                 borderRadius: 16,
                 padding: 24,
                 display: "flex",
@@ -654,6 +639,7 @@ export default function RestaurantDashboard() {
             <div
               style={{
                 backgroundColor: card,
+                border: "1px solid #E8E3DC",
                 borderRadius: 16,
                 padding: 24,
                 display: "flex",
@@ -717,6 +703,7 @@ export default function RestaurantDashboard() {
             <div
               style={{
                 backgroundColor: card,
+                border: "1px solid #E8E3DC",
                 borderRadius: 16,
                 padding: 24,
                 animation: "fadeUp 0.5s ease-out",
@@ -780,6 +767,7 @@ export default function RestaurantDashboard() {
             <div
               style={{
                 backgroundColor: card,
+                border: "1px solid #E8E3DC",
                 borderRadius: 16,
                 padding: 24,
                 display: "flex",
