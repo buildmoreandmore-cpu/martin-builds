@@ -5,29 +5,29 @@ import ScrollReveal from "../ScrollReveal";
 
 const faqs = [
   {
-    question: "Is this just a chatbot?",
-    answer: "No. Chatbots answer questions. AI employees do work — they send emails, book meetings, follow up on invoices, update your CRM. They take action, not just respond."
+    question: "Is this just a basic chatbot?",
+    answer: "No. Basic chatbots follow scripts. Your AI agent is trained on your actual business data and can handle conversations it's never seen before. It understands context, follows up naturally, and gets smarter over time."
   },
   {
-    question: "What tools does it integrate with?",
-    answer: "Gmail, Outlook, Google Calendar, Slack, HubSpot, Salesforce, QuickBooks, Stripe, Shopify, and more. If it has an API, we can connect it."
+    question: "What if it says something wrong?",
+    answer: "The agent is trained with guardrails — it only answers based on the information you provide. If it doesn't know something, it says so and offers to connect the customer with you directly. No hallucinations, no made-up answers."
   },
   {
-    question: "What if it makes a mistake?",
-    answer: "Your agent has guardrails. Critical actions (sending money, deleting data) always require your approval. For everything else, you get a daily summary of everything it handled."
+    question: "How does the billing work?",
+    answer: "One-time setup fee to get your agent live. After that, you only pay per conversation — no flat monthly fee. Your card on file is charged at the end of each month based on actual usage. If your agent handles 50 conversations, you pay for 50."
   },
   {
-    question: "How is this different from hiring a VA?",
-    answer: "A VA works 8 hours, needs training, takes PTO, and handles one thing at a time. Your AI agent works 24/7, learns instantly, never forgets, and costs a fraction of a hire."
+    question: "Will it match my brand?",
+    answer: "Completely. Your colors, your logo, your tone of voice. It looks and feels like part of your site, not a third-party widget. Your customers won't know it's AI — they'll just think your support is incredibly fast."
+  },
+  {
+    question: "Do I need a website from you to use this?",
+    answer: "No. The agent works on any website — WordPress, Shopify, Squarespace, custom-built, anything. It's a single script tag that drops into your existing site."
   },
   {
     question: "Can I cancel anytime?",
-    answer: "Yes. Month-to-month. No contracts. If it's not delivering value, cancel with one email."
+    answer: "Yes. Month-to-month. No contracts, no cancellation fees. If the agent isn't delivering value, you can pause or cancel with one email."
   },
-  {
-    question: "What industries do you work with?",
-    answer: "Any. We've built agents for restaurants, law firms, contractors, e-commerce, real estate, agencies, and more. If you run a business, we can build an agent for it."
-  }
 ];
 
 export default function AgentFAQ() {

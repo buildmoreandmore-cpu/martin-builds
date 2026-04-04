@@ -28,10 +28,10 @@ export const metadata: Metadata = {
 const agentFaqs = [
   { question: "Is this just a basic chatbot?", answer: "No. Basic chatbots follow scripts. Your AI agent is trained on your actual business data and can handle conversations it's never seen before. It understands context, follows up naturally, and gets smarter over time." },
   { question: "What if it says something wrong?", answer: "The agent is trained with guardrails — it only answers based on the information you provide. If it doesn't know something, it says so and offers to connect the customer with you directly. No hallucinations, no made-up answers." },
+  { question: "How does the billing work?", answer: "One-time setup fee to get your agent live. After that, you only pay per conversation — no flat monthly fee. Your card on file is charged at the end of each month based on actual usage." },
   { question: "Will it match my brand?", answer: "Completely. Your colors, your logo, your tone of voice. It looks and feels like part of your site, not a third-party widget. Your customers won't know it's AI — they'll just think your support is incredibly fast." },
-  { question: "How do I get the leads it captures?", answer: "Starter plan sends you an email notification for every lead. Pro plan integrates directly with your CRM, Google Sheets, or whatever tool you use. You'll never miss a lead again." },
-  { question: "Can I cancel anytime?", answer: "Yes. Month-to-month. No contracts, no cancellation fees. If the agent isn't delivering value, you can pause or cancel with one email. But nobody has yet." },
   { question: "Do I need a website from you to use this?", answer: "No. The agent works on any website — WordPress, Shopify, Squarespace, custom-built, anything. It's a single script tag that drops into your existing site." },
+  { question: "Can I cancel anytime?", answer: "Yes. Month-to-month. No contracts, no cancellation fees. If the agent isn't delivering value, you can pause or cancel with one email." },
 ];
 
 export default function AIAgentPage() {
