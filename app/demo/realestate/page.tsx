@@ -60,19 +60,19 @@ const CONTRACTS = [
 ];
 
 const CONVERSION_BY_SOURCE = [
-  { channel: "Referrals", leads: 27, rate: 41, color: "text-green-700" },
-  { channel: "Google Ads", leads: 31, rate: 19, color: "text-blue-700" },
-  { channel: "Zillow", leads: 42, rate: 14, color: "text-amber-700" },
-  { channel: "Facebook", leads: 48, rate: 11, color: "text-amber-700" },
+  { channel: "Referrals", leads: 27, rate: 41, color: "#14532d" },
+  { channel: "Google Ads", leads: 31, rate: 19, color: "#1e40af" },
+  { channel: "Zillow", leads: 42, rate: 14, color: "#92400e" },
+  { channel: "Facebook", leads: 48, rate: 11, color: "#92400e" },
 ];
 
 const ACTIVITY = [
-  { time: "3:42 PM", text: "142 Birchwood Dr — contract expires in 3 days, buyer unresponsive", dot: "bg-red-600" },
-  { time: "2:15 PM", text: "55 Lakeview Ct — buyer signed final addendum", dot: "bg-green-600" },
-  { time: "1:30 PM", text: "New lead: Maria Rodriguez — Buy $450k–$600k via Facebook", dot: "bg-purple-600" },
-  { time: "12:00 PM", text: "8 leads gone quiet (7+ days) — auto-flagged for follow-up", dot: "bg-amber-500" },
-  { time: "10:45 AM", text: "Google Ads monthly budget at 82% — $620 remaining", dot: "bg-blue-600" },
-  { time: "9:10 AM", text: "Referral from David Park closed — $14,250 commission", dot: "bg-green-600" },
+  { time: "3:42 PM", text: "142 Birchwood Dr — contract expires in 3 days, buyer unresponsive", dot: "#dc2626" },
+  { time: "2:15 PM", text: "55 Lakeview Ct — buyer signed final addendum", dot: "#16a34a" },
+  { time: "1:30 PM", text: "New lead: Maria Rodriguez — Buy $450k–$600k via Facebook", dot: "#9333ea" },
+  { time: "12:00 PM", text: "8 leads gone quiet (7+ days) — auto-flagged for follow-up", dot: "#f59e0b" },
+  { time: "10:45 AM", text: "Google Ads monthly budget at 82% — $620 remaining", dot: "#2563eb" },
+  { time: "9:10 AM", text: "Referral from David Park closed — $14,250 commission", dot: "#16a34a" },
 ];
 
 const DEALS = [
@@ -102,137 +102,299 @@ const DEALS = [
 
 /* ─── helpers ─── */
 
-function daysColor(d: number) {
-  if (d <= 7) return "text-red-700 bg-red-100";
-  if (d <= 21) return "text-amber-700 bg-amber-100";
-  return "text-green-700 bg-green-100";
+function daysStyle(d: number): React.CSSProperties {
+  if (d <= 7) return { color: "#991b1b", background: "#fee2e2" };
+  if (d <= 21) return { color: "#92400e", background: "#fef3c7" };
+  return { color: "#14532d", background: "#dcfce7" };
 }
 
-function statusColor(s: string) {
+function statusStyle(s: string): React.CSSProperties {
   switch (s) {
-    case "Addendum": return "text-red-700 bg-red-100";
-    case "In review": return "text-amber-700 bg-amber-100";
-    case "Signed": return "text-green-700 bg-green-100";
-    case "Inspection": return "text-blue-700 bg-blue-100";
-    default: return "text-gray-700 bg-gray-100";
+    case "Addendum": return { color: "#991b1b", background: "#fee2e2" };
+    case "In review": return { color: "#92400e", background: "#fef3c7" };
+    case "Signed": return { color: "#14532d", background: "#dcfce7" };
+    case "Inspection": return { color: "#1e40af", background: "#dbeafe" };
+    default: return { color: "#374151", background: "#f3f4f6" };
   }
 }
 
-function badgeColor(b: string) {
+function badgeStyle(b: string): React.CSSProperties {
   switch (b) {
-    case "Hot": return "text-red-700 bg-red-100";
-    case "Warm": return "text-amber-700 bg-amber-100";
-    case "Contract": return "text-green-700 bg-green-100";
-    case "Nurture": return "text-purple-700 bg-purple-100";
-    case "New": return "text-blue-700 bg-blue-100";
-    default: return "text-gray-700 bg-gray-100";
+    case "Hot": return { color: "#991b1b", background: "#fee2e2" };
+    case "Warm": return { color: "#92400e", background: "#fef3c7" };
+    case "Contract": return { color: "#14532d", background: "#dcfce7" };
+    case "Nurture": return { color: "#7e22ce", background: "#f3e8ff" };
+    case "New": return { color: "#1e40af", background: "#dbeafe" };
+    default: return { color: "#374151", background: "#f3f4f6" };
   }
 }
 
-function cplColor(c: "green" | "amber" | "red") {
-  if (c === "green") return "text-green-700";
-  if (c === "amber") return "text-amber-700";
-  return "text-red-700";
+function cplTextColor(c: "green" | "amber" | "red"): string {
+  if (c === "green") return "#14532d";
+  if (c === "amber") return "#92400e";
+  return "#991b1b";
 }
 
-const funnelColors = [
-  "bg-blue-200",
-  "bg-blue-300",
-  "bg-blue-400",
-  "bg-blue-500",
-  "bg-blue-600",
-  "bg-blue-700",
-];
-
-function fmt(n: number) {
-  return n.toLocaleString("en-US");
+function cplBarColor(c: "green" | "amber" | "red"): string {
+  if (c === "green") return "#14532d";
+  if (c === "amber") return "#92400e";
+  return "#991b1b";
 }
+
+const funnelColors = ["#bfdbfe", "#93c5fd", "#60a5fa", "#3b82f6", "#2563eb", "#1d4ed8"];
 
 function fmtUsd(n: number) {
   return "$" + n.toLocaleString("en-US");
 }
+
+/* ─── shared inline style fragments ─── */
+
+const card: React.CSSProperties = {
+  background: "#ffffff",
+  border: "1px solid #E8E3DC",
+  borderRadius: 12,
+  padding: 20,
+};
+
+const sectionTitle: React.CSSProperties = {
+  fontSize: 13,
+  fontWeight: 700,
+  textTransform: "uppercase",
+  letterSpacing: "0.05em",
+  color: "#14532d",
+  margin: 0,
+};
+
+const sectionSub: React.CSSProperties = {
+  fontSize: 12,
+  color: "#6b7280",
+  margin: "4px 0 16px",
+};
+
+const mono: React.CSSProperties = {
+  fontFamily: "var(--font-dm-mono)",
+};
+
+const pill: React.CSSProperties = {
+  borderRadius: 9999,
+  padding: "2px 8px",
+  fontSize: 10,
+  fontWeight: 600,
+  display: "inline-block",
+};
+
+const barTrack: React.CSSProperties = {
+  height: 10,
+  width: "100%",
+  borderRadius: 9999,
+  background: "#f3f4f6",
+  overflow: "hidden",
+};
+
+const barFill = (pct: number, color: string): React.CSSProperties => ({
+  height: "100%",
+  borderRadius: 9999,
+  width: `${pct}%`,
+  background: color,
+});
 
 /* ─── page ─── */
 
 export default function RealEstateCommandCenter() {
   return (
     <div
-      className={`${playfair.variable} ${dmSans.variable} ${dmMono.variable} min-h-screen`}
-      style={{ backgroundColor: "#FAFAF8", fontFamily: "var(--font-dm-sans)" }}
+      className={`${playfair.variable} ${dmSans.variable} ${dmMono.variable}`}
+      style={{ minHeight: "100vh", background: "#FAFAF8", fontFamily: "var(--font-dm-sans)" }}
     >
-      {/* ── CSS keyframes for staggered fade-up ── */}
       <style>{`
-        body { background: #FAFAF8 !important; color: #1a1a1a !important; }
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(16px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .fade-up {
-          opacity: 0;
-          animation: fadeUp 0.5s ease-out forwards;
-        }
-        .delay-1 { animation-delay: 0.05s; }
-        .delay-2 { animation-delay: 0.10s; }
-        .delay-3 { animation-delay: 0.15s; }
-        .delay-4 { animation-delay: 0.20s; }
-        .delay-5 { animation-delay: 0.25s; }
-        .delay-6 { animation-delay: 0.30s; }
-        .delay-7 { animation-delay: 0.35s; }
-        .delay-8 { animation-delay: 0.40s; }
-        .delay-9 { animation-delay: 0.45s; }
-        .delay-10 { animation-delay: 0.50s; }
-      `}</style>
+  body { background: #FAFAF8 !important; color: #1a1a1a !important; font-family: var(--font-dm-sans), sans-serif !important; }
+  body::before { display: none !important; }
+  section { padding-left: unset !important; padding-right: unset !important; }
+  h1, h2 { font-size: unset !important; letter-spacing: unset !important; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .re-kpi { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+  .re-three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .re-two-wide { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+  .re-two-narrow { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; }
+  .re-deals { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  @media (max-width: 768px) {
+    .re-kpi { grid-template-columns: repeat(2, 1fr) !important; }
+    .re-three { grid-template-columns: 1fr !important; }
+    .re-two-wide { grid-template-columns: 1fr !important; }
+    .re-two-narrow { grid-template-columns: 1fr !important; }
+    .re-deals { grid-template-columns: 1fr !important; }
+  }
+  @media (max-width: 480px) {
+    .re-kpi { grid-template-columns: 1fr !important; }
+  }
+`}</style>
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: 24 }}>
 
         {/* ═══════════════ 1. TOP BAR ═══════════════ */}
-        <div className="fade-up delay-1 mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 16,
+            marginBottom: 24,
+            animation: "fadeUp 0.5s ease-out forwards",
+          }}
+        >
           <div>
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl" style={{ color: "#14532d", fontFamily: "var(--font-playfair)" }}>
+            <h1
+              style={{
+                margin: 0,
+                fontSize: 28,
+                fontWeight: 700,
+                color: "#14532d",
+                fontFamily: "var(--font-playfair)",
+              }}
+            >
               Real Estate Command Center
             </h1>
-            <p className="mt-1 text-sm" style={{ color: "#6b7280", fontFamily: "var(--font-dm-mono)" }}>
+            <p style={{ margin: "4px 0 0", fontSize: 13, color: "#6b7280", ...mono }}>
               April 2025 &middot; 6 active deals &middot; $2.31M pipeline
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                borderRadius: 9999,
+                background: "#dcfce7",
+                padding: "4px 12px",
+                fontSize: 12,
+                fontWeight: 600,
+                color: "#14532d",
+              }}
+            >
               Lead&rarr;close 18.4%
             </span>
-            <span className="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                borderRadius: 9999,
+                background: "#fef3c7",
+                padding: "4px 12px",
+                fontSize: 12,
+                fontWeight: 600,
+                color: "#92400e",
+              }}
+            >
               Cost per lead $84
             </span>
           </div>
         </div>
 
         {/* ═══════════════ 2. ALERT BANNER ═══════════════ */}
-        <div className="fade-up delay-2 mb-6 flex flex-col gap-3 rounded-xl border border-green-300 bg-green-50 p-4 sm:flex-row sm:items-center sm:justify-between" style={{ borderColor: "#bbf7d0" }}>
-          <p className="text-sm font-medium text-green-900">
-            <span className="mr-2 inline-block h-2 w-2 rounded-full bg-green-600" />
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+            background: "#f0fdf4",
+            border: "1px solid #bbf7d0",
+            borderRadius: 12,
+            padding: "14px 20px",
+            marginBottom: 24,
+            animation: "fadeUp 0.5s ease-out 0.05s forwards",
+            opacity: 0,
+          }}
+        >
+          <p style={{ margin: 0, fontSize: 14, fontWeight: 500, color: "#14532d" }}>
+            <span
+              style={{
+                display: "inline-block",
+                width: 8,
+                height: 8,
+                borderRadius: "50%",
+                background: "#16a34a",
+                marginRight: 8,
+                verticalAlign: "middle",
+              }}
+            />
             <strong>142 Birchwood Dr</strong> — contract expires in 3 days. Buyer hasn&apos;t signed the addendum. Last contact was 6 days ago.
           </p>
-          <button className="shrink-0 rounded-lg px-4 py-2 text-sm font-semibold text-white" style={{ backgroundColor: "#14532d" }}>
+          <button
+            style={{
+              flexShrink: 0,
+              borderRadius: 8,
+              padding: "8px 16px",
+              fontSize: 13,
+              fontWeight: 600,
+              color: "#fff",
+              background: "#14532d",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
             Draft follow-up
           </button>
         </div>
 
         {/* ═══════════════ 3. KPI ROW ═══════════════ */}
-        <div className="fade-up delay-3 mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div
+          className="re-kpi"
+          style={{
+            marginBottom: 24,
+            animation: "fadeUp 0.5s ease-out 0.1s forwards",
+            opacity: 0,
+          }}
+        >
           {[
-            { label: "Leads this month", value: "148", sub: "↑22 vs last month", accent: null },
+            { label: "Leads this month", value: "148", sub: "\u21915 22 vs last month", accent: null },
             { label: "Active conversations", value: "27", sub: "8 gone quiet 7d+", accent: "amber" },
-            { label: "Lead → close rate", value: "18.4%", sub: "↑2.1% vs Q1", accent: "green" },
-            { label: "Cost per lead", value: "$84", sub: "↓$12 vs last month", accent: "green" },
+            { label: "Lead \u2192 close rate", value: "18.4%", sub: "\u21912.1% vs Q1", accent: "green" },
+            { label: "Cost per lead", value: "$84", sub: "\u2193$12 vs last month", accent: "green" },
             { label: "Commission pipeline", value: "$41,200", sub: "3 closing this month", accent: "green" },
           ].map((kpi, i) => (
-            <div
-              key={i}
-              className="rounded-xl border bg-white p-4"
-              style={{ borderColor: "#E8E3DC" }}
-            >
-              <p className="text-xs font-medium uppercase tracking-wide" style={{ color: "#6b7280" }}>{kpi.label}</p>
-              <p className="mt-1 text-2xl font-bold" style={{ fontFamily: "var(--font-dm-mono)", color: "#14532d" }}>{kpi.value}</p>
-              <p className={`mt-1 text-xs font-medium ${kpi.accent === "amber" ? "text-amber-700" : kpi.accent === "green" ? "text-green-700" : "text-gray-500"}`}>
+            <div key={i} style={{ ...card }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 11,
+                  fontWeight: 500,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                  color: "#6b7280",
+                }}
+              >
+                {kpi.label}
+              </p>
+              <p
+                style={{
+                  margin: "6px 0 0",
+                  fontSize: 28,
+                  fontWeight: 700,
+                  ...mono,
+                  color: "#14532d",
+                }}
+              >
+                {kpi.value}
+              </p>
+              <p
+                style={{
+                  margin: "4px 0 0",
+                  fontSize: 12,
+                  fontWeight: 500,
+                  color:
+                    kpi.accent === "amber"
+                      ? "#92400e"
+                      : kpi.accent === "green"
+                        ? "#14532d"
+                        : "#6b7280",
+                }}
+              >
                 {kpi.sub}
               </p>
             </div>
@@ -240,29 +402,42 @@ export default function RealEstateCommandCenter() {
         </div>
 
         {/* ═══════════════ 4. THREE-COLUMN GRID ═══════════════ */}
-        <div className="fade-up delay-4 mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-
+        <div
+          className="re-three"
+          style={{
+            marginBottom: 24,
+            animation: "fadeUp 0.5s ease-out 0.15s forwards",
+            opacity: 0,
+          }}
+        >
           {/* ── Lead pipeline / Conversion funnel ── */}
-          <div className="rounded-xl border bg-white p-5" style={{ borderColor: "#E8E3DC" }}>
-            <h2 className="mb-1 text-sm font-bold uppercase tracking-wide" style={{ color: "#14532d" }}>Lead Pipeline</h2>
-            <p className="mb-4 text-xs" style={{ color: "#6b7280" }}>Conversion funnel</p>
-            <div className="space-y-3">
+          <div style={{ ...card }}>
+            <h2 style={{ ...sectionTitle }}>Lead Pipeline</h2>
+            <p style={{ ...sectionSub }}>Conversion funnel</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {FUNNEL.map((f, i) => {
                 const pct = (f.count / 148) * 100;
                 return (
                   <div key={i}>
-                    <div className="mb-1 flex items-center justify-between text-xs">
-                      <span className="font-medium text-gray-700">{f.stage}</span>
-                      <span style={{ fontFamily: "var(--font-dm-mono)" }}>
-                        <span className="font-semibold text-gray-900">{f.count}</span>
-                        {f.conv !== null && <span className="ml-1 text-gray-400">({f.conv}%)</span>}
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        fontSize: 12,
+                        marginBottom: 4,
+                      }}
+                    >
+                      <span style={{ fontWeight: 500, color: "#374151" }}>{f.stage}</span>
+                      <span style={{ ...mono }}>
+                        <span style={{ fontWeight: 600, color: "#1a1a1a" }}>{f.count}</span>
+                        {f.conv !== null && (
+                          <span style={{ marginLeft: 4, color: "#9ca3af" }}>({f.conv}%)</span>
+                        )}
                       </span>
                     </div>
-                    <div className="h-3 w-full overflow-hidden rounded-full bg-gray-100">
-                      <div
-                        className={`h-full rounded-full ${funnelColors[i]}`}
-                        style={{ width: `${pct}%` }}
-                      />
+                    <div style={{ ...barTrack }}>
+                      <div style={barFill(pct, funnelColors[i])} />
                     </div>
                   </div>
                 );
@@ -271,56 +446,138 @@ export default function RealEstateCommandCenter() {
           </div>
 
           {/* ── Marketing spend / CPL ── */}
-          <div className="rounded-xl border bg-white p-5" style={{ borderColor: "#E8E3DC" }}>
-            <h2 className="mb-1 text-sm font-bold uppercase tracking-wide" style={{ color: "#14532d" }}>Marketing Spend</h2>
-            <p className="mb-4 text-xs" style={{ color: "#6b7280" }}>Cost per lead by channel</p>
-            <div className="space-y-4">
+          <div style={{ ...card }}>
+            <h2 style={{ ...sectionTitle }}>Marketing Spend</h2>
+            <p style={{ ...sectionSub }}>Cost per lead by channel</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               {CHANNELS.map((ch, i) => (
                 <div key={i}>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-medium text-gray-700">{ch.name}</span>
-                    <span className={`font-semibold ${cplColor(ch.color)}`} style={{ fontFamily: "var(--font-dm-mono)" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      fontSize: 12,
+                    }}
+                  >
+                    <span style={{ fontWeight: 500, color: "#374151" }}>{ch.name}</span>
+                    <span
+                      style={{
+                        fontWeight: 600,
+                        color: cplTextColor(ch.color),
+                        ...mono,
+                      }}
+                    >
                       {ch.cpl === 0 ? "$0" : `$${ch.cpl}`}/lead
                     </span>
                   </div>
-                  <div className="mt-1 flex items-center gap-2">
-                    <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      marginTop: 4,
+                    }}
+                  >
+                    <div style={{ ...barTrack, height: 8, flex: 1 }}>
                       <div
-                        className="h-full rounded-full"
-                        style={{
-                          width: `${(ch.leads / 48) * 100}%`,
-                          backgroundColor: ch.color === "green" ? "#14532d" : ch.color === "amber" ? "#92400e" : "#991b1b",
-                        }}
+                        style={barFill(
+                          (ch.leads / 48) * 100,
+                          cplBarColor(ch.color)
+                        )}
                       />
                     </div>
-                    <span className="whitespace-nowrap text-[10px] text-gray-400" style={{ fontFamily: "var(--font-dm-mono)" }}>
+                    <span
+                      style={{
+                        whiteSpace: "nowrap",
+                        fontSize: 10,
+                        color: "#9ca3af",
+                        ...mono,
+                      }}
+                    >
                       {ch.leads} leads &middot; {fmtUsd(ch.spend)}
                     </span>
                   </div>
-                  <p className="mt-0.5 text-[10px] italic text-gray-400">{ch.note}</p>
+                  <p
+                    style={{
+                      margin: "2px 0 0",
+                      fontSize: 10,
+                      fontStyle: "italic",
+                      color: "#9ca3af",
+                    }}
+                  >
+                    {ch.note}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
 
           {/* ── Active lead contacts ── */}
-          <div className="rounded-xl border bg-white p-5" style={{ borderColor: "#E8E3DC" }}>
-            <h2 className="mb-1 text-sm font-bold uppercase tracking-wide" style={{ color: "#14532d" }}>Active Lead Contacts</h2>
-            <p className="mb-4 text-xs" style={{ color: "#6b7280" }}>5 priority leads</p>
-            <div className="space-y-3">
+          <div style={{ ...card }}>
+            <h2 style={{ ...sectionTitle }}>Active Lead Contacts</h2>
+            <p style={{ ...sectionSub }}>5 priority leads</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {LEADS.map((l, i) => (
-                <div key={i} className="flex items-center gap-3">
+                <div
+                  key={i}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                  }}
+                >
                   <div
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
-                    style={{ backgroundColor: "#14532d" }}
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: "50%",
+                      background: "#14532d",
+                      color: "#fff",
+                      fontSize: 12,
+                      fontWeight: 700,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                    }}
                   >
                     {l.initials}
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-gray-900">{l.name}</p>
-                    <p className="truncate text-xs text-gray-500">{l.interest}</p>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 14,
+                        fontWeight: 600,
+                        color: "#1a1a1a",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {l.name}
+                    </p>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 12,
+                        color: "#6b7280",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {l.interest}
+                    </p>
                   </div>
-                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${badgeColor(l.badge)}`}>
+                  <span
+                    style={{
+                      ...pill,
+                      ...badgeStyle(l.badge),
+                      flexShrink: 0,
+                    }}
+                  >
                     {l.badge}
                   </span>
                 </div>
@@ -330,36 +587,88 @@ export default function RealEstateCommandCenter() {
         </div>
 
         {/* ═══════════════ 5. TWO-COLUMN (wider left) ═══════════════ */}
-        <div className="fade-up delay-6 mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-
-          {/* ── Contract tracker (2 cols wide) ── */}
-          <div className="rounded-xl border bg-white p-5 lg:col-span-2" style={{ borderColor: "#E8E3DC" }}>
-            <h2 className="mb-1 text-sm font-bold uppercase tracking-wide" style={{ color: "#14532d" }}>Contract Tracker</h2>
-            <p className="mb-4 text-xs" style={{ color: "#6b7280" }}>5 active contracts</p>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+        <div
+          className="re-two-wide"
+          style={{
+            marginBottom: 24,
+            animation: "fadeUp 0.5s ease-out 0.2s forwards",
+            opacity: 0,
+          }}
+        >
+          {/* ── Contract tracker ── */}
+          <div style={{ ...card }}>
+            <h2 style={{ ...sectionTitle }}>Contract Tracker</h2>
+            <p style={{ ...sectionSub }}>5 active contracts</p>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
                 <thead>
-                  <tr className="border-b text-xs uppercase tracking-wide text-gray-400" style={{ borderColor: "#E8E3DC" }}>
-                    <th className="pb-2 font-medium">Property</th>
-                    <th className="pb-2 font-medium">Price</th>
-                    <th className="pb-2 font-medium">Close</th>
-                    <th className="pb-2 font-medium">Days left</th>
-                    <th className="pb-2 font-medium">Status</th>
+                  <tr
+                    style={{
+                      borderBottom: "1px solid #E8E3DC",
+                    }}
+                  >
+                    {["Property", "Price", "Close", "Days left", "Status"].map((h) => (
+                      <th
+                        key={h}
+                        style={{
+                          padding: "10px 16px",
+                          textAlign: "left",
+                          fontSize: 11,
+                          fontWeight: 500,
+                          textTransform: "uppercase",
+                          letterSpacing: "0.05em",
+                          color: "#9ca3af",
+                        }}
+                      >
+                        {h}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
                   {CONTRACTS.map((c, i) => (
-                    <tr key={i} className="border-b last:border-0" style={{ borderColor: "#E8E3DC" }}>
-                      <td className="py-2.5 font-medium text-gray-900">{c.property}</td>
-                      <td className="py-2.5" style={{ fontFamily: "var(--font-dm-mono)" }}>{c.price}</td>
-                      <td className="py-2.5 text-gray-500">{c.close}</td>
-                      <td className="py-2.5">
-                        <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${daysColor(c.days)}`} style={{ fontFamily: "var(--font-dm-mono)" }}>
+                    <tr
+                      key={i}
+                      style={{
+                        borderBottom:
+                          i < CONTRACTS.length - 1
+                            ? "1px solid #E8E3DC"
+                            : "none",
+                      }}
+                    >
+                      <td
+                        style={{
+                          padding: "10px 16px",
+                          fontWeight: 500,
+                          color: "#1a1a1a",
+                        }}
+                      >
+                        {c.property}
+                      </td>
+                      <td style={{ padding: "10px 16px", ...mono }}>
+                        {c.price}
+                      </td>
+                      <td style={{ padding: "10px 16px", color: "#6b7280" }}>
+                        {c.close}
+                      </td>
+                      <td style={{ padding: "10px 16px" }}>
+                        <span
+                          style={{
+                            ...pill,
+                            ...daysStyle(c.days),
+                            ...mono,
+                          }}
+                        >
                           {c.days}d
                         </span>
                       </td>
-                      <td className="py-2.5">
-                        <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${statusColor(c.status)}`}>
+                      <td style={{ padding: "10px 16px" }}>
+                        <span
+                          style={{
+                            ...pill,
+                            ...statusStyle(c.status),
+                          }}
+                        >
                           {c.status}
                         </span>
                       </td>
@@ -371,27 +680,49 @@ export default function RealEstateCommandCenter() {
           </div>
 
           {/* ── Conversion by lead source ── */}
-          <div className="rounded-xl border bg-white p-5" style={{ borderColor: "#E8E3DC" }}>
-            <h2 className="mb-1 text-sm font-bold uppercase tracking-wide" style={{ color: "#14532d" }}>Conversion by Lead Source</h2>
-            <p className="mb-4 text-xs" style={{ color: "#6b7280" }}>Close rate by channel</p>
-            <div className="space-y-4">
+          <div style={{ ...card }}>
+            <h2 style={{ ...sectionTitle }}>Conversion by Lead Source</h2>
+            <p style={{ ...sectionSub }}>Close rate by channel</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               {CONVERSION_BY_SOURCE.map((s, i) => (
                 <div key={i}>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium text-gray-700">{s.channel}</span>
-                    <span className={`font-bold ${s.color}`} style={{ fontFamily: "var(--font-dm-mono)" }}>{s.rate}%</span>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      fontSize: 14,
+                    }}
+                  >
+                    <span style={{ fontWeight: 500, color: "#374151" }}>
+                      {s.channel}
+                    </span>
+                    <span
+                      style={{
+                        fontWeight: 700,
+                        color: s.color,
+                        ...mono,
+                      }}
+                    >
+                      {s.rate}%
+                    </span>
                   </div>
-                  <div className="mt-1 flex items-center gap-2">
-                    <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
-                      <div
-                        className="h-full rounded-full"
-                        style={{
-                          width: `${(s.rate / 41) * 100}%`,
-                          backgroundColor: s.color.includes("green") ? "#14532d" : s.color.includes("blue") ? "#1e40af" : "#92400e",
-                        }}
-                      />
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      marginTop: 4,
+                    }}
+                  >
+                    <div style={{ ...barTrack, height: 8, flex: 1 }}>
+                      <div style={barFill((s.rate / 41) * 100, s.color)} />
                     </div>
-                    <span className="text-xs text-gray-400" style={{ fontFamily: "var(--font-dm-mono)" }}>{s.leads} leads</span>
+                    <span
+                      style={{ fontSize: 12, color: "#9ca3af", ...mono }}
+                    >
+                      {s.leads} leads
+                    </span>
                   </div>
                 </div>
               ))}
@@ -400,22 +731,73 @@ export default function RealEstateCommandCenter() {
         </div>
 
         {/* ═══════════════ 6. TWO-COLUMN (narrower left) ═══════════════ */}
-        <div className="fade-up delay-8 mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-
+        <div
+          className="re-two-narrow"
+          style={{
+            marginBottom: 24,
+            animation: "fadeUp 0.5s ease-out 0.25s forwards",
+            opacity: 0,
+          }}
+        >
           {/* ── Activity feed ── */}
-          <div className="rounded-xl border bg-white p-5" style={{ borderColor: "#E8E3DC" }}>
-            <h2 className="mb-1 text-sm font-bold uppercase tracking-wide" style={{ color: "#14532d" }}>Activity Feed</h2>
-            <p className="mb-4 text-xs" style={{ color: "#6b7280" }}>Today</p>
-            <div className="space-y-3">
+          <div style={{ ...card }}>
+            <h2 style={{ ...sectionTitle }}>Activity Feed</h2>
+            <p style={{ ...sectionSub }}>Today</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
               {ACTIVITY.map((a, i) => (
-                <div key={i} className="flex gap-3">
-                  <div className="flex flex-col items-center">
-                    <div className={`mt-1 h-2.5 w-2.5 shrink-0 rounded-full ${a.dot}`} />
-                    {i < ACTIVITY.length - 1 && <div className="mt-1 w-px flex-1 bg-gray-200" />}
+                <div
+                  key={i}
+                  style={{ display: "flex", gap: 12 }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div
+                      style={{
+                        marginTop: 4,
+                        width: 10,
+                        height: 10,
+                        borderRadius: "50%",
+                        background: a.dot,
+                        flexShrink: 0,
+                      }}
+                    />
+                    {i < ACTIVITY.length - 1 && (
+                      <div
+                        style={{
+                          marginTop: 4,
+                          width: 1,
+                          flex: 1,
+                          background: "#e5e7eb",
+                        }}
+                      />
+                    )}
                   </div>
-                  <div className="pb-3">
-                    <p className="text-xs font-medium text-gray-900">{a.text}</p>
-                    <p className="mt-0.5 text-[10px] text-gray-400" style={{ fontFamily: "var(--font-dm-mono)" }}>{a.time}</p>
+                  <div style={{ paddingBottom: 14 }}>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 12,
+                        fontWeight: 500,
+                        color: "#1a1a1a",
+                      }}
+                    >
+                      {a.text}
+                    </p>
+                    <p
+                      style={{
+                        margin: "2px 0 0",
+                        fontSize: 10,
+                        color: "#9ca3af",
+                        ...mono,
+                      }}
+                    >
+                      {a.time}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -423,49 +805,138 @@ export default function RealEstateCommandCenter() {
           </div>
 
           {/* ── Deal analyzer ── */}
-          <div className="rounded-xl border bg-white p-5 lg:col-span-2" style={{ borderColor: "#E8E3DC" }}>
-            <h2 className="mb-1 text-sm font-bold uppercase tracking-wide" style={{ color: "#14532d" }}>Deal Analyzer</h2>
-            <p className="mb-4 text-xs" style={{ color: "#6b7280" }}>Active negotiations</p>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div style={{ ...card }}>
+            <h2 style={{ ...sectionTitle }}>Deal Analyzer</h2>
+            <p style={{ ...sectionSub }}>Active negotiations</p>
+            <div className="re-deals">
               {DEALS.map((d, i) => {
                 const isOver = d.pctDiff > 0;
                 const barPct = isOver ? 100 : (d.offer / d.list) * 100;
                 return (
-                  <div key={i} className="rounded-lg border p-4" style={{ borderColor: "#E8E3DC" }}>
-                    <p className="text-sm font-bold text-gray-900">{d.address}</p>
-                    <p className="mt-0.5 text-[10px] text-gray-400">via {d.source}</p>
+                  <div
+                    key={i}
+                    style={{
+                      border: "1px solid #E8E3DC",
+                      borderRadius: 10,
+                      padding: 16,
+                    }}
+                  >
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 14,
+                        fontWeight: 700,
+                        color: "#1a1a1a",
+                      }}
+                    >
+                      {d.address}
+                    </p>
+                    <p
+                      style={{
+                        margin: "2px 0 0",
+                        fontSize: 10,
+                        color: "#9ca3af",
+                      }}
+                    >
+                      via {d.source}
+                    </p>
 
-                    <div className="mt-3 flex justify-between text-xs text-gray-500">
-                      <span>List: <span style={{ fontFamily: "var(--font-dm-mono)" }}>{fmtUsd(d.list)}</span></span>
-                      <span>Offer: <span className="font-semibold text-gray-900" style={{ fontFamily: "var(--font-dm-mono)" }}>{fmtUsd(d.offer)}</span></span>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        fontSize: 12,
+                        color: "#6b7280",
+                        marginTop: 12,
+                      }}
+                    >
+                      <span>
+                        List:{" "}
+                        <span style={{ ...mono }}>{fmtUsd(d.list)}</span>
+                      </span>
+                      <span>
+                        Offer:{" "}
+                        <span
+                          style={{
+                            fontWeight: 600,
+                            color: "#1a1a1a",
+                            ...mono,
+                          }}
+                        >
+                          {fmtUsd(d.offer)}
+                        </span>
+                      </span>
                     </div>
 
-                    <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-gray-100">
+                    <div style={{ ...barTrack, marginTop: 8 }}>
                       <div
-                        className="h-full rounded-full"
-                        style={{
-                          width: `${barPct}%`,
-                          backgroundColor: isOver ? "#14532d" : "#991b1b",
-                        }}
+                        style={barFill(
+                          barPct,
+                          isOver ? "#14532d" : "#991b1b"
+                        )}
                       />
                     </div>
 
-                    <div className="mt-2 flex justify-between text-xs">
-                      <span className={`font-semibold ${isOver ? "text-green-700" : "text-red-700"}`}>
-                        {isOver ? "+" : ""}{d.pctDiff}% {isOver ? "over" : "under"} ask
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        fontSize: 12,
+                        marginTop: 8,
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontWeight: 600,
+                          color: isOver ? "#14532d" : "#991b1b",
+                        }}
+                      >
+                        {isOver ? "+" : ""}
+                        {d.pctDiff}% {isOver ? "over" : "under"} ask
                       </span>
-                      <span className="text-gray-400" style={{ fontFamily: "var(--font-dm-mono)" }}>{d.dom} DOM</span>
+                      <span style={{ color: "#9ca3af", ...mono }}>
+                        {d.dom} DOM
+                      </span>
                     </div>
 
-                    <div className="mt-3 border-t pt-3" style={{ borderColor: "#E8E3DC" }}>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-gray-500">Net commission</span>
-                        <span className="text-lg font-bold" style={{ color: "#14532d", fontFamily: "var(--font-dm-mono)" }}>
+                    <div
+                      style={{
+                        marginTop: 12,
+                        borderTop: "1px solid #E8E3DC",
+                        paddingTop: 12,
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <span style={{ fontSize: 12, color: "#6b7280" }}>
+                          Net commission
+                        </span>
+                        <span
+                          style={{
+                            fontSize: 20,
+                            fontWeight: 700,
+                            color: "#14532d",
+                            ...mono,
+                          }}
+                        >
                           {fmtUsd(d.netComm)}
                         </span>
                       </div>
                       {d.marketingCost > 0 && (
-                        <p className="mt-0.5 text-right text-[10px] text-gray-400" style={{ fontFamily: "var(--font-dm-mono)" }}>
+                        <p
+                          style={{
+                            margin: "2px 0 0",
+                            textAlign: "right",
+                            fontSize: 10,
+                            color: "#9ca3af",
+                            ...mono,
+                          }}
+                        >
                           after {fmtUsd(d.marketingCost)} marketing
                         </p>
                       )}
@@ -478,10 +949,24 @@ export default function RealEstateCommandCenter() {
         </div>
 
         {/* ── martinbuilds.ai watermark ── */}
-        <div className="fade-up delay-10 pt-4 text-center">
-          <p className="text-xs text-gray-400">
+        <div
+          style={{
+            paddingTop: 16,
+            textAlign: "center",
+            animation: "fadeUp 0.5s ease-out 0.35s forwards",
+            opacity: 0,
+          }}
+        >
+          <p style={{ margin: 0, fontSize: 12, color: "#9ca3af" }}>
             Built by{" "}
-            <a href="https://martinbuilds.ai" className="font-semibold underline" style={{ color: "#14532d" }}>
+            <a
+              href="https://martinbuilds.ai"
+              style={{
+                fontWeight: 600,
+                textDecoration: "underline",
+                color: "#14532d",
+              }}
+            >
               martinbuilds.ai
             </a>
           </p>
@@ -491,8 +976,20 @@ export default function RealEstateCommandCenter() {
       {/* ═══════════════ FIXED CTA ═══════════════ */}
       <a
         href="https://martinbuilds.ai"
-        className="fixed bottom-6 right-6 z-50 rounded-full px-5 py-3 text-sm font-semibold text-white shadow-lg transition-transform hover:scale-105"
-        style={{ backgroundColor: "#14532d" }}
+        style={{
+          position: "fixed",
+          bottom: 24,
+          right: 24,
+          zIndex: 50,
+          borderRadius: 9999,
+          padding: "12px 20px",
+          fontSize: 14,
+          fontWeight: 600,
+          color: "#fff",
+          background: "#14532d",
+          textDecoration: "none",
+          boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)",
+        }}
       >
         Book a walkthrough &rarr;
       </a>
