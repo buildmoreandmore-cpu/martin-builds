@@ -28,21 +28,21 @@ const services = [
   {
     icon: <SprintIcon />,
     title: "Website + Dashboard",
-    price: "From $5,000",
+    price: "",
     description: "Custom website with a built-in admin dashboard — scoped, built, and live in 2 weeks. Your data, your metrics, your layout. No templates. No monthly fees.",
     tags: "Phase 1 · Website · Dashboard · 2 Weeks",
   },
   {
     icon: <PlatformIcon />,
     title: "Full Platform",
-    price: "From $8,000",
+    price: "",
     description: "Everything in Phase 1, plus client portals, automated workflows, integrations, and AWS infrastructure. The full system — from first click to signed deal.",
     tags: "Phase 2 · Portals · Workflows · Integrations",
   },
   {
     icon: <RetainerIcon />,
     title: "Retainer",
-    price: "Custom pricing",
+    price: "",
     description: "Your builder on call. New features, iterations, and optimization every month. As your business grows, your systems grow with it.",
     tags: "Phase 3 · Ongoing · Growth",
   },
@@ -60,7 +60,7 @@ export default function Services() {
           <br />
           A custom dashboard.
           <br />
-          <span style={{ color: "#c8ff00" }}>One builder. One price.</span>
+          <span style={{ color: "#c8ff00" }}>One builder. Your vision.</span>
         </h2>
       </ScrollReveal>
 
@@ -179,7 +179,7 @@ function ServiceCard({
       </h3>
       <p style={{ fontSize: "0.95rem", color: "#888", lineHeight: 1.6, marginBottom: "1rem" }}>{description}</p>
       <p style={{ fontSize: "0.8rem", color: "#666", marginBottom: "1.5rem" }}>{tags}</p>
-      <div
+      {price && <div
         style={{
           paddingTop: "1.5rem",
           borderTop: "1px solid rgba(245,245,240,0.06)",
@@ -189,7 +189,7 @@ function ServiceCard({
         }}
       >
         {price}
-      </div>
+      </div>}
     </div>
   );
 }

@@ -58,9 +58,9 @@ const realEstateConfig: IndustryConfig = {
   },
 };
 
-/* ── CPG Sales ── */
+/* ── E-Commerce ── */
 const cpgConfig: IndustryConfig = {
-  label: "CPG Sales",
+  label: "E-Commerce",
   sidebar: ["Dashboard", "Leads", "Orders", "Projections", "Territories"],
   greeting: "Good morning, Dana",
   pages: {
@@ -895,7 +895,7 @@ function RealEstatePhotos() {
 }
 
 /* ══════════════════════════════════════════════
-   CPG SALES PAGES
+   E-COMMERCE PAGES
    ══════════════════════════════════════════════ */
 
 function CPGDashboard() {
