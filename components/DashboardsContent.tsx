@@ -497,6 +497,31 @@ export default function DashboardsContent({ embedded = false }: { embedded?: boo
           .industry-tabs { gap: 0.35rem !important; }
           .industry-tabs button { font-size: 0.6rem !important; padding: 0.45rem 0.9rem !important; }
           .dash-mobile-content { overflow-x: hidden !important; }
+          .dash-metric-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.5rem !important;
+          }
+          .dash-metric-card {
+            padding: 0.75rem !important;
+          }
+          .dash-metric-value {
+            font-size: 1.1rem !important;
+          }
+          .dash-table-wrap {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+          }
+          .dash-table-grid {
+            min-width: 280px;
+            font-size: 0.7rem !important;
+          }
+          .dash-table-grid > div {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+          }
+          .dash-chart-wrap {
+            padding: 0.75rem !important;
+          }
         }
       `}</style>
     </main>
@@ -1424,10 +1449,11 @@ function CPABilling() {
 
 function MetricGrid({ metrics, cols = 4 }: { metrics: { label: string; value: string; sub: string; accent?: boolean }[]; cols?: number }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(cols, metrics.length)}, 1fr)`, gap: "1rem", marginBottom: "1.25rem" }}>
+    <div className="dash-metric-grid" style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(cols, metrics.length)}, 1fr)`, gap: "1rem", marginBottom: "1.25rem" }}>
       {metrics.map((w, i) => (
         <div
           key={w.label}
+          className="dash-metric-card"
           style={{
             padding: "1.25rem",
             background: w.accent ? "rgba(200,255,0,0.04)" : "rgba(245,245,240,0.02)",
@@ -1437,7 +1463,7 @@ function MetricGrid({ metrics, cols = 4 }: { metrics: { label: string; value: st
           }}
         >
           <div style={{ fontSize: "0.65rem", color: "#666", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "0.4rem", fontFamily: "'Space Mono', monospace" }}>{w.label}</div>
-          <div style={{ fontSize: "1.5rem", fontWeight: 700, color: w.accent ? "#c8ff00" : "#f5f5f0" }}>{w.value}</div>
+          <div className="dash-metric-value" style={{ fontSize: "1.5rem", fontWeight: 700, color: w.accent ? "#c8ff00" : "#f5f5f0" }}>{w.value}</div>
           <div style={{ fontSize: "0.7rem", color: w.sub.startsWith("↑") || w.sub.startsWith("+") ? "#c8ff00" : "#666", marginTop: "0.2rem" }}>{w.sub}</div>
         </div>
       ))}
@@ -1450,7 +1476,7 @@ function ChartWidget({ title, heights = [45, 62, 38, 71, 55, 82, 68], labels = [
   useEffect(() => { const t = setTimeout(() => setMounted(true), 50); return () => clearTimeout(t); }, []);
 
   return (
-    <div style={{ background: "rgba(245,245,240,0.02)", borderRadius: "12px", border: "1px solid rgba(245,245,240,0.06)", padding: "1.25rem", marginBottom: "1rem" }}>
+    <div className="dash-chart-wrap" style={{ background: "rgba(245,245,240,0.02)", borderRadius: "12px", border: "1px solid rgba(245,245,240,0.06)", padding: "1.25rem", marginBottom: "1rem" }}>
       <div style={{ fontSize: "0.7rem", color: "#666", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "1rem", fontFamily: "'Space Mono', monospace" }}>{title}</div>
       <div style={{ display: "flex", alignItems: "flex-end", gap: "6px", height: "80px" }}>
         {heights.map((h, i) => (
@@ -1494,8 +1520,8 @@ function ActivityWidget({ items }: { items: string[] }) {
 function TableView({ headers, rows }: { headers: string[]; rows: React.ReactNode[][] }) {
   const colTemplate = headers.length === 3 ? "2fr 1fr 1fr" : headers.length === 4 ? "2fr 1.5fr 1fr 1fr" : `repeat(${headers.length}, 1fr)`;
   return (
-    <div style={{ background: "rgba(245,245,240,0.02)", borderRadius: "12px", border: "1px solid rgba(245,245,240,0.06)", overflow: "hidden" }}>
-      <div style={{ display: "grid", gridTemplateColumns: colTemplate, padding: "0.75rem 1.25rem", borderBottom: "1px solid rgba(245,245,240,0.06)" }}>
+    <div className="dash-table-wrap" style={{ background: "rgba(245,245,240,0.02)", borderRadius: "12px", border: "1px solid rgba(245,245,240,0.06)", overflow: "hidden" }}>
+      <div className="dash-table-grid" style={{ display: "grid", gridTemplateColumns: colTemplate, padding: "0.75rem 1.25rem", borderBottom: "1px solid rgba(245,245,240,0.06)" }}>
         {headers.map((h) => (
           <div key={h} style={{ fontSize: "0.6rem", color: "#555", fontFamily: "'Space Mono', monospace", letterSpacing: "1px", textTransform: "uppercase" }}>{h}</div>
         ))}
@@ -1503,6 +1529,7 @@ function TableView({ headers, rows }: { headers: string[]; rows: React.ReactNode
       {rows.map((row, i) => (
         <div
           key={i}
+          className="dash-table-grid"
           style={{
             display: "grid",
             gridTemplateColumns: colTemplate,

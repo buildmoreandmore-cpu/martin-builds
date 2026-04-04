@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, type CSSProperties, type FormEvent } from "react";
+import { useState, useEffect, useCallback, useRef, type CSSProperties, type FormEvent } from "react";
 
 /* ─── Design tokens ─── */
 const GREEN = "#c8ff00";
@@ -27,6 +27,7 @@ interface InvoiceEntry {
   stripe_url: string;
   pay_url: string | null;
   description: string | null;
+  customer_email: string | null;
   line_items: { id: string; description: string; amount: number }[];
 }
 
@@ -546,6 +547,23 @@ export default function AdminPanel() {
   const [removingItemId, setRemovingItemId] = useState<string | null>(null);
   const [voidingId, setVoidingId] = useState<string | null>(null);
 
+  // Ref for scrolling to invoice form
+  const invoiceFormRef = useRef<HTMLDivElement>(null);
+
+  const prefillClient = (name: string, email: string | null) => {
+    setClientName(name);
+    setClientEmail(email || "");
+    setProjectName("");
+    setLineItems([{ id: crypto.randomUUID(), description: "", amount: "" }]);
+    setPaymentType("full");
+    setMemo("");
+    setSelectedPreset("");
+    setPresetApplied(false);
+    setFormError("");
+    setFormSuccess("");
+    setTimeout(() => invoiceFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+  };
+
   // Check sessionStorage on mount
   useEffect(() => {
     const stored = sessionStorage.getItem("mb_admin_auth");
@@ -980,7 +998,7 @@ export default function AdminPanel() {
         {/* ─── INVOICES TAB ─── */}
         {activeTab === "invoices" && <>
         {/* ─── Invoice Generator ─── */}
-        <div style={s.section}>
+        <div ref={invoiceFormRef} style={s.section}>
           <div style={s.sectionTitle}>Invoice Generator</div>
           <form onSubmit={handleSubmit}>
             {/* Service Preset Selector */}
@@ -1568,6 +1586,26 @@ export default function AdminPanel() {
                       {resendingId === inv.id ? "Sending..." : "Resend"}
                     </button>
                   ))}
+
+                {/* New Invoice for paid-in-full clients */}
+                {p.status === "paid_full" && (
+                  <button
+                    onClick={() => prefillClient(p.client_name, p.invoices[0]?.customer_email ?? null)}
+                    style={{
+                      padding: "6px 12px",
+                      background: GREEN,
+                      color: BG,
+                      border: "none",
+                      borderRadius: 4,
+                      fontSize: 11,
+                      fontWeight: 700,
+                      cursor: "pointer",
+                      fontFamily: "inherit",
+                    }}
+                  >
+                    + New Invoice
+                  </button>
+                )}
 
                 {/* Stripe link — single link for the project */}
                 <a

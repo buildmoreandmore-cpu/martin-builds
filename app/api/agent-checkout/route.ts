@@ -17,11 +17,11 @@ const TIERS: Record<string, { setup: string; usage: string }> = {
   },
   professional: {
     setup: "price_1TIKh6H8PIRJCA4GUZD9Ovq5",   // $99 one-time
-    usage: "price_1TILDTH8PIRJCA4GPa9Vqelv",   // $0.12/convo metered (meter-backed)
+    usage: "price_1TILaXH8PIRJCA4GY24VoZ66",   // $0.12/convo metered (meter-backed, Professional product)
   },
   enterprise: {
     setup: "price_1TIKh7H8PIRJCA4GfAFJWNqt",   // $149 one-time
-    usage: "price_1TILDTH8PIRJCA4Go2Akhsr6",   // $0.35/convo metered (meter-backed)
+    usage: "price_1TILacH8PIRJCA4GJzdiO74K",   // $0.35/convo metered (meter-backed, Enterprise product)
   },
 };
 
