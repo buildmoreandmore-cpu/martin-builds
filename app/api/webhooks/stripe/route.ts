@@ -15,13 +15,25 @@ export async function POST(req: NextRequest) {
   const sig = req.headers.get("stripe-signature") || "";
 
   const stripe = getStripe();
-  const WEBHOOK_SECRET = process.env.STRIPE_AGENT_WEBHOOK_SECRET || process.env.STRIPE_WEBHOOK_SECRET || "";
 
-  let event: Stripe.Event;
-  try {
-    event = stripe.webhooks.constructEvent(body, sig, WEBHOOK_SECRET);
-  } catch (err) {
-    console.error("[Stripe Webhook] Signature verification failed:", err);
+  // Try both webhook secrets — main webhook + automate-signups destination
+  const secrets = [
+    process.env.STRIPE_WEBHOOK_SECRET,
+    process.env.STRIPE_AGENT_WEBHOOK_SECRET,
+  ].filter(Boolean) as string[];
+
+  let event: Stripe.Event | null = null;
+  for (const secret of secrets) {
+    try {
+      event = stripe.webhooks.constructEvent(body, sig, secret);
+      break;
+    } catch {
+      // Try next secret
+    }
+  }
+
+  if (!event) {
+    console.error("[Stripe Webhook] Signature verification failed with all secrets");
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 

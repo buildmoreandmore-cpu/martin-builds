@@ -451,6 +451,47 @@ const SERVICE_PRESETS: ServicePreset[] = [
 
 const PRESET_CATEGORIES = [...new Set(SERVICE_PRESETS.map((p) => p.category))];
 
+/* ─── Automation Types ─── */
+interface AutoClient {
+  id: string;
+  stripe_customer_id: string;
+  subscription_id: string;
+  subscription_item_id: string;
+  plan: string;
+  customer_email: string;
+  client_name: string;
+  business_name: string;
+  model: string;
+  per_convo_cents: number;
+  status: string;
+  conversations_this_month: number;
+  last_conversation_at: string | null;
+  setup_paid_at: string | null;
+  current_usage: number;
+  current_bill: number;
+  created_at: string;
+}
+
+interface AutoSummary {
+  total: number;
+  active: number;
+  paused: number;
+  canceled: number;
+  monthly_revenue: number;
+}
+
+const PLAN_COLORS: Record<string, string> = {
+  essential: "#c8ff00",
+  professional: "#64b4ff",
+  enterprise: "#b482ff",
+};
+
+const PLAN_MODELS: Record<string, string> = {
+  essential: "MiniMax-Text-01",
+  professional: "Claude Haiku 4.5",
+  enterprise: "Claude Sonnet 4.6",
+};
+
 /* ─── Component ─── */
 export default function AdminPanel() {
   const [authed, setAuthed] = useState(false);
@@ -458,6 +499,15 @@ export default function AdminPanel() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
+
+  // Tab
+  const [activeTab, setActiveTab] = useState<"invoices" | "automate">("invoices");
+
+  // Automation
+  const [autoClients, setAutoClients] = useState<AutoClient[]>([]);
+  const [autoSummary, setAutoSummary] = useState<AutoSummary | null>(null);
+  const [autoLoading, setAutoLoading] = useState(false);
+  const [autoActionId, setAutoActionId] = useState<string | null>(null);
 
   // Form state
   const [clientName, setClientName] = useState("");
@@ -515,9 +565,40 @@ export default function AdminPanel() {
     setProjectsLoading(false);
   }, []);
 
+  const fetchAutomation = useCallback(async () => {
+    setAutoLoading(true);
+    try {
+      const res = await fetch("/api/admin/automation");
+      const data = await res.json();
+      if (data.clients) setAutoClients(data.clients);
+      if (data.summary) setAutoSummary(data.summary);
+    } catch { /* silent */ }
+    setAutoLoading(false);
+  }, []);
+
+  async function handleAutoAction(clientId: string, action: string, tier?: string) {
+    setAutoActionId(clientId);
+    try {
+      const res = await fetch("/api/admin/automation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action, client_id: clientId, tier }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      fetchAutomation();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Action failed");
+    }
+    setAutoActionId(null);
+  }
+
   useEffect(() => {
-    if (authed) fetchProjects();
-  }, [authed, fetchProjects]);
+    if (authed) {
+      fetchProjects();
+      fetchAutomation();
+    }
+  }, [authed, fetchProjects, fetchAutomation]);
 
   /* ─── Login ─── */
   async function handleLogin(e: FormEvent) {
@@ -870,7 +951,34 @@ export default function AdminPanel() {
         </button>
       </div>
 
+      {/* Tab Navigation */}
+      <div style={{ display: "flex", borderBottom: `1px solid ${BORDER}`, padding: "0 clamp(12px, 4vw, 24px)" }}>
+        {(["invoices", "automate"] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => setActiveTab(t)}
+            style={{
+              padding: "12px 20px",
+              background: "transparent",
+              border: "none",
+              borderBottom: activeTab === t ? `2px solid ${GREEN}` : "2px solid transparent",
+              color: activeTab === t ? GREEN : DIM,
+              fontWeight: 600,
+              fontSize: 13,
+              cursor: "pointer",
+              fontFamily: "'Outfit', sans-serif",
+              textTransform: "capitalize",
+              letterSpacing: 0.5,
+            }}
+          >
+            {t === "invoices" ? "Invoices" : "Automate"}
+          </button>
+        ))}
+      </div>
+
       <div style={s.content}>
+        {/* ─── INVOICES TAB ─── */}
+        {activeTab === "invoices" && <>
         {/* ─── Invoice Generator ─── */}
         <div style={s.section}>
           <div style={s.sectionTitle}>Invoice Generator</div>
@@ -1480,6 +1588,143 @@ export default function AdminPanel() {
             );
           })}
         </div>
+        </>}
+
+        {/* ─── AUTOMATE TAB ─── */}
+        {activeTab === "automate" && (
+          <>
+            {/* Summary Cards */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 12, marginBottom: 24 }}>
+              {[
+                { label: "Total", value: autoSummary?.total ?? 0, color: TEXT },
+                { label: "Active", value: autoSummary?.active ?? 0, color: GREEN },
+                { label: "Paused", value: autoSummary?.paused ?? 0, color: "#ffcc00" },
+                { label: "Canceled", value: autoSummary?.canceled ?? 0, color: "#ff4444" },
+                { label: "Monthly Rev", value: `$${(autoSummary?.monthly_revenue ?? 0).toFixed(2)}`, color: GREEN },
+              ].map((c) => (
+                <div key={c.label} style={{ background: CARD_BG, border: `1px solid ${BORDER}`, borderRadius: 6, padding: 14, textAlign: "center" }}>
+                  <div style={{ fontSize: 10, color: DIM, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4, fontFamily: "'Space Mono', monospace" }}>{c.label}</div>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: c.color, fontFamily: "'Space Mono', monospace" }}>{c.value}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Client List */}
+            <div style={s.section}>
+              <div style={{ ...s.sectionTitle, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span>Automation Clients</span>
+                <button onClick={fetchAutomation} disabled={autoLoading} style={{ ...s.logoutBtn, fontSize: 11, color: GREEN, borderColor: GREEN }}>
+                  {autoLoading ? "Loading..." : "Refresh"}
+                </button>
+              </div>
+
+              {autoLoading && !autoClients.length && <div style={s.emptyState}>Loading...</div>}
+              {!autoLoading && !autoClients.length && <div style={s.emptyState}>No automation clients yet.</div>}
+
+              {autoClients.map((ac) => {
+                const planColor = PLAN_COLORS[ac.plan] || GREEN;
+                const busy = autoActionId === ac.id;
+                return (
+                  <div key={ac.id} style={{ ...s.card, borderLeft: `3px solid ${planColor}` }}>
+                    <div style={s.cardHeader}>
+                      <div>
+                        <p style={s.cardTitle}>{ac.client_name || ac.customer_email}</p>
+                        <p style={s.cardClient}>
+                          {ac.customer_email}
+                          {ac.business_name && <span style={{ marginLeft: 8, color: DIM }}>&bull; {ac.business_name}</span>}
+                        </p>
+                      </div>
+                      <span style={{
+                        ...s.badge,
+                        background: ac.status === "active" ? "#002200" : ac.status === "paused" ? "#332b00" : "#1a0000",
+                        color: ac.status === "active" ? GREEN : ac.status === "paused" ? "#ffcc00" : "#ff4444",
+                      }}>
+                        {ac.status}
+                      </span>
+                    </div>
+
+                    {/* Tier / Model / Rate */}
+                    <div style={{ display: "flex", gap: 16, flexWrap: "wrap", margin: "8px 0" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <span style={{ fontSize: 10, color: DIM, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'Space Mono', monospace" }}>Tier</span>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: planColor, textTransform: "capitalize" }}>{ac.plan}</span>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <span style={{ fontSize: 10, color: DIM, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'Space Mono', monospace" }}>Model</span>
+                        <span style={{ fontSize: 12, color: TEXT }}>{ac.model || PLAN_MODELS[ac.plan] || "—"}</span>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <span style={{ fontSize: 10, color: DIM, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'Space Mono', monospace" }}>Rate</span>
+                        <span style={{ fontSize: 12, color: TEXT, fontFamily: "'Space Mono', monospace" }}>${(ac.per_convo_cents / 100).toFixed(2)}/convo</span>
+                      </div>
+                    </div>
+
+                    {/* Usage Stats */}
+                    <div style={{ background: "#111", borderRadius: 4, border: `1px solid ${BORDER}`, padding: 12, margin: "8px 0" }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, textAlign: "center" }}>
+                        <div>
+                          <div style={{ fontSize: 9, color: DIM, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Conversations</div>
+                          <div style={{ fontSize: 18, fontWeight: 700, color: planColor, fontFamily: "'Space Mono', monospace" }}>{ac.current_usage || 0}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 9, color: DIM, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Current Bill</div>
+                          <div style={{ fontSize: 18, fontWeight: 700, color: TEXT, fontFamily: "'Space Mono', monospace" }}>${ac.current_bill.toFixed(2)}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 9, color: DIM, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Last Active</div>
+                          <div style={{ fontSize: 12, color: DIM }}>
+                            {ac.last_conversation_at ? new Date(ac.last_conversation_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "—"}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={s.cardMeta}>
+                      <span>Joined: {new Date(ac.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                    </div>
+
+                    {/* Actions */}
+                    <div style={{ marginTop: 12, paddingTop: 10, borderTop: `1px solid ${BORDER}`, display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+                      {ac.status === "active" && (
+                        <button onClick={() => handleAutoAction(ac.id, "pause")} disabled={busy}
+                          style={{ padding: "5px 12px", background: "transparent", border: "1px solid #ffcc00", color: "#ffcc00", borderRadius: 3, fontSize: 11, cursor: busy ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: busy ? 0.5 : 1 }}>
+                          Pause
+                        </button>
+                      )}
+                      {ac.status === "paused" && (
+                        <button onClick={() => handleAutoAction(ac.id, "resume")} disabled={busy}
+                          style={{ padding: "5px 12px", background: GREEN, color: BG, border: "none", borderRadius: 3, fontSize: 11, fontWeight: 700, cursor: busy ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: busy ? 0.5 : 1 }}>
+                          Resume
+                        </button>
+                      )}
+                      {ac.status !== "canceled" && (
+                        <>
+                          <select value="" onChange={(e) => { if (e.target.value && e.target.value !== ac.plan) handleAutoAction(ac.id, "change_tier", e.target.value); }}
+                            style={{ padding: "5px 8px", background: CARD_BG, border: `1px solid ${BORDER}`, color: DIM, borderRadius: 3, fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}>
+                            <option value="">Change Tier</option>
+                            {["essential", "professional", "enterprise"].filter((t) => t !== ac.plan).map((t) => (
+                              <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
+                            ))}
+                          </select>
+                          <button onClick={() => { if (confirm(`Cancel ${ac.client_name || ac.customer_email}?`)) handleAutoAction(ac.id, "cancel"); }} disabled={busy}
+                            style={{ padding: "5px 12px", background: "transparent", border: "1px solid #ff4444", color: "#ff4444", borderRadius: 3, fontSize: 11, cursor: busy ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: busy ? 0.5 : 1 }}>
+                            Cancel
+                          </button>
+                        </>
+                      )}
+                      {ac.stripe_customer_id && (
+                        <a href={`https://dashboard.stripe.com/customers/${ac.stripe_customer_id}`} target="_blank" rel="noopener noreferrer"
+                          style={{ fontSize: 11, color: DIM, textDecoration: "none", marginLeft: "auto" }}>
+                          Stripe &rarr;
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
