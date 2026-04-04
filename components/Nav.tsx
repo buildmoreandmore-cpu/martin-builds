@@ -46,6 +46,7 @@ export default function Nav() {
         {/* Desktop links */}
         <div className="nav-desktop" style={{ display: "flex", gap: "2.5rem", alignItems: "center" }}>
           <NavLink href="/#services">Services</NavLink>
+          <NavLink href="/demo">Demos</NavLink>
           <NavLink href="/utility">Utility</NavLink>
           <NavLink href="/contact">Contact</NavLink>
           <a
@@ -95,6 +96,7 @@ export default function Nav() {
       >
         {[
           { href: "/#services", label: "Services" },
+          { href: "/demo", label: "Demos" },
           { href: "/utility", label: "Utility" },
           { href: "/contact", label: "Contact" },
         ].map((link) => (
