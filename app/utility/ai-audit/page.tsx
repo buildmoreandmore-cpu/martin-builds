@@ -77,7 +77,7 @@ export default function AIGapAudit() {
 
   // --- Score Calculation ---
   const calcScore = useCallback(() => {
-    let score = 30;
+    let score = 15;
     // Q2 tools (index 2)
     const tools = (answers[2] as string[]) || [];
     const realTools = tools.filter(
@@ -105,9 +105,9 @@ export default function AIGapAudit() {
   }, [answers]);
 
   const getTier = (score: number) => {
-    if (score < 40) return "Early stage — significant opportunity";
-    if (score < 60) return "Developing — you're leaving money on the table";
-    if (score < 80) return "Progressing — a few key gaps to close";
+    if (score < 30) return "Early stage — significant opportunity";
+    if (score < 50) return "Developing — you're leaving money on the table";
+    if (score < 70) return "Progressing — a few key gaps to close";
     return "Advanced — ready to scale with AI";
   };
 
@@ -131,9 +131,10 @@ export default function AIGapAudit() {
   };
 
   // --- Build Recommendation ---
-  const buildMap: Record<string, { name: string; bullets: string[] }> = {
+  const buildMap: Record<string, { name: string; outcome: string; bullets: string[] }> = {
     "Home Services": {
       name: "Field Service Command Center",
+      outcome: "Most home service operators lose 8+ hours a week to scheduling chaos and missed follow-ups. This eliminates both.",
       bullets: [
         "Automated job scheduling + route-optimized dispatch",
         "AI-powered invoice generation + payment follow-up",
@@ -143,6 +144,7 @@ export default function AIGapAudit() {
     },
     "Staffing Agency": {
       name: "Coverage & Placement Portal",
+      outcome: "Manual shift coverage and candidate tracking costs staffing operators more time than any other single task. This replaces both with one system.",
       bullets: [
         "AI-matched candidate-to-job placement engine",
         "Automated shift coverage + no-show backfill",
@@ -152,6 +154,7 @@ export default function AIGapAudit() {
     },
     "Real Estate": {
       name: "Lead & Deal Command Center",
+      outcome: "Most real estate operators have no single view of their pipeline, deals, and marketing spend. This gives you that view in real time.",
       bullets: [
         "AI lead scoring + automated nurture sequences",
         "Deal pipeline with smart follow-up reminders",
@@ -161,6 +164,7 @@ export default function AIGapAudit() {
     },
     "Restaurant": {
       name: "Restaurant Owner Dashboard",
+      outcome: "Food cost and customer retention are the two levers most restaurant owners manage manually every week. This automates both.",
       bullets: [
         "Automated inventory tracking + reorder alerts",
         "Staff scheduling with labor cost optimization",
@@ -170,6 +174,7 @@ export default function AIGapAudit() {
     },
     "Inspection / Compliance": {
       name: "Compliance Operations Portal",
+      outcome: "Certificate expiries and renewal follow-ups are the most common source of lost revenue in compliance businesses. This tracks and automates both.",
       bullets: [
         "AI-powered inspection report generation from photos",
         "Automated compliance checklist + violation tracking",
@@ -179,6 +184,7 @@ export default function AIGapAudit() {
     },
     "Other Service Business": {
       name: "Custom Business Command Center",
+      outcome: "Most service businesses run across 4\u20136 disconnected tools with no single source of truth. This gives you one.",
       bullets: [
         "Automated client onboarding + intake workflows",
         "AI-powered task management + priority engine",
@@ -380,6 +386,23 @@ export default function AIGapAudit() {
     const tier = getTier(score);
     const gaps = getTopGaps();
     const build = getBuild();
+    const bizTypeLabels: Record<string, string> = {
+      "Home Services": "Home Services",
+      "Staffing Agency": "Staffing",
+      "Real Estate": "Real Estate",
+      "Restaurant": "Restaurant",
+      "Inspection / Compliance": "Inspection & Compliance",
+      "Other Service Business": "Service Business",
+    };
+    const bizLabel = bizTypeLabels[(answers[0] as string)] || "Service Business";
+    const fearResponses: Record<string, string> = {
+      "Cost": "Fixed price, locked before we start. No invoices that surprise you.",
+      "It won't actually work": "Every build ships with a full walkthrough. If it doesn\u2019t work for your team, we fix it.",
+      "Takes too long": "14 days. Locked timeline before we touch a line of code.",
+      "I don't know where to start": "That\u2019s what the discovery call is for. 30 minutes and you\u2019ll have a clear picture.",
+      "My team won't use it": "We build around how your team already works. Adoption is designed in, not hoped for.",
+    };
+    const fearResponse = fearResponses[(answers[6] as string)] || "";
     const price = getPrice();
     const totalHrs = getTotalHours();
     const weeklyValue = totalHrs * 75;
@@ -414,7 +437,7 @@ export default function AIGapAudit() {
                   marginBottom: "1.5rem",
                 }}
               >
-                Your AI Readiness Score
+                Your {bizLabel} AI Readiness Score
               </p>
               <div style={{ display: "flex", justifyContent: "center", marginBottom: "1.25rem" }}>
                 <ScoreRing score={score} />
@@ -501,90 +524,8 @@ export default function AIGapAudit() {
               </div>
             )}
 
-            {/* SECTION C: What We'd Build */}
+            {/* SECTION C: ROI Snapshot */}
             <div style={{ ...sectionStyle(2), marginBottom: "3rem" }}>
-              <h2
-                style={{
-                  fontFamily: "'Outfit', sans-serif",
-                  fontSize: "1.5rem",
-                  fontWeight: 700,
-                  color: "#f5f5f0",
-                  marginBottom: "1.25rem",
-                }}
-              >
-                What We&apos;d Build For You
-              </h2>
-              <div
-                style={{
-                  background: "#1a1a1a",
-                  border: "1px solid #2a2a2a",
-                  borderRadius: "12px",
-                  padding: "1.75rem",
-                }}
-              >
-                <p
-                  style={{
-                    color: "#C8F135",
-                    fontWeight: 700,
-                    fontSize: "1.15rem",
-                    marginBottom: "1rem",
-                    fontFamily: "'Outfit', sans-serif",
-                  }}
-                >
-                  {build.name}
-                </p>
-                <ul style={{ listStyle: "none", padding: 0, marginBottom: "1.25rem" }}>
-                  {build.bullets.map((b, i) => (
-                    <li
-                      key={i}
-                      style={{
-                        color: "#f5f5f0",
-                        fontSize: "0.9rem",
-                        padding: "0.4rem 0",
-                        paddingLeft: "1.25rem",
-                        position: "relative",
-                      }}
-                    >
-                      <span
-                        style={{
-                          position: "absolute",
-                          left: 0,
-                          color: "#C8F135",
-                        }}
-                      >
-                        +
-                      </span>
-                      {b}
-                    </li>
-                  ))}
-                </ul>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "2rem",
-                    borderTop: "1px solid #2a2a2a",
-                    paddingTop: "1rem",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <div>
-                    <p style={{ color: "#888", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "1px" }}>
-                      Timeline
-                    </p>
-                    <p style={{ color: "#f5f5f0", fontWeight: 600, fontSize: "1rem" }}>14 days</p>
-                  </div>
-                  <div>
-                    <p style={{ color: "#888", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "1px" }}>
-                      Starting at
-                    </p>
-                    <p style={{ color: "#C8F135", fontWeight: 700, fontSize: "1rem" }}>{price}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* SECTION D: ROI Snapshot */}
-            <div style={{ ...sectionStyle(3), marginBottom: "3rem" }}>
               <h2
                 style={{
                   fontFamily: "'Outfit', sans-serif",
@@ -637,6 +578,98 @@ export default function AIGapAudit() {
               </div>
             </div>
 
+            {/* SECTION D: What We'd Build */}
+            <div style={{ ...sectionStyle(3), marginBottom: "3rem" }}>
+              <h2
+                style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: "1.5rem",
+                  fontWeight: 700,
+                  color: "#f5f5f0",
+                  marginBottom: "1.25rem",
+                }}
+              >
+                What We&apos;d Build For You
+              </h2>
+              <div
+                style={{
+                  background: "#1a1a1a",
+                  border: "1px solid #2a2a2a",
+                  borderRadius: "12px",
+                  padding: "1.75rem",
+                }}
+              >
+                <p
+                  style={{
+                    color: "#C8F135",
+                    fontWeight: 700,
+                    fontSize: "1.15rem",
+                    marginBottom: "0.5rem",
+                    fontFamily: "'Outfit', sans-serif",
+                  }}
+                >
+                  {build.name}
+                </p>
+                <p
+                  style={{
+                    color: "#f5f5f0",
+                    fontSize: "0.9rem",
+                    marginBottom: "1rem",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {build.outcome}
+                </p>
+                <ul style={{ listStyle: "none", padding: 0, marginBottom: "1.25rem" }}>
+                  {build.bullets.map((b, i) => (
+                    <li
+                      key={i}
+                      style={{
+                        color: "#f5f5f0",
+                        fontSize: "0.9rem",
+                        padding: "0.4rem 0",
+                        paddingLeft: "1.25rem",
+                        position: "relative",
+                      }}
+                    >
+                      <span
+                        style={{
+                          position: "absolute",
+                          left: 0,
+                          color: "#C8F135",
+                        }}
+                      >
+                        +
+                      </span>
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "2rem",
+                    borderTop: "1px solid #2a2a2a",
+                    paddingTop: "1rem",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <div>
+                    <p style={{ color: "#888", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "1px" }}>
+                      Timeline
+                    </p>
+                    <p style={{ color: "#f5f5f0", fontWeight: 600, fontSize: "1rem" }}>14 days</p>
+                  </div>
+                  <div>
+                    <p style={{ color: "#888", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "1px" }}>
+                      Starting at
+                    </p>
+                    <p style={{ color: "#C8F135", fontWeight: 700, fontSize: "1rem" }}>{price}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* SECTION E: CTA */}
             <div style={{ ...sectionStyle(4), marginBottom: "3rem" }}>
               <div
@@ -659,9 +692,14 @@ export default function AIGapAudit() {
                 >
                   Ready to close these gaps?
                 </h2>
-                <p style={{ color: "#888", fontSize: "0.95rem", marginBottom: "2rem", maxWidth: "480px", margin: "0 auto 2rem" }}>
+                <p style={{ color: "#888", fontSize: "0.95rem", marginBottom: "1rem", maxWidth: "480px", margin: "0 auto 1rem" }}>
                   Book a free 15-minute call and we&apos;ll walk through your report together.
                 </p>
+                {fearResponse && (
+                  <p style={{ color: "#888", fontSize: "0.85rem", fontStyle: "italic", marginBottom: "2rem", maxWidth: "480px", margin: "0 auto 2rem" }}>
+                    {fearResponse}
+                  </p>
+                )}
                 <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
                   <a
                     href="/contact"
