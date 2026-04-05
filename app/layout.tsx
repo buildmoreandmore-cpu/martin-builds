@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { LocalBusinessJsonLd } from "@/components/JsonLd";
 
-const title = "martin.builds — AI Tools for Small Business";
+const title = "martin.builds — Custom Websites & Dashboards in 14 Days";
 const description =
-  "I build AI-powered tools, websites, and products for small businesses. Custom builds shipped in 2 weeks. Based in Atlanta, GA.";
+  "Most businesses are one system away from running like a real company. I build that system in 14 days. Custom website + admin dashboard. Based in Atlanta, GA.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://martinbuilds.ai"),
@@ -25,24 +25,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     title,
-    description: "Custom AI tools, websites, and products shipped in 2 weeks. Built by Francis Martin in Atlanta.",
+    description: "Custom websites and admin dashboards built in 14 days. One builder. Owned forever. Based in Atlanta.",
     url: "https://martinbuilds.ai",
     siteName: "martin.builds",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "martin.builds — AI Tools & Products for Small Businesses",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     creator: "@martinbuilds",
     title,
     description,
-    images: ["/og-image.png"],
   },
   alternates: {
     canonical: "https://martinbuilds.ai",
