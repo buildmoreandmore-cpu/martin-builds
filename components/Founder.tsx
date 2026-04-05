@@ -37,9 +37,9 @@ export default function Founder() {
               marginBottom: "1.5rem",
             }}
           >
-            I&apos;m Francis Martin — a self-taught builder based in Atlanta. I
-            run martin.builds as a solo studio. No account managers. No offshore
-            team. No handoffs.
+            I&apos;m a self-taught builder based in Atlanta. I run martin.builds
+            as a solo studio. No account managers. No offshore team. No
+            handoffs.
           </p>
         </ScrollReveal>
 
