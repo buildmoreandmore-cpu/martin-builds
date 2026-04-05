@@ -41,6 +41,14 @@ const demos = [
     href: "/demo/realestate",
     accent: "#14532d",
   },
+  {
+    title: "Ecommerce Profit Dashboard",
+    vertical: "DTC / Ecommerce",
+    description:
+      "True profit tracking, ad channel ROAS, CAC analysis, and ad set watchlist for DTC and dropshipping brands.",
+    href: "/demo/ecommerce",
+    accent: "#7c3aed",
+  },
 ];
 
 export default function DemoIndex() {
