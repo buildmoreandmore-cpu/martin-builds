@@ -121,11 +121,12 @@ export async function GET() {
     const projects = Object.values(projectMap).sort((a, b) => {
       const order: Record<string, number> = {
         overdue: 0,
-        deposit_pending: 1,
-        awaiting_payment: 2,
-        final_sent: 3,
-        deposit_paid: 4,
-        paid_full: 5,
+        draft_saved: 1,
+        deposit_pending: 2,
+        awaiting_payment: 3,
+        final_sent: 4,
+        deposit_paid: 5,
+        paid_full: 6,
       };
       return (order[a.status] ?? 9) - (order[b.status] ?? 9);
     });
@@ -205,6 +206,8 @@ export async function POST(req: NextRequest) {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://martinbuilds.ai";
 
     if (payment_type === "full") {
+      const { send_later } = body;
+
       // Create payment intent for on-site payment
       const paymentIntent = await stripe.paymentIntents.create({
         amount: totalCents,
@@ -243,6 +246,16 @@ export async function POST(req: NextRequest) {
           description: li.description,
           amount: Math.round(li.amount * 100),
           currency: "usd",
+        });
+      }
+
+      if (send_later) {
+        // Keep as draft — do not finalize or send
+        return NextResponse.json({
+          success: true,
+          type: "draft",
+          invoice_id: invoice.id,
+          payment_link: `${baseUrl}/pay/${paymentIntent.id}`,
         });
       }
 
@@ -431,6 +444,12 @@ function computeStatus(card: ProjectCard): string {
   const allPaid = invoices.every((i) => i.status === "paid");
   if (allPaid && invoices.length > 0) return "paid_full";
 
+  // Check for saved drafts (full invoices kept as draft)
+  const hasDraftFull = invoices.some(
+    (i) => i.status === "draft" && i.payment_type === "full"
+  );
+  if (hasDraftFull) return "draft_saved";
+
   // Check overdue
   const now = Date.now();
   const hasOverdue = invoices.some(
@@ -458,6 +477,8 @@ function computeStatus(card: ProjectCard): string {
 
 function statusLabel(status: string, card: ProjectCard): string {
   switch (status) {
+    case "draft_saved":
+      return "Draft — not sent yet";
     case "deposit_pending":
       return "Deposit pending";
     case "deposit_paid":

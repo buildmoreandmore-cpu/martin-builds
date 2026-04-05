@@ -47,7 +47,10 @@ export default function Nav() {
         <div className="nav-desktop" style={{ display: "flex", gap: "2.5rem", alignItems: "center" }}>
           <NavLink href="/#services">Services</NavLink>
           <NavLink href="/demo">Demos</NavLink>
-          <NavLink href="/utility">Utility</NavLink>
+          <NavDropdown label="Utility" href="/utility" items={[
+            { href: "/utility", label: "AI Agent" },
+            { href: "/utility/ai-audit", label: "AI Gap Audit" },
+          ]} />
           <NavLink href="/contact">Contact</NavLink>
           <a
             href="/discovery-call"
@@ -98,6 +101,7 @@ export default function Nav() {
           { href: "/#services", label: "Services" },
           { href: "/demo", label: "Demos" },
           { href: "/utility", label: "Utility" },
+          { href: "/utility/ai-audit", label: "AI Gap Audit" },
           { href: "/contact", label: "Contact" },
         ].map((link) => (
           <a
@@ -141,5 +145,75 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
     >
       {children}
     </a>
+  );
+}
+
+function NavDropdown({ label, href, items }: { label: string; href: string; items: { href: string; label: string }[] }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div
+      style={{ position: "relative" }}
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <a
+        href={href}
+        style={{ fontSize: "0.85rem", fontWeight: 500, letterSpacing: "0.5px", textTransform: "uppercase", color: "#888", transition: "color 0.3s", textDecoration: "none", whiteSpace: "nowrap" }}
+        onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#f5f5f0")}
+        onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#888")}
+      >
+        {label}
+      </a>
+      <div
+        style={{
+          position: "absolute",
+          top: "100%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          paddingTop: "0.5rem",
+          opacity: open ? 1 : 0,
+          pointerEvents: open ? "auto" : "none",
+          transition: "opacity 0.2s",
+        }}
+      >
+        <div
+          style={{
+            background: "rgba(26,26,26,0.98)",
+            border: "1px solid #2a2a2a",
+            borderRadius: "8px",
+            padding: "0.4rem 0",
+            minWidth: "160px",
+            backdropFilter: "blur(20px)",
+          }}
+        >
+          {items.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              style={{
+                display: "block",
+                padding: "0.5rem 1rem",
+                fontSize: "0.8rem",
+                fontWeight: 500,
+                color: "#888",
+                textDecoration: "none",
+                transition: "color 0.2s, background 0.2s",
+                whiteSpace: "nowrap",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.color = "#f5f5f0";
+                (e.currentTarget as HTMLAnchorElement).style.background = "rgba(200,241,53,0.05)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.color = "#888";
+                (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
+              }}
+            >
+              {item.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }

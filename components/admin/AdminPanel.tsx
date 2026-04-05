@@ -685,7 +685,7 @@ export default function AdminPanel() {
   }
 
   /* ─── Submit invoice ─── */
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent, sendLater = false) {
     e.preventDefault();
     setFormLoading(true);
     setFormError("");
@@ -721,6 +721,7 @@ export default function AdminPanel() {
           payment_type: paymentType,
           memo,
           due_date: dueDateType === "receipt" ? "receipt" : dueDate,
+          send_later: sendLater,
         }),
       });
 
@@ -728,7 +729,9 @@ export default function AdminPanel() {
       if (!res.ok) throw new Error(data.error || "Failed to create invoice");
 
       const typeLabel =
-        data.type === "split"
+        data.type === "draft"
+          ? "Invoice saved as draft"
+          : data.type === "split"
           ? "Split invoices created (deposit sent, final held)"
           : data.type === "retainer"
           ? "Retainer subscription created"
@@ -883,6 +886,7 @@ export default function AdminPanel() {
   /* ─── Status badge ─── */
   function statusBadge(status: string, label: string) {
     const colors: Record<string, { bg: string; text: string }> = {
+      draft_saved: { bg: "#1a1a2e", text: "#a78bfa" },
       deposit_pending: { bg: "#332b00", text: "#ffcc00" },
       deposit_paid: { bg: "#003300", text: GREEN },
       final_sent: { bg: "#001a33", text: "#4da6ff" },
@@ -893,6 +897,7 @@ export default function AdminPanel() {
     const c = colors[status] || colors.awaiting_payment;
 
     const emoji: Record<string, string> = {
+      draft_saved: "\uD83D\uDCDD",
       deposit_pending: "\uD83D\uDFE1",
       deposit_paid: "\uD83D\uDFE2",
       final_sent: "\uD83D\uDD35",
@@ -1239,25 +1244,44 @@ export default function AdminPanel() {
               </div>
             )}
 
-            <button
-              type="submit"
-              disabled={formLoading}
-              style={{
-                ...s.btn,
-                marginTop: 16,
-                ...(formLoading ? s.btnDisabled : {}),
-              }}
-            >
-              {formLoading ? (
-                <>
-                  <span style={s.spinner} /> Creating...
-                </>
-              ) : paymentType === "retainer" ? (
-                "Create Retainer"
-              ) : (
-                "Send Invoice"
+            <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
+              <button
+                type="submit"
+                disabled={formLoading}
+                style={{
+                  ...s.btn,
+                  flex: 1,
+                  ...(formLoading ? s.btnDisabled : {}),
+                }}
+              >
+                {formLoading ? (
+                  <>
+                    <span style={s.spinner} /> Creating...
+                  </>
+                ) : paymentType === "retainer" ? (
+                  "Create Retainer"
+                ) : (
+                  "Send Invoice"
+                )}
+              </button>
+              {paymentType === "full" && (
+                <button
+                  type="button"
+                  disabled={formLoading}
+                  onClick={(e) => handleSubmit(e as unknown as FormEvent, true)}
+                  style={{
+                    ...s.btn,
+                    flex: 1,
+                    background: "transparent",
+                    border: `1px solid ${GREEN}`,
+                    color: GREEN,
+                    ...(formLoading ? s.btnDisabled : {}),
+                  }}
+                >
+                  Save Draft
+                </button>
               )}
-            </button>
+            </div>
 
             {formError && <div style={s.error}>{formError}</div>}
             {formSuccess && <div style={s.success}>{formSuccess}</div>}
@@ -1529,6 +1553,32 @@ export default function AdminPanel() {
                         }}
                       >
                         {releasingId === inv.id ? "Releasing..." : "Release Final"}
+                      </button>
+                    ))}
+
+                {/* Send draft invoice */}
+                {p.status === "draft_saved" &&
+                  p.invoices
+                    .filter((inv) => inv.payment_type === "full" && inv.status === "draft")
+                    .map((inv) => (
+                      <button
+                        key={`send-${inv.id}`}
+                        onClick={() => handleRelease(inv.id)}
+                        disabled={releasingId === inv.id}
+                        style={{
+                          padding: "6px 12px",
+                          background: GREEN,
+                          color: BG,
+                          border: "none",
+                          borderRadius: 4,
+                          fontSize: 11,
+                          fontWeight: 700,
+                          cursor: releasingId === inv.id ? "not-allowed" : "pointer",
+                          fontFamily: "inherit",
+                          opacity: releasingId === inv.id ? 0.5 : 1,
+                        }}
+                      >
+                        {releasingId === inv.id ? "Sending..." : "Send Now"}
                       </button>
                     ))}
 

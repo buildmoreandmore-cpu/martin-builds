@@ -27,9 +27,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (invoice.metadata?.payment_type !== "final") {
+    if (invoice.metadata?.payment_type !== "final" && invoice.metadata?.payment_type !== "full") {
       return NextResponse.json(
-        { error: "This invoice is not a final payment invoice" },
+        { error: "This invoice cannot be sent" },
         { status: 400 }
       );
     }
