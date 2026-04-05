@@ -32,16 +32,16 @@ export default function Hero() {
       <h1
         className="animate-fade-up-2"
         style={{
-          fontSize: "clamp(3rem, 8vw, 7rem)",
+          fontSize: "clamp(2.8rem, 7vw, 6rem)",
           fontWeight: 900,
-          lineHeight: 0.95,
+          lineHeight: 1,
           letterSpacing: "-3px",
           maxWidth: "900px",
         }}
       >
-        Your site.{" "}
+        Most businesses are one system away from running like a{" "}
         <span style={{ color: "#c8ff00", position: "relative", display: "inline-block" }}>
-          Your dashboard.
+          real company.
           <span
             style={{
               position: "absolute",
@@ -56,24 +56,34 @@ export default function Hero() {
             }}
           />
         </span>
-        <br />
-        <span style={{ color: "#888", fontSize: "clamp(1.8rem, 5vw, 4rem)", fontWeight: 700 }}>
-          Owned forever.
-        </span>
       </h1>
 
       <p
         className="animate-fade-up-3"
         style={{
-          fontSize: "clamp(1.1rem, 2vw, 1.4rem)",
-          fontWeight: 300,
-          color: "#888",
+          fontSize: "clamp(1.3rem, 2.5vw, 1.8rem)",
+          fontWeight: 600,
+          color: "#f5f5f0",
           maxWidth: "560px",
           marginTop: "1.5rem",
-          lineHeight: 1.7,
+          lineHeight: 1.5,
         }}
       >
-        Every site ships with a custom admin dashboard — not a template, not a no-code embed. Built around your workflow, your metrics, your team.
+        I build that system in 14 days.
+      </p>
+
+      <p
+        className="animate-fade-up-3"
+        style={{
+          fontSize: "clamp(0.9rem, 1.5vw, 1rem)",
+          fontWeight: 400,
+          color: "#666",
+          maxWidth: "560px",
+          marginTop: "0.75rem",
+          lineHeight: 1.6,
+        }}
+      >
+        Custom website + admin dashboard. Built by one person. Owned by you forever.
       </p>
 
       <div
@@ -84,13 +94,7 @@ export default function Hero() {
           onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-3px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 30px rgba(200,255,0,0.25)"; }}
           onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
         >
-          Book a Free Discovery Call
-        </a>
-        <a href="/contact" style={secondaryBtnStyle}
-          onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "#c8ff00"; (e.currentTarget as HTMLAnchorElement).style.color = "#c8ff00"; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(245,245,240,0.2)"; (e.currentTarget as HTMLAnchorElement).style.color = "#f5f5f0"; }}
-        >
-          Get in Touch
+          See What I&apos;d Build For You
         </a>
       </div>
     </section>
@@ -110,15 +114,3 @@ const primaryBtnStyle: React.CSSProperties = {
   textDecoration: "none",
 };
 
-const secondaryBtnStyle: React.CSSProperties = {
-  background: "transparent",
-  color: "#f5f5f0",
-  padding: "1rem 2.5rem",
-  borderRadius: "100px",
-  fontWeight: 600,
-  fontSize: "1rem",
-  border: "1px solid rgba(245,245,240,0.2)",
-  transition: "all 0.3s",
-  display: "inline-block",
-  textDecoration: "none",
-};

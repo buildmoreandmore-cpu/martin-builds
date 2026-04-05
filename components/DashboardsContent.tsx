@@ -216,7 +216,7 @@ export default function DashboardsContent({ embedded = false }: { embedded?: boo
             <br />
             <span style={{ color: "#c8ff00" }}>Explore the dashboard.</span>
           </h2>
-          <p style={subStyle}>Click through real dashboard layouts built for each vertical.</p>
+          <p style={subStyle}>Click through. This is what your dashboard could look like.</p>
         </ScrollReveal>
 
         {/* Industry tabs */}

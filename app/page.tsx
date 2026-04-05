@@ -19,6 +19,7 @@ import AppAudit from "@/components/AppAudit";
 import DashboardsContent from "@/components/DashboardsContent";
 import Process from "@/components/Process";
 import Testimonials from "@/components/Testimonials";
+import Founder from "@/components/Founder";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
 
@@ -29,11 +30,12 @@ export default function Home() {
       <Nav />
       <Hero />
       <DashboardsContent embedded />
+      <Testimonials />
+      <Process />
       <AppAudit />
       <Services />
+      <Founder />
       <ObjectionHandler />
-      <Process />
-      <Testimonials />
       <CTA />
       <Footer />
     </>

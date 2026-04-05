@@ -27,21 +27,21 @@ const RetainerIcon = () => (
 const services = [
   {
     icon: <SprintIcon />,
-    title: "Website + Dashboard",
+    title: "Foundation",
     price: "",
     description: "Custom website with a built-in admin dashboard — scoped, built, and live in 2 weeks. Your data, your metrics, your layout. No templates. No monthly fees.",
     tags: "Phase 1 · Website · Dashboard · 2 Weeks",
   },
   {
     icon: <PlatformIcon />,
-    title: "Full Platform",
+    title: "Full Stack",
     price: "",
     description: "Everything in Phase 1, plus client portals, automated workflows, integrations, and AWS infrastructure. The full system — from first click to signed deal.",
     tags: "Phase 2 · Portals · Workflows · Integrations",
   },
   {
     icon: <RetainerIcon />,
-    title: "Retainer",
+    title: "On Call",
     price: "",
     description: "Your builder on call. New features, iterations, and optimization every month. As your business grows, your systems grow with it.",
     tags: "Phase 3 · Ongoing · Growth",
