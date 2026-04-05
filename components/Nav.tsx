@@ -47,10 +47,8 @@ export default function Nav() {
         <div className="nav-desktop" style={{ display: "flex", gap: "2.5rem", alignItems: "center" }}>
           <NavLink href="/#services">Services</NavLink>
           <NavLink href="/demo">Demos</NavLink>
-          <NavDropdown label="Utility" href="/utility" items={[
-            { href: "/utility", label: "AI Agent" },
-            { href: "/utility/ai-audit", label: "AI Gap Audit" },
-          ]} />
+          <NavLink href="/utility">Utility</NavLink>
+          <NavLink href="/utility/ai-audit">AI Audit</NavLink>
           <NavLink href="/contact">Contact</NavLink>
           <a
             href="/discovery-call"
