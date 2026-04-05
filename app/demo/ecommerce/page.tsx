@@ -91,11 +91,13 @@ export default function EcommerceProfitDashboard() {
   .ecom-three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .ecom-two-wide { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
   .ecom-two-narrow { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; }
+  .ecom-two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   @media (max-width: 768px) {
     .ecom-kpi { grid-template-columns: repeat(2, 1fr) !important; }
     .ecom-three { grid-template-columns: 1fr !important; }
     .ecom-two-wide { grid-template-columns: 1fr !important; }
     .ecom-two-narrow { grid-template-columns: 1fr !important; }
+    .ecom-two { grid-template-columns: 1fr !important; }
   }
   @media (max-width: 480px) {
     .ecom-kpi { grid-template-columns: 1fr !important; }
@@ -427,6 +429,115 @@ export default function EcommerceProfitDashboard() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+
+        {/* ═══════════════ ROW 4: CREATIVE ANALYTICS + AD LEADERBOARD ═══════════════ */}
+        <div className="ecom-two" style={{ marginBottom: 24, animation: "fadeUp 0.5s ease-out 0.55s both" }}>
+
+          {/* ── Creative Analytics ── */}
+          <div style={card}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+              <p style={{ ...sectionTitle, margin: 0 }}>Creative Analytics</p>
+              <span style={{ ...pill, color: "#14532d", background: "#dcfce7" }}>Premium</span>
+            </div>
+            <p style={sectionSub}>Which creatives are actually driving profit</p>
+            {[
+              { name: "UGC Testimonial — Glow Serum", type: "Video", spend: "$420", roas: "4.8x", roasColor: "#16a34a", ctr: "3.2%", ctrColor: "#16a34a", conv: "6.1%", tag: "Scale", tagBg: "#dcfce7", tagColor: "#14532d", thumb: "🎬" },
+              { name: "Before/After Carousel", type: "Image", spend: "$310", roas: "3.6x", roasColor: "#16a34a", ctr: "2.8%", ctrColor: "#16a34a", conv: "4.9%", tag: "Scale", tagBg: "#dcfce7", tagColor: "#14532d", thumb: "🖼" },
+              { name: "Summer Skin Static Ad", type: "Image", spend: "$340", roas: "1.2x", roasColor: "#dc2626", ctr: "0.9%", ctrColor: "#dc2626", conv: "1.4%", tag: "Pause", tagBg: "#fee2e2", tagColor: "#991b1b", thumb: "🖼" },
+              { name: "Bundle Deal — Story Format", type: "Video", spend: "$180", roas: "2.9x", roasColor: "#d97706", ctr: "2.1%", ctrColor: "#d97706", conv: "3.2%", tag: "Watch", tagBg: "#fef3c7", tagColor: "#92400e", thumb: "🎬" },
+              { name: "Influencer Repost — @skinbykel", type: "Video", spend: "$210", roas: "5.2x", roasColor: "#16a34a", ctr: "4.1%", ctrColor: "#16a34a", conv: "7.3%", tag: "Scale", tagBg: "#dcfce7", tagColor: "#14532d", thumb: "🎬" },
+            ].map((c, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: i < 4 ? "1px solid #f3f4f6" : "none" }}>
+                <div style={{ width: 40, height: 40, borderRadius: 8, background: "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
+                  {c.thumb}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: "#1a1a1a", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name}</p>
+                  <div style={{ display: "flex", gap: 12, marginTop: 3 }}>
+                    <span style={{ fontSize: 10, color: "#6b7280" }}>{c.type}</span>
+                    <span style={{ ...mono, fontSize: 10, color: "#6b7280" }}>{c.spend}</span>
+                    <span style={{ ...mono, fontSize: 10, fontWeight: 600, color: c.roasColor }}>{c.roas} ROAS</span>
+                    <span style={{ ...mono, fontSize: 10, color: c.ctrColor }}>{c.ctr} CTR</span>
+                  </div>
+                </div>
+                <span style={{ ...pill, color: c.tagColor, background: c.tagBg, flexShrink: 0 }}>{c.tag}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* ── Ad Leaderboard ── */}
+          <div style={card}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+              <p style={{ ...sectionTitle, margin: 0 }}>Ad Leaderboard</p>
+              <span style={{ ...pill, color: "#14532d", background: "#dcfce7" }}>Premium</span>
+            </div>
+            <p style={sectionSub}>Head-to-head creative performance — ranked by profit per dollar spent</p>
+            {[
+              { rank: 1, name: "Influencer Repost — @skinbykel", roas: "5.2x", profitPerDollar: "$4.20", conv: "7.3%", trend: "↑", trendColor: "#16a34a" },
+              { rank: 2, name: "UGC Testimonial — Glow Serum", roas: "4.8x", profitPerDollar: "$3.80", conv: "6.1%", trend: "↑", trendColor: "#16a34a" },
+              { rank: 3, name: "Before/After Carousel", roas: "3.6x", profitPerDollar: "$2.60", conv: "4.9%", trend: "→", trendColor: "#d97706" },
+              { rank: 4, name: "Bundle Deal — Story Format", roas: "2.9x", profitPerDollar: "$1.90", conv: "3.2%", trend: "→", trendColor: "#d97706" },
+              { rank: 5, name: "Summer Skin Static Ad", roas: "1.2x", profitPerDollar: "$0.20", conv: "1.4%", trend: "↓", trendColor: "#dc2626" },
+            ].map((a, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: i < 4 ? "1px solid #f3f4f6" : "none" }}>
+                <div style={{
+                  width: 28, height: 28, borderRadius: "50%",
+                  background: i === 0 ? "#dcfce7" : i === 4 ? "#fee2e2" : "#f3f4f6",
+                  color: i === 0 ? "#14532d" : i === 4 ? "#991b1b" : "#1a1a1a",
+                  fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                }}>
+                  {a.rank}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 13, fontWeight: 500, color: "#1a1a1a", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{a.name}</p>
+                  <div style={{ display: "flex", gap: 16, marginTop: 3 }}>
+                    <span style={{ ...mono, fontSize: 11, color: "#6b7280" }}>{a.roas} ROAS</span>
+                    <span style={{ ...mono, fontSize: 11, color: "#6b7280" }}>{a.conv} conv</span>
+                  </div>
+                </div>
+                <div style={{ textAlign: "right", flexShrink: 0 }}>
+                  <p style={{ ...mono, fontSize: 14, fontWeight: 700, color: "#1a1a1a", margin: 0 }}>{a.profitPerDollar}</p>
+                  <p style={{ fontSize: 10, color: "#6b7280", margin: 0 }}>profit/$ spent</p>
+                </div>
+                <span style={{ fontSize: 14, color: a.trendColor, flexShrink: 0 }}>{a.trend}</span>
+              </div>
+            ))}
+            <div style={{ marginTop: 12, padding: "10px 12px", borderRadius: 8, background: "#f0fdf4", border: "1px solid #bbf7d0" }}>
+              <p style={{ fontSize: 12, fontWeight: 500, color: "#14532d", margin: 0 }}>
+                Top creative earns <span style={{ ...mono, fontWeight: 700 }}>21x</span> more profit per dollar than your worst. Shift budget from #5 to #1.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ═══════════════ ROW 5: AI TAGS & TASKS ═══════════════ */}
+        <div style={{ ...card, marginBottom: 24, animation: "fadeUp 0.5s ease-out 0.6s both" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+            <p style={{ ...sectionTitle, margin: 0 }}>AI Tags &amp; Tasks</p>
+            <span style={{ ...pill, color: "#14532d", background: "#dcfce7" }}>Premium</span>
+          </div>
+          <p style={sectionSub}>Auto-generated actions based on your data — no manual analysis needed</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+            {[
+              { priority: "Critical", priBg: "#fee2e2", priColor: "#991b1b", icon: "🔴", task: "Pause 'Summer Skin Static Ad' immediately", reason: "1.2x ROAS after $340 spend — losing $0.80 per dollar. Reallocate budget to UGC Testimonial (4.8x ROAS).", time: "Auto-detected 14 min ago" },
+              { priority: "High", priBg: "#fef3c7", priColor: "#92400e", icon: "🟡", task: "Investigate Night Cream return spike", reason: "6 returns today (5.6% rate) vs 2.1% average. Check recent batch quality or listing accuracy.", time: "Auto-detected 3 hrs ago" },
+              { priority: "Opportunity", priBg: "#dcfce7", priColor: "#14532d", icon: "🟢", task: "Scale @skinbykel influencer repost", reason: "5.2x ROAS and 7.3% conversion — best performing creative this month. Currently only $210/day budget.", time: "Auto-detected 41 min ago" },
+              { priority: "Insight", priBg: "#dbeafe", priColor: "#1e40af", icon: "🔵", task: "Repeat customers order 38% more than new", reason: "Average repeat order: $89 vs $64 for new. Email/SMS driving 74% of repeat purchases — increase send frequency.", time: "Weekly insight" },
+              { priority: "Opportunity", priBg: "#dcfce7", priColor: "#14532d", icon: "🟢", task: "Google Brand Search hit daily record", reason: "$2,268 revenue on $540 spend (4.2x ROAS). Consider increasing daily budget cap by 20%.", time: "Auto-detected 41 min ago" },
+            ].map((t, i) => (
+              <div key={i} style={{ display: "flex", gap: 12, padding: "14px 0", borderBottom: i < 4 ? "1px solid #f3f4f6" : "none" }}>
+                <div style={{ flexShrink: 0, marginTop: 2 }}>
+                  <span style={{ ...pill, color: t.priColor, background: t.priBg, fontSize: 10, padding: "3px 8px" }}>{t.priority}</span>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: 14, fontWeight: 600, color: "#1a1a1a", margin: "0 0 4px" }}>{t.task}</p>
+                  <p style={{ fontSize: 12, color: "#6b7280", margin: "0 0 4px", lineHeight: 1.5 }}>{t.reason}</p>
+                  <p style={{ ...mono, fontSize: 10, color: "#9ca3af", margin: 0 }}>{t.time}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
