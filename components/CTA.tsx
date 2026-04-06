@@ -80,7 +80,7 @@ export default function CTA() {
           >
             <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#c8ff00", display: "inline-block", animation: "pulse-dot 2s infinite" }} />
             <span style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", color: "#888", letterSpacing: "0.5px" }}>
-              I take 2 new projects per month — <span style={{ color: "#c8ff00", fontWeight: 600 }}>1 spot open for April</span>
+              I take 2 new projects per month — <span style={{ color: "#c8ff00", fontWeight: 600 }}>1 spot open for May</span>
             </span>
           </div>
         </div>

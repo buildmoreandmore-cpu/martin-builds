@@ -4,16 +4,6 @@ import ScrollReveal from "./ScrollReveal";
 
 const testimonials = [
   {
-    before: "Client intake was a mess — proposals took days, follow-ups fell through the cracks, and the team was drowning in manual data entry.",
-    after: "AI-powered intake cut proposal turnaround from 3 days to under 10 minutes. Team reclaimed 15+ hours per week — and started closing proposals the same day they came in.",
-    metric: "3 days → 10 min turnaround",
-    quote:
-      "Francis didn't just build us a website — he built us a system. The AI tools he integrated have completely changed how we handle client intake and proposals.",
-    initials: "RN",
-    name: "Ruthie Norton",
-    role: "2KB Energy Engineering — Energy Services",
-  },
-  {
     before: "Had a clear vision for the business but no way to translate it into tools the team could use. Previous developers couldn't bridge the gap between strategy and execution.",
     after: "Shipped a working system in 12 days that the team adopted same-week. First new client closed through the system within two weeks of launch.",
     metric: "12-day build, revenue in 2 weeks",

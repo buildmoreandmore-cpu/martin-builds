@@ -46,13 +46,6 @@ const reviews = {
     {
       "@type": "Review",
       reviewBody:
-        "Francis didn't just build us a website — he built us a system. The AI tools he integrated have completely changed how we handle client intake and proposals.",
-      author: { "@type": "Person", name: "Ruthie Norton" },
-      reviewRating: { "@type": "Rating", ratingValue: "5", bestRating: "5" },
-    },
-    {
-      "@type": "Review",
-      reviewBody:
         "He understands the business side and the tech side — that's rare. He translated what I needed into something my team could actually use, in less time than I expected.",
       author: { "@type": "Person", name: "Camisha Alford" },
       reviewRating: { "@type": "Rating", ratingValue: "5", bestRating: "5" },

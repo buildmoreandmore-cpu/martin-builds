@@ -83,7 +83,7 @@ export default function Hero() {
           lineHeight: 1.6,
         }}
       >
-        Custom website + admin dashboard. Built by one person. Owned by you forever.
+        Your site. Your dashboard. Built around how you actually win.
       </p>
 
       <div
