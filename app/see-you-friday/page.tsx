@@ -51,16 +51,16 @@ export default function SeeYouFriday() {
   const title = "THE FRIDAY LETTER";
   const letter = letters[currentIndex];
 
-  /* Typewriter */
+  /* Typewriter — faster typing, tighter gaps between states */
   useEffect(() => {
     if (typedChars < title.length) {
-      const t = setTimeout(() => setTypedChars((c) => c + 1), 55);
+      const t = setTimeout(() => setTypedChars((c) => c + 1), 40);
       return () => clearTimeout(t);
     } else {
       const t = setTimeout(() => {
         setTaglineVisible(true);
-        setTimeout(() => setHeroDone(true), 600);
-      }, 300);
+        setTimeout(() => setHeroDone(true), 350);
+      }, 150);
       return () => clearTimeout(t);
     }
   }, [typedChars, title.length]);
@@ -147,36 +147,43 @@ export default function SeeYouFriday() {
           animation: blink 0.8s steps(1) infinite;
         }
 
-        /* Tagline fade */
+        /* Tagline — layered: opacity + translateY + scale + blur */
         .friday-tagline {
           opacity: 0;
-          transform: translateY(10px);
-          transition: opacity 0.6s ease, transform 0.6s ease;
+          transform: translateY(12px) scale(0.97);
+          filter: blur(4px);
+          transition: opacity 0.45s cubic-bezier(0.16,1,0.3,1),
+                      transform 0.45s cubic-bezier(0.16,1,0.3,1),
+                      filter 0.45s cubic-bezier(0.16,1,0.3,1);
         }
         .friday-tagline.visible {
           opacity: 1;
-          transform: translateY(0);
+          transform: translateY(0) scale(1);
+          filter: blur(0);
         }
 
-        /* Paragraph reveal */
+        /* Paragraph reveal — layered: opacity + translateY + scale */
         .friday-para {
           opacity: 0;
-          transform: translateY(24px);
-          transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1);
+          transform: translateY(20px) scale(0.985);
+          transition: opacity 0.5s cubic-bezier(0.22,1,0.36,1),
+                      transform 0.5s cubic-bezier(0.22,1,0.36,1),
+                      border-left-color 0.3s ease;
           border-left: 2px solid transparent;
           padding-left: 1.5rem;
         }
         .friday-para.visible {
           opacity: 1;
-          transform: translateY(0);
+          transform: translateY(0) scale(1);
         }
         .friday-para.pulse-border {
           border-left-color: #00FF85;
-          transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1), border-left-color 0.3s ease;
         }
         .friday-para.settled {
           border-left-color: rgba(0,255,133,0.15);
-          transition: border-left-color 1.2s ease;
+          transition: opacity 0.5s cubic-bezier(0.22,1,0.36,1),
+                      transform 0.5s cubic-bezier(0.22,1,0.36,1),
+                      border-left-color 1s cubic-bezier(0.22,1,0.36,1);
         }
 
         /* Letter card slide */
@@ -192,16 +199,26 @@ export default function SeeYouFriday() {
           opacity: 0;
         }
 
-        /* Subscribe bar */
+        /* Subscribe bar — fast rise with settle */
         .friday-subscribe {
           position: fixed;
           bottom: 0; left: 0; right: 0;
           z-index: 150;
           transform: translateY(100%);
-          transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+          transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
         }
         .friday-subscribe.show {
           transform: translateY(0);
+        }
+
+        /* Scroll hint — drops in as reaction to hero completing */
+        @keyframes scrollDrop {
+          0% { opacity: 0; transform: translateY(-16px) scaleY(0.3); }
+          60% { opacity: 0.4; transform: translateY(4px) scaleY(1.05); }
+          100% { opacity: 0.3; transform: translateY(0) scaleY(1); }
+        }
+        .friday-scroll-hint {
+          animation: scrollDrop 0.5s cubic-bezier(0.22,1,0.36,1) forwards;
         }
 
         /* Subscribed confirmation */
@@ -309,11 +326,10 @@ export default function SeeYouFriday() {
         {/* Scroll hint */}
         {heroDone && (
           <div
+            className="friday-scroll-hint"
             style={{
               position: "absolute",
               bottom: "3rem",
-              opacity: 0.3,
-              animation: "fadeUp 0.8s ease forwards",
             }}
           >
             <div
@@ -549,7 +565,7 @@ function RevealParagraph({
         color: isSignoff ? "#00FF85" : "#ccc",
         fontStyle: isSignoff ? "italic" : "normal",
         marginBottom: "1.8rem",
-        transitionDelay: `${index * 0.05}s`,
+        transitionDelay: `${index * 0.08}s`,
       }}
     >
       {children}
