@@ -49,6 +49,7 @@ export default function Nav() {
           <NavLink href="/demo">Demos</NavLink>
           <NavLink href="/utility">Utility</NavLink>
           <NavLink href="/utility/ai-audit">AI Audit</NavLink>
+          <NavLink href="/see-you-friday">Friday Letter</NavLink>
           <NavLink href="/contact">Contact</NavLink>
           <a
             href="/discovery-call"
@@ -100,6 +101,7 @@ export default function Nav() {
           { href: "/demo", label: "Demos" },
           { href: "/utility", label: "Utility" },
           { href: "/utility/ai-audit", label: "AI Gap Audit" },
+          { href: "/see-you-friday", label: "Friday Letter" },
           { href: "/contact", label: "Contact" },
         ].map((link) => (
           <a
