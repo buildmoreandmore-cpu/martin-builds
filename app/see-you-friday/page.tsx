@@ -165,25 +165,13 @@ export default function SeeYouFriday() {
         /* Paragraph reveal — layered: opacity + translateY + scale */
         .friday-para {
           opacity: 0;
-          transform: translateY(20px) scale(0.985);
+          transform: translateY(16px) scale(0.99);
           transition: opacity 0.5s cubic-bezier(0.22,1,0.36,1),
-                      transform 0.5s cubic-bezier(0.22,1,0.36,1),
-                      border-left-color 0.3s ease;
-          border-left: 2px solid transparent;
-          padding-left: 1.5rem;
+                      transform 0.5s cubic-bezier(0.22,1,0.36,1);
         }
         .friday-para.visible {
           opacity: 1;
           transform: translateY(0) scale(1);
-        }
-        .friday-para.pulse-border {
-          border-left-color: #00FF85;
-        }
-        .friday-para.settled {
-          border-left-color: rgba(0,255,133,0.15);
-          transition: opacity 0.5s cubic-bezier(0.22,1,0.36,1),
-                      transform 0.5s cubic-bezier(0.22,1,0.36,1),
-                      border-left-color 1s cubic-bezier(0.22,1,0.36,1);
         }
 
         /* Letter card slide */
@@ -274,6 +262,29 @@ export default function SeeYouFriday() {
         }
       `}</style>
 
+      {/* Minimal back link — no full nav */}
+      <a
+        href="/"
+        style={{
+          position: "fixed",
+          top: "1.25rem",
+          left: "clamp(1.25rem, 5vw, 3rem)",
+          zIndex: 100,
+          fontFamily: "'Space Mono', monospace",
+          fontSize: "0.85rem",
+          fontWeight: 700,
+          letterSpacing: "-0.5px",
+          textDecoration: "none",
+          color: "#f5f5f0",
+          opacity: 0.5,
+          transition: "opacity 0.2s",
+        }}
+        onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.opacity = "1")}
+        onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.opacity = "0.5")}
+      >
+        martin<span style={{ color: "#00FF85" }}>.builds</span>
+      </a>
+
       {/* Dot grid */}
       <div className="friday-dot-grid" />
 
@@ -348,7 +359,7 @@ export default function SeeYouFriday() {
       <section
         ref={letterRef}
         style={{
-          maxWidth: "720px",
+          maxWidth: "860px",
           margin: "0 auto",
           padding: "0 clamp(1.5rem, 5vw, 3rem) 6rem",
           position: "relative",
@@ -361,10 +372,10 @@ export default function SeeYouFriday() {
           <div
             className="friday-card-inner"
             style={{
-              background: "#111111",
+              background: "#0f0f0f",
               border: "1px solid rgba(255,255,255,0.04)",
-              borderRadius: "2px",
-              padding: "3.5rem 3rem",
+              borderRadius: "4px",
+              padding: "3.5rem clamp(2rem, 5vw, 4rem)",
             }}
           >
             {/* Issue + date */}
@@ -530,8 +541,6 @@ function RevealParagraph({
 }) {
   const ref = useRef<HTMLParagraphElement>(null);
   const [visible, setVisible] = useState(false);
-  const [pulsed, setPulsed] = useState(false);
-  const [settled, setSettled] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -540,12 +549,10 @@ function RevealParagraph({
       ([entry]) => {
         if (entry.isIntersecting) {
           setVisible(true);
-          setPulsed(true);
-          setTimeout(() => setSettled(true), 600);
           obs.disconnect();
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.2 }
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -556,16 +563,16 @@ function RevealParagraph({
   return (
     <p
       ref={ref}
-      className={`friday-para ${visible ? "visible" : ""} ${pulsed && !settled ? "pulse-border" : ""} ${settled ? "settled" : ""}`}
+      className={`friday-para ${visible ? "visible" : ""}`}
       style={{
-        fontFamily: "'IBM Plex Mono', monospace",
-        fontSize: "0.9rem",
+        fontFamily: "'Outfit', sans-serif",
+        fontSize: "1.05rem",
         fontWeight: 300,
-        lineHeight: 1.9,
+        lineHeight: 1.85,
         color: isSignoff ? "#00FF85" : "#ccc",
         fontStyle: isSignoff ? "italic" : "normal",
-        marginBottom: "1.8rem",
-        transitionDelay: `${index * 0.08}s`,
+        marginBottom: "1.5rem",
+        transitionDelay: `${index * 0.06}s`,
       }}
     >
       {children}

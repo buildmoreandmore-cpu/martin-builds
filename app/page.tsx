@@ -16,7 +16,7 @@ import Hero from "@/components/Hero";
 import ObjectionHandler from "@/components/ObjectionHandler";
 import Services from "@/components/Services";
 import AppAudit from "@/components/AppAudit";
-import DashboardsContent from "@/components/DashboardsContent";
+import DashboardPreview from "@/components/DashboardPreview";
 import Process from "@/components/Process";
 import Testimonials from "@/components/Testimonials";
 import Founder from "@/components/Founder";
@@ -29,10 +29,10 @@ export default function Home() {
       <ProfessionalServiceJsonLd />
       <Nav />
       <Hero />
-      <DashboardsContent embedded />
+      <DashboardPreview />
+      <AppAudit />
       <Testimonials />
       <Process />
-      <AppAudit />
       <Services />
       <Founder />
       <ObjectionHandler />
