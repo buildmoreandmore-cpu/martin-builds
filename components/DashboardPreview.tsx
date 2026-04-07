@@ -1,32 +1,86 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import ScrollReveal from "./ScrollReveal";
+
+/* ── SVG Icons ── */
+
+const KpiIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" />
+  </svg>
+);
+
+const ChartIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+  </svg>
+);
+
+const ActivityIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+  </svg>
+);
+
+const InvoiceIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+  </svg>
+);
+
+const CalendarIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
+  </svg>
+);
+
+const ClientsIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+  </svg>
+);
 
 /* ── Feature modules a prospect can toggle on/off ── */
 
 const features = [
-  { id: "kpis", label: "KPIs", icon: "📊" },
-  { id: "chart", label: "Revenue Chart", icon: "📈" },
-  { id: "activity", label: "Activity Feed", icon: "⚡" },
-  { id: "invoices", label: "Invoicing", icon: "💰" },
-  { id: "calendar", label: "Scheduling", icon: "📅" },
-  { id: "clients", label: "Client List", icon: "👥" },
+  { id: "kpis", label: "KPIs", icon: <KpiIcon /> },
+  { id: "chart", label: "Revenue Chart", icon: <ChartIcon /> },
+  { id: "activity", label: "Activity Feed", icon: <ActivityIcon /> },
+  { id: "invoices", label: "Invoicing", icon: <InvoiceIcon /> },
+  { id: "calendar", label: "Scheduling", icon: <CalendarIcon /> },
+  { id: "clients", label: "Client List", icon: <ClientsIcon /> },
 ];
 
 export default function DashboardPreview() {
-  const [active, setActive] = useState<Set<string>>(
-    new Set(["kpis", "chart", "activity"])
-  );
+  const [active, setActive] = useState<Set<string>>(new Set(["kpis"]));
+  const [paused, setPaused] = useState(false);
+  const cycleIndex = useRef(1); // start after kpis which is already on
 
-  const toggle = (id: string) => {
+  const toggle = useCallback((id: string) => {
     setActive((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
       return next;
     });
-  };
+  }, []);
+
+  // Auto-cycle: add features one by one, pause on hover
+  useEffect(() => {
+    if (paused) return;
+    const interval = setInterval(() => {
+      const idx = cycleIndex.current;
+      if (idx < features.length) {
+        const feature = features[idx];
+        setActive((prev) => new Set([...prev, feature.id]));
+        cycleIndex.current = idx + 1;
+      } else {
+        clearInterval(interval);
+      }
+    }, 1200);
+    return () => clearInterval(interval);
+  }, [paused]);
 
   return (
     <section
@@ -52,6 +106,8 @@ export default function DashboardPreview() {
       <ScrollReveal>
         <div
           className="dp-toggles"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
           style={{
             display: "flex",
             justifyContent: "center",
@@ -84,7 +140,7 @@ export default function DashboardPreview() {
                   transform: on ? "scale(1.04)" : "scale(1)",
                 }}
               >
-                <span style={{ marginRight: "0.4rem" }}>{f.icon}</span>
+                <span style={{ marginRight: "0.4rem", display: "inline-flex", verticalAlign: "middle" }}>{f.icon}</span>
                 {f.label}
               </button>
             );
@@ -93,7 +149,11 @@ export default function DashboardPreview() {
       </ScrollReveal>
 
       {/* Dashboard mock */}
-      <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+      <div
+        style={{ maxWidth: "900px", margin: "0 auto" }}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
         <div
           style={{
             borderRadius: "16px",
