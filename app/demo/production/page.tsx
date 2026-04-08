@@ -78,17 +78,17 @@ function statusColor(s: string) {
 
 /* ── nav items ── */
 const navItems = [
-  { label: "Overview", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6", active: true },
-  { label: "Projects", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2", active: false },
-  { label: "Crew", icon: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z", active: false },
-  { label: "Pipeline", icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6", active: false },
-  { label: "Invoices", icon: "M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z", active: false },
+  { label: "Overview", scrollTo: "overview", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
+  { label: "Projects", scrollTo: "projects", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" },
+  { label: "Crew", scrollTo: "crew", icon: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" },
+  { label: "Pipeline", scrollTo: "pipeline", icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" },
+  { label: "Invoices", scrollTo: "invoices", icon: "M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z" },
 ];
 
 /* ── page ── */
 
 export default function ProductionDashboard() {
-  const [collapsed, setCollapsed] = useState(false);
+  const [activeNav, setActiveNav] = useState("overview");
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: fontBody, color: textDark }}>
@@ -151,26 +151,33 @@ export default function ProductionDashboard() {
 
         {/* Nav */}
         <nav style={{ flex: 1, display: "flex", flexDirection: "column", gap: 2, padding: "0 10px" }}>
-          {navItems.map(item => (
-            <div
-              key={item.label}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-                padding: "10px 14px",
-                borderRadius: 8,
-                cursor: "pointer",
-                background: item.active ? sidebarActive : "transparent",
-                transition: "background 0.15s",
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={item.active ? "#fff" : "#666"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d={item.icon} />
-              </svg>
-              <span style={{ fontSize: 13, fontWeight: item.active ? 600 : 400, color: item.active ? "#fff" : "#888" }}>{item.label}</span>
-            </div>
-          ))}
+          {navItems.map(item => {
+            const isActive = activeNav === item.scrollTo;
+            return (
+              <div
+                key={item.label}
+                onClick={() => {
+                  setActiveNav(item.scrollTo);
+                  document.getElementById(item.scrollTo)?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  padding: "10px 14px",
+                  borderRadius: 8,
+                  cursor: "pointer",
+                  background: isActive ? sidebarActive : "transparent",
+                  transition: "background 0.15s",
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isActive ? "#fff" : "#666"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d={item.icon} />
+                </svg>
+                <span style={{ fontSize: 13, fontWeight: isActive ? 600 : 400, color: isActive ? "#fff" : "#888" }}>{item.label}</span>
+              </div>
+            );
+          })}
         </nav>
 
       </aside>
@@ -203,7 +210,7 @@ export default function ProductionDashboard() {
           </div>
 
           {/* ── KPIs ── */}
-          <div className="prod-kpi-row prod-fade prod-fade-1" style={{ marginBottom: 28 }}>
+          <div id="overview" className="prod-kpi-row prod-fade prod-fade-1" style={{ marginBottom: 28 }}>
             {[
               { label: "Revenue YTD", value: "$68,400", detail: "+31% vs last year", color: green },
               { label: "Active Value", value: "$24,800", detail: "3 projects", color: blue },
@@ -222,7 +229,7 @@ export default function ProductionDashboard() {
           <div className="prod-main-grid prod-fade prod-fade-2" style={{ marginBottom: 28 }}>
 
             {/* Projects */}
-            <div style={{ background: card, border: `1px solid ${border}`, borderRadius: 12, padding: "24px 28px" }}>
+            <div id="projects" style={{ background: card, border: `1px solid ${border}`, borderRadius: 12, padding: "24px 28px", scrollMarginTop: 20 }}>
               <h2 style={{ margin: "0 0 20px", fontSize: 15, fontWeight: 700, color: textDark }}>Active Projects</h2>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 {PROJECTS.map(p => {
@@ -269,7 +276,7 @@ export default function ProductionDashboard() {
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
 
               {/* Pipeline */}
-              <div style={{ background: card, border: `1px solid ${border}`, borderRadius: 12, padding: "24px 28px" }}>
+              <div id="pipeline" style={{ background: card, border: `1px solid ${border}`, borderRadius: 12, padding: "24px 28px", scrollMarginTop: 20 }}>
                 <h2 style={{ margin: "0 0 20px", fontSize: 15, fontWeight: 700, color: textDark }}>Pipeline</h2>
                 <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                   {PIPELINE.map(p => (
@@ -288,7 +295,7 @@ export default function ProductionDashboard() {
               </div>
 
               {/* Crew */}
-              <div style={{ background: card, border: `1px solid ${border}`, borderRadius: 12, padding: "24px 28px" }}>
+              <div id="crew" style={{ background: card, border: `1px solid ${border}`, borderRadius: 12, padding: "24px 28px", scrollMarginTop: 20 }}>
                 <h2 style={{ margin: "0 0 20px", fontSize: 15, fontWeight: 700, color: textDark }}>Crew</h2>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {CREW.map(c => {
@@ -315,7 +322,7 @@ export default function ProductionDashboard() {
           <div className="prod-bottom-grid prod-fade prod-fade-3">
 
             {/* Revenue forecast */}
-            <div style={{ background: card, border: `1px solid ${border}`, borderRadius: 12, padding: "24px 28px" }}>
+            <div id="invoices" style={{ background: card, border: `1px solid ${border}`, borderRadius: 12, padding: "24px 28px", scrollMarginTop: 20 }}>
               <h2 style={{ margin: "0 0 20px", fontSize: 15, fontWeight: 700, color: textDark }}>Revenue Forecast</h2>
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 {MONTHS.map(m => (
