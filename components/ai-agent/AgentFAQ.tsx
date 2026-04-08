@@ -22,7 +22,7 @@ const faqs = [
   },
   {
     question: "Do I need a website from you to use this?",
-    answer: "No. The agent works on any website — WordPress, Shopify, Squarespace, custom-built, anything. It's a single script tag that drops into your existing site."
+    answer: "The agent is designed to work with the custom websites and dashboards I build. It's trained on your business data and integrated directly into your system — that's how it delivers real value instead of generic chatbot answers."
   },
   {
     question: "Can I cancel anytime?",

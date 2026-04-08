@@ -44,6 +44,56 @@ export default function WhatIBuild() {
         </p>
       </ScrollReveal>
 
+      {/* Featured demo */}
+      <ScrollReveal>
+        <Link
+          href="/demo/production"
+          style={{
+            display: "block",
+            maxWidth: "960px",
+            margin: "3rem auto 0",
+            padding: "2rem 2.5rem",
+            background: "#1a1a1a",
+            border: "1px solid rgba(200,255,0,0.15)",
+            borderRadius: "16px",
+            textDecoration: "none",
+            color: "#f5f5f0",
+            transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1.5rem" }}>
+            <div style={{ maxWidth: 520 }}>
+              <p style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.65rem", color: "#c8ff00", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "0.5rem" }}>
+                Featured concept
+              </p>
+              <h3 style={{ fontSize: "1.3rem", fontWeight: 700, marginBottom: "0.5rem" }}>Production Company Dashboard</h3>
+              <p style={{ fontSize: "0.85rem", color: "#888", lineHeight: 1.7, margin: 0 }}>
+                Sidebar navigation, project pipeline, crew management, revenue forecasting — designed like real software. This is the level of UI/UX that goes into every build.
+              </p>
+            </div>
+            <span style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.4rem",
+              padding: "0.75rem 1.75rem",
+              background: "#c8ff00",
+              color: "#0a0a0a",
+              borderRadius: "100px",
+              fontWeight: 700,
+              fontSize: "0.85rem",
+              whiteSpace: "nowrap",
+            }}>
+              Explore this demo
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </span>
+          </div>
+        </Link>
+      </ScrollReveal>
+
       <div
         className="wib-grid"
         style={{
