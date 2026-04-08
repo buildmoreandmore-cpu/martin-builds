@@ -225,6 +225,23 @@ export default function ProductionDashboard() {
 
       <div style={{ maxWidth: 1260, margin: "0 auto", padding: "0 24px 48px" }}>
 
+        {/* ── Demo context banner ── */}
+        <div style={{
+          margin: "20px 0",
+          padding: "24px 28px",
+          background: "#f0fdf4",
+          border: "1px solid #bbf7d0",
+          borderRadius: 12,
+          animation: "fadeInUp 0.4s ease-out forwards",
+        }}>
+          <p style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "#166534", marginBottom: 6 }}>
+            You&apos;re looking at a custom dashboard built for a video production company.
+          </p>
+          <p style={{ margin: 0, fontSize: 14, color: "#15803d", lineHeight: 1.6 }}>
+            This is what your command center could look like — every project, proposal, crew booking, and dollar tracked in one place. No spreadsheets. No guessing if June is booked. Scroll down to explore the full layout.
+          </p>
+        </div>
+
         {/* ── Alert banners ── */}
         <div style={{ display: "flex", flexDirection: "column", gap: 10, margin: "20px 0", animation: "fadeInUp 0.5s ease-out forwards" }}>
           <div style={{ padding: "14px 20px", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
