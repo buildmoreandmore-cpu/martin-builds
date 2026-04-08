@@ -245,13 +245,15 @@ export default function InvestorCommandCenter() {
     .re-three { grid-template-columns: 1fr !important; }
     .re-two-wide { grid-template-columns: 1fr !important; }
     .re-two-narrow { grid-template-columns: 1fr !important; }
+    .re-wrap { padding: 16px !important; }
   }
   @media (max-width: 480px) {
     .re-kpi { grid-template-columns: 1fr !important; }
+    .re-wrap { padding: 12px !important; }
   }
 `}</style>
 
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: 24 }}>
+      <div className="re-wrap" style={{ maxWidth: 1200, margin: "0 auto", padding: 24 }}>
 
         {/* ── Demo context banner ── */}
         <div style={{ padding: "24px 28px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 12, marginBottom: 24 }}>
@@ -1055,7 +1057,7 @@ export default function InvestorCommandCenter() {
           boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)",
         }}
       >
-        Book a walkthrough &rarr;
+        I want this for my business
       </a>
     </div>
   );

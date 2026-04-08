@@ -158,9 +158,15 @@ export default function HvacDashboard() {
           .hvac-row3 { grid-template-columns: 1fr !important; }
           .hvac-row2 { grid-template-columns: 1fr !important; }
         }
-        @media (max-width: 640px) {
-          .hvac-g5 { grid-template-columns: 1fr !important; }
+        @media (max-width: 768px) {
+          .hvac-g5 { grid-template-columns: repeat(2, 1fr) !important; }
           .hvac-g12 { grid-template-columns: repeat(4, 1fr) !important; }
+          .hvac-wrap { padding: 0 16px 48px !important; }
+        }
+        @media (max-width: 480px) {
+          .hvac-g5 { grid-template-columns: 1fr !important; }
+          .hvac-g12 { grid-template-columns: repeat(3, 1fr) !important; }
+          .hvac-wrap { padding: 0 12px 48px !important; }
         }
       `}</style>
 
@@ -195,7 +201,7 @@ export default function HvacDashboard() {
         </div>
       </header>
 
-      <div style={{ maxWidth: 1260, margin: "0 auto", padding: "0 24px 48px" }}>
+      <div className="hvac-wrap" style={{ maxWidth: 1260, margin: "0 auto", padding: "0 24px 48px" }}>
 
         {/* ── Demo context banner ── */}
         <div style={{ margin: "20px 0", padding: "24px 28px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 12, animation: "fadeInUp 0.4s ease-out forwards" }}>
@@ -502,7 +508,7 @@ export default function HvacDashboard() {
 
       {/* ── Fixed CTA ── */}
       <a
-        href="https://martinbuilds.ai/contact"
+        href="/contact"
         style={{
           position: "fixed",
           bottom: 24,
@@ -519,7 +525,7 @@ export default function HvacDashboard() {
           transition: "all 0.2s",
         }}
       >
-        Book a walkthrough &#8594;
+        I want this for my business
       </a>
     </div>
   );

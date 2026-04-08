@@ -189,9 +189,11 @@ export default function InspectionDemoPage() {
     .insp-two { grid-template-columns: 1fr !important; }
     .insp-three { grid-template-columns: 1fr !important; }
     .insp-photo { grid-template-columns: 1fr !important; }
+    .insp-wrap { padding: 16px 16px !important; }
   }
   @media (max-width: 480px) {
     .insp-kpi { grid-template-columns: 1fr !important; }
+    .insp-wrap { padding: 16px 12px !important; }
   }
 `}</style>
 
@@ -225,7 +227,7 @@ export default function InspectionDemoPage() {
         </div>
       </header>
 
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
+      <div className="insp-wrap" style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
 
         {/* ── Demo context banner ── */}
         <div style={{ padding: "24px 28px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 12 }}>
@@ -655,7 +657,7 @@ export default function InspectionDemoPage() {
           boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)",
         }}
       >
-        Book a walkthrough &rarr;
+        I want this for my business
       </a>
     </div>
   );

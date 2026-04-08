@@ -109,14 +109,18 @@ export default function ProductionDashboard() {
         .prod-bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         @media (max-width: 1100px) {
           .prod-sidebar { display: none !important; }
+          .prod-main-area { margin-left: 0 !important; }
           .prod-main-grid { grid-template-columns: 1fr !important; }
           .prod-bottom-grid { grid-template-columns: 1fr !important; }
         }
         @media (max-width: 768px) {
           .prod-kpi-row { grid-template-columns: repeat(2, 1fr) !important; }
+          .prod-content { padding: 20px 16px 48px !important; }
+          .prod-header { padding: 16px !important; }
         }
         @media (max-width: 480px) {
           .prod-kpi-row { grid-template-columns: 1fr !important; }
+          .prod-content { padding: 16px 12px 48px !important; }
         }
       `}</style>
 
@@ -183,9 +187,9 @@ export default function ProductionDashboard() {
       </aside>
 
       {/* ── Main content ── */}
-      <main style={{ flex: 1, marginLeft: 220, background: bg, minHeight: "100vh" }}>
+      <main className="prod-main-area" style={{ flex: 1, marginLeft: 220, background: bg, minHeight: "100vh" }}>
         {/* Top bar */}
-        <header style={{ padding: "20px 36px", borderBottom: `1px solid ${border}`, background: card, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <header className="prod-header" style={{ padding: "20px 36px", borderBottom: `1px solid ${border}`, background: card, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
           <div>
             <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: textDark }}>Overview</h1>
             <p style={{ margin: "2px 0 0", fontSize: 13, color: muted }}>April 2025</p>
@@ -200,7 +204,7 @@ export default function ProductionDashboard() {
           </div>
         </header>
 
-        <div style={{ padding: "28px 36px 48px" }}>
+        <div className="prod-content" style={{ padding: "28px 36px 48px" }}>
 
           {/* ── Demo context ── */}
           <div className="prod-fade" style={{ padding: "20px 24px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 10, marginBottom: 28 }}>

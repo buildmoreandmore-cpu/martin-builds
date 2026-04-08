@@ -440,10 +440,12 @@ export default function RestaurantDashboard() {
     .restaurant-gauges { grid-template-columns: repeat(2, 1fr) !important; }
     .restaurant-three { grid-template-columns: 1fr !important; }
     .restaurant-two { grid-template-columns: 1fr !important; }
+    .restaurant-wrap { padding: 24px 16px 80px 16px !important; }
   }
   @media (max-width: 480px) {
     .restaurant-kpi { grid-template-columns: 1fr !important; }
     .restaurant-gauges { grid-template-columns: 1fr !important; }
+    .restaurant-wrap { padding: 16px 12px 80px 12px !important; }
   }
 `}</style>
 
@@ -457,6 +459,7 @@ export default function RestaurantDashboard() {
         }}
       >
         <div
+          className="restaurant-wrap"
           style={{
             maxWidth: 1200,
             margin: "0 auto",
@@ -1084,7 +1087,7 @@ export default function RestaurantDashboard() {
             fontFamily: fontBody,
           }}
         >
-          Book a walkthrough &rarr;
+          I want this for my business
         </a>
       </div>
     </>

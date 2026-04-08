@@ -125,8 +125,13 @@ export default function JunkRemovalDashboard() {
           .junk-row2 { grid-template-columns: 1fr !important; }
           .junk-row2b { grid-template-columns: 1fr !important; }
         }
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
+          .junk-g5 { grid-template-columns: repeat(2, 1fr) !important; }
+          .junk-wrap { padding: 0 16px 48px !important; }
+        }
+        @media (max-width: 480px) {
           .junk-g5 { grid-template-columns: 1fr !important; }
+          .junk-wrap { padding: 0 12px 48px !important; }
         }
       `}</style>
 
@@ -162,7 +167,7 @@ export default function JunkRemovalDashboard() {
         </div>
       </header>
 
-      <div style={{ maxWidth: 1260, margin: "0 auto", padding: "0 24px 48px" }}>
+      <div className="junk-wrap" style={{ maxWidth: 1260, margin: "0 auto", padding: "0 24px 48px" }}>
 
         {/* ── Demo context banner ── */}
         <div style={{ margin: "20px 0", padding: "24px 28px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 12, animation: "fadeInUp 0.4s ease-out forwards" }}>
