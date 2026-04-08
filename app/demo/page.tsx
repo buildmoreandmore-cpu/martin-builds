@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Live Demos — martin.builds",
+  title: "Dashboard Demos — martin.builds",
   description:
     "See what a custom dashboard looks like for your industry. Staffing, restaurant, inspection, and real estate demos — built by martin.builds.",
   alternates: { canonical: "https://martinbuilds.ai/demo" },
@@ -119,7 +119,7 @@ export default function DemoIndex() {
             marginBottom: "1rem",
           }}
         >
-          Live Dashboard Demos
+          Dashboard Concepts
         </h1>
         <p
           style={{
@@ -130,8 +130,7 @@ export default function DemoIndex() {
             lineHeight: 1.6,
           }}
         >
-          Pick your industry. See what your custom dashboard could look like —
-          built for how you actually run your business.
+          Pick your industry. These are design concepts — the final product is built around how you actually run your business.
         </p>
       </div>
 

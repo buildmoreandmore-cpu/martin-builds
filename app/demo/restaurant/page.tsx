@@ -466,6 +466,12 @@ export default function RestaurantDashboard() {
             gap: 32,
           }}
         >
+          {/* ── Demo context banner ── */}
+          <div style={{ padding: "24px 28px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 12 }}>
+            <p style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "#166534", marginBottom: 6 }}>This is a dashboard concept designed for a restaurant owner.</p>
+            <p style={{ margin: 0, fontSize: 14, color: "#15803d", lineHeight: 1.6 }}>Food costs, projections, ordering stats, and nightly performance — all in one place. The final product is designed around how your restaurant actually operates. This is a starting point to show what&apos;s possible.</p>
+          </div>
+
           {/* ── TOP BAR ── */}
           <div
             style={{

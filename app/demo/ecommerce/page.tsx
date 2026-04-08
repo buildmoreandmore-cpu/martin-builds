@@ -106,6 +106,12 @@ export default function EcommerceProfitDashboard() {
 
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: 24 }}>
 
+        {/* ── Demo context banner ── */}
+        <div style={{ padding: "24px 28px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 12, marginBottom: 24 }}>
+          <p style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "#166534", marginBottom: 6 }}>This is a dashboard concept designed for an ecommerce / DTC brand.</p>
+          <p style={{ margin: 0, fontSize: 14, color: "#15803d", lineHeight: 1.6 }}>True profit, ad ROAS, CAC analysis, and channel performance — all in one place. The final product is designed around how your brand actually operates. This is a starting point to show what&apos;s possible.</p>
+        </div>
+
         {/* ═══════════════ TOP BAR ═══════════════ */}
         <div
           style={{

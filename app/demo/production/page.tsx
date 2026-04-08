@@ -235,10 +235,10 @@ export default function ProductionDashboard() {
           animation: "fadeInUp 0.4s ease-out forwards",
         }}>
           <p style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "#166534", marginBottom: 6 }}>
-            You&apos;re looking at a custom dashboard built for a video production company.
+            This is a dashboard concept designed for a video production company.
           </p>
           <p style={{ margin: 0, fontSize: 14, color: "#15803d", lineHeight: 1.6 }}>
-            This is what your command center could look like — every project, proposal, crew booking, and dollar tracked in one place. No spreadsheets. No guessing if June is booked. Scroll down to explore the full layout.
+            Every project, proposal, crew booking, and dollar — tracked in one place. The final product is designed around how your business actually runs. This is just a starting point to show what&apos;s possible.
           </p>
         </div>
 

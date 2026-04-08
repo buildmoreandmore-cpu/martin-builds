@@ -40,7 +40,7 @@ export default function WhatIBuild() {
           <span style={{ color: "#c8ff00" }}>See the dashboard.</span>
         </h2>
         <p style={subStyle}>
-          Every business runs differently. These are real dashboards I&apos;ve designed — click any to explore.
+          Every business runs differently. These are dashboard concepts designed for real industries — click any to explore.
         </p>
       </ScrollReveal>
 

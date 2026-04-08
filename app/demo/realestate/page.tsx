@@ -253,6 +253,12 @@ export default function InvestorCommandCenter() {
 
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: 24 }}>
 
+        {/* ── Demo context banner ── */}
+        <div style={{ padding: "24px 28px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 12, marginBottom: 24 }}>
+          <p style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "#166534", marginBottom: 6 }}>This is a dashboard concept designed for a real estate investor.</p>
+          <p style={{ margin: 0, fontSize: 14, color: "#15803d", lineHeight: 1.6 }}>Deal pipeline, wholesale spreads, cash buyer matching, and assignment tracking — all in one place. The final product is designed around how your deals actually flow. This is a starting point to show what&apos;s possible.</p>
+        </div>
+
         {/* ═══════════════ 1. TOP BAR ═══════════════ */}
         <div
           style={{
