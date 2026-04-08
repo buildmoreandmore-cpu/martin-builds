@@ -76,39 +76,78 @@ export async function GET() {
       projectMap[key].amount_paid += inv.amount_paid / 100;
     }
 
-    // Add retainer subscriptions
+    // Add retainer and installment subscriptions
     for (const sub of adminSubs) {
       const projectName = sub.metadata?.project_name || "Unnamed Project";
       const key = `${sub.metadata?.client_name}::${projectName}`;
       const customer = sub.customer as Stripe.Customer | null;
+      const isInstallment = sub.metadata?.payment_type === "installment";
 
       if (!projectMap[key]) {
         const monthlyAmount = sub.items.data[0]?.price?.unit_amount
           ? sub.items.data[0].price.unit_amount / 100
           : 0;
 
-        projectMap[key] = {
-          client_name: sub.metadata?.client_name || "Unknown",
-          project_name: projectName,
-          payment_type: "retainer",
-          phase: null,
-          invoices: [],
-          status: sub.status === "active" ? "paid_full" : "awaiting_payment",
-          status_label:
-            sub.status === "active" ? "Retainer active" : "Retainer pending",
-          total_amount: monthlyAmount,
-          amount_paid: 0,
-          subscription: {
-            id: sub.id,
-            status: sub.status,
-            current_period_end: new Date(
-              ((sub as unknown as { current_period_end: number }).current_period_end || 0) * 1000
-            ).toISOString(),
-            monthly_amount: monthlyAmount,
-            stripe_url: `https://dashboard.stripe.com/subscriptions/${sub.id}`,
-            customer_email: customer?.email || null,
-          },
-        };
+        if (isInstallment) {
+          const totalOwed = parseInt(sub.metadata?.total_owed || "0") / 100;
+          const numPayments = parseInt(sub.metadata?.num_payments || "0");
+          const paymentsMade = parseInt(sub.metadata?.payments_made || "0");
+          const amountPaid = paymentsMade * monthlyAmount;
+          const cancelAt = (sub as unknown as { cancel_at: number | null }).cancel_at;
+
+          projectMap[key] = {
+            client_name: sub.metadata?.client_name || "Unknown",
+            project_name: projectName,
+            payment_type: "installment",
+            phase: null,
+            invoices: [],
+            status: paymentsMade >= numPayments ? "paid_full" : "installment_active",
+            status_label: paymentsMade >= numPayments
+              ? "Paid in full"
+              : `${paymentsMade} of ${numPayments} payments`,
+            total_amount: totalOwed,
+            amount_paid: amountPaid,
+            installment: {
+              id: sub.id,
+              status: sub.status,
+              monthly_amount: monthlyAmount,
+              total_owed: totalOwed,
+              payments_made: paymentsMade,
+              total_payments: numPayments,
+              amount_paid: amountPaid,
+              next_payment_date: cancelAt
+                ? new Date(
+                    ((sub as unknown as { current_period_end: number }).current_period_end || 0) * 1000
+                  ).toISOString()
+                : null,
+              stripe_url: `https://dashboard.stripe.com/subscriptions/${sub.id}`,
+              customer_email: customer?.email || null,
+            },
+          };
+        } else {
+          projectMap[key] = {
+            client_name: sub.metadata?.client_name || "Unknown",
+            project_name: projectName,
+            payment_type: "retainer",
+            phase: null,
+            invoices: [],
+            status: sub.status === "active" ? "paid_full" : "awaiting_payment",
+            status_label:
+              sub.status === "active" ? "Retainer active" : "Retainer pending",
+            total_amount: monthlyAmount,
+            amount_paid: 0,
+            subscription: {
+              id: sub.id,
+              status: sub.status,
+              current_period_end: new Date(
+                ((sub as unknown as { current_period_end: number }).current_period_end || 0) * 1000
+              ).toISOString(),
+              monthly_amount: monthlyAmount,
+              stripe_url: `https://dashboard.stripe.com/subscriptions/${sub.id}`,
+              customer_email: customer?.email || null,
+            },
+          };
+        }
       }
     }
 
@@ -123,10 +162,11 @@ export async function GET() {
         overdue: 0,
         draft_saved: 1,
         deposit_pending: 2,
-        awaiting_payment: 3,
-        final_sent: 4,
-        deposit_paid: 5,
-        paid_full: 6,
+        installment_active: 3,
+        awaiting_payment: 4,
+        final_sent: 5,
+        deposit_paid: 6,
+        paid_full: 7,
       };
       return (order[a.status] ?? 9) - (order[b.status] ?? 9);
     });
@@ -358,6 +398,58 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    if (payment_type === "installment") {
+      const { monthly_amount } = body;
+      if (!monthly_amount || monthly_amount < 300) {
+        return NextResponse.json(
+          { error: "Monthly payment must be at least $300" },
+          { status: 400 }
+        );
+      }
+
+      const totalDollars = totalCents / 100;
+      const numPayments = Math.ceil(totalDollars / monthly_amount);
+      const monthlyCents = Math.round(monthly_amount * 100);
+
+      // Create a recurring price for the monthly amount
+      const price = await stripe.prices.create({
+        currency: "usd",
+        unit_amount: monthlyCents,
+        recurring: { interval: "month" },
+        product_data: {
+          name: `${invoiceTitle} — Installment Payment`,
+        },
+      });
+
+      // Calculate cancel_at: end after numPayments months
+      const cancelAt = Math.floor(Date.now() / 1000) + numPayments * 30 * 24 * 60 * 60;
+
+      // Create subscription that auto-cancels after all payments
+      const subscription = await stripe.subscriptions.create({
+        customer: customer.id,
+        items: [{ price: price.id }],
+        cancel_at: cancelAt,
+        metadata: {
+          ...baseMeta,
+          payment_type: "installment",
+          total_owed: totalCents.toString(),
+          monthly_amount: monthlyCents.toString(),
+          num_payments: numPayments.toString(),
+          payments_made: "0",
+        },
+        description: `${invoiceTitle} — ${numPayments} payments of $${monthly_amount}/mo`,
+      });
+
+      return NextResponse.json({
+        success: true,
+        type: "installment",
+        subscription_id: subscription.id,
+        monthly_amount: monthly_amount,
+        num_payments: numPayments,
+        total: totalDollars,
+      });
+    }
+
     if (payment_type === "retainer") {
       const monthlyAmount = totalCents;
 
@@ -433,6 +525,18 @@ interface ProjectCard {
   total_amount: number;
   amount_paid: number;
   subscription?: SubscriptionEntry;
+  installment?: {
+    id: string;
+    status: string;
+    monthly_amount: number;
+    total_owed: number;
+    payments_made: number;
+    total_payments: number;
+    amount_paid: number;
+    next_payment_date: string | null;
+    stripe_url: string;
+    customer_email: string | null;
+  };
 }
 
 function computeStatus(card: ProjectCard): string {

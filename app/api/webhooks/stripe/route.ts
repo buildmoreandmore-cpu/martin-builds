@@ -99,6 +99,29 @@ export async function POST(req: NextRequest) {
         console.log(`[Stripe] ${client.business_name} payment received — agent active`);
       }
 
+      // Handle installment subscription payments
+      const subId = (invoice as unknown as { subscription?: string | null }).subscription;
+      if (subId && typeof subId === "string") {
+        try {
+          const sub = await stripe.subscriptions.retrieve(subId);
+          if (sub.metadata?.payment_type === "installment") {
+            const paymentsMade = parseInt(sub.metadata.payments_made || "0") + 1;
+            const totalPayments = parseInt(sub.metadata.num_payments || "0");
+            await stripe.subscriptions.update(sub.id, {
+              metadata: { ...sub.metadata, payments_made: paymentsMade.toString() },
+            });
+            console.log(`[INSTALLMENT] Payment ${paymentsMade}/${totalPayments} received for ${sub.metadata.project_name}`);
+
+            // If all payments made, log completion
+            if (paymentsMade >= totalPayments) {
+              console.log(`[INSTALLMENT] All payments complete for ${sub.metadata.project_name}`);
+            }
+          }
+        } catch (e) {
+          console.error("Installment tracking error:", e);
+        }
+      }
+
       // Send branded thank-you for admin-created invoices
       if (invoice.metadata?.created_by === "martin.builds admin") {
         const paymentType = invoice.metadata.payment_type as "full" | "deposit" | "final";

@@ -85,6 +85,7 @@ export default function TermsPage() {
             <Li>For multi-phase projects: each phase is invoiced separately and must be paid in full before that phase begins.</Li>
             <Li>Add-ons and scope changes require a revised or supplemental invoice before work begins. Verbal agreements are not honored.</Li>
             <Li>Monthly retainers are billed automatically via Stripe on the same date each month and continue until cancelled in writing.</Li>
+            <Li>Installment plans: clients may finance a project with monthly autopay payments (minimum $300/month). A card must remain on file with Stripe for automatic billing. Ownership and full access to the deliverable transfers only after the final installment is received. Failed payments are retried automatically by Stripe; if payment fails after all retry attempts, Martin Builds reserves the right to pause or suspend access until the balance is resolved. Early payoff is accepted at any time with no penalty.</Li>
             <Li>Accepted payment methods: credit/debit card or ACH via Stripe. No cash, check, or peer-to-peer transfers accepted.</Li>
           </Ul>
         </Section>

@@ -48,6 +48,18 @@ interface ProjectCard {
   status: string;
   status_label: string;
   total_amount: number;
+  installment?: {
+    id: string;
+    status: string;
+    monthly_amount: number;
+    total_owed: number;
+    payments_made: number;
+    total_payments: number;
+    amount_paid: number;
+    next_payment_date: string | null;
+    stripe_url: string;
+    customer_email: string | null;
+  };
   amount_paid: number;
   subscription?: SubscriptionEntry;
 }
@@ -519,7 +531,8 @@ export default function AdminPanel() {
   const [lineItems, setLineItems] = useState<LineItem[]>([
     { id: crypto.randomUUID(), description: "", amount: "" },
   ]);
-  const [paymentType, setPaymentType] = useState<"full" | "split" | "retainer">("full");
+  const [paymentType, setPaymentType] = useState<"full" | "split" | "retainer" | "installment">("full");
+  const [monthlyPayment, setMonthlyPayment] = useState("");
   const [memo, setMemo] = useState("");
   const [dueDateType, setDueDateType] = useState<"receipt" | "custom">("receipt");
   const [dueDate, setDueDate] = useState("");
@@ -707,6 +720,15 @@ export default function AdminPanel() {
       return;
     }
 
+    if (paymentType === "installment") {
+      const mp = parseFloat(monthlyPayment);
+      if (isNaN(mp) || mp < 300) {
+        setFormError("Monthly payment must be at least $300");
+        setFormLoading(false);
+        return;
+      }
+    }
+
     try {
       const res = await fetch("/api/admin/invoices", {
         method: "POST",
@@ -722,6 +744,7 @@ export default function AdminPanel() {
           memo,
           due_date: dueDateType === "receipt" ? "receipt" : dueDate,
           send_later: sendLater,
+          ...(paymentType === "installment" ? { monthly_amount: parseFloat(monthlyPayment) } : {}),
         }),
       });
 
@@ -735,6 +758,8 @@ export default function AdminPanel() {
           ? "Split invoices created (deposit sent, final held)"
           : data.type === "retainer"
           ? "Retainer subscription created"
+          : data.type === "installment"
+          ? `Installment plan created (${data.num_payments} payments of $${data.monthly_amount}/mo)`
           : "Invoice sent";
 
       const linkMsg = data.payment_link
@@ -750,6 +775,7 @@ export default function AdminPanel() {
       setTotalPhases("");
       setLineItems([{ id: crypto.randomUUID(), description: "", amount: "" }]);
       setPaymentType("full");
+      setMonthlyPayment("");
       setMemo("");
       setDueDateType("receipt");
       setDueDate("");
@@ -893,6 +919,7 @@ export default function AdminPanel() {
       paid_full: { bg: "#002200", text: GREEN },
       overdue: { bg: "#330000", text: "#ff4444" },
       awaiting_payment: { bg: "#1a1a00", text: "#cccc00" },
+      installment_active: { bg: "#001a33", text: "#4da6ff" },
     };
     const c = colors[status] || colors.awaiting_payment;
 
@@ -904,6 +931,7 @@ export default function AdminPanel() {
       paid_full: "\u2705",
       overdue: "\uD83D\uDD34",
       awaiting_payment: "\u23F3",
+      installment_active: "\uD83D\uDCB3",
     };
 
     return (
@@ -1161,6 +1189,11 @@ export default function AdminPanel() {
                   {paymentType === "retainer" && (
                     <span style={{ color: DIM, marginLeft: 8 }}>/month</span>
                   )}
+                  {paymentType === "installment" && parseFloat(monthlyPayment) >= 300 && (
+                    <span style={{ color: DIM, marginLeft: 8 }}>
+                      ({Math.ceil(total / parseFloat(monthlyPayment))} &times; ${parseFloat(monthlyPayment).toLocaleString()}/mo)
+                    </span>
+                  )}
                 </div>
               )}
             </div>
@@ -1169,7 +1202,7 @@ export default function AdminPanel() {
             <div style={s.formGroup}>
               <label style={s.label}>Payment Type</label>
               <div style={s.toggleGroup}>
-                {(["full", "split", "retainer"] as const).map((t) => (
+                {(["full", "split", "installment", "retainer"] as const).map((t) => (
                   <button
                     key={t}
                     type="button"
@@ -1179,7 +1212,7 @@ export default function AdminPanel() {
                       ...(paymentType === t ? s.toggleActive : {}),
                     }}
                   >
-                    {t === "full" ? "Full Payment" : t === "split" ? "Split (50/50)" : "Retainer"}
+                    {t === "full" ? "Full Payment" : t === "split" ? "Split (50/50)" : t === "installment" ? "Installment" : "Retainer"}
                   </button>
                 ))}
               </div>
@@ -1187,9 +1220,47 @@ export default function AdminPanel() {
                 {paymentType === "full" && "Single invoice, sent immediately"}
                 {paymentType === "split" &&
                   "Deposit invoice sent now, final invoice held as draft"}
+                {paymentType === "installment" && "Monthly autopay until project is paid in full"}
                 {paymentType === "retainer" && "Monthly recurring subscription"}
               </div>
             </div>
+
+            {/* Installment Details */}
+            {paymentType === "installment" && total > 0 && (
+              <div style={{ ...s.formGroup, background: "#111", borderRadius: 8, padding: 12, border: `1px solid ${BORDER}` }}>
+                <label style={s.label}>Monthly Payment Amount</label>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ color: DIM, fontSize: 14 }}>$</span>
+                  <input
+                    type="number"
+                    min="300"
+                    step="50"
+                    value={monthlyPayment}
+                    onChange={(e) => setMonthlyPayment(e.target.value)}
+                    placeholder="300"
+                    style={{ ...s.input, flex: 1 }}
+                  />
+                  <span style={{ color: DIM, fontSize: 12 }}>/mo</span>
+                </div>
+                {parseFloat(monthlyPayment) > 0 && parseFloat(monthlyPayment) < 300 && (
+                  <div style={{ fontSize: 11, color: "#ff4444", marginTop: 4 }}>Minimum $300/mo</div>
+                )}
+                {parseFloat(monthlyPayment) >= 300 && (
+                  <div style={{ marginTop: 10, padding: 10, background: "#0a0a0a", borderRadius: 6, border: `1px solid rgba(200,255,0,0.1)` }}>
+                    <div style={{ fontSize: 12, color: GREEN, fontWeight: 600, marginBottom: 6 }}>Payment Schedule</div>
+                    <div style={{ fontSize: 12, color: TEXT }}>
+                      {Math.ceil(total / parseFloat(monthlyPayment))} payments of ${parseFloat(monthlyPayment).toLocaleString()}/mo
+                      {total % parseFloat(monthlyPayment) !== 0 && (
+                        <span style={{ color: DIM }}> (final payment: ${(total % parseFloat(monthlyPayment)).toLocaleString("en-US", { minimumFractionDigits: 2 })})</span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: 11, color: DIM, marginTop: 4 }}>
+                      Total: ${total.toLocaleString("en-US", { minimumFractionDigits: 2 })} &middot; Autopay required &middot; Card on file
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Memo */}
             <div style={s.formGroup}>
@@ -1203,7 +1274,7 @@ export default function AdminPanel() {
             </div>
 
             {/* Due Date */}
-            {paymentType !== "retainer" && (
+            {paymentType !== "retainer" && paymentType !== "installment" && (
               <div style={s.formGroup}>
                 <label style={s.label}>Due Date</label>
                 <div style={s.dueDateRow}>
@@ -1260,6 +1331,8 @@ export default function AdminPanel() {
                   </>
                 ) : paymentType === "retainer" ? (
                   "Create Retainer"
+                ) : paymentType === "installment" ? (
+                  "Create Installment Plan"
                 ) : (
                   "Send Invoice"
                 )}
@@ -1337,9 +1410,32 @@ export default function AdminPanel() {
                     ? "Split (50/50)"
                     : p.payment_type === "retainer"
                     ? "Retainer"
+                    : p.payment_type === "installment"
+                    ? "Installment"
                     : "Full"}
                 </span>
-                {p.subscription ? (
+                {p.installment ? (
+                  <>
+                    <span>
+                      ${p.installment.monthly_amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}/mo
+                    </span>
+                    <span>
+                      {p.installment.payments_made} of {p.installment.total_payments} paid
+                    </span>
+                    <div style={{ width: "100%", height: 4, background: "#222", borderRadius: 2, marginTop: 4 }}>
+                      <div style={{
+                        height: "100%",
+                        width: `${(p.installment.payments_made / p.installment.total_payments) * 100}%`,
+                        background: p.installment.payments_made === p.installment.total_payments ? GREEN : "#4da6ff",
+                        borderRadius: 2,
+                        transition: "width 0.3s ease",
+                      }} />
+                    </div>
+                    <span style={{ fontSize: 10, color: DIM }}>
+                      ${p.installment.amount_paid.toLocaleString("en-US", { minimumFractionDigits: 2 })} of ${p.installment.total_owed.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                    </span>
+                  </>
+                ) : p.subscription ? (
                   <span>
                     ${p.subscription.monthly_amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                     /mo
@@ -1659,7 +1755,7 @@ export default function AdminPanel() {
 
                 {/* Stripe link — single link for the project */}
                 <a
-                  href={p.subscription?.stripe_url || p.invoices[0]?.stripe_url || "#"}
+                  href={p.installment?.stripe_url || p.subscription?.stripe_url || p.invoices[0]?.stripe_url || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{

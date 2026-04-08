@@ -100,6 +100,9 @@ export default function Services() {
           >
             Book a Free Discovery Call
           </a>
+          <p style={{ marginTop: "1.25rem", fontSize: "0.8rem", color: "#888", fontFamily: "'Space Mono', monospace" }}>
+            Financing available — payments as low as $300/mo
+          </p>
         </div>
       </ScrollReveal>
     </section>
