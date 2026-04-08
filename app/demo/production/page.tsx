@@ -173,15 +173,6 @@ export default function ProductionDashboard() {
           ))}
         </nav>
 
-        {/* Bottom */}
-        <div style={{ padding: "0 10px" }}>
-          <div style={{ padding: "16px 14px", borderTop: "1px solid #222", display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 28, height: 28, borderRadius: 9999, background: "#333", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ fontSize: 11, fontWeight: 600, color: "#999", fontFamily: fontMono }}>MF</span>
-            </div>
-            <span style={{ fontSize: 12, color: "#888" }}>Martin F.</span>
-          </div>
-        </div>
       </aside>
 
       {/* ── Main content ── */}
