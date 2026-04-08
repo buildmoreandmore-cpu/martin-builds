@@ -65,6 +65,14 @@ const demos = [
     href: "/demo/production",
     accent: "#7c3aed",
   },
+  {
+    title: "HVAC Command Center",
+    vertical: "HVAC / Heating & Cooling",
+    description:
+      "Dispatch board, technician tracking, seasonal revenue forecasting, maintenance agreements, and inventory alerts for HVAC operators.",
+    href: "/demo/hvac",
+    accent: "#2563eb",
+  },
 ];
 
 export default function DemoIndex() {
