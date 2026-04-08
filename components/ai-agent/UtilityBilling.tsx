@@ -26,18 +26,19 @@ const tiers: Record<TierKey, TierConfig> = {
   essential: {
     name: "Essential",
     tagline: "Reliable coverage for everyday conversations",
-    model: "MiniMax-Text-01",
+    model: "Claude Haiku 4.5",
     setup: "$49",
     perConvo: "$0.04",
     perConvoNum: 0.04,
     color: "#c8ff00",
     bestFor: "FAQs, booking, basic support",
     features: [
-      "Custom-trained on your business",
-      "24/7 customer support agent",
+      "AI agent trained on your business",
+      "Website widget (one line of code)",
       "Lead capture & notifications",
+      "Client and job management",
+      "Dashboard login",
       "48-hour setup",
-      "Pay as you go",
     ],
   },
   professional: {
@@ -51,10 +52,10 @@ const tiers: Record<TierKey, TierConfig> = {
     bestFor: "Lead qualifying, consultations, complex support",
     features: [
       "Everything in Essential",
-      "Nuanced conversation handling",
-      "Multi-step lead qualification",
-      "CRM & calendar integration",
-      "Pay as you go",
+      "Telegram bot — manage your business by text",
+      "Smarter conversations",
+      "CRM sync",
+      "Priority email support",
     ],
   },
   enterprise: {
@@ -68,10 +69,11 @@ const tiers: Record<TierKey, TierConfig> = {
     bestFor: "Sales, legal intake, consulting, high-stakes conversations",
     features: [
       "Everything in Professional",
-      "Best-in-class AI reasoning",
-      "Complex workflow automation",
-      "Priority support & monitoring",
-      "Pay as you go",
+      "Highest intelligence model",
+      "Full conversation history",
+      "Admin reporting",
+      "Dedicated onboarding call",
+      "Same-day support",
     ],
   },
 };
@@ -496,6 +498,50 @@ export default function UtilityBilling() {
             Low setup. Pay as you go. Upgrade your model anytime. No contracts, no overage charges — just your agent working 24/7 and a transparent bill at the end of the month.
           </p>
         </div>
+
+        {/* Delivery methods */}
+        <ScrollReveal>
+          <div style={{ marginTop: "3.5rem", textAlign: "center" }}>
+            <p style={tagStyle}>How Your Agent Gets Delivered</p>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1.25rem", maxWidth: "900px", margin: "1.5rem auto 0" }}>
+            <div style={{ padding: "1.75rem", background: "#1a1a1a", borderRadius: "16px", border: "1px solid rgba(200,255,0,0.1)" }}>
+              <div style={{ width: 44, height: 44, borderRadius: "12px", background: "rgba(200,255,0,0.08)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1rem" }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" />
+                </svg>
+              </div>
+              <h3 style={{ fontSize: "1.05rem", fontWeight: 700, color: "#f5f5f0", marginBottom: "0.5rem" }}>Website Widget</h3>
+              <p style={{ fontSize: "0.82rem", color: "#888", lineHeight: 1.6 }}>
+                Drop one line of code on your site. Your agent goes live in 48 hours.
+              </p>
+            </div>
+            <div style={{ padding: "1.75rem", background: "#1a1a1a", borderRadius: "16px", border: "1px solid rgba(100,180,255,0.12)" }}>
+              <div style={{ width: 44, height: 44, borderRadius: "12px", background: "rgba(100,180,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1rem" }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#64b4ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+              </div>
+              <h3 style={{ fontSize: "1.05rem", fontWeight: 700, color: "#f5f5f0", marginBottom: "0.5rem" }}>
+                Telegram Bot <span style={{ fontSize: "0.65rem", color: "#64b4ff", fontWeight: 500 }}>Pro+</span>
+              </h3>
+              <p style={{ fontSize: "0.82rem", color: "#888", lineHeight: 1.6 }}>
+                Text your agent like you text anyone else. Add clients, check stats, trigger follow-ups — from your phone, no login required.
+              </p>
+            </div>
+            <div style={{ padding: "1.75rem", background: "#1a1a1a", borderRadius: "16px", border: "1px solid rgba(180,130,255,0.12)" }}>
+              <div style={{ width: 44, height: 44, borderRadius: "12px", background: "rgba(180,130,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1rem" }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b482ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="21" x2="9" y2="9" />
+                </svg>
+              </div>
+              <h3 style={{ fontSize: "1.05rem", fontWeight: 700, color: "#f5f5f0", marginBottom: "0.5rem" }}>Your Dashboard</h3>
+              <p style={{ fontSize: "0.82rem", color: "#888", lineHeight: 1.6 }}>
+                Log in anytime to see your data, update your agent&apos;s training, and review every conversation.
+              </p>
+            </div>
+          </div>
+        </ScrollReveal>
       </div>
 
       {/* Mobile version */}

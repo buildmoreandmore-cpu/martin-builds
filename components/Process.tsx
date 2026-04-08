@@ -85,7 +85,7 @@ export default function Process() {
         >
           {[
             { label: "What you get", value: "Scope doc, daily updates, deployed product, full walkthrough, source code" },
-            { label: "What it costs", value: "Sprints from $5K, Platforms from $8K. Exact quote after discovery call — no hidden fees" },
+            { label: "What it costs", value: "Exact quote after discovery call — no hidden fees, no surprises" },
             { label: "How long", value: "2 weeks for sprints. 2-3 weeks for platforms. Locked timeline before we start" },
             { label: "What success looks like", value: "Your team uses it daily. It saves real hours — and closes more deals. You come back for Phase 2" },
           ].map((item) => (

@@ -18,7 +18,7 @@ import Services from "@/components/Services";
 import AppAudit from "@/components/AppAudit";
 import DashboardPreview from "@/components/DashboardPreview";
 import Process from "@/components/Process";
-import Testimonials from "@/components/Testimonials";
+import WhatIBuild from "@/components/WhatIBuild";
 import Founder from "@/components/Founder";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
@@ -31,11 +31,11 @@ export default function Home() {
       <Hero />
       <DashboardPreview />
       <AppAudit />
-      <Testimonials />
-      <Process />
+      <WhatIBuild />
       <Services />
       <Founder />
       <ObjectionHandler />
+      <Process />
       <CTA />
       <Footer />
     </>
