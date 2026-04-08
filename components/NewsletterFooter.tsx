@@ -65,13 +65,14 @@ export default function NewsletterFooter() {
               marginBottom: "0.75rem",
             }}
           >
-            Stay Connected
+            The Friday Letter
           </p>
           <h3 style={{ fontSize: "1.5rem", fontWeight: 700, letterSpacing: "-0.5px", marginBottom: "0.5rem" }}>
-            One insight a week. No ask.
+            How I think about building.
           </h3>
           <p style={{ fontSize: "0.9rem", color: "#888", lineHeight: 1.6, fontWeight: 300 }}>
-            What I&apos;m building, what&apos;s working for clients, and AI moves you can steal. Not a pitch — just value. Every Friday.
+            Every Friday I write one letter about what I&apos;m building, how I think about systems, and the decisions behind the work. No pitch. No fluff.{" "}
+            <a href="/see-you-friday" style={{ color: "#c8ff00", textDecoration: "none", fontWeight: 600 }}>Read the latest →</a>
           </p>
         </div>
 

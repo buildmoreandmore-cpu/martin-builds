@@ -733,26 +733,41 @@ export default function DashboardPreview() {
         </div>
 
         {/* Link to full demos */}
-        <p
+        <div
           style={{
             textAlign: "center",
-            marginTop: "1.25rem",
-            fontSize: "0.8rem",
-            color: "#888",
+            marginTop: "2rem",
+            padding: "1.25rem 2rem",
+            background: "rgba(200,255,0,0.04)",
+            border: "1px solid rgba(200,255,0,0.12)",
+            borderRadius: "12px",
+            maxWidth: "540px",
+            margin: "2rem auto 0",
           }}
         >
-          Want to see industry-specific examples?{" "}
+          <p style={{ fontSize: "0.95rem", fontWeight: 600, color: "#f5f5f0", marginBottom: "0.5rem" }}>
+            See full dashboards built for real industries
+          </p>
+          <p style={{ fontSize: "0.8rem", color: "#888", marginBottom: "1rem" }}>
+            Staffing, restaurant, HVAC, production, ecommerce, and more — explore live demos.
+          </p>
           <a
             href="/demo"
             style={{
-              color: "#c8ff00",
-              fontWeight: 600,
+              display: "inline-block",
+              padding: "0.65rem 2rem",
+              background: "#c8ff00",
+              color: "#0a0a0a",
+              borderRadius: "100px",
+              fontWeight: 700,
+              fontSize: "0.85rem",
               textDecoration: "none",
+              transition: "all 0.3s",
             }}
           >
-            Explore full demos →
+            Explore All Demos →
           </a>
-        </p>
+        </div>
       </div>
 
       <style>{`
