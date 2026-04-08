@@ -57,6 +57,14 @@ const demos = [
     href: "/demo/junk-removal",
     accent: "#14532d",
   },
+  {
+    title: "Production Company Command Center",
+    vertical: "Production Company",
+    description:
+      "Project pipeline, profit per shoot, crew scheduling, and revenue gap forecasting for production companies.",
+    href: "/demo/production",
+    accent: "#7c3aed",
+  },
 ];
 
 export default function DemoIndex() {

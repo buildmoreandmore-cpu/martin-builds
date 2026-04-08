@@ -39,9 +39,9 @@ export default function Hero() {
           maxWidth: "900px",
         }}
       >
-        Most businesses are one system away from running like a{" "}
+        Your business deserves a system that runs like{" "}
         <span style={{ color: "#c8ff00", position: "relative", display: "inline-block" }}>
-          real company.
+          you do.
           <span
             style={{
               position: "absolute",
@@ -69,7 +69,7 @@ export default function Hero() {
           lineHeight: 1.5,
         }}
       >
-        I build that system in 14 days.
+        Owned by you forever.
       </p>
 
       <p
@@ -83,7 +83,7 @@ export default function Hero() {
           lineHeight: 1.6,
         }}
       >
-        Your site. Your dashboard. Built around how you actually win. Owned by you forever.
+        Your site. Your dashboard. Built around how you actually win.
       </p>
 
       <div
