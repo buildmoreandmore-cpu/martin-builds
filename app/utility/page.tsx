@@ -3,7 +3,6 @@ import Nav from "@/components/Nav";
 import { FAQJsonLd, AIAgentServiceJsonLd } from "@/components/JsonLd";
 import UtilityBilling from "@/components/ai-agent/UtilityBilling";
 import AgentFAQ from "@/components/ai-agent/AgentFAQ";
-import AgentFinalCTA from "@/components/ai-agent/AgentFinalCTA";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -42,7 +41,6 @@ export default function AIAgentPage() {
       <Nav />
       <UtilityBilling />
       <AgentFAQ />
-      <AgentFinalCTA />
       <Footer />
     </>
   );

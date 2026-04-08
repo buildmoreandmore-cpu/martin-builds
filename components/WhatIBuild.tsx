@@ -17,40 +17,16 @@ const builds = [
     accent: "#d97706",
   },
   {
-    title: "Inspection Services",
-    desc: "Certificate tracking, violation remediation, workload",
-    href: "/demo/inspection",
-    accent: "#1e3a5f",
-  },
-  {
-    title: "Real Estate Investor",
-    desc: "Deal pipeline, wholesale spread, cash buyer matching",
-    href: "/demo/realestate",
-    accent: "#14532d",
+    title: "HVAC",
+    desc: "Dispatch board, seasonal revenue, maintenance agreements",
+    href: "/demo/hvac",
+    accent: "#2563eb",
   },
   {
     title: "Ecommerce / DTC",
     desc: "True profit tracking, ad ROAS, CAC analysis",
     href: "/demo/ecommerce",
     accent: "#7c3aed",
-  },
-  {
-    title: "Junk Removal",
-    desc: "Job board, crew dispatch, estimates pipeline",
-    href: "/demo/junk-removal",
-    accent: "#14532d",
-  },
-  {
-    title: "Production Company",
-    desc: "Project pipeline, profit per shoot, crew scheduling",
-    href: "/demo/production",
-    accent: "#7c3aed",
-  },
-  {
-    title: "HVAC",
-    desc: "Dispatch board, seasonal revenue, maintenance agreements",
-    href: "/demo/hvac",
-    accent: "#2563eb",
   },
 ];
 
@@ -130,6 +106,29 @@ export default function WhatIBuild() {
         ))}
       </div>
 
+      <ScrollReveal>
+        <div style={{ textAlign: "center", marginTop: "2rem" }}>
+          <Link
+            href="/demo"
+            style={{
+              color: "#c8ff00",
+              fontWeight: 600,
+              fontSize: "0.95rem",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.4rem",
+              textDecoration: "none",
+              transition: "all 0.3s",
+            }}
+          >
+            See all demos
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
+      </ScrollReveal>
+
       {/* Utility Agent CTA */}
       <ScrollReveal>
         <div
@@ -149,13 +148,13 @@ export default function WhatIBuild() {
         >
           <div style={{ maxWidth: 560 }}>
             <p style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.65rem", color: "#c8ff00", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "0.5rem" }}>
-              Included with every dashboard
+              Optional add-on
             </p>
             <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: "#f5f5f0", marginBottom: "0.5rem" }}>
-              Your AI Agent — built into your system
+              Want your dashboard to work for you 24/7?
             </h3>
             <p style={{ fontSize: "0.85rem", color: "#888", lineHeight: 1.7, margin: 0 }}>
-              Every custom dashboard comes with a trained AI agent that handles leads, answers questions, and manages your data 24/7 — embedded on your website and available via Telegram.
+              Add a trained AI agent to your dashboard — it handles leads, answers questions, and manages your data around the clock. Embedded on your website and available via Telegram.
             </p>
           </div>
           <Link
