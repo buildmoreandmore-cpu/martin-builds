@@ -49,6 +49,14 @@ const demos = [
     href: "/demo/ecommerce",
     accent: "#7c3aed",
   },
+  {
+    title: "Junk Removal Operations",
+    vertical: "Junk Removal / Hauling",
+    description:
+      "Job board, crew dispatch, revenue by service area, estimates pipeline, and Google review tracking for junk removal operators.",
+    href: "/demo/junk-removal",
+    accent: "#14532d",
+  },
 ];
 
 export default function DemoIndex() {
