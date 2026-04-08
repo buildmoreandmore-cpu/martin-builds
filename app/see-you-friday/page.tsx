@@ -23,7 +23,7 @@ const letters: Letter[] = [
       "If you could hit the Disney button — what would you want this to do? What would you want it to look like? What would it feel like to use?",
       "It sounds simple but it does something important. It gets people out of the box they've been living in. Most small business owners have a fixed idea of what technology is supposed to look like because that's all they've ever been shown. Standard templates. Cookie cutter sites. Someone else's vision of what their business should be. That question gives them permission to imagine something different.",
       "Once they open up I take it from there and build.",
-      "Now I have a background in banking, financing, and sales. So I'm always teetering between two things — creativity and what actually matters to be seen. That balance is important. And my goal is always to bring those two things together.",
+      "Now I have a background in Finance, Sales, Marketing. So I'm always teetering between two things — creativity and what actually matters to be seen. That balance is important. And my goal is always to bring those two things together.",
       "Because when a client sees what we built for the first time I don't want them to just see their imagination on a screen. I want them to see what matters.",
       "A lot of businesses are locked in on the top number. Revenue. That number feels good. But my training always pulls me toward the net. What are the expenses. What are we actually operating with. What does the business really look like underneath.",
       "The tool we build together isn't just going to make their day flow easier. It's going to help them understand their business on a deeper level than they did before.",
