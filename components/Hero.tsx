@@ -83,7 +83,7 @@ export default function Hero() {
           lineHeight: 1.6,
         }}
       >
-        Your site. Your dashboard. Built around how you actually win.
+        Your site. Your dashboard. Built around how you actually win. Owned by you forever.
       </p>
 
       <div
