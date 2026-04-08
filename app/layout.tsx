@@ -4,7 +4,7 @@ import { LocalBusinessJsonLd } from "@/components/JsonLd";
 
 const title = "martin.builds — Custom Websites & Dashboards in 14 Days";
 const description =
-  "Most businesses are one system away from running like a real company. I build that system in 14 days. Custom website + admin dashboard. Based in Atlanta, GA.";
+  "Your business deserves a system that runs like you do. Custom website + admin dashboard. Owned by you forever. Based in Atlanta, GA.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://martinbuilds.ai"),

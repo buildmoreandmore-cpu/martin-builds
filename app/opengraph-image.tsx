@@ -63,7 +63,7 @@ export default function OGImage() {
               letterSpacing: "-1.5px",
             }}
           >
-            Most businesses are one system away from running like a real company.
+            Your business deserves a system that runs like you do.
           </div>
           <div
             style={{
@@ -73,7 +73,7 @@ export default function OGImage() {
               letterSpacing: "-0.5px",
             }}
           >
-            I build that system in 14 days.
+            Owned by you forever.
           </div>
         </div>
 

@@ -15,7 +15,7 @@ const letters: Letter[] = [
   {
     issue: "001",
     date: "April 4, 2025",
-    title: "The Disney Button",
+    title: "The Disney Magic",
     paragraphs: [
       "When clients come to me they're usually full of ideas. No real direction, but a feeling. Something they want to experience, something they want to fix, something they can almost see but can't quite describe yet.",
       "That's actually my favorite place to start.",
