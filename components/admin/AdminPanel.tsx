@@ -520,7 +520,13 @@ interface AgentClient {
   last_active: string | null;
   last_interface: string | null;
   estimated_cost: number;
-  dashboard_url: string;
+  created_at: string;
+}
+
+interface AgentMessage {
+  role: "user" | "assistant";
+  content: string;
+  interface: string;
   created_at: string;
 }
 
@@ -544,6 +550,9 @@ export default function AdminPanel() {
   // AI Agents
   const [agents, setAgents] = useState<AgentClient[]>([]);
   const [agentsLoading, setAgentsLoading] = useState(false);
+  const [conversationAgent, setConversationAgent] = useState<AgentClient | null>(null);
+  const [conversationMessages, setConversationMessages] = useState<AgentMessage[]>([]);
+  const [conversationLoading, setConversationLoading] = useState(false);
 
   // Form state
   const [clientName, setClientName] = useState("");
@@ -642,6 +651,21 @@ export default function AdminPanel() {
   }, []);
 
   const [deletingAgentId, setDeletingAgentId] = useState<string | null>(null);
+
+  async function openConversation(agent: AgentClient) {
+    setConversationAgent(agent);
+    setConversationMessages([]);
+    setConversationLoading(true);
+    try {
+      const pw = sessionStorage.getItem("mb_admin_pw") || "";
+      const res = await fetch(`/api/admin/agents/${agent.id}/messages`, {
+        headers: { "x-admin-password": pw },
+      });
+      const data = await res.json();
+      if (Array.isArray(data.messages)) setConversationMessages(data.messages);
+    } catch { /* silent */ }
+    setConversationLoading(false);
+  }
 
   async function handleDeleteAgent(agentId: string, agentName: string) {
     if (!confirm(`Delete ${agentName}? This will remove the client and all their messages permanently.`)) return;
@@ -1946,10 +1970,12 @@ export default function AdminPanel() {
 
                     {/* Actions */}
                     <div style={{ marginTop: 12, paddingTop: 10, borderTop: `1px solid ${BORDER}`, display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-                      <a href={agent.dashboard_url} target="_blank" rel="noopener noreferrer"
-                        style={{ padding: "5px 12px", background: GREEN, color: BG, border: "none", borderRadius: 3, fontSize: 11, fontWeight: 700, textDecoration: "none", fontFamily: "inherit" }}>
-                        Open Dashboard
-                      </a>
+                      <button
+                        onClick={() => openConversation(agent)}
+                        style={{ padding: "5px 12px", background: GREEN, color: BG, border: "none", borderRadius: 3, fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
+                      >
+                        View Conversation
+                      </button>
                       <button
                         onClick={() => handleDeleteAgent(agent.id, agent.name)}
                         disabled={deletingAgentId === agent.id}
@@ -2101,6 +2127,44 @@ export default function AdminPanel() {
           </>
         )}
       </div>
+
+      {/* Conversation Modal */}
+      {conversationAgent && (
+        <div
+          onClick={() => setConversationAgent(null)}
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100, padding: 16 }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{ background: CARD_BG, border: `1px solid ${BORDER}`, borderRadius: 8, width: "100%", maxWidth: 720, maxHeight: "85vh", display: "flex", flexDirection: "column", overflow: "hidden" }}
+          >
+            <div style={{ padding: "14px 18px", borderBottom: `1px solid ${BORDER}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: TEXT }}>{conversationAgent.bot_name || "Agent"} &harr; {conversationAgent.name}</div>
+                <div style={{ fontSize: 11, color: DIM, marginTop: 2 }}>{conversationAgent.business_name} &middot; {conversationMessages.length} messages</div>
+              </div>
+              <button onClick={() => setConversationAgent(null)} style={{ background: "transparent", border: `1px solid ${BORDER}`, color: DIM, padding: "4px 10px", borderRadius: 4, fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}>Close</button>
+            </div>
+            <div style={{ flex: 1, overflowY: "auto", padding: 18 }}>
+              {conversationLoading && <div style={{ color: DIM, textAlign: "center", padding: 24, fontSize: 12 }}>Loading...</div>}
+              {!conversationLoading && conversationMessages.length === 0 && <div style={{ color: DIM, textAlign: "center", padding: 24, fontSize: 12 }}>No messages yet.</div>}
+              {conversationMessages.map((msg, i) => {
+                const isUser = msg.role === "user";
+                return (
+                  <div key={i} style={{ display: "flex", justifyContent: isUser ? "flex-end" : "flex-start", marginBottom: 10 }}>
+                    <div style={{ maxWidth: "75%" }}>
+                      <div style={{ padding: "10px 14px", borderRadius: isUser ? "12px 12px 4px 12px" : "12px 12px 12px 4px", background: isUser ? GREEN : "#222", color: isUser ? "#0a0a0a" : TEXT, fontSize: 13, lineHeight: 1.5, whiteSpace: "pre-wrap" }}>{msg.content}</div>
+                      <div style={{ fontSize: 10, color: DIM, marginTop: 3, textAlign: isUser ? "right" : "left" }}>
+                        {msg.interface} &middot; {new Date(msg.created_at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -49,7 +49,6 @@ export async function GET(req: NextRequest) {
         last_interface: lastMsg?.interface || null,
         estimated_cost: Math.round(estimatedCost * 100) / 100,
         telegram_connected: !!client.telegram_chat_id,
-        dashboard_url: `/dashboard/${client.id}`,
       };
     })
   );
