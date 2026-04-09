@@ -163,7 +163,12 @@ function SetupInner() {
         <div style={styles.card}>
           {error ? (
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: 32, marginBottom: 12 }}>🔒</div>
+              <div style={{ marginBottom: 12, display: "flex", justifyContent: "center" }}>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0110 0v4" />
+                </svg>
+              </div>
               <h1 style={styles.h1}>Setup Requires Payment</h1>
               <p style={{ color: "#999", fontSize: 14, margin: "12px 0 20px" }}>{error}</p>
               <a
@@ -186,7 +191,13 @@ function SetupInner() {
       <div style={styles.container}>
         <div style={styles.card}>
           <div style={{ textAlign: "center", marginBottom: 24 }}>
-            <div style={{ fontSize: 32, marginBottom: 8 }}>🤖</div>
+            <div style={{ marginBottom: 8, display: "flex", justifyContent: "center" }}>
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                <path d="M2 17l10 5 10-5" />
+                <path d="M2 12l10 5 10-5" />
+              </svg>
+            </div>
             <h1 style={styles.h1}>Set Up Your AI Agent</h1>
             <p style={styles.subtitle}>Tell us about your business so your agent knows how to work for you.</p>
           </div>
@@ -318,7 +329,12 @@ function SetupInner() {
     <div style={styles.container}>
       <div style={styles.card}>
         <div style={{ textAlign: "center" }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>✅</div>
+          <div style={{ marginBottom: 12, display: "flex", justifyContent: "center" }}>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+          </div>
           <h1 style={styles.h1}>Your Agent is Ready!</h1>
           <p style={styles.subtitle}>
             Meet <strong style={{ color: "#c8ff00" }}>{botName || businessName + " Agent"}</strong> — your AI employee.
