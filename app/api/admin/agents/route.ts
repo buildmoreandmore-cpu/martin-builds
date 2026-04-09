@@ -56,3 +56,26 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json(enriched);
 }
+
+export async function DELETE(req: NextRequest) {
+  const auth = req.headers.get("x-admin-password");
+  if (auth !== process.env.ADMIN_PASSWORD) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id } = await req.json();
+  if (!id) {
+    return NextResponse.json({ error: "id required" }, { status: 400 });
+  }
+
+  // Delete messages first (foreign key)
+  await supabase.from("client_messages").delete().eq("client_id", id);
+
+  // Delete the client
+  const { error } = await supabase.from("clients").delete().eq("id", id);
+  if (error) {
+    return NextResponse.json({ error: "Failed to delete client" }, { status: 500 });
+  }
+
+  return NextResponse.json({ ok: true });
+}

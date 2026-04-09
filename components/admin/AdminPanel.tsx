@@ -641,6 +641,26 @@ export default function AdminPanel() {
     setAgentsLoading(false);
   }, []);
 
+  const [deletingAgentId, setDeletingAgentId] = useState<string | null>(null);
+
+  async function handleDeleteAgent(agentId: string, agentName: string) {
+    if (!confirm(`Delete ${agentName}? This will remove the client and all their messages permanently.`)) return;
+    setDeletingAgentId(agentId);
+    try {
+      const pw = sessionStorage.getItem("mb_admin_pw") || "";
+      const res = await fetch("/api/admin/agents", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json", "x-admin-password": pw },
+        body: JSON.stringify({ id: agentId }),
+      });
+      if (!res.ok) throw new Error("Delete failed");
+      fetchAgents();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Delete failed");
+    }
+    setDeletingAgentId(null);
+  }
+
   async function handleAutoAction(clientId: string, action: string, tier?: string) {
     setAutoActionId(clientId);
     try {
@@ -1033,7 +1053,10 @@ export default function AdminPanel() {
 
       {/* Header */}
       <div style={s.header}>
-        <h1 style={s.headerTitle}>martin.builds admin</h1>
+        <h1 style={s.headerTitle}>
+          martin<span style={{ color: GREEN }}>.builds</span>{" "}
+          <span style={{ color: DIM, fontWeight: 400, fontSize: 13 }}>admin</span>
+        </h1>
         <button onClick={handleLogout} style={s.logoutBtn}>
           Logout
         </button>
@@ -1927,6 +1950,13 @@ export default function AdminPanel() {
                         style={{ padding: "5px 12px", background: GREEN, color: BG, border: "none", borderRadius: 3, fontSize: 11, fontWeight: 700, textDecoration: "none", fontFamily: "inherit" }}>
                         Open Dashboard
                       </a>
+                      <button
+                        onClick={() => handleDeleteAgent(agent.id, agent.name)}
+                        disabled={deletingAgentId === agent.id}
+                        style={{ padding: "5px 12px", background: "transparent", border: "1px solid #ff4444", color: "#ff4444", borderRadius: 3, fontSize: 11, cursor: deletingAgentId === agent.id ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: deletingAgentId === agent.id ? 0.5 : 1, marginLeft: "auto" }}
+                      >
+                        {deletingAgentId === agent.id ? "Deleting..." : "Delete"}
+                      </button>
                     </div>
                   </div>
                 );
