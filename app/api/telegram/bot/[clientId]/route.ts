@@ -12,6 +12,7 @@ import { supabase } from "@/lib/supabase";
 import Anthropic from "@anthropic-ai/sdk";
 import { buildSystemPrompt } from "@/lib/agent-prompt";
 import { saveMessage, loadHistory } from "@/lib/client-messages";
+import { PCG_TOOLS, executePcgTool } from "@/lib/pcg-client";
 
 const anthropic = new Anthropic({
   apiKey: (process.env.ANTHROPIC_API_KEY || "").trim(),
@@ -153,17 +154,56 @@ export async function POST(
     const history = await loadHistory(clientId, 20);
 
     const systemPrompt = buildSystemPrompt(client);
-    const response = await anthropic.messages.create({
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: 1024,
-      system: systemPrompt,
-      messages: history,
-    });
 
-    const reply =
-      response.content[0].type === "text"
-        ? response.content[0].text
-        : "I couldn't process that. Try again?";
+    // Tool-use loop: Claude may call PCG tools, we execute and feed results back
+    // Cap iterations to prevent runaway loops (max 5 tool rounds per turn)
+    const messages: Anthropic.MessageParam[] = [...history];
+    let finalText = "";
+    const pcgConfigured = !!process.env.PCG_API_KEY && !!process.env.PCG_API_BASE_URL;
+
+    for (let i = 0; i < 5; i++) {
+      const response = await anthropic.messages.create({
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: 1024,
+        system: systemPrompt,
+        tools: pcgConfigured ? PCG_TOOLS : undefined,
+        messages,
+      });
+
+      // Collect any text output
+      for (const block of response.content) {
+        if (block.type === "text") finalText += block.text;
+      }
+
+      if (response.stop_reason !== "tool_use") break;
+
+      // Execute tool calls and append results
+      const toolUseBlocks = response.content.filter((b) => b.type === "tool_use");
+      messages.push({ role: "assistant", content: response.content });
+
+      const toolResults: Anthropic.ToolResultBlockParam[] = [];
+      for (const block of toolUseBlocks) {
+        if (block.type !== "tool_use") continue;
+        try {
+          const result = await executePcgTool(block.name, block.input as Record<string, unknown>);
+          toolResults.push({
+            type: "tool_result",
+            tool_use_id: block.id,
+            content: JSON.stringify(result),
+          });
+        } catch (err) {
+          toolResults.push({
+            type: "tool_result",
+            tool_use_id: block.id,
+            content: `Error: ${err instanceof Error ? err.message : "tool failed"}`,
+            is_error: true,
+          });
+        }
+      }
+      messages.push({ role: "user", content: toolResults });
+    }
+
+    const reply = finalText || "I couldn't process that. Try again?";
 
     // Save the assistant response
     await saveMessage(clientId, "assistant", reply, "telegram");
