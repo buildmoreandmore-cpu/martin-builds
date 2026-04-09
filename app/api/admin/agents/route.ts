@@ -39,8 +39,9 @@ export async function GET(req: NextRequest) {
         .limit(1)
         .single();
 
-      // Rough cost estimate: ~$0.001 per message for Haiku
-      const estimatedCost = (count || 0) * 0.001;
+      // Rough cost estimate: ~$0.015 per message for Haiku 4.5 with tool use
+      // (system prompt + history + tool results + output, averaged across light/heavy users)
+      const estimatedCost = (count || 0) * 0.015;
 
       return {
         ...client,

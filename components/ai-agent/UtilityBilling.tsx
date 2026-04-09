@@ -17,6 +17,7 @@ interface TierConfig {
   setup: string;
   perConvo: string;
   perConvoNum: number;
+  monthlyCap: number;
   color: string;
   bestFor: string;
   features: string[];
@@ -30,6 +31,7 @@ const tiers: Record<TierKey, TierConfig> = {
     setup: "$49",
     perConvo: "$0.04",
     perConvoNum: 0.04,
+    monthlyCap: 1000,
     color: "#c8ff00",
     bestFor: "FAQs, booking, basic support",
     features: [
@@ -48,6 +50,7 @@ const tiers: Record<TierKey, TierConfig> = {
     setup: "$99",
     perConvo: "$0.12",
     perConvoNum: 0.12,
+    monthlyCap: 1500,
     color: "#64b4ff",
     bestFor: "Lead qualifying, consultations, complex support",
     features: [
@@ -65,6 +68,7 @@ const tiers: Record<TierKey, TierConfig> = {
     setup: "$149",
     perConvo: "$0.35",
     perConvoNum: 0.35,
+    monthlyCap: 2000,
     color: "#b482ff",
     bestFor: "Sales, legal intake, consulting, high-stakes conversations",
     features: [
@@ -293,6 +297,8 @@ export default function UtilityBilling() {
                   <span style={{ color: tier.color, fontWeight: 700 }}>{tier.setup}</span> setup → agent goes live in 48h
                   <br />
                   Then <span style={{ color: tier.color, fontWeight: 600 }}>{tier.perConvo} per conversation</span>
+                  <br />
+                  <span style={{ color: "#888", fontSize: "0.7rem" }}>Up to {tier.monthlyCap.toLocaleString()} conversations/month included</span>
                   <br />
                   <span style={{ color: "#888", fontSize: "0.7rem" }}>Billed monthly to your card on file</span>
                 </div>
@@ -622,6 +628,13 @@ export default function UtilityBilling() {
           >
             {checkoutLoading ? "Loading..." : "Get Your Agent"}
           </button>
+        </div>
+
+        {/* Pricing footnote */}
+        <div style={{ marginTop: "2.5rem", padding: "1.25rem 1.5rem", background: "rgba(245,245,240,0.02)", border: "1px solid rgba(245,245,240,0.06)", borderRadius: "12px", maxWidth: "700px", marginLeft: "auto", marginRight: "auto" }}>
+          <p style={{ fontSize: "0.7rem", color: "#888", lineHeight: 1.7, margin: 0, textAlign: "center" }}>
+            <span style={{ color: "#aaa", fontWeight: 600 }}>Fair-use note:</span> A conversation = up to 10 message exchanges. Each plan includes a generous monthly conversation cap. Heavy tool usage (CRM sync, custom integrations, dashboard queries) may count as additional conversations. Need more? We&apos;ll talk before any overage shows up on your bill — never a surprise charge.
+          </p>
         </div>
       </div>
 
