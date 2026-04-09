@@ -505,6 +505,25 @@ const PLAN_MODELS: Record<string, string> = {
   enterprise: "Claude Sonnet 4.6",
 };
 
+interface AgentClient {
+  id: string;
+  name: string;
+  email: string;
+  business_name: string;
+  bot_name: string;
+  industry: string;
+  plan: string;
+  active: boolean;
+  telegram_connected: boolean;
+  bot_username: string | null;
+  message_count: number;
+  last_active: string | null;
+  last_interface: string | null;
+  estimated_cost: number;
+  dashboard_url: string;
+  created_at: string;
+}
+
 /* ─── Component ─── */
 export default function AdminPanel() {
   const [authed, setAuthed] = useState(false);
@@ -514,13 +533,17 @@ export default function AdminPanel() {
   const [loginLoading, setLoginLoading] = useState(false);
 
   // Tab
-  const [activeTab, setActiveTab] = useState<"invoices" | "automate">("invoices");
+  const [activeTab, setActiveTab] = useState<"invoices" | "automate" | "agents">("invoices");
 
   // Automation
   const [autoClients, setAutoClients] = useState<AutoClient[]>([]);
   const [autoSummary, setAutoSummary] = useState<AutoSummary | null>(null);
   const [autoLoading, setAutoLoading] = useState(false);
   const [autoActionId, setAutoActionId] = useState<string | null>(null);
+
+  // AI Agents
+  const [agents, setAgents] = useState<AgentClient[]>([]);
+  const [agentsLoading, setAgentsLoading] = useState(false);
 
   // Form state
   const [clientName, setClientName] = useState("");
@@ -607,6 +630,17 @@ export default function AdminPanel() {
     setAutoLoading(false);
   }, []);
 
+  const fetchAgents = useCallback(async () => {
+    setAgentsLoading(true);
+    try {
+      const pw = sessionStorage.getItem("mb_admin_pw") || "";
+      const res = await fetch("/api/admin/agents", { headers: { "x-admin-password": pw } });
+      const data = await res.json();
+      if (Array.isArray(data)) setAgents(data);
+    } catch { /* silent */ }
+    setAgentsLoading(false);
+  }, []);
+
   async function handleAutoAction(clientId: string, action: string, tier?: string) {
     setAutoActionId(clientId);
     try {
@@ -628,8 +662,9 @@ export default function AdminPanel() {
     if (authed) {
       fetchProjects();
       fetchAutomation();
+      fetchAgents();
     }
-  }, [authed, fetchProjects, fetchAutomation]);
+  }, [authed, fetchProjects, fetchAutomation, fetchAgents]);
 
   /* ─── Login ─── */
   async function handleLogin(e: FormEvent) {
@@ -644,6 +679,7 @@ export default function AdminPanel() {
       });
       if (res.ok) {
         sessionStorage.setItem("mb_admin_auth", "true");
+        sessionStorage.setItem("mb_admin_pw", password);
         setAuthed(true);
       } else {
         setLoginError("Invalid password");
@@ -656,6 +692,7 @@ export default function AdminPanel() {
 
   function handleLogout() {
     sessionStorage.removeItem("mb_admin_auth");
+    sessionStorage.removeItem("mb_admin_pw");
     setAuthed(false);
     setPassword("");
   }
@@ -1004,7 +1041,7 @@ export default function AdminPanel() {
 
       {/* Tab Navigation */}
       <div style={{ display: "flex", borderBottom: `1px solid ${BORDER}`, padding: "0 clamp(12px, 4vw, 24px)" }}>
-        {(["invoices", "automate"] as const).map((t) => (
+        {(["invoices", "automate", "agents"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setActiveTab(t)}
@@ -1022,7 +1059,7 @@ export default function AdminPanel() {
               letterSpacing: 0.5,
             }}
           >
-            {t === "invoices" ? "Invoices" : "Automate"}
+            {t === "invoices" ? "Invoices" : t === "automate" ? "Automate" : "AI Agents"}
           </button>
         ))}
       </div>
@@ -1773,6 +1810,130 @@ export default function AdminPanel() {
           })}
         </div>
         </>}
+
+        {/* ─── AI AGENTS TAB ─── */}
+        {activeTab === "agents" && (
+          <>
+            {/* Summary Cards */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 12, marginBottom: 24 }}>
+              {[
+                { label: "Total Agents", value: agents.length, color: TEXT },
+                { label: "Active", value: agents.filter(a => a.active).length, color: GREEN },
+                { label: "Telegram", value: agents.filter(a => a.telegram_connected).length, color: "#64b4ff" },
+                { label: "Total Messages", value: agents.reduce((s, a) => s + a.message_count, 0), color: TEXT },
+                { label: "Est. Cost", value: `$${agents.reduce((s, a) => s + a.estimated_cost, 0).toFixed(2)}`, color: "#ffcc00" },
+              ].map((c) => (
+                <div key={c.label} style={{ background: CARD_BG, border: `1px solid ${BORDER}`, borderRadius: 6, padding: 14, textAlign: "center" }}>
+                  <div style={{ fontSize: 10, color: DIM, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4, fontFamily: "'Space Mono', monospace" }}>{c.label}</div>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: c.color, fontFamily: "'Space Mono', monospace" }}>{c.value}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Agent List */}
+            <div style={s.section}>
+              <div style={{ ...s.sectionTitle, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span>AI Agent Clients</span>
+                <button onClick={fetchAgents} disabled={agentsLoading} style={{ ...s.logoutBtn, fontSize: 11, color: GREEN, borderColor: GREEN }}>
+                  {agentsLoading ? "Loading..." : "Refresh"}
+                </button>
+              </div>
+
+              {agentsLoading && !agents.length && <div style={s.emptyState}>Loading...</div>}
+              {!agentsLoading && !agents.length && <div style={s.emptyState}>No AI agent clients yet.</div>}
+
+              {agents.map((agent) => {
+                const planColor = PLAN_COLORS[agent.plan] || GREEN;
+                return (
+                  <div key={agent.id} style={{ ...s.card, borderLeft: `3px solid ${planColor}` }}>
+                    <div style={s.cardHeader}>
+                      <div>
+                        <p style={s.cardTitle}>{agent.name}</p>
+                        <p style={s.cardClient}>
+                          {agent.email}
+                          {agent.business_name && <span style={{ marginLeft: 8, color: DIM }}>&bull; {agent.business_name}</span>}
+                        </p>
+                      </div>
+                      <span style={{
+                        ...s.badge,
+                        background: agent.active ? "#002200" : "#1a0000",
+                        color: agent.active ? GREEN : "#ff4444",
+                      }}>
+                        {agent.active ? "Active" : "Inactive"}
+                      </span>
+                    </div>
+
+                    {/* Agent Info */}
+                    <div style={{ display: "flex", gap: 16, flexWrap: "wrap", margin: "8px 0" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <span style={{ fontSize: 10, color: DIM, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'Space Mono', monospace" }}>Bot</span>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: GREEN }}>{agent.bot_name || "—"}</span>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <span style={{ fontSize: 10, color: DIM, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'Space Mono', monospace" }}>Plan</span>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: planColor, textTransform: "capitalize" }}>{agent.plan || "starter"}</span>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <span style={{ fontSize: 10, color: DIM, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'Space Mono', monospace" }}>Industry</span>
+                        <span style={{ fontSize: 12, color: TEXT }}>{agent.industry || "—"}</span>
+                      </div>
+                    </div>
+
+                    {/* Usage Stats */}
+                    <div style={{ background: "#111", borderRadius: 4, border: `1px solid ${BORDER}`, padding: 12, margin: "8px 0" }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 12, textAlign: "center" }}>
+                        <div>
+                          <div style={{ fontSize: 9, color: DIM, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Messages</div>
+                          <div style={{ fontSize: 18, fontWeight: 700, color: planColor, fontFamily: "'Space Mono', monospace" }}>{agent.message_count}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 9, color: DIM, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Est. Cost</div>
+                          <div style={{ fontSize: 18, fontWeight: 700, color: TEXT, fontFamily: "'Space Mono', monospace" }}>${agent.estimated_cost.toFixed(2)}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 9, color: DIM, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Last Active</div>
+                          <div style={{ fontSize: 12, color: DIM }}>
+                            {agent.last_active ? new Date(agent.last_active).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "—"}
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 9, color: DIM, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Channel</div>
+                          <div style={{ fontSize: 12, color: DIM }}>
+                            {agent.last_interface || "—"}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Connections */}
+                    <div style={s.cardMeta}>
+                      <span>Joined: {new Date(agent.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                      <span style={{ display: "flex", gap: 8 }}>
+                        {agent.telegram_connected && (
+                          <span style={{ fontSize: 11, color: "#64b4ff" }}>Telegram connected</span>
+                        )}
+                        {agent.bot_username && (
+                          <a href={`https://t.me/${agent.bot_username}`} target="_blank" rel="noopener noreferrer"
+                            style={{ fontSize: 11, color: DIM, textDecoration: "none" }}>
+                            @{agent.bot_username} &rarr;
+                          </a>
+                        )}
+                      </span>
+                    </div>
+
+                    {/* Actions */}
+                    <div style={{ marginTop: 12, paddingTop: 10, borderTop: `1px solid ${BORDER}`, display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+                      <a href={agent.dashboard_url} target="_blank" rel="noopener noreferrer"
+                        style={{ padding: "5px 12px", background: GREEN, color: BG, border: "none", borderRadius: 3, fontSize: 11, fontWeight: 700, textDecoration: "none", fontFamily: "inherit" }}>
+                        Open Dashboard
+                      </a>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
 
         {/* ─── AUTOMATE TAB ─── */}
         {activeTab === "automate" && (
