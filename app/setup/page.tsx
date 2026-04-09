@@ -3,15 +3,30 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
+const TOOL_ICONS: Record<string, React.ReactNode> = {
+  gmail: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4l-10 8L2 4"/></svg>,
+  googlecalendar: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>,
+  slack: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/><path d="M20.5 10H19v-1.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/><path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z"/><path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z"/><path d="M14 14.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z"/><path d="M14 20.5c0-.83.67-1.5 1.5-1.5h0c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h0c-.83 0-1.5-.67-1.5-1.5z"/><path d="M10 9.5C10 10.33 9.33 11 8.5 11h-5C2.67 11 2 10.33 2 9.5S2.67 8 3.5 8h5c.83 0 1.5.67 1.5 1.5z"/></svg>,
+  googlesheets: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>,
+  googledrive: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 19.5h20L12 2z"/><path d="M2 19.5l5-8.5h14"/><path d="M16 11L22 19.5"/></svg>,
+  hubspot: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>,
+  quickbooks: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>,
+  shopify: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>,
+  email: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4l-10 8L2 4"/></svg>,
+  dashboard: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>,
+};
+
 const TOOLS = [
-  { key: "gmail", name: "Gmail", desc: "Email management", icon: "✉️" },
-  { key: "googlecalendar", name: "Google Calendar", desc: "Scheduling", icon: "📅" },
-  { key: "slack", name: "Slack", desc: "Team chat", icon: "💬" },
-  { key: "googlesheets", name: "Google Sheets", desc: "Data & reports", icon: "📊" },
-  { key: "googledrive", name: "Google Drive", desc: "File storage", icon: "📁" },
-  { key: "hubspot", name: "HubSpot", desc: "CRM", icon: "🔗" },
-  { key: "quickbooks", name: "QuickBooks", desc: "Accounting", icon: "💰" },
-  { key: "shopify", name: "Shopify", desc: "E-commerce", icon: "🛒" },
+  { key: "gmail", name: "Gmail", desc: "Email management" },
+  { key: "googlecalendar", name: "Google Calendar", desc: "Scheduling" },
+  { key: "slack", name: "Slack", desc: "Team chat" },
+  { key: "googlesheets", name: "Google Sheets", desc: "Data & reports" },
+  { key: "googledrive", name: "Google Drive", desc: "File storage" },
+  { key: "hubspot", name: "HubSpot", desc: "CRM" },
+  { key: "quickbooks", name: "QuickBooks", desc: "Accounting" },
+  { key: "shopify", name: "Shopify", desc: "E-commerce" },
+  { key: "email", name: "Email", desc: "Send & receive emails" },
+  { key: "dashboard", name: "Dashboard", desc: "Your custom dashboard" },
 ];
 
 type Step = "loading" | "profile" | "tools" | "done";
@@ -295,7 +310,7 @@ function SetupInner() {
                     transition: "all 0.2s",
                   }}
                 >
-                  <span style={{ fontSize: 20 }}>{tool.icon}</span>
+                  <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, flexShrink: 0 }}>{TOOL_ICONS[tool.key]}</span>
                   <div style={{ textAlign: "left" }}>
                     <div style={{ color: "#fff", fontSize: 14, fontWeight: 600 }}>
                       {tool.name} {isConnected && <span style={{ color: "#c8ff00" }}>✓</span>}
