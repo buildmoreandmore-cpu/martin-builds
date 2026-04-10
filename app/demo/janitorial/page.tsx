@@ -740,17 +740,17 @@ export default function JanitorialDashboard() {
               display: "inline-flex",
               alignItems: "center",
               gap: 8,
-              background: "#fff",
-              color: "#0F1C2E",
+              background: "#c8ff00",
+              color: "#0a0a0a",
               padding: "13px 28px",
-              borderRadius: 10,
+              borderRadius: 9999,
               fontSize: 15,
               fontWeight: 700,
               textDecoration: "none",
             }}
           >
             I want this for my business
-            <ArrowRightIcon color="#0F1C2E" />
+            <ArrowRightIcon color="#0a0a0a" />
           </a>
         </div>
 
