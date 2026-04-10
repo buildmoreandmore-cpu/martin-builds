@@ -21,7 +21,7 @@ const KPIS = [
   { value: "$38,240", label: "Monthly recurring revenue", sub: "+ $1,120 vs last month", accent: green, tintBg: "#f0fdf4", tintBorder: "#bbf7d0" },
   { value: "22", label: "Active contracts", sub: "3 up for renewal in 30 days", accent: amber, tintBg: "#fffbeb", tintBorder: "#fde68a" },
   { value: "84%", label: "Crew utilization", sub: "9.3 of 11 FTEs billable today", accent: blue, tintBg: card, tintBorder: border },
-  { value: "$1,738", label: "Avg monthly contract", sub: "Industry avg: $1,400 · Above avg ✓", accent: green, tintBg: "#f0fdf4", tintBorder: "#bbf7d0" },
+  { value: "$1,738", label: "Avg monthly contract", sub: "Industry avg: $1,400 · Above avg", accent: green, tintBg: "#f0fdf4", tintBorder: "#bbf7d0" },
   { value: "3", label: "Incidents this month", sub: "2 late arrivals · 1 skipped area", accent: red, tintBg: "#fef2f2", tintBorder: "#fecaca" },
 ];
 
@@ -91,9 +91,9 @@ const MARGIN_BREAKDOWN = [
 ];
 
 const MARGIN_KILLERS = [
-  { sym: "⚠", text: "Overtime hours: $640 excess this month", color: amber },
-  { sym: "⚠", text: "3 callback cleans (avg $85 each) = $255 lost", color: red },
-  { sym: "✓", text: "Supply costs down 4% vs last month (bulk order working)", color: green },
+  { kind: "warn" as const, text: "Overtime hours: $640 excess this month", color: amber },
+  { kind: "warn" as const, text: "3 callback cleans (avg $85 each) = $255 lost", color: red },
+  { kind: "good" as const, text: "Supply costs down 4% vs last month (bulk order working)", color: green },
 ];
 
 const CHURN = [
@@ -155,7 +155,7 @@ const SUPPLIES = [
 
 const INSIGHTS = [
   {
-    icon: "↘",
+    iconKey: "trending-down",
     title: "Price Erosion Risk",
     body: "You haven't raised rates on 8 of your 22 contracts in over 18 months. With supply and labor costs up ~14% since 2023, those accounts are 6–9% less profitable than when you signed them.",
     metric: "8 contracts · Avg age: 22 months · Est. margin loss: $340/mo",
@@ -165,7 +165,7 @@ const INSIGHTS = [
     tintBorder: "#fecaca",
   },
   {
-    icon: "📅",
+    iconKey: "calendar",
     title: "Summer Revenue Dip Coming",
     body: "Based on 3 years of data, July–August typically drops 14–18% as office tenants reduce headcount and buildings close. Last July you dipped to $28,900. You have 9 weeks to close 2 new contracts or renegotiate scope.",
     metric: "Projected July revenue if no action: $32,400",
@@ -175,7 +175,7 @@ const INSIGHTS = [
     tintBorder: "#fde68a",
   },
   {
-    icon: "👥",
+    iconKey: "users",
     title: "Turnover Is Your Hidden Expense",
     body: "Janitorial industry turnover averages 75% annually. Each time you replace a cleaner it costs $1,200–$2,400 in recruiting, onboarding, and productivity loss. You've had 2 replacements this year.",
     metric: "Est. turnover cost YTD: $3,100 · Industry avg: $4,800",
@@ -185,7 +185,7 @@ const INSIGHTS = [
     tintBorder: "#bfdbfe",
   },
   {
-    icon: "🛡",
+    iconKey: "shield",
     title: "Compliance Gaps Cost More Than Fixing Them",
     body: "Medical and legal accounts require up-to-date W-9s, liability certificates, and OSHA training records on file. A single audit or incident without documentation can void your insurance claim or lose the contract.",
     metric: "3 clients require annual cert updates · Next due: Apr 30",
@@ -196,12 +196,91 @@ const INSIGHTS = [
   },
 ];
 
+/* ── SVG icons ── */
+
+const WarnIcon = ({ size = 18, color = amber }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+    <line x1="12" y1="9" x2="12" y2="13" />
+    <line x1="12" y1="17" x2="12.01" y2="17" />
+  </svg>
+);
+
+const CheckIcon = ({ size = 16, color = green }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+
+const BulbIcon = ({ size = 14, color = "#1e40af" }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 18h6" />
+    <path d="M10 22h4" />
+    <path d="M12 2a7 7 0 0 0-4 12.74V17h8v-2.26A7 7 0 0 0 12 2z" />
+  </svg>
+);
+
+const TrendingDownIcon = ({ size = 20, color = red }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="23 18 13.5 8.5 8.5 13.5 1 6" />
+    <polyline points="17 18 23 18 23 12" />
+  </svg>
+);
+
+const CalendarIcon = ({ size = 20, color = amber }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+    <line x1="16" y1="2" x2="16" y2="6" />
+    <line x1="8" y1="2" x2="8" y2="6" />
+    <line x1="3" y1="10" x2="21" y2="10" />
+  </svg>
+);
+
+const UsersIcon = ({ size = 20, color = blue }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+  </svg>
+);
+
+const ShieldIcon = ({ size = 20, color = green }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+  </svg>
+);
+
+const BellIcon = ({ size = 14, color = "#92400e" }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+  </svg>
+);
+
+const ArrowRightIcon = ({ size = 16, color = "#fff" }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+    <line x1="5" y1="12" x2="19" y2="12" />
+    <polyline points="12 5 19 12 12 19" />
+  </svg>
+);
+
+const renderInsightIcon = (key: string, color: string) => {
+  switch (key) {
+    case "trending-down": return <TrendingDownIcon color={color} />;
+    case "calendar": return <CalendarIcon color={color} />;
+    case "users": return <UsersIcon color={color} />;
+    case "shield": return <ShieldIcon color={color} />;
+    default: return null;
+  }
+};
+
 /* ── helpers ── */
 
 function scoreStyle(s: number) {
-  if (s >= 95) return { bg: "#dcfce7", color: "#166534", dot: green, label: "🟢" };
-  if (s >= 88) return { bg: "#fef3c7", color: "#92400e", dot: amber, label: "🟡" };
-  return { bg: "#fee2e2", color: "#991b1b", dot: red, label: "🔴" };
+  if (s >= 95) return { bg: "#dcfce7", color: "#166534", dot: green };
+  if (s >= 88) return { bg: "#fef3c7", color: "#92400e", dot: amber };
+  return { bg: "#fee2e2", color: "#991b1b", dot: red };
 }
 
 function crewStatusStyle(s: string) {
@@ -309,7 +388,7 @@ export default function JanitorialDashboard() {
               Monday, April 7 · Week 15 of 52
             </span>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#fef3c7", color: "#92400e", fontSize: 12, fontWeight: 600, padding: "5px 12px", borderRadius: 9999 }}>
-              <span style={{ width: 7, height: 7, borderRadius: 9999, background: amber, display: "inline-block" }} />
+              <BellIcon />
               2 alerts
             </span>
             <div style={{ width: 34, height: 34, borderRadius: 9999, background: "#0F1C2E", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, fontFamily: fontMono }}>
@@ -330,7 +409,7 @@ export default function JanitorialDashboard() {
         {/* ── Alert banner ── */}
         <div style={{ margin: "20px 0", padding: "16px 22px", background: "#FFFBEB", borderLeft: "4px solid #d97706", border: "1px solid #fde68a", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12, animation: "fadeInUp 0.5s ease-out forwards" }}>
           <div style={{ display: "flex", alignItems: "flex-start", gap: 12, flex: 1, minWidth: 240 }}>
-            <span style={{ fontSize: 18 }}>⚠</span>
+            <span style={{ flexShrink: 0, marginTop: 1 }}><WarnIcon size={20} color="#92400e" /></span>
             <div>
               <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: "#92400e" }}>Inspection overdue — Whitfield Medical Center (Contract #WMC-04)</p>
               <p style={{ margin: 0, fontSize: 13, color: "#78350f", lineHeight: 1.5 }}>Has not been inspected in 34 days. Client contract requires monthly QC inspection. Last score: 87/100.</p>
@@ -400,8 +479,9 @@ export default function JanitorialDashboard() {
                 </div>
               </div>
 
-              <div style={{ marginTop: 18, padding: "12px 14px", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 8, fontSize: 12, color: "#1e40af", lineHeight: 1.5 }}>
-                💡 <strong>July is historically your lowest month (-15%).</strong> Consider offering summer deep-clean packages to offset.
+              <div style={{ marginTop: 18, padding: "12px 14px", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 8, fontSize: 12, color: "#1e40af", lineHeight: 1.5, display: "flex", alignItems: "flex-start", gap: 8 }}>
+                <span style={{ flexShrink: 0, marginTop: 1 }}><BulbIcon /></span>
+                <span><strong>July is historically your lowest month (-15%).</strong> Consider offering summer deep-clean packages to offset.</span>
               </div>
             </div>
 
@@ -506,8 +586,9 @@ export default function JanitorialDashboard() {
                   ))}
                 </div>
               </div>
-              <div style={{ marginTop: 14, padding: "12px 14px", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 8, fontSize: 12, color: "#1e40af", lineHeight: 1.5 }}>
-                💡 Medical contracts pay 22% more on average. You&apos;re well-positioned — target 2 more medical accounts in Q2.
+              <div style={{ marginTop: 14, padding: "12px 14px", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 8, fontSize: 12, color: "#1e40af", lineHeight: 1.5, display: "flex", alignItems: "flex-start", gap: 8 }}>
+                <span style={{ flexShrink: 0, marginTop: 1 }}><BulbIcon /></span>
+                <span>Medical contracts pay 22% more on average. You&apos;re well-positioned — target 2 more medical accounts in Q2.</span>
               </div>
             </div>
 
@@ -567,7 +648,9 @@ export default function JanitorialDashboard() {
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 {MARGIN_KILLERS.map((k, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 12, color: textDark }}>
-                    <span style={{ color: k.color, fontWeight: 700 }}>{k.sym}</span>
+                    <span style={{ flexShrink: 0, marginTop: 1 }}>
+                      {k.kind === "warn" ? <WarnIcon size={14} color={k.color} /> : <CheckIcon size={14} color={k.color} />}
+                    </span>
                     <span>{k.text}</span>
                   </div>
                 ))}
@@ -599,8 +682,9 @@ export default function JanitorialDashboard() {
                 </div>
               ))}
             </div>
-            <div style={{ marginTop: 14, padding: "12px 14px", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 8, fontSize: 12, color: "#1e40af", lineHeight: 1.5 }}>
-              💡 Losing Riverside Church saves you a low-margin account. Losing Buckhead Pediatrics costs you $1,800/mo. Prioritize accordingly.
+            <div style={{ marginTop: 14, padding: "12px 14px", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 8, fontSize: 12, color: "#1e40af", lineHeight: 1.5, display: "flex", alignItems: "flex-start", gap: 8 }}>
+              <span style={{ flexShrink: 0, marginTop: 1 }}><BulbIcon /></span>
+              <span>Losing Riverside Church saves you a low-margin account. Losing Buckhead Pediatrics costs you $1,800/mo. Prioritize accordingly.</span>
             </div>
           </div>
 
@@ -625,32 +709,54 @@ export default function JanitorialDashboard() {
           </div>
         </div>
 
-        {/* ── Long-Term Intelligence Panel ── */}
-        <div style={{ animation: "fadeInUp 0.5s ease-out 0.32s both" }}>
-          <div style={{ marginBottom: 14 }}>
-            <p className="jan-eyebrow" style={{ margin: 0 }}>Long-Term Intelligence</p>
-            <h2 style={{ margin: "4px 0 0", fontSize: 20, fontWeight: 700, color: textDark }}>What Most Cleaning Companies Don&apos;t Track — But Should</h2>
-          </div>
-          <div className="jan-g4">
-            {INSIGHTS.map((ins, i) => (
-              <div key={i} style={{ background: ins.tintBg, border: `1px solid ${ins.tintBorder}`, borderRadius: 12, padding: "20px 22px", display: "flex", flexDirection: "column", gap: 10 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 8, background: card, border: `1px solid ${ins.tintBorder}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>
-                  {ins.icon}
-                </div>
-                <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: textDark }}>{ins.title}</h3>
-                <p style={{ margin: 0, fontSize: 12, color: muted, lineHeight: 1.6 }}>{ins.body}</p>
-                <p style={{ margin: 0, fontSize: 11, fontWeight: 600, color: ins.accent, fontFamily: fontMono }}>{ins.metric}</p>
-                <button style={{ marginTop: "auto", background: "transparent", color: ins.accent, border: "none", fontSize: 12, fontWeight: 600, cursor: "pointer", textAlign: "left", padding: 0 }}>
-                  {ins.cta}
-                </button>
+        {/* ── Insight cards (part of the dashboard, no callout heading) ── */}
+        <div className="jan-g4" style={{ marginBottom: 28, animation: "fadeInUp 0.5s ease-out 0.32s both" }}>
+          {INSIGHTS.map((ins, i) => (
+            <div key={i} style={{ background: ins.tintBg, border: `1px solid ${ins.tintBorder}`, borderRadius: 12, padding: "20px 22px", display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ width: 38, height: 38, borderRadius: 8, background: card, border: `1px solid ${ins.tintBorder}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {renderInsightIcon(ins.iconKey, ins.accent)}
               </div>
-            ))}
-          </div>
+              <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: textDark }}>{ins.title}</h3>
+              <p style={{ margin: 0, fontSize: 12, color: muted, lineHeight: 1.6 }}>{ins.body}</p>
+              <p style={{ margin: 0, fontSize: 11, fontWeight: 600, color: ins.accent, fontFamily: fontMono }}>{ins.metric}</p>
+              <button style={{ marginTop: "auto", background: "transparent", color: ins.accent, border: "none", fontSize: 12, fontWeight: 600, cursor: "pointer", textAlign: "left", padding: 0, display: "inline-flex", alignItems: "center", gap: 6 }}>
+                {ins.cta}
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* ── "I want this for my business" CTA ── */}
+        <div style={{ marginTop: 8, padding: "32px 28px", background: "#0F1C2E", borderRadius: 14, textAlign: "center", animation: "fadeInUp 0.5s ease-out 0.4s both" }}>
+          <h3 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: "#fff", lineHeight: 1.3 }}>
+            Want a dashboard like this for your business?
+          </h3>
+          <p style={{ margin: "10px auto 22px", fontSize: 14, color: "#cbd5e1", maxWidth: 520, lineHeight: 1.6 }}>
+            Built around how you actually run your operation — not a template. Replace the spreadsheets, group chats, and paper inspection sheets with one screen you open every morning.
+          </p>
+          <a
+            href="/discovery-call"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              background: "#fff",
+              color: "#0F1C2E",
+              padding: "13px 28px",
+              borderRadius: 10,
+              fontSize: 15,
+              fontWeight: 700,
+              textDecoration: "none",
+            }}
+          >
+            I want this for my business
+            <ArrowRightIcon color="#0F1C2E" />
+          </a>
         </div>
 
         {/* ── Footer ── */}
-        <div style={{ marginTop: 40, paddingTop: 24, borderTop: `1px solid ${border}`, textAlign: "center", fontSize: 12, color: muted }}>
-          CleanCommand demo · Built by <a href="/" style={{ color: blue, fontWeight: 600, textDecoration: "none" }}>martin.builds</a> · Want one for your business? <a href="/discovery-call" style={{ color: blue, fontWeight: 600, textDecoration: "none" }}>Book a discovery call →</a>
+        <div style={{ marginTop: 32, paddingTop: 24, borderTop: `1px solid ${border}`, textAlign: "center", fontSize: 12, color: muted }}>
+          CleanCommand demo · Built by <a href="/" style={{ color: blue, fontWeight: 600, textDecoration: "none" }}>martin.builds</a>
         </div>
       </div>
     </div>
