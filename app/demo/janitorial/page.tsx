@@ -258,13 +258,6 @@ const BellIcon = ({ size = 14, color = "#92400e" }: { size?: number; color?: str
   </svg>
 );
 
-const ArrowRightIcon = ({ size = 16, color = "#fff" }: { size?: number; color?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-    <line x1="5" y1="12" x2="19" y2="12" />
-    <polyline points="12 5 19 12 12 19" />
-  </svg>
-);
-
 const renderInsightIcon = (key: string, color: string) => {
   switch (key) {
     case "trending-down": return <TrendingDownIcon color={color} />;
@@ -726,39 +719,33 @@ export default function JanitorialDashboard() {
           ))}
         </div>
 
-        {/* ── "I want this for my business" CTA ── */}
-        <div style={{ marginTop: 8, padding: "32px 28px", background: "#0F1C2E", borderRadius: 14, textAlign: "center", animation: "fadeInUp 0.5s ease-out 0.4s both" }}>
-          <h3 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: "#fff", lineHeight: 1.3 }}>
-            Want a dashboard like this for your business?
-          </h3>
-          <p style={{ margin: "10px auto 22px", fontSize: 14, color: "#cbd5e1", maxWidth: 520, lineHeight: 1.6 }}>
-            Built around how you actually run your operation — not a template. Replace the spreadsheets, group chats, and paper inspection sheets with one screen you open every morning.
-          </p>
-          <a
-            href="/discovery-call"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              background: "#c8ff00",
-              color: "#0a0a0a",
-              padding: "13px 28px",
-              borderRadius: 9999,
-              fontSize: 15,
-              fontWeight: 700,
-              textDecoration: "none",
-            }}
-          >
-            I want this for my business
-            <ArrowRightIcon color="#0a0a0a" />
-          </a>
-        </div>
-
         {/* ── Footer ── */}
         <div style={{ marginTop: 32, paddingTop: 24, borderTop: `1px solid ${border}`, textAlign: "center", fontSize: 12, color: muted }}>
           CleanCommand demo · Built by <a href="/" style={{ color: blue, fontWeight: 600, textDecoration: "none" }}>martin.builds</a>
         </div>
       </div>
+
+      {/* ── Fixed CTA pill ── */}
+      <a
+        href="/discovery-call"
+        style={{
+          position: "fixed",
+          bottom: 24,
+          right: 24,
+          background: "#c8ff00",
+          color: "#0a0a0a",
+          padding: "10px 20px",
+          borderRadius: 9999,
+          fontWeight: 700,
+          fontSize: 13,
+          textDecoration: "none",
+          zIndex: 50,
+          boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
+          transition: "all 0.2s",
+        }}
+      >
+        I want this for my business
+      </a>
     </div>
   );
 }
