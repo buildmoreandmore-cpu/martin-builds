@@ -424,11 +424,18 @@ export async function POST(req: NextRequest) {
       // Calculate cancel_at: end after numPayments months
       const cancelAt = Math.floor(Date.now() / 1000) + numPayments * 30 * 24 * 60 * 60;
 
-      // Create subscription that auto-cancels after all payments
+      // Create subscription in "default_incomplete" state so the client can
+      // pay the first month via Stripe Elements; that card is then saved as
+      // the default payment method for subsequent monthly autopay charges.
       const subscription = await stripe.subscriptions.create({
         customer: customer.id,
         items: [{ price: price.id }],
         cancel_at: cancelAt,
+        payment_behavior: "default_incomplete",
+        payment_settings: {
+          save_default_payment_method: "on_subscription",
+        },
+        expand: ["latest_invoice.payment_intent"],
         metadata: {
           ...baseMeta,
           payment_type: "installment",
@@ -440,6 +447,36 @@ export async function POST(req: NextRequest) {
         description: `${invoiceTitle} — ${numPayments} payments of $${monthly_amount}/mo`,
       });
 
+      // Pull the payment intent from the first invoice and tag it with our
+      // admin metadata so the existing /pay/[id] route will serve it.
+      const latestInvoice = subscription.latest_invoice as Stripe.Invoice | null;
+      const firstPI =
+        (latestInvoice as unknown as { payment_intent: Stripe.PaymentIntent | string | null } | null)
+          ?.payment_intent as Stripe.PaymentIntent | string | null;
+
+      if (!firstPI) {
+        return NextResponse.json(
+          { error: "Stripe did not return a payment intent for the first installment. Check dashboard." },
+          { status: 500 }
+        );
+      }
+
+      const firstPIId = typeof firstPI === "string" ? firstPI : firstPI.id;
+
+      await stripe.paymentIntents.update(firstPIId, {
+        metadata: {
+          ...baseMeta,
+          payment_type: "installment",
+          subscription_id: subscription.id,
+          monthly_amount: monthlyCents.toString(),
+          num_payments: numPayments.toString(),
+          installment_number: "1",
+          total_amount: totalCents.toString(),
+        },
+        receipt_email: client_email,
+        description: `${invoiceTitle} — Installment 1 of ${numPayments} ($${monthly_amount})`,
+      });
+
       return NextResponse.json({
         success: true,
         type: "installment",
@@ -447,6 +484,7 @@ export async function POST(req: NextRequest) {
         monthly_amount: monthly_amount,
         num_payments: numPayments,
         total: totalDollars,
+        payment_link: `${baseUrl}/pay/${firstPIId}`,
       });
     }
 
