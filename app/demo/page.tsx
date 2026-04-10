@@ -73,6 +73,14 @@ const demos = [
     href: "/demo/hvac",
     accent: "#2563eb",
   },
+  {
+    title: "CleanCommand",
+    vertical: "Janitorial / Commercial Cleaning",
+    description:
+      "Crew status, contract health, churn risk radar, margin analysis, supply tracking, and long-term intelligence for janitorial operators.",
+    href: "/demo/janitorial",
+    accent: "#0F1C2E",
+  },
 ];
 
 export default function DemoIndex() {
