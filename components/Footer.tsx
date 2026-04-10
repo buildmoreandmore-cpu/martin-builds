@@ -27,6 +27,7 @@ export default function Footer() {
         </div>
       </div>
       <div style={{ display: "flex", gap: "2rem" }}>
+        <FooterLink href="/results">Results</FooterLink>
         <FooterLink href="/contact">Contact</FooterLink>
         <FooterLink href="/pay">Pay</FooterLink>
         <FooterLink href="/terms">Terms</FooterLink>

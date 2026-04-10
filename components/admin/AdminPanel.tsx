@@ -1837,6 +1837,37 @@ export default function AdminPanel() {
                   </button>
                 )}
 
+                {/* Send Build Report */}
+                {p.status === "paid_full" && p.invoices[0]?.customer_email && (
+                  <button
+                    onClick={async () => {
+                      if (!confirm(`Send build report request to ${p.invoices[0]?.customer_email}?`)) return;
+                      try {
+                        const res = await fetch("/api/admin/send-build-report", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ client_email: p.invoices[0]?.customer_email, client_name: p.client_name }),
+                        });
+                        if (!res.ok) throw new Error("Failed");
+                        alert("Build report request sent!");
+                      } catch { alert("Failed to send build report request"); }
+                    }}
+                    style={{
+                      padding: "6px 12px",
+                      background: "transparent",
+                      border: `1px solid ${DIM}`,
+                      color: TEXT,
+                      borderRadius: 4,
+                      fontSize: 11,
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      fontFamily: "inherit",
+                    }}
+                  >
+                    Build Report
+                  </button>
+                )}
+
                 {/* Stripe link — single link for the project */}
                 <a
                   href={p.installment?.stripe_url || p.subscription?.stripe_url || p.invoices[0]?.stripe_url || "#"}
