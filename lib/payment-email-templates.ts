@@ -1,4 +1,9 @@
-type PaymentEmailType = "full" | "deposit" | "final";
+type PaymentEmailType =
+  | "full"
+  | "deposit"
+  | "final"
+  | "installment"
+  | "installment_complete";
 
 interface ThankYouEmailData {
   type: PaymentEmailType;
@@ -6,6 +11,8 @@ interface ThankYouEmailData {
   projectName: string;
   amount: number; // cents
   totalAmount?: number; // cents
+  installmentNumber?: number;
+  totalInstallments?: number;
 }
 
 const CONTENT: Record<
@@ -51,6 +58,28 @@ const CONTENT: Record<
     closingLine:
       "It's been great building this with you. Don't hesitate to reach out if anything comes up.",
   },
+  installment: {
+    headline: (name) => `Payment received, ${name}.`,
+    subject: (project) => `Installment Received: ${project}`,
+    steps: [
+      "Card on file &mdash; next month charges automatically",
+      "You&rsquo;ll get a receipt each month the payment clears",
+      "Project stays in motion while payments come in",
+    ],
+    closingLine:
+      "Thanks for the payment. Autopay is active &mdash; no action needed until next month.",
+  },
+  installment_complete: {
+    headline: (name) => `All payments received &mdash; paid in full, ${name}.`,
+    subject: (project) => `Paid In Full: ${project}`,
+    steps: [
+      "Final installment cleared &mdash; project is fully paid",
+      "No further charges will be made",
+      "Full ownership &mdash; everything is yours",
+    ],
+    closingLine:
+      "That&rsquo;s the last payment. It&rsquo;s been great building this with you &mdash; reach out anytime.",
+  },
 };
 
 export function getThankYouSubject(
@@ -61,24 +90,39 @@ export function getThankYouSubject(
 }
 
 export function buildThankYouEmail(data: ThankYouEmailData): string {
-  const { type, clientName, projectName, amount, totalAmount } = data;
+  const { type, clientName, projectName, amount, totalAmount, installmentNumber, totalInstallments } = data;
   const c = CONTENT[type];
   const dollars = (amount / 100).toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
 
-  const totalLine =
-    totalAmount && type !== "full"
-      ? `<p style="color:#888;font-size:13px;margin:8px 0 0 0;">Total project: $${(totalAmount / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>`
-      : "";
+  let totalLine = "";
+  if (type === "installment" && installmentNumber && totalInstallments) {
+    const remaining = totalInstallments - installmentNumber;
+    const remainingLine =
+      remaining > 0
+        ? `<p style="color:#888;font-size:13px;margin:4px 0 0 0;">${remaining} payment${remaining === 1 ? "" : "s"} remaining</p>`
+        : "";
+    totalLine =
+      `<p style="color:#888;font-size:13px;margin:8px 0 0 0;">Payment ${installmentNumber} of ${totalInstallments}${totalAmount ? ` &middot; Total project: $${(totalAmount / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ""}</p>` +
+      remainingLine;
+  } else if (totalAmount && type !== "full") {
+    totalLine = `<p style="color:#888;font-size:13px;margin:8px 0 0 0;">Total project: $${(totalAmount / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>`;
+  }
 
   const typeBadge =
     type === "full"
       ? "Paid in Full"
       : type === "deposit"
         ? "Deposit (50%)"
-        : "Final Payment";
+        : type === "final"
+          ? "Final Payment"
+          : type === "installment_complete"
+            ? "Paid In Full"
+            : installmentNumber && totalInstallments
+              ? `Installment ${installmentNumber} of ${totalInstallments}`
+              : "Installment";
 
   const stepsHtml = c.steps
     .map(

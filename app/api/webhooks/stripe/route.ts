@@ -101,19 +101,37 @@ export async function POST(req: NextRequest) {
 
       // Handle installment subscription payments
       const subId = (invoice as unknown as { subscription?: string | null }).subscription;
+      let installmentContext: {
+        clientName: string;
+        projectName: string;
+        paymentsMade: number;
+        totalPayments: number;
+        totalAmount: number;
+        complete: boolean;
+      } | null = null;
+
       if (subId && typeof subId === "string") {
         try {
           const sub = await stripe.subscriptions.retrieve(subId);
           if (sub.metadata?.payment_type === "installment") {
             const paymentsMade = parseInt(sub.metadata.payments_made || "0") + 1;
             const totalPayments = parseInt(sub.metadata.num_payments || "0");
+            const totalAmount = parseInt(sub.metadata.total_owed || "0");
             await stripe.subscriptions.update(sub.id, {
               metadata: { ...sub.metadata, payments_made: paymentsMade.toString() },
             });
             console.log(`[INSTALLMENT] Payment ${paymentsMade}/${totalPayments} received for ${sub.metadata.project_name}`);
 
-            // If all payments made, log completion
-            if (paymentsMade >= totalPayments) {
+            installmentContext = {
+              clientName: sub.metadata.client_name || "there",
+              projectName: sub.metadata.project_name || "your project",
+              paymentsMade,
+              totalPayments,
+              totalAmount,
+              complete: paymentsMade >= totalPayments,
+            };
+
+            if (installmentContext.complete) {
               console.log(`[INSTALLMENT] All payments complete for ${sub.metadata.project_name}`);
             }
           }
@@ -141,6 +159,46 @@ export async function POST(req: NextRequest) {
               body: html,
               isHtml: true,
             }).catch((e) => console.error("Thank-you email failed:", e));
+          }
+        }
+      }
+
+      // Send branded installment receipt (+ completion email on last payment)
+      if (installmentContext) {
+        const recipientEmail = invoice.customer_email || (invoice.customer as Stripe.Customer)?.email;
+        if (recipientEmail) {
+          const receiptHtml = buildThankYouEmail({
+            type: "installment",
+            clientName: installmentContext.clientName,
+            projectName: installmentContext.projectName,
+            amount: invoice.amount_paid,
+            totalAmount: installmentContext.totalAmount || undefined,
+            installmentNumber: installmentContext.paymentsMade,
+            totalInstallments: installmentContext.totalPayments,
+          });
+          await sendEmail({
+            to: recipientEmail,
+            subject: getThankYouSubject("installment", installmentContext.projectName),
+            body: receiptHtml,
+            isHtml: true,
+          }).catch((e) => console.error("Installment receipt email failed:", e));
+
+          if (installmentContext.complete) {
+            const doneHtml = buildThankYouEmail({
+              type: "installment_complete",
+              clientName: installmentContext.clientName,
+              projectName: installmentContext.projectName,
+              amount: installmentContext.totalAmount || invoice.amount_paid,
+              totalAmount: installmentContext.totalAmount || undefined,
+              installmentNumber: installmentContext.paymentsMade,
+              totalInstallments: installmentContext.totalPayments,
+            });
+            await sendEmail({
+              to: recipientEmail,
+              subject: getThankYouSubject("installment_complete", installmentContext.projectName),
+              body: doneHtml,
+              isHtml: true,
+            }).catch((e) => console.error("Installment completion email failed:", e));
           }
         }
       }
