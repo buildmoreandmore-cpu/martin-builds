@@ -79,7 +79,7 @@ const demos = [
     description:
       "Crew status, contract health, churn risk radar, margin analysis, supply tracking, and long-term intelligence for janitorial operators.",
     href: "/demo/janitorial",
-    accent: "#0F1C2E",
+    accent: "#38bdf8",
   },
 ];
 
