@@ -156,6 +156,12 @@ export default function ProjectPaymentForm({
   const projectName =
     paymentData.metadata.project_name || "Project Payment";
   const phase = paymentData.metadata.phase || "1";
+  const isInstallment = paymentData.metadata.payment_type === "installment";
+  const installmentNumber = parseInt(paymentData.metadata.installment_number || "1");
+  const numPayments = parseInt(paymentData.metadata.num_payments || "1");
+  const monthlyAmount = paymentData.metadata.monthly_amount
+    ? parseInt(paymentData.metadata.monthly_amount) / 100
+    : depositAmount;
 
   const handleContinueToAgreement = (e: React.FormEvent) => {
     e.preventDefault();
@@ -452,24 +458,67 @@ export default function ProjectPaymentForm({
               >
                 <p style={{ marginBottom: "0.75rem" }}>
                   <strong style={{ color: white }}>Payment Terms:</strong>{" "}
-                  All projects require payment before work begins. No
-                  exceptions. For split-payment projects: a 50% deposit is
-                  due at booking; the remaining 50% is due before final
-                  delivery and handoff.
+                  {isInstallment ? (
+                    <>
+                      This project uses an installment payment plan. You will
+                      be charged <strong style={{ color: white }}>${monthlyAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}/mo</strong> for{" "}
+                      <strong style={{ color: white }}>{numPayments} months</strong> (total:{" "}
+                      <strong style={{ color: white }}>${totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}</strong>).
+                      Your card will be saved and charged automatically each month.
+                      This first payment initiates the plan.
+                    </>
+                  ) : (
+                    <>
+                      All projects require payment before work begins. No
+                      exceptions. For split-payment projects: a 50% deposit is
+                      due at booking; the remaining 50% is due before final
+                      delivery and handoff.
+                    </>
+                  )}
                 </p>
+                {isInstallment && (
+                  <p style={{ marginBottom: "0.75rem" }}>
+                    <strong style={{ color: white }}>Autopay:</strong>{" "}
+                    By completing this payment, your card will be saved as the
+                    default payment method. Subsequent monthly payments will be
+                    charged automatically on the same date each month. You may
+                    pay off the remaining balance early at any time by contacting
+                    Martin Builds.
+                  </p>
+                )}
                 <p style={{ marginBottom: "0.75rem" }}>
                   <strong style={{ color: white }}>Refund Policy:</strong>{" "}
-                  Deposits are non-refundable once work has begun. Full
-                  payments for completed projects are non-refundable. If
-                  Martin Builds cancels a project before work begins, a
-                  full refund will be issued within 5 business days.
+                  {isInstallment ? (
+                    <>
+                      Installment payments are non-refundable once processed.
+                      If Martin Builds cancels a project before work begins, a
+                      full refund will be issued within 5 business days.
+                    </>
+                  ) : (
+                    <>
+                      Deposits are non-refundable once work has begun. Full
+                      payments for completed projects are non-refundable. If
+                      Martin Builds cancels a project before work begins, a
+                      full refund will be issued within 5 business days.
+                    </>
+                  )}
                 </p>
                 <p style={{ marginBottom: "0.75rem" }}>
                   <strong style={{ color: white }}>Delivery:</strong>{" "}
-                  Martin Builds operates on a 14-day delivery model for
-                  standard website projects. Final project files,
-                  credentials, and assets will not be transferred until all
-                  outstanding balances are paid in full.
+                  {isInstallment ? (
+                    <>
+                      Project work begins after the first payment clears. Final
+                      project files, credentials, and assets will not be
+                      transferred until all installments are paid in full.
+                    </>
+                  ) : (
+                    <>
+                      Martin Builds operates on a 14-day delivery model for
+                      standard website projects. Final project files,
+                      credentials, and assets will not be transferred until all
+                      outstanding balances are paid in full.
+                    </>
+                  )}
                 </p>
                 <p style={{ marginBottom: "0.75rem" }}>
                   <strong style={{ color: white }}>Revisions:</strong> Each
@@ -659,6 +708,10 @@ export default function ProjectPaymentForm({
               totalAmount={totalAmount}
               phase={phase}
               clientName={clientInfo.name}
+              isInstallment={isInstallment}
+              installmentNumber={installmentNumber}
+              numPayments={numPayments}
+              monthlyAmount={monthlyAmount}
             />
           </Elements>
         )}
@@ -675,12 +728,20 @@ function PaymentStep({
   totalAmount,
   phase,
   clientName,
+  isInstallment,
+  installmentNumber,
+  numPayments,
+  monthlyAmount,
 }: {
   projectName: string;
   depositAmount: number;
   totalAmount: number;
   phase: string;
   clientName: string;
+  isInstallment: boolean;
+  installmentNumber: number;
+  numPayments: number;
+  monthlyAmount: number;
 }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -746,16 +807,40 @@ function PaymentStep({
       >
         <div
           style={{
-            fontSize: "0.7rem",
-            fontWeight: 700,
-            color: accent,
-            textTransform: "uppercase",
-            letterSpacing: "1.5px",
-            fontFamily: "'Space Mono', monospace",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
             marginBottom: "1rem",
           }}
         >
-          Payment Summary
+          <div
+            style={{
+              fontSize: "0.7rem",
+              fontWeight: 700,
+              color: accent,
+              textTransform: "uppercase",
+              letterSpacing: "1.5px",
+              fontFamily: "'Space Mono', monospace",
+            }}
+          >
+            Payment Summary
+          </div>
+          {isInstallment && (
+            <div
+              style={{
+                fontSize: "0.7rem",
+                fontWeight: 700,
+                color: black,
+                background: accent,
+                padding: "3px 10px",
+                borderRadius: 100,
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
+              }}
+            >
+              {installmentNumber} of {numPayments}
+            </div>
+          )}
         </div>
         <div
           style={{
@@ -774,7 +859,7 @@ function PaymentStep({
             {projectName}
           </span>
         </div>
-        {totalAmount !== depositAmount && (
+        {(totalAmount !== depositAmount || isInstallment) && (
           <div
             style={{
               display: "flex",
@@ -791,6 +876,42 @@ function PaymentStep({
             </span>
           </div>
         )}
+        {isInstallment && (
+          <>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "0.5rem",
+              }}
+            >
+              <span style={{ color: grayText, fontSize: "0.9rem" }}>
+                Monthly Payment
+              </span>
+              <span style={{ color: grayText, fontSize: "0.9rem" }}>
+                ${monthlyAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}/mo &times; {numPayments}
+              </span>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "0.5rem",
+              }}
+            >
+              <span style={{ color: grayText, fontSize: "0.9rem" }}>
+                Remaining After This
+              </span>
+              <span style={{ color: grayText, fontSize: "0.9rem" }}>
+                {numPayments - installmentNumber > 0
+                  ? `$${((numPayments - installmentNumber) * monthlyAmount).toLocaleString("en-US", { minimumFractionDigits: 2 })} (${numPayments - installmentNumber} payment${numPayments - installmentNumber === 1 ? "" : "s"})`
+                  : "Paid in full"}
+              </span>
+            </div>
+          </>
+        )}
         <div
           style={{
             display: "flex",
@@ -801,7 +922,13 @@ function PaymentStep({
           }}
         >
           <span style={{ color: white, fontSize: "1rem", fontWeight: 700 }}>
-            {phase === "2" ? "Final Payment" : totalAmount !== depositAmount ? "Phase 1 Deposit (50%)" : "Amount Due"}
+            {isInstallment
+              ? `Installment ${installmentNumber}`
+              : phase === "2"
+                ? "Final Payment"
+                : totalAmount !== depositAmount
+                  ? "Phase 1 Deposit (50%)"
+                  : "Amount Due"}
           </span>
           <span
             style={{
@@ -815,6 +942,31 @@ function PaymentStep({
           </span>
         </div>
       </div>
+
+      {/* Autopay Notice */}
+      {isInstallment && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "0.75rem",
+            padding: "1rem 1.25rem",
+            background: "rgba(200,255,0,0.05)",
+            border: "1px solid rgba(200,255,0,0.15)",
+            borderRadius: 10,
+            marginBottom: "1.5rem",
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1 }}>
+            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+            <path d="M12 16v-4" />
+            <path d="M12 8h.01" />
+          </svg>
+          <p style={{ color: grayText, fontSize: "0.82rem", lineHeight: 1.5, margin: 0 }}>
+            Your card will be saved and charged <strong style={{ color: white }}>${monthlyAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}</strong> automatically each month until all {numPayments} payments are complete. No action needed after this.
+          </p>
+        </div>
+      )}
 
       {/* Card Form */}
       <form onSubmit={handleSubmit}>
