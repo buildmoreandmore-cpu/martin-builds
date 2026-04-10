@@ -435,7 +435,7 @@ export async function POST(req: NextRequest) {
         payment_settings: {
           save_default_payment_method: "on_subscription",
         },
-        expand: ["latest_invoice.payment_intent"],
+        expand: ["latest_invoice.confirmation_secret"],
         metadata: {
           ...baseMeta,
           payment_type: "installment",
@@ -447,21 +447,27 @@ export async function POST(req: NextRequest) {
         description: `${invoiceTitle} — ${numPayments} payments of $${monthly_amount}/mo`,
       });
 
-      // Pull the payment intent from the first invoice and tag it with our
-      // admin metadata so the existing /pay/[id] route will serve it.
-      const latestInvoice = subscription.latest_invoice as Stripe.Invoice | null;
-      const firstPI =
-        (latestInvoice as unknown as { payment_intent: Stripe.PaymentIntent | string | null } | null)
-          ?.payment_intent as Stripe.PaymentIntent | string | null;
+      // In newer Stripe API versions, invoices no longer expose
+      // `payment_intent` directly — instead the finalized invoice carries a
+      // `confirmation_secret` whose client_secret has the format
+      // `pi_XXX_secret_YYY`. Parse the PI id from it so the existing
+      // /pay/[id] route can serve it.
+      const latestInvoice = subscription.latest_invoice as
+        | (Stripe.Invoice & { confirmation_secret?: { client_secret: string } | null })
+        | string
+        | null;
+      const confirmationSecret =
+        latestInvoice && typeof latestInvoice !== "string"
+          ? latestInvoice.confirmation_secret?.client_secret ?? null
+          : null;
+      const firstPIId = confirmationSecret?.match(/^(pi_[^_]+)_secret_/)?.[1] ?? null;
 
-      if (!firstPI) {
+      if (!firstPIId) {
         return NextResponse.json(
           { error: "Stripe did not return a payment intent for the first installment. Check dashboard." },
           { status: 500 }
         );
       }
-
-      const firstPIId = typeof firstPI === "string" ? firstPI : firstPI.id;
 
       await stripe.paymentIntents.update(firstPIId, {
         metadata: {
