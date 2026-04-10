@@ -539,7 +539,7 @@ export default function AdminPanel() {
   const [loginLoading, setLoginLoading] = useState(false);
 
   // Tab
-  const [activeTab, setActiveTab] = useState<"invoices" | "automate" | "agents">("invoices");
+  const [activeTab, setActiveTab] = useState<"invoices" | "automate" | "agents" | "reports">("invoices");
 
   // Automation
   const [autoClients, setAutoClients] = useState<AutoClient[]>([]);
@@ -553,6 +553,55 @@ export default function AdminPanel() {
   const [conversationAgent, setConversationAgent] = useState<AgentClient | null>(null);
   const [conversationMessages, setConversationMessages] = useState<AgentMessage[]>([]);
   const [conversationLoading, setConversationLoading] = useState(false);
+
+  // Build Reports
+  interface BuildReport {
+    id: string;
+    name: string;
+    business_name: string;
+    industry: string;
+    location: string | null;
+    before: string;
+    built: string;
+    tech_tags: string[];
+    impact: string;
+    rating: string | null;
+    quote: string | null;
+    referral_name: string | null;
+    referral_business: string | null;
+    referral_contact: string | null;
+    referral_reason: string | null;
+    status: string;
+    created_at: string;
+  }
+  const [reports, setReports] = useState<BuildReport[]>([]);
+  const [reportsLoading, setReportsLoading] = useState(false);
+  const [expandedReport, setExpandedReport] = useState<string | null>(null);
+
+  const fetchReports = useCallback(async () => {
+    setReportsLoading(true);
+    try {
+      const res = await fetch("/api/admin/build-reports");
+      if (res.ok) {
+        const data = await res.json();
+        setReports(data.reports || []);
+      }
+    } catch { /* ignore */ }
+    setReportsLoading(false);
+  }, []);
+
+  async function updateReportStatus(id: string, status: string) {
+    try {
+      const res = await fetch("/api/admin/build-reports", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status }),
+      });
+      if (res.ok) {
+        setReports((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
+      }
+    } catch { /* ignore */ }
+  }
 
   // Form state
   const [clientName, setClientName] = useState("");
@@ -707,8 +756,9 @@ export default function AdminPanel() {
       fetchProjects();
       fetchAutomation();
       fetchAgents();
+      fetchReports();
     }
-  }, [authed, fetchProjects, fetchAutomation, fetchAgents]);
+  }, [authed, fetchProjects, fetchAutomation, fetchAgents, fetchReports]);
 
   /* ─── Login ─── */
   async function handleLogin(e: FormEvent) {
@@ -1088,7 +1138,7 @@ export default function AdminPanel() {
 
       {/* Tab Navigation */}
       <div style={{ display: "flex", borderBottom: `1px solid ${BORDER}`, padding: "0 clamp(12px, 4vw, 24px)" }}>
-        {(["invoices", "automate", "agents"] as const).map((t) => (
+        {(["invoices", "automate", "agents", "reports"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setActiveTab(t)}
@@ -1106,7 +1156,7 @@ export default function AdminPanel() {
               letterSpacing: 0.5,
             }}
           >
-            {t === "invoices" ? "Invoices" : t === "automate" ? "Automate" : "AI Agents"}
+            {t === "invoices" ? "Invoices" : t === "automate" ? "Automate" : t === "agents" ? "AI Agents" : "Reports"}
           </button>
         ))}
       </div>
@@ -2155,6 +2205,153 @@ export default function AdminPanel() {
                 );
               })}
             </div>
+          </>
+        )}
+
+        {/* ─── REPORTS TAB ─── */}
+        {activeTab === "reports" && (
+          <>
+            {/* Summary */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 12, marginBottom: 24 }}>
+              {[
+                { label: "Total", value: reports.length, color: TEXT },
+                { label: "Pending", value: reports.filter((r) => r.status === "pending").length, color: "#ffcc00" },
+                { label: "Approved", value: reports.filter((r) => r.status === "approved").length, color: GREEN },
+                { label: "Archived", value: reports.filter((r) => r.status === "archived").length, color: DIM },
+              ].map((c) => (
+                <div key={c.label} style={{ background: CARD_BG, border: `1px solid ${BORDER}`, borderRadius: 6, padding: 14, textAlign: "center" }}>
+                  <div style={{ fontSize: 10, color: DIM, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4, fontFamily: "'Space Mono', monospace" }}>{c.label}</div>
+                  <div style={{ fontSize: 22, fontWeight: 700, color: c.color }}>{c.value}</div>
+                </div>
+              ))}
+            </div>
+
+            {reportsLoading && <div style={{ textAlign: "center", color: DIM, padding: 40, fontSize: 13 }}>Loading reports...</div>}
+
+            {!reportsLoading && reports.length === 0 && (
+              <div style={{ textAlign: "center", color: DIM, padding: 40 }}>
+                <div style={{ fontSize: 13, marginBottom: 8 }}>No build reports yet.</div>
+                <div style={{ fontSize: 12 }}>Send the link to a client: <span style={{ color: GREEN }}>martinbuilds.ai/results</span></div>
+              </div>
+            )}
+
+            {!reportsLoading && reports.length > 0 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                {reports.map((r) => {
+                  const isExpanded = expandedReport === r.id;
+                  const statusColors: Record<string, { bg: string; text: string }> = {
+                    pending: { bg: "#1a1a00", text: "#cccc00" },
+                    approved: { bg: "#002200", text: GREEN },
+                    archived: { bg: "#1a1a1a", text: DIM },
+                  };
+                  const sc = statusColors[r.status] || statusColors.pending;
+                  const ratingLabel = r.rating === "game_changer" ? "Game Changer" : r.rating === "exceptional" ? "Exceptional" : r.rating === "good" ? "Good" : null;
+
+                  return (
+                    <div key={r.id} style={{ background: CARD_BG, border: `1px solid ${BORDER}`, borderRadius: 8, overflow: "hidden" }}>
+                      {/* Header row */}
+                      <div
+                        onClick={() => setExpandedReport(isExpanded ? null : r.id)}
+                        style={{ padding: "16px 18px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}
+                      >
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: TEXT, marginBottom: 2 }}>{r.name}</div>
+                          <div style={{ fontSize: 12, color: DIM }}>{r.business_name} &middot; {r.industry}</div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+                          {ratingLabel && (
+                            <span style={{ fontSize: 10, padding: "3px 8px", background: "rgba(200,255,0,0.08)", border: `1px solid ${BORDER}`, borderRadius: 3, color: GREEN, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                              {ratingLabel}
+                            </span>
+                          )}
+                          <span style={{ fontSize: 10, padding: "3px 8px", background: sc.bg, color: sc.text, borderRadius: 3, textTransform: "uppercase", letterSpacing: 0.5, fontWeight: 600 }}>
+                            {r.status}
+                          </span>
+                          <span style={{ fontSize: 11, color: DIM }}>{new Date(r.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+                        </div>
+                      </div>
+
+                      {/* Expanded detail */}
+                      {isExpanded && (
+                        <div style={{ padding: "0 18px 18px", borderTop: `1px solid ${BORDER}` }}>
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 16 }}>
+                            <div>
+                              <div style={{ fontSize: 10, color: DIM, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6, fontFamily: "'Space Mono', monospace" }}>Before</div>
+                              <div style={{ fontSize: 13, color: TEXT, lineHeight: 1.6 }}>{r.before}</div>
+                            </div>
+                            <div>
+                              <div style={{ fontSize: 10, color: DIM, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6, fontFamily: "'Space Mono', monospace" }}>What Was Built</div>
+                              <div style={{ fontSize: 13, color: TEXT, lineHeight: 1.6 }}>{r.built}</div>
+                            </div>
+                          </div>
+
+                          <div style={{ marginTop: 16 }}>
+                            <div style={{ fontSize: 10, color: DIM, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6, fontFamily: "'Space Mono', monospace" }}>Impact</div>
+                            <div style={{ fontSize: 13, color: TEXT, lineHeight: 1.6 }}>{r.impact}</div>
+                          </div>
+
+                          {r.quote && (
+                            <div style={{ marginTop: 16, padding: "12px 16px", borderLeft: `2px solid ${GREEN}`, background: "rgba(200,255,0,0.03)" }}>
+                              <div style={{ fontSize: 13, color: "#ccc", fontStyle: "italic", lineHeight: 1.6 }}>&ldquo;{r.quote}&rdquo;</div>
+                            </div>
+                          )}
+
+                          {r.tech_tags && r.tech_tags.length > 0 && (
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 12 }}>
+                              {r.tech_tags.map((t: string) => (
+                                <span key={t} style={{ fontSize: 10, padding: "3px 8px", border: `1px solid ${BORDER}`, borderRadius: 2, color: DIM, textTransform: "uppercase", letterSpacing: 0.5 }}>{t}</span>
+                              ))}
+                            </div>
+                          )}
+
+                          {r.location && (
+                            <div style={{ fontSize: 12, color: DIM, marginTop: 12 }}>Location: {r.location}</div>
+                          )}
+
+                          {/* Referral */}
+                          {r.referral_name && (
+                            <div style={{ marginTop: 16, padding: 14, background: "#111", border: `1px solid ${BORDER}`, borderRadius: 6 }}>
+                              <div style={{ fontSize: 10, color: GREEN, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, fontFamily: "'Space Mono', monospace" }}>Referral</div>
+                              <div style={{ fontSize: 13, color: TEXT }}>{r.referral_name}{r.referral_business ? ` — ${r.referral_business}` : ""}</div>
+                              {r.referral_contact && <div style={{ fontSize: 12, color: DIM, marginTop: 4 }}>{r.referral_contact}</div>}
+                              {r.referral_reason && <div style={{ fontSize: 12, color: DIM, marginTop: 4, fontStyle: "italic" }}>{r.referral_reason}</div>}
+                            </div>
+                          )}
+
+                          {/* Actions */}
+                          <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+                            {r.status !== "approved" && (
+                              <button
+                                onClick={() => updateReportStatus(r.id, "approved")}
+                                style={{ padding: "6px 14px", background: GREEN, color: BG, border: "none", borderRadius: 4, fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
+                              >
+                                Approve
+                              </button>
+                            )}
+                            {r.status !== "archived" && (
+                              <button
+                                onClick={() => updateReportStatus(r.id, "archived")}
+                                style={{ padding: "6px 14px", background: "transparent", border: `1px solid ${BORDER}`, color: DIM, borderRadius: 4, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+                              >
+                                Archive
+                              </button>
+                            )}
+                            {r.status === "archived" && (
+                              <button
+                                onClick={() => updateReportStatus(r.id, "pending")}
+                                style={{ padding: "6px 14px", background: "transparent", border: `1px solid ${BORDER}`, color: TEXT, borderRadius: 4, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+                              >
+                                Restore
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </>
         )}
       </div>
