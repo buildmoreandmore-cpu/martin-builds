@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { LocalBusinessJsonLd } from "@/components/JsonLd";
 
-const title = "martin.builds — Custom Websites & Dashboards in 14 Days";
+const title = "martin.builds — Custom Dashboards for Every Business";
 const description =
   "Your business deserves a system that runs like you do. Custom website + admin dashboard. Owned by you forever. Based in Atlanta, GA.";
 
@@ -14,6 +14,14 @@ export const metadata: Metadata = {
     "AI developer Atlanta, AI tools small business, custom AI website Atlanta, AI app developer Atlanta GA, AI consultant Atlanta, ChatGPT integration Atlanta, AI automation Atlanta",
   authors: [{ name: "Francis Martin" }],
   creator: "Francis Martin",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png" },
+    ],
+    apple: "/apple-icon.png",
+    shortcut: "/favicon.ico",
+  },
   other: {
     "theme-color": "#0a0a0a",
     "geo.region": "US-GA",
