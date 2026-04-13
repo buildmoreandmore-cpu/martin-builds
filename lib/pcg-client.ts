@@ -129,6 +129,60 @@ export const PCG_TOOLS = [
   },
 ];
 
+/**
+ * Sync a message to PCG's shared conversation store so Patrick
+ * (admin panel) sees Telegram messages and vice versa.
+ */
+export async function syncMessageToPcg(
+  role: "user" | "assistant",
+  content: string,
+  source: string,
+  senderName?: string
+) {
+  if (!PCG_BASE || !PCG_KEY) return;
+  try {
+    await fetch(`${PCG_BASE}/messages`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${PCG_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        role,
+        content,
+        source,
+        sender_name: senderName || undefined,
+        thread_id: "pcg-admin",
+      }),
+    });
+  } catch (e) {
+    console.error("[PCG Sync] Failed to sync message:", e);
+  }
+}
+
+/**
+ * Load recent messages from PCG's conversation store so Parker
+ * has context from Patrick (admin panel) conversations.
+ */
+export async function loadPcgHistory(limit: number = 20): Promise<{ role: "user" | "assistant"; content: string }[]> {
+  if (!PCG_BASE || !PCG_KEY) return [];
+  try {
+    const res = await fetch(`${PCG_BASE}/messages?thread_id=pcg-admin&limit=${limit}`, {
+      headers: { Authorization: `Bearer ${PCG_KEY}` },
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    const messages = Array.isArray(data) ? data : data.messages || [];
+    return messages.map((m: { role: string; content: string }) => ({
+      role: m.role as "user" | "assistant",
+      content: m.content,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export async function executePcgTool(name: string, input: Record<string, unknown>): Promise<unknown> {
   switch (name) {
     case "get_stats":

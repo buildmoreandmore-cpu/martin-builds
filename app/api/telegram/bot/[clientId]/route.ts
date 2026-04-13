@@ -12,7 +12,7 @@ import { supabase } from "@/lib/supabase";
 import Anthropic from "@anthropic-ai/sdk";
 import { buildSystemPrompt } from "@/lib/agent-prompt";
 import { saveMessage, loadHistory } from "@/lib/client-messages";
-import { PCG_TOOLS, executePcgTool } from "@/lib/pcg-client";
+import { PCG_TOOLS, executePcgTool, syncMessageToPcg, loadPcgHistory } from "@/lib/pcg-client";
 
 const anthropic = new Anthropic({
   apiKey: (process.env.ANTHROPIC_API_KEY || "").trim(),
@@ -147,11 +147,14 @@ export async function POST(
     }
 
     // Regular conversation — use Claude with shared conversation history
-    // Save the incoming user message
+    // Save the incoming user message (local + PCG sync)
     await saveMessage(clientId, "user", text, "telegram");
+    await syncMessageToPcg("user", text, "telegram", client.name);
 
-    // Load cross-interface conversation history (last 20 messages)
-    const history = await loadHistory(clientId, 20);
+    // Load cross-interface conversation history
+    // Try PCG's shared store first (includes Patrick messages), fall back to local
+    const pcgHistory = await loadPcgHistory(20);
+    const history = pcgHistory.length > 0 ? pcgHistory : await loadHistory(clientId, 20);
 
     const systemPrompt = buildSystemPrompt(client);
 
@@ -205,8 +208,9 @@ export async function POST(
 
     const reply = finalText || "I couldn't process that. Try again?";
 
-    // Save the assistant response
+    // Save the assistant response (local + PCG sync)
     await saveMessage(clientId, "assistant", reply, "telegram");
+    await syncMessageToPcg("assistant", reply, "telegram", client.bot_name || "Parker");
 
     await sendMessage(botToken, chatId, reply);
     return NextResponse.json({ ok: true });
