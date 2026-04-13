@@ -13,13 +13,18 @@
 const PCG_BASE = (process.env.PCG_API_BASE_URL || "").trim();
 const PCG_KEY = (process.env.PCG_API_KEY || "").trim();
 
-async function pcgFetch(path: string): Promise<unknown> {
+async function pcgFetch(path: string, options?: { method?: string; body?: unknown }): Promise<unknown> {
   if (!PCG_BASE || !PCG_KEY) {
     throw new Error("PCG API not configured");
   }
   const url = `${PCG_BASE}${path}`;
   const res = await fetch(url, {
-    headers: { Authorization: `Bearer ${PCG_KEY}` },
+    method: options?.method || "GET",
+    headers: {
+      Authorization: `Bearer ${PCG_KEY}`,
+      ...(options?.body ? { "Content-Type": "application/json" } : {}),
+    },
+    body: options?.body ? JSON.stringify(options.body) : undefined,
     cache: "no-store",
   });
   if (!res.ok) {
@@ -60,6 +65,53 @@ export async function getStats() {
 
 export async function getRecentActivity(days: number = 7) {
   return pcgFetch(`/recent-activity?days=${days}`);
+}
+
+// ─── Write Operations ───
+
+export async function createCandidate(data: {
+  first_name: string;
+  last_name: string;
+  email?: string;
+  phone?: string;
+  employer_client_id?: string;
+  position?: string;
+  notes?: string;
+}) {
+  return pcgFetch("/candidates", { method: "POST", body: data });
+}
+
+export async function updateCandidate(id: string, data: {
+  status?: string;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  phone?: string;
+  position?: string;
+  notes?: string;
+}) {
+  return pcgFetch(`/candidates/${encodeURIComponent(id)}`, { method: "PATCH", body: data });
+}
+
+export async function updateScreening(id: string, data: {
+  status?: string;
+  notes?: string;
+}) {
+  return pcgFetch(`/screenings/${encodeURIComponent(id)}`, { method: "PATCH", body: data });
+}
+
+export async function createSupportTicket(data: {
+  title: string;
+  description: string;
+  priority?: string;
+  reported_by?: string;
+}) {
+  return pcgFetch("/support-tickets", { method: "POST", body: data });
+}
+
+export async function getSupportTickets(status?: string) {
+  const qs = status ? `?status=${encodeURIComponent(status)}` : "";
+  return pcgFetch(`/support-tickets${qs}`);
 }
 
 export const PCG_TOOLS = [
@@ -123,6 +175,79 @@ export const PCG_TOOLS = [
       type: "object" as const,
       properties: {
         days: { type: "number", description: "Look back this many days, default 7" },
+      },
+      required: [],
+    },
+  },
+  {
+    name: "create_candidate",
+    description: "Create a new candidate in the PCG system. Use when Gwen asks to add a new candidate for screening.",
+    input_schema: {
+      type: "object" as const,
+      properties: {
+        first_name: { type: "string", description: "Candidate first name" },
+        last_name: { type: "string", description: "Candidate last name" },
+        email: { type: "string", description: "Candidate email address" },
+        phone: { type: "string", description: "Candidate phone number" },
+        employer_client_id: { type: "string", description: "ID of the employer client requesting the screening" },
+        position: { type: "string", description: "Position the candidate is applying for" },
+        notes: { type: "string", description: "Any notes about the candidate" },
+      },
+      required: ["first_name", "last_name"],
+    },
+  },
+  {
+    name: "update_candidate",
+    description: "Update a candidate's status or details. Use when Gwen asks to change a candidate's status (e.g. to 'in_progress', 'complete', 'flagged') or update their info.",
+    input_schema: {
+      type: "object" as const,
+      properties: {
+        id: { type: "string", description: "Candidate ID to update" },
+        status: { type: "string", description: "New status (e.g. pending, in_progress, complete, flagged, withdrawn)" },
+        first_name: { type: "string", description: "Updated first name" },
+        last_name: { type: "string", description: "Updated last name" },
+        email: { type: "string", description: "Updated email" },
+        phone: { type: "string", description: "Updated phone" },
+        position: { type: "string", description: "Updated position" },
+        notes: { type: "string", description: "Updated notes" },
+      },
+      required: ["id"],
+    },
+  },
+  {
+    name: "update_screening",
+    description: "Update a screening's status or add notes. Use when Gwen asks to change a screening status (e.g. mark as complete, flag an issue).",
+    input_schema: {
+      type: "object" as const,
+      properties: {
+        id: { type: "string", description: "Screening ID to update" },
+        status: { type: "string", description: "New status (e.g. pending, in_progress, complete, flagged)" },
+        notes: { type: "string", description: "Notes about the screening update" },
+      },
+      required: ["id"],
+    },
+  },
+  {
+    name: "create_support_ticket",
+    description: "Log a bug report or issue. Use when Gwen reports a problem, bug, or requests a feature. Always confirm the details before creating.",
+    input_schema: {
+      type: "object" as const,
+      properties: {
+        title: { type: "string", description: "Short title describing the issue" },
+        description: { type: "string", description: "Detailed description of the bug, issue, or feature request" },
+        priority: { type: "string", description: "Priority level: low, medium, high, critical. Default medium." },
+        reported_by: { type: "string", description: "Name of the person reporting, default Gwen" },
+      },
+      required: ["title", "description"],
+    },
+  },
+  {
+    name: "get_support_tickets",
+    description: "List support tickets. Use when Gwen asks about open tickets, bug status, or reported issues.",
+    input_schema: {
+      type: "object" as const,
+      properties: {
+        status: { type: "string", description: "Filter by status: open, in_progress, resolved, closed" },
       },
       required: [],
     },
@@ -197,6 +322,16 @@ export async function executePcgTool(name: string, input: Record<string, unknown
       return getClients();
     case "get_recent_activity":
       return getRecentActivity(typeof input.days === "number" ? input.days : 7);
+    case "create_candidate":
+      return createCandidate(input as { first_name: string; last_name: string; email?: string; phone?: string; employer_client_id?: string; position?: string; notes?: string });
+    case "update_candidate":
+      return updateCandidate(String(input.id), input as { status?: string; first_name?: string; last_name?: string; email?: string; phone?: string; position?: string; notes?: string });
+    case "update_screening":
+      return updateScreening(String(input.id), input as { status?: string; notes?: string });
+    case "create_support_ticket":
+      return createSupportTicket(input as { title: string; description: string; priority?: string; reported_by?: string });
+    case "get_support_tickets":
+      return getSupportTickets(input.status as string | undefined);
     default:
       throw new Error(`Unknown PCG tool: ${name}`);
   }
