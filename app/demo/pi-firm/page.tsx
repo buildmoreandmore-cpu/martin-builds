@@ -265,6 +265,12 @@ export default function PIFirmDemo() {
       {/* ── Main content ── */}
       <div className="pi-wrap" style={{ maxWidth: 1260, margin: "0 auto", padding: "24px 24px 80px" }}>
 
+        {/* ── Demo context banner ── */}
+        <div style={{ marginBottom: 20, padding: "24px 28px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 12, animation: "fadeInUp 0.4s ease-out forwards" }}>
+          <p style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "#166534", marginBottom: 6 }}>This is a dashboard concept designed for a personal injury law firm.</p>
+          <p style={{ margin: 0, fontSize: 14, color: "#15803d", lineHeight: 1.6 }}>Medical records tracking, treatment summaries, demand letter generation, and e-signature workflows — all in one place. The final product is designed around how your firm actually runs cases. This is a starting point to show what&apos;s possible.</p>
+        </div>
+
         {/* Case info bar */}
         <div style={{ background: card, border: `1px solid ${border}`, borderRadius: 12, padding: "16px 20px", marginBottom: 20, animation: "fadeInUp 0.5s ease-out 0.1s both", display: "flex", flexWrap: "wrap", gap: "20px 40px" }}>
           {[
@@ -335,6 +341,8 @@ export default function PIFirmDemo() {
           {activeTab === "demand" && <DemandTab />}
           {activeTab === "signatures" && <SignaturesTab />}
         </div>
+        {/* spacer for fixed button */}
+        <div style={{ height: 64 }} />
       </div>
 
       {/* ── Fixed CTA pill ── */}
