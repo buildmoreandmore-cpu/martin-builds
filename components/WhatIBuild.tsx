@@ -28,6 +28,12 @@ const builds = [
     href: "/demo/ecommerce",
     accent: "#7c3aed",
   },
+  {
+    title: "PI Law Firm",
+    desc: "Case tracking, demand letters, medical records, e-signatures",
+    href: "/demo/pi-firm",
+    accent: "#1e3a5f",
+  },
 ];
 
 export default function WhatIBuild() {

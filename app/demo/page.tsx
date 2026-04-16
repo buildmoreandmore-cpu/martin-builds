@@ -81,6 +81,14 @@ const demos = [
     href: "/demo/janitorial",
     accent: "#38bdf8",
   },
+  {
+    title: "PI Case Platform",
+    vertical: "Personal Injury Law Firm",
+    description:
+      "Medical records tracking, treatment summaries, demand letter builder, and e-signature workflows for PI case management.",
+    href: "/demo/pi-firm",
+    accent: "#1e3a5f",
+  },
 ];
 
 export default function DemoIndex() {
