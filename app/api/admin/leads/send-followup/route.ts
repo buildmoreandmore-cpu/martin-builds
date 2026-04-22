@@ -27,7 +27,7 @@ function buildDripA(firstName: string, firmName: string): string {
 <h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
 
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
-My name is Francis with martin.builds and I help firms like <strong style="color:#f5f5f0;">${firmName}</strong> simplify the workflows that eat up your team&rsquo;s time &mdash; intake, conflict checks, engagement letters, all of it.
+My name is Francis with martin.builds and I help businesses like <strong style="color:#f5f5f0;">${firmName}</strong> simplify the workflows that eat up your team&rsquo;s time &mdash; client intake, scheduling, reporting, all of it.
 </p>
 
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 24px 0;">
@@ -45,7 +45,7 @@ I&rsquo;d love to learn more about how your team runs things today and see if th
 <tr><td colspan="2" style="padding:0;"><div style="height:1px;background:#222;"></div></td></tr>
 <tr>
 <td style="width:36px;vertical-align:top;padding:8px 0;"><div style="width:28px;height:28px;border-radius:50%;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:13px;line-height:28px;text-align:center;">2</div></td>
-<td style="padding:10px 0 10px 12px;color:#ccc;font-size:14px;line-height:1.5;"><strong style="color:#f5f5f0;">Operations dashboard</strong> &mdash; cases, billing, and team workload in one view</td>
+<td style="padding:10px 0 10px 12px;color:#ccc;font-size:14px;line-height:1.5;"><strong style="color:#f5f5f0;">Operations dashboard</strong> &mdash; projects, billing, and team workload in one view</td>
 </tr>
 <tr><td colspan="2" style="padding:0;"><div style="height:1px;background:#222;"></div></td></tr>
 <tr>
@@ -160,7 +160,7 @@ I came across your work${bizLine} and wanted to reach out. I build custom dashbo
 </p>
 
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
-A few things I&rsquo;ve built recently for firms in your space:
+A few things I&rsquo;ve built recently for businesses like yours:
 </p>
 
 <div style="background:#111;border:1px solid #222;border-radius:12px;padding:20px;margin-bottom:24px;">
