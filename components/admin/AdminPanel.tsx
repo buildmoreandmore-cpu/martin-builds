@@ -260,7 +260,7 @@ const s: Record<string, CSSProperties> = {
     background: CARD_BG,
     border: `1px solid ${BORDER}`,
     borderRadius: 6,
-    padding: 16,
+    padding: "clamp(10px, 3vw, 16px)",
     marginBottom: 12,
   },
   cardHeader: {
@@ -268,9 +268,11 @@ const s: Record<string, CSSProperties> = {
     justifyContent: "space-between",
     alignItems: "flex-start",
     marginBottom: 8,
+    gap: 8,
+    flexWrap: "wrap" as const,
   },
   cardTitle: {
-    fontSize: 15,
+    fontSize: "clamp(13px, 3.5vw, 15px)",
     fontWeight: 700,
     color: TEXT,
     margin: 0,
@@ -282,9 +284,9 @@ const s: Record<string, CSSProperties> = {
   },
   badge: {
     display: "inline-block",
-    padding: "3px 10px",
+    padding: "2px 8px",
     borderRadius: 12,
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: 600,
     whiteSpace: "nowrap" as const,
   },
@@ -2535,7 +2537,7 @@ export default function AdminPanel() {
         {activeTab === "leads" && (
           <>
             {/* Summary cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 12, marginBottom: 24 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(90px, 1fr))", gap: 8, marginBottom: 20 }}>
               {[
                 { label: "Total", value: leads.length, color: TEXT },
                 { label: "New", value: leads.filter((l) => l.status === "new").length, color: "#4ade80" },
@@ -2544,9 +2546,9 @@ export default function AdminPanel() {
                 { label: "Proposal", value: leads.filter((l) => l.status === "proposal_sent").length, color: "#facc15" },
                 { label: "Won", value: leads.filter((l) => l.status === "won").length, color: GREEN },
               ].map((c) => (
-                <div key={c.label} style={{ ...s.card, textAlign: "center", padding: "14px 8px" }}>
-                  <div style={{ fontSize: 22, fontWeight: 700, color: c.color }}>{c.value}</div>
-                  <div style={{ fontSize: 11, color: DIM, marginTop: 4 }}>{c.label}</div>
+                <div key={c.label} style={{ ...s.card, textAlign: "center", padding: "clamp(8px, 2vw, 14px) 6px" }}>
+                  <div style={{ fontSize: "clamp(18px, 4vw, 22px)", fontWeight: 700, color: c.color }}>{c.value}</div>
+                  <div style={{ fontSize: 10, color: DIM, marginTop: 2 }}>{c.label}</div>
                 </div>
               ))}
             </div>
@@ -2575,8 +2577,8 @@ export default function AdminPanel() {
                       key={f}
                       onClick={() => setLeadFilter(f)}
                       style={{
-                        padding: "5px 12px",
-                        fontSize: 11,
+                        padding: "5px 8px",
+                        fontSize: 10,
                         fontWeight: 600,
                         border: `1px solid ${leadFilter === f ? GREEN : BORDER}`,
                         borderRadius: 4,
@@ -2592,14 +2594,14 @@ export default function AdminPanel() {
                   ))}
                 </div>
                 <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                  <button onClick={fetchLeads} disabled={leadsLoading} style={{ ...s.logoutBtn, fontSize: 11, color: GREEN, borderColor: GREEN }}>
-                    {leadsLoading ? "Loading..." : "Refresh"}
+                  <button onClick={fetchLeads} disabled={leadsLoading} style={{ ...s.logoutBtn, fontSize: 11, color: GREEN, borderColor: GREEN, whiteSpace: "nowrap" as const }}>
+                    {leadsLoading ? "..." : "Refresh"}
                   </button>
                   <button
                     onClick={() => setShowAddLead(!showAddLead)}
-                    style={{ padding: "6px 14px", background: GREEN, color: BG, border: "none", borderRadius: 4, fontWeight: 700, fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}
+                    style={{ padding: "6px 12px", background: GREEN, color: BG, border: "none", borderRadius: 4, fontWeight: 700, fontSize: 11, cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap" as const }}
                   >
-                    + Add Lead
+                    + Add
                   </button>
                 </div>
               </div>
@@ -2633,8 +2635,8 @@ export default function AdminPanel() {
 
             {/* Bulk action bar */}
             {selectedLeads.size > 0 && (
-              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", background: "rgba(200,255,0,0.08)", border: `1px solid rgba(200,255,0,0.2)`, borderRadius: 6, marginBottom: 16, flexWrap: "wrap" }}>
-                <span style={{ fontSize: 13, fontWeight: 700, color: GREEN }}>{selectedLeads.size} selected</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 10px", background: "rgba(200,255,0,0.08)", border: `1px solid rgba(200,255,0,0.2)`, borderRadius: 6, marginBottom: 16, flexWrap: "wrap" }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: GREEN }}>{selectedLeads.size} selected</span>
                 <button
                   onClick={bulkSendIntros}
                   style={{ padding: "5px 14px", background: GREEN, color: BG, border: "none", borderRadius: 4, fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
@@ -2725,7 +2727,7 @@ export default function AdminPanel() {
                 <div style={{ marginBottom: 8 }}>
                   <label style={s.label}>Message</label>
                   <textarea
-                    style={{ ...s.textarea, minHeight: 220, lineHeight: 1.6 }}
+                    style={{ ...s.textarea, minHeight: "clamp(140px, 30vh, 220px)", lineHeight: 1.6 }}
                     value={composeMessage}
                     onChange={(e) => { setComposeMessage(e.target.value); setComposeTemplate(""); }}
                     placeholder="Write your message..."
@@ -2748,7 +2750,7 @@ export default function AdminPanel() {
             {showAddLead && (
               <div style={{ ...s.card, marginBottom: 16, border: `1px solid ${GREEN}` }}>
                 <div style={{ ...s.sectionTitle, fontSize: 12, marginBottom: 12 }}>New Lead</div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))", gap: 10 }}>
                   <div>
                     <label style={s.label}>Name *</label>
                     <input style={s.input} value={newLeadName} onChange={(e) => setNewLeadName(e.target.value)} placeholder="Full name" />
@@ -2832,7 +2834,7 @@ export default function AdminPanel() {
                           {editingLeadField?.id === lead.id && editingLeadField.field === "name" ? (
                             <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
                               <input
-                                style={{ ...s.input, width: 200, padding: "4px 8px", fontSize: 15, fontWeight: 700, display: "inline-block" }}
+                                style={{ ...s.input, width: "min(200px, 50vw)", padding: "4px 8px", fontSize: 15, fontWeight: 700, display: "inline-block" }}
                                 value={leadFieldValue}
                                 onChange={(e) => setLeadFieldValue(e.target.value)}
                                 onKeyDown={(e) => {
@@ -2885,7 +2887,7 @@ export default function AdminPanel() {
                           {editingLeadField?.id === lead.id && editingLeadField.field === "email" ? (
                             <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
                               <input
-                                style={{ ...s.input, width: 200, padding: "3px 8px", fontSize: 12, display: "inline-block" }}
+                                style={{ ...s.input, width: "min(200px, 50vw)", padding: "3px 8px", fontSize: 12, display: "inline-block" }}
                                 value={leadFieldValue}
                                 onChange={(e) => setLeadFieldValue(e.target.value)}
                                 onKeyDown={(e) => {
@@ -2912,7 +2914,7 @@ export default function AdminPanel() {
                           {editingLeadField?.id === lead.id && editingLeadField.field === "phone" ? (
                             <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
                               <input
-                                style={{ ...s.input, width: 160, padding: "3px 8px", fontSize: 12, display: "inline-block" }}
+                                style={{ ...s.input, width: "min(160px, 45vw)", padding: "3px 8px", fontSize: 12, display: "inline-block" }}
                                 value={leadFieldValue}
                                 onChange={(e) => setLeadFieldValue(e.target.value)}
                                 onKeyDown={(e) => {
@@ -3002,7 +3004,7 @@ export default function AdminPanel() {
                     ) : null}
 
                     {/* Actions */}
-                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 8 }}>
+                    <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: 8 }}>
                       {/* Status buttons */}
                       {lead.status === "new" && (
                         <button onClick={() => updateLead(lead.id, { status: "contacted" })} style={{ padding: "4px 12px", background: "rgba(96,165,250,0.15)", color: "#60a5fa", border: "none", borderRadius: 3, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>

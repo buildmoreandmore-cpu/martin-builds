@@ -94,22 +94,22 @@ All the steps, all the clicks &mdash; and knowing there&rsquo;s a better way but
 <h3 style="font-size:12px;color:#c8ff00;margin:0 0 16px 0;text-transform:uppercase;letter-spacing:1.5px;">I Build the Fix</h3>
 <table style="width:100%;border-collapse:collapse;">
 <tr>
-<td style="padding:8px 0;vertical-align:middle;"><span style="display:inline-block;background:#c8ff00;color:#0a0a0a;font-weight:800;font-size:11px;padding:3px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:0.5px;">Custom</span></td>
+<td style="width:90px;padding:8px 0;vertical-align:middle;"><span style="display:inline-block;background:#c8ff00;color:#0a0a0a;font-weight:800;font-size:11px;padding:3px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;">Custom</span></td>
 <td style="padding:8px 0 8px 12px;color:#ccc;font-size:14px;">Built around how your team actually works</td>
 </tr>
 <tr><td colspan="2" style="padding:0;"><div style="height:1px;background:#222;"></div></td></tr>
 <tr>
-<td style="padding:8px 0;vertical-align:middle;"><span style="display:inline-block;background:#c8ff00;color:#0a0a0a;font-weight:800;font-size:11px;padding:3px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:0.5px;">2 Weeks</span></td>
+<td style="width:90px;padding:8px 0;vertical-align:middle;"><span style="display:inline-block;background:#c8ff00;color:#0a0a0a;font-weight:800;font-size:11px;padding:3px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;">2 Weeks</span></td>
 <td style="padding:8px 0 8px 12px;color:#ccc;font-size:14px;">Not 2 months, not 6 months</td>
 </tr>
 <tr><td colspan="2" style="padding:0;"><div style="height:1px;background:#222;"></div></td></tr>
 <tr>
-<td style="padding:8px 0;vertical-align:middle;"><span style="display:inline-block;background:#c8ff00;color:#0a0a0a;font-weight:800;font-size:11px;padding:3px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:0.5px;">Fixed $</span></td>
+<td style="width:90px;padding:8px 0;vertical-align:middle;"><span style="display:inline-block;background:#c8ff00;color:#0a0a0a;font-weight:800;font-size:11px;padding:3px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;">Fixed $</span></td>
 <td style="padding:8px 0 8px 12px;color:#ccc;font-size:14px;">No hourly billing, no surprises</td>
 </tr>
 <tr><td colspan="2" style="padding:0;"><div style="height:1px;background:#222;"></div></td></tr>
 <tr>
-<td style="padding:8px 0;vertical-align:middle;"><span style="display:inline-block;background:#c8ff00;color:#0a0a0a;font-weight:800;font-size:11px;padding:3px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:0.5px;">Yours</span></td>
+<td style="width:90px;padding:8px 0;vertical-align:middle;"><span style="display:inline-block;background:#c8ff00;color:#0a0a0a;font-weight:800;font-size:11px;padding:3px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;">Yours</span></td>
 <td style="padding:8px 0 8px 12px;color:#ccc;font-size:14px;">You own the code &mdash; no vendor lock-in</td>
 </tr>
 </table>
