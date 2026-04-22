@@ -668,6 +668,30 @@ export default function AdminPanel() {
     } catch { /* ignore */ }
   }
 
+  const [sendingFollowUp, setSendingFollowUp] = useState<string | null>(null);
+
+  async function sendFollowUp(lead: Lead, type: "initial" | "proposal") {
+    setSendingFollowUp(lead.id);
+    try {
+      const res = await fetch("/api/admin/leads/send-followup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lead_id: lead.id,
+          lead_email: lead.email,
+          lead_name: lead.name,
+          type,
+        }),
+      });
+      if (res.ok) {
+        const newStatus = type === "proposal" ? "proposal_sent" : "contacted";
+        const noteText = `Follow-up email (${type}) sent ${new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
+        setLeads((prev) => prev.map((l) => l.id === lead.id ? { ...l, status: newStatus, notes: noteText } : l));
+      }
+    } catch { /* ignore */ }
+    setSendingFollowUp(null);
+  }
+
   const fetchReports = useCallback(async () => {
     setReportsLoading(true);
     try {
@@ -2531,9 +2555,28 @@ export default function AdminPanel() {
                           + Notes
                         </button>
                       )}
-                      {/* Email */}
+                      {/* Follow-up emails */}
+                      {(lead.status === "new") && (
+                        <button
+                          onClick={() => sendFollowUp(lead, "initial")}
+                          disabled={sendingFollowUp === lead.id}
+                          style={{ padding: "4px 12px", background: "rgba(96,165,250,0.15)", color: "#60a5fa", border: "none", borderRadius: 3, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+                        >
+                          {sendingFollowUp === lead.id ? "Sending..." : "Send Follow-up"}
+                        </button>
+                      )}
+                      {(lead.status === "qualified") && (
+                        <button
+                          onClick={() => sendFollowUp(lead, "proposal")}
+                          disabled={sendingFollowUp === lead.id}
+                          style={{ padding: "4px 12px", background: "rgba(250,204,21,0.15)", color: "#facc15", border: "none", borderRadius: 3, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+                        >
+                          {sendingFollowUp === lead.id ? "Sending..." : "Send Proposal Follow-up"}
+                        </button>
+                      )}
+                      {/* Gmail */}
                       <a href={`mailto:${lead.email}`} style={{ padding: "4px 12px", background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 3, fontSize: 11, cursor: "pointer", fontFamily: "inherit", textDecoration: "none", display: "inline-block" }}>
-                        Email
+                        Gmail
                       </a>
                       {/* Delete */}
                       <button onClick={() => { if (confirm(`Delete lead: ${lead.name}?`)) deleteLead(lead.id); }} style={{ padding: "4px 12px", background: "transparent", color: "#ff4444", border: `1px solid rgba(255,68,68,0.2)`, borderRadius: 3, fontSize: 11, cursor: "pointer", fontFamily: "inherit", marginLeft: "auto" }}>
