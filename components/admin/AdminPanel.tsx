@@ -2720,16 +2720,28 @@ export default function AdminPanel() {
                 <div style={{ fontSize: 10, color: DIM, marginBottom: 8, padding: "6px 10px", background: "#111", borderRadius: 4 }}>
                   Use <strong style={{ color: GREEN }}>{`{{first_name}}`}</strong> for the contact&apos;s first name and <strong style={{ color: GREEN }}>{`{{firm_name}}`}</strong> for their business name. These auto-fill per lead.
                 </div>
+                {["A", "B", "C"].includes(composeTemplate) && (
+                  <div style={{ fontSize: 11, color: GREEN, marginBottom: 10, padding: "8px 12px", background: "rgba(200,255,0,0.06)", border: `1px solid rgba(200,255,0,0.15)`, borderRadius: 4 }}>
+                    Sending styled HTML template {composeTemplate}. The preview below is plain text — the actual email includes branded design, cards, and CTA buttons.
+                  </div>
+                )}
                 <div style={{ marginBottom: 8 }}>
                   <label style={s.label}>Subject</label>
-                  <input style={s.input} value={composeSubject} onChange={(e) => { setComposeSubject(e.target.value); setComposeTemplate(""); }} placeholder="Email subject..." />
+                  <input
+                    style={{ ...s.input, ...(["A", "B", "C"].includes(composeTemplate) ? { opacity: 0.6 } : {}) }}
+                    value={composeSubject}
+                    readOnly={["A", "B", "C"].includes(composeTemplate)}
+                    onChange={(e) => { setComposeSubject(e.target.value); if (!["A", "B", "C"].includes(composeTemplate)) setComposeTemplate(""); }}
+                    placeholder="Email subject..."
+                  />
                 </div>
                 <div style={{ marginBottom: 8 }}>
-                  <label style={s.label}>Message</label>
+                  <label style={s.label}>Message Preview</label>
                   <textarea
-                    style={{ ...s.textarea, minHeight: "clamp(140px, 30vh, 220px)", lineHeight: 1.6 }}
+                    style={{ ...s.textarea, minHeight: "clamp(140px, 30vh, 220px)", lineHeight: 1.6, ...(["A", "B", "C"].includes(composeTemplate) ? { opacity: 0.6 } : {}) }}
                     value={composeMessage}
-                    onChange={(e) => { setComposeMessage(e.target.value); setComposeTemplate(""); }}
+                    readOnly={["A", "B", "C"].includes(composeTemplate)}
+                    onChange={(e) => { setComposeMessage(e.target.value); if (!["A", "B", "C"].includes(composeTemplate)) setComposeTemplate(""); }}
                     placeholder="Write your message..."
                   />
                 </div>
