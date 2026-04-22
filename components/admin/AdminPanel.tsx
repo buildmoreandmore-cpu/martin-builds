@@ -539,7 +539,7 @@ export default function AdminPanel() {
   const [loginLoading, setLoginLoading] = useState(false);
 
   // Tab
-  const [activeTab, setActiveTab] = useState<"invoices" | "automate" | "agents" | "reports">("invoices");
+  const [activeTab, setActiveTab] = useState<"invoices" | "automate" | "agents" | "reports" | "leads">("invoices");
 
   // Automation
   const [autoClients, setAutoClients] = useState<AutoClient[]>([]);
@@ -577,6 +577,96 @@ export default function AdminPanel() {
   const [reports, setReports] = useState<BuildReport[]>([]);
   const [reportsLoading, setReportsLoading] = useState(false);
   const [expandedReport, setExpandedReport] = useState<string | null>(null);
+
+  // Leads
+  interface Lead {
+    id: string;
+    name: string;
+    email: string;
+    business: string | null;
+    type: string;
+    message: string | null;
+    source: string;
+    status: string;
+    notes: string | null;
+    created_at: string;
+  }
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [leadsLoading, setLeadsLoading] = useState(false);
+  const [showAddLead, setShowAddLead] = useState(false);
+  const [newLeadName, setNewLeadName] = useState("");
+  const [newLeadEmail, setNewLeadEmail] = useState("");
+  const [newLeadBusiness, setNewLeadBusiness] = useState("");
+  const [newLeadType, setNewLeadType] = useState("General");
+  const [newLeadMessage, setNewLeadMessage] = useState("");
+  const [leadFilter, setLeadFilter] = useState<string>("all");
+  const [editingLeadNotes, setEditingLeadNotes] = useState<string | null>(null);
+  const [leadNotesValue, setLeadNotesValue] = useState("");
+
+  const fetchLeads = useCallback(async () => {
+    setLeadsLoading(true);
+    try {
+      const res = await fetch("/api/admin/leads");
+      if (res.ok) {
+        const data = await res.json();
+        setLeads(data.leads || []);
+      }
+    } catch { /* ignore */ }
+    setLeadsLoading(false);
+  }, []);
+
+  async function addLead() {
+    if (!newLeadName || !newLeadEmail) return;
+    try {
+      const res = await fetch("/api/admin/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newLeadName,
+          email: newLeadEmail,
+          business: newLeadBusiness || null,
+          type: newLeadType,
+          message: newLeadMessage || null,
+          source: "manual",
+        }),
+      });
+      if (res.ok) {
+        setNewLeadName("");
+        setNewLeadEmail("");
+        setNewLeadBusiness("");
+        setNewLeadType("General");
+        setNewLeadMessage("");
+        setShowAddLead(false);
+        fetchLeads();
+      }
+    } catch { /* ignore */ }
+  }
+
+  async function updateLead(id: string, updates: Record<string, string | null>) {
+    try {
+      const res = await fetch("/api/admin/leads", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, ...updates }),
+      });
+      if (res.ok) {
+        setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, ...updates } : l)));
+      }
+    } catch { /* ignore */ }
+  }
+
+  async function deleteLead(id: string) {
+    try {
+      const res = await fetch("/api/admin/leads", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) {
+        setLeads((prev) => prev.filter((l) => l.id !== id));
+      }
+    } catch { /* ignore */ }
+  }
 
   const fetchReports = useCallback(async () => {
     setReportsLoading(true);
@@ -757,8 +847,9 @@ export default function AdminPanel() {
       fetchAutomation();
       fetchAgents();
       fetchReports();
+      fetchLeads();
     }
-  }, [authed, fetchProjects, fetchAutomation, fetchAgents, fetchReports]);
+  }, [authed, fetchProjects, fetchAutomation, fetchAgents, fetchReports, fetchLeads]);
 
   /* ─── Login ─── */
   async function handleLogin(e: FormEvent) {
@@ -1138,7 +1229,7 @@ export default function AdminPanel() {
 
       {/* Tab Navigation */}
       <div style={{ display: "flex", borderBottom: `1px solid ${BORDER}`, padding: "0 clamp(12px, 4vw, 24px)" }}>
-        {(["invoices", "automate", "agents", "reports"] as const).map((t) => (
+        {(["invoices", "leads", "automate", "agents", "reports"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setActiveTab(t)}
@@ -1156,7 +1247,7 @@ export default function AdminPanel() {
               letterSpacing: 0.5,
             }}
           >
-            {t === "invoices" ? "Invoices" : t === "automate" ? "Automate" : t === "agents" ? "AI Agents" : "Reports"}
+            {t === "invoices" ? "Invoices" : t === "leads" ? "Leads" : t === "automate" ? "Automate" : t === "agents" ? "AI Agents" : "Reports"}
           </button>
         ))}
       </div>
@@ -2205,6 +2296,253 @@ export default function AdminPanel() {
                 );
               })}
             </div>
+          </>
+        )}
+
+        {/* ─── LEADS TAB ─── */}
+        {activeTab === "leads" && (
+          <>
+            {/* Summary cards */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 12, marginBottom: 24 }}>
+              {[
+                { label: "Total", value: leads.length, color: TEXT },
+                { label: "New", value: leads.filter((l) => l.status === "new").length, color: "#4ade80" },
+                { label: "Contacted", value: leads.filter((l) => l.status === "contacted").length, color: "#60a5fa" },
+                { label: "Qualified", value: leads.filter((l) => l.status === "qualified").length, color: "#c084fc" },
+                { label: "Proposal", value: leads.filter((l) => l.status === "proposal_sent").length, color: "#facc15" },
+                { label: "Won", value: leads.filter((l) => l.status === "won").length, color: GREEN },
+              ].map((c) => (
+                <div key={c.label} style={{ ...s.card, textAlign: "center", padding: "14px 8px" }}>
+                  <div style={{ fontSize: 22, fontWeight: 700, color: c.color }}>{c.value}</div>
+                  <div style={{ fontSize: 11, color: DIM, marginTop: 4 }}>{c.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Controls */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
+              <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                {["all", "new", "contacted", "qualified", "proposal_sent", "won", "lost"].map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => setLeadFilter(f)}
+                    style={{
+                      padding: "5px 12px",
+                      fontSize: 11,
+                      fontWeight: 600,
+                      border: `1px solid ${leadFilter === f ? GREEN : BORDER}`,
+                      borderRadius: 4,
+                      background: leadFilter === f ? GREEN : "transparent",
+                      color: leadFilter === f ? BG : DIM,
+                      cursor: "pointer",
+                      fontFamily: "inherit",
+                      textTransform: "capitalize",
+                    }}
+                  >
+                    {f === "proposal_sent" ? "Proposal" : f}
+                  </button>
+                ))}
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button onClick={fetchLeads} disabled={leadsLoading} style={{ ...s.logoutBtn, fontSize: 11, color: GREEN, borderColor: GREEN }}>
+                  {leadsLoading ? "Loading..." : "Refresh"}
+                </button>
+                <button
+                  onClick={() => setShowAddLead(!showAddLead)}
+                  style={{
+                    padding: "6px 14px",
+                    background: GREEN,
+                    color: BG,
+                    border: "none",
+                    borderRadius: 4,
+                    fontWeight: 700,
+                    fontSize: 12,
+                    cursor: "pointer",
+                    fontFamily: "inherit",
+                  }}
+                >
+                  + Add Lead
+                </button>
+              </div>
+            </div>
+
+            {/* Add Lead Form */}
+            {showAddLead && (
+              <div style={{ ...s.card, marginBottom: 16, border: `1px solid ${GREEN}` }}>
+                <div style={{ ...s.sectionTitle, fontSize: 12, marginBottom: 12 }}>New Lead</div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <div>
+                    <label style={s.label}>Name *</label>
+                    <input style={s.input} value={newLeadName} onChange={(e) => setNewLeadName(e.target.value)} placeholder="Full name" />
+                  </div>
+                  <div>
+                    <label style={s.label}>Email *</label>
+                    <input style={s.input} value={newLeadEmail} onChange={(e) => setNewLeadEmail(e.target.value)} placeholder="email@example.com" type="email" />
+                  </div>
+                  <div>
+                    <label style={s.label}>Business</label>
+                    <input style={s.input} value={newLeadBusiness} onChange={(e) => setNewLeadBusiness(e.target.value)} placeholder="Business name" />
+                  </div>
+                  <div>
+                    <label style={s.label}>Type</label>
+                    <select style={{ ...s.input, cursor: "pointer" }} value={newLeadType} onChange={(e) => setNewLeadType(e.target.value)}>
+                      <option value="General">General</option>
+                      <option value="Custom Website + Dashboard">Custom Website + Dashboard</option>
+                      <option value="AI Agent for My Site">AI Agent for My Site</option>
+                      <option value="Full Platform Build">Full Platform Build</option>
+                      <option value="Referral">Referral</option>
+                    </select>
+                  </div>
+                </div>
+                <div style={{ marginTop: 12 }}>
+                  <label style={s.label}>Notes</label>
+                  <textarea style={s.textarea} rows={3} value={newLeadMessage} onChange={(e) => setNewLeadMessage(e.target.value)} placeholder="How did this lead come in? Any context..." />
+                </div>
+                <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+                  <button onClick={addLead} disabled={!newLeadName || !newLeadEmail} style={{ ...s.btn, width: "auto", padding: "8px 20px", marginTop: 0, ...((!newLeadName || !newLeadEmail) ? s.btnDisabled : {}) }}>
+                    Save Lead
+                  </button>
+                  <button onClick={() => setShowAddLead(false)} style={{ ...s.logoutBtn }}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Lead cards */}
+            {leadsLoading && <div style={s.emptyState}>Loading leads...</div>}
+            {!leadsLoading && leads.length === 0 && <div style={s.emptyState}>No leads yet. They&apos;ll appear here automatically from your contact form, or add them manually.</div>}
+
+            {leads
+              .filter((l) => leadFilter === "all" || l.status === leadFilter)
+              .map((lead) => {
+                const statusColors: Record<string, { bg: string; color: string }> = {
+                  new: { bg: "rgba(74,222,128,0.15)", color: "#4ade80" },
+                  contacted: { bg: "rgba(96,165,250,0.15)", color: "#60a5fa" },
+                  qualified: { bg: "rgba(192,132,252,0.15)", color: "#c084fc" },
+                  proposal_sent: { bg: "rgba(250,204,21,0.15)", color: "#facc15" },
+                  won: { bg: `rgba(200,255,0,0.15)`, color: GREEN },
+                  lost: { bg: "rgba(255,68,68,0.15)", color: "#ff4444" },
+                };
+                const sc = statusColors[lead.status] || statusColors.new;
+                const age = Math.floor((Date.now() - new Date(lead.created_at).getTime()) / (1000 * 60 * 60 * 24));
+                const ageLabel = age === 0 ? "Today" : age === 1 ? "1 day ago" : `${age} days ago`;
+
+                return (
+                  <div key={lead.id} style={{ ...s.card, position: "relative" }}>
+                    <div style={s.cardHeader}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                          <h3 style={s.cardTitle}>{lead.name}</h3>
+                          <span style={{ ...s.badge, background: sc.bg, color: sc.color }}>
+                            {lead.status === "proposal_sent" ? "Proposal Sent" : lead.status}
+                          </span>
+                          {lead.source !== "manual" && (
+                            <span style={{ ...s.badge, background: "rgba(136,136,136,0.15)", color: DIM }}>
+                              {lead.source === "contact_form" ? "Contact Form" : lead.source === "discovery_call" ? "Discovery Call" : lead.source}
+                            </span>
+                          )}
+                        </div>
+                        <p style={s.cardClient}>
+                          {lead.email}
+                          {lead.business && <> &middot; {lead.business}</>}
+                          {lead.type && lead.type !== "General" && <> &middot; {lead.type}</>}
+                        </p>
+                      </div>
+                      <div style={{ fontSize: 11, color: DIM, whiteSpace: "nowrap" }}>{ageLabel}</div>
+                    </div>
+
+                    {lead.message && (
+                      <div style={{ fontSize: 13, color: DIM, lineHeight: 1.6, padding: "8px 12px", background: "#111", borderRadius: 4, marginBottom: 8, whiteSpace: "pre-wrap" }}>
+                        {lead.message}
+                      </div>
+                    )}
+
+                    {/* Notes */}
+                    {editingLeadNotes === lead.id ? (
+                      <div style={{ marginBottom: 8 }}>
+                        <textarea
+                          style={{ ...s.textarea, minHeight: 60 }}
+                          value={leadNotesValue}
+                          onChange={(e) => setLeadNotesValue(e.target.value)}
+                          placeholder="Add notes about this lead..."
+                          autoFocus
+                        />
+                        <div style={{ display: "flex", gap: 6, marginTop: 4 }}>
+                          <button
+                            onClick={() => { updateLead(lead.id, { notes: leadNotesValue || null }); setEditingLeadNotes(null); }}
+                            style={{ padding: "4px 12px", background: GREEN, color: BG, border: "none", borderRadius: 3, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => setEditingLeadNotes(null)}
+                            style={{ padding: "4px 12px", background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 3, fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : lead.notes ? (
+                      <div
+                        onClick={() => { setEditingLeadNotes(lead.id); setLeadNotesValue(lead.notes || ""); }}
+                        style={{ fontSize: 12, color: "#aaa", padding: "6px 10px", background: "rgba(200,255,0,0.04)", border: `1px solid rgba(200,255,0,0.1)`, borderRadius: 4, marginBottom: 8, cursor: "pointer", whiteSpace: "pre-wrap" }}
+                      >
+                        <span style={{ fontSize: 10, color: GREEN, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>Notes: </span>{lead.notes}
+                      </div>
+                    ) : null}
+
+                    {/* Actions */}
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 8 }}>
+                      {/* Status buttons */}
+                      {lead.status === "new" && (
+                        <button onClick={() => updateLead(lead.id, { status: "contacted" })} style={{ padding: "4px 12px", background: "rgba(96,165,250,0.15)", color: "#60a5fa", border: "none", borderRadius: 3, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                          Mark Contacted
+                        </button>
+                      )}
+                      {lead.status === "contacted" && (
+                        <button onClick={() => updateLead(lead.id, { status: "qualified" })} style={{ padding: "4px 12px", background: "rgba(192,132,252,0.15)", color: "#c084fc", border: "none", borderRadius: 3, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                          Qualify
+                        </button>
+                      )}
+                      {lead.status === "qualified" && (
+                        <button onClick={() => updateLead(lead.id, { status: "proposal_sent" })} style={{ padding: "4px 12px", background: "rgba(250,204,21,0.15)", color: "#facc15", border: "none", borderRadius: 3, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                          Proposal Sent
+                        </button>
+                      )}
+                      {lead.status === "proposal_sent" && (
+                        <button onClick={() => updateLead(lead.id, { status: "won" })} style={{ padding: "4px 12px", background: `rgba(200,255,0,0.15)`, color: GREEN, border: "none", borderRadius: 3, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                          Won
+                        </button>
+                      )}
+                      {lead.status !== "lost" && lead.status !== "won" && (
+                        <button onClick={() => updateLead(lead.id, { status: "lost" })} style={{ padding: "4px 12px", background: "rgba(255,68,68,0.1)", color: "#ff4444", border: "none", borderRadius: 3, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                          Lost
+                        </button>
+                      )}
+                      {(lead.status === "lost" || lead.status === "won") && (
+                        <button onClick={() => updateLead(lead.id, { status: "new" })} style={{ padding: "4px 12px", background: "rgba(136,136,136,0.1)", color: DIM, border: "none", borderRadius: 3, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                          Reopen
+                        </button>
+                      )}
+                      {/* Add notes */}
+                      {!lead.notes && editingLeadNotes !== lead.id && (
+                        <button onClick={() => { setEditingLeadNotes(lead.id); setLeadNotesValue(""); }} style={{ padding: "4px 12px", background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 3, fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}>
+                          + Notes
+                        </button>
+                      )}
+                      {/* Email */}
+                      <a href={`mailto:${lead.email}`} style={{ padding: "4px 12px", background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 3, fontSize: 11, cursor: "pointer", fontFamily: "inherit", textDecoration: "none", display: "inline-block" }}>
+                        Email
+                      </a>
+                      {/* Delete */}
+                      <button onClick={() => { if (confirm(`Delete lead: ${lead.name}?`)) deleteLead(lead.id); }} style={{ padding: "4px 12px", background: "transparent", color: "#ff4444", border: `1px solid rgba(255,68,68,0.2)`, borderRadius: 3, fontSize: 11, cursor: "pointer", fontFamily: "inherit", marginLeft: "auto" }}>
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
           </>
         )}
 

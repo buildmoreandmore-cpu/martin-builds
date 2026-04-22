@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendEmail } from "@/lib/send-email";
+import { supabase } from "@/lib/supabase";
 
 function buildConfirmationEmail(name: string): string {
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -47,6 +48,18 @@ export async function POST(req: NextRequest) {
     if (!name || !email || !message) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
+
+    // Auto-capture as lead
+    await supabase.from("leads").insert({
+      name,
+      email,
+      business: business || null,
+      type: type || "General",
+      message: message || null,
+      source: "contact_form",
+      status: "new",
+      created_at: new Date().toISOString(),
+    }).catch((e: unknown) => console.error("Lead capture failed:", e));
 
     // Notify admin
     await sendEmail({
