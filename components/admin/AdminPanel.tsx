@@ -602,6 +602,8 @@ export default function AdminPanel() {
   const [leadFilter, setLeadFilter] = useState<string>("all");
   const [editingLeadNotes, setEditingLeadNotes] = useState<string | null>(null);
   const [leadNotesValue, setLeadNotesValue] = useState("");
+  const [editingLeadEmail, setEditingLeadEmail] = useState<string | null>(null);
+  const [leadEmailValue, setLeadEmailValue] = useState("");
 
   const fetchLeads = useCallback(async () => {
     setLeadsLoading(true);
@@ -2468,7 +2470,31 @@ export default function AdminPanel() {
                           )}
                         </div>
                         <p style={s.cardClient}>
-                          {lead.email}
+                          {editingLeadEmail === lead.id ? (
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                              <input
+                                style={{ ...s.input, width: 200, padding: "3px 8px", fontSize: 12, display: "inline-block" }}
+                                value={leadEmailValue}
+                                onChange={(e) => setLeadEmailValue(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") { updateLead(lead.id, { email: leadEmailValue || null }); setEditingLeadEmail(null); }
+                                  if (e.key === "Escape") setEditingLeadEmail(null);
+                                }}
+                                placeholder="email@example.com"
+                                autoFocus
+                              />
+                              <button onClick={() => { updateLead(lead.id, { email: leadEmailValue || null }); setEditingLeadEmail(null); }} style={{ background: GREEN, color: BG, border: "none", borderRadius: 3, padding: "3px 8px", fontSize: 10, fontWeight: 700, cursor: "pointer" }}>Save</button>
+                              <button onClick={() => setEditingLeadEmail(null)} style={{ background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 3, padding: "3px 8px", fontSize: 10, cursor: "pointer" }}>Cancel</button>
+                            </span>
+                          ) : (
+                            <span
+                              onClick={() => { setEditingLeadEmail(lead.id); setLeadEmailValue(lead.email || ""); }}
+                              style={{ cursor: "pointer", borderBottom: `1px dashed ${BORDER}` }}
+                              title="Click to edit email"
+                            >
+                              {lead.email && lead.email !== "not found" ? lead.email : <span style={{ color: "#ff4444", fontStyle: "italic" }}>no email — click to add</span>}
+                            </span>
+                          )}
                           {lead.business && <> &middot; {lead.business}</>}
                           {lead.type && lead.type !== "General" && <> &middot; {lead.type}</>}
                         </p>
