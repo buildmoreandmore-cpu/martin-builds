@@ -7,7 +7,7 @@ const HEADER = `<div style="margin-bottom:32px;">
 <h1 style="font-size:24px;font-weight:800;letter-spacing:-0.5px;margin:0 0 4px 0;">
 <span style="color:#c8ff00;">m</span><span style="color:#f5f5f0;">artin</span><span style="color:#c8ff00;font-size:28px;">.</span><span style="color:#f5f5f0;">builds</span>
 </h1>
-<p style="color:#666;font-size:11px;margin:0;text-transform:uppercase;letter-spacing:2px;">AI Tools for Small Business</p>
+<p style="color:#666;font-size:11px;margin:0;text-transform:uppercase;letter-spacing:2px;">Custom Dashboards That You Own</p>
 </div>
 <div style="height:2px;background:linear-gradient(90deg,#c8ff00 0%,#c8ff0000 100%);margin-bottom:32px;"></div>`;
 
@@ -27,7 +27,7 @@ function buildDripA(firstName: string, firmName: string): string {
 <h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
 
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
-My name is Francis Martin with martin.builds and I help firms like <strong style="color:#f5f5f0;">${firmName}</strong> simplify the workflows that eat up your team&rsquo;s time &mdash; intake, conflict checks, engagement letters, all of it.
+My name is Francis with martin.builds and I help firms like <strong style="color:#f5f5f0;">${firmName}</strong> simplify the workflows that eat up your team&rsquo;s time &mdash; intake, conflict checks, engagement letters, all of it.
 </p>
 
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 24px 0;">
