@@ -139,7 +139,7 @@ If the timing isn&rsquo;t right, no hard feelings. The demos are still live if y
 </p>
 
 <div style="text-align:center;margin-bottom:24px;">
-<a href="https://martinbuilds.ai/demo" style="display:inline-block;padding:14px 32px;background:transparent;color:#c8ff00;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;border:2px solid #c8ff00;">martinbuilds.ai/demo</a>
+<a href="https://martinbuilds.ai/demo" style="display:inline-block;padding:14px 32px;background:transparent;color:#c8ff00;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;border:2px solid #c8ff00;">See Live Demos</a>
 </div>
 
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 0 0;">
