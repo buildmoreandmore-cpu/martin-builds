@@ -43,6 +43,7 @@ export async function sendEmail({
         connectedAccountId: GMAIL_CONNECTION_ID,
         input: {
           recipient_email: to,
+          from_email: "martin.builds <agent@martinbuilds.ai>",
           subject,
           body,
           ...(isHtml ? { is_html: true } : {}),
