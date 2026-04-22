@@ -744,6 +744,7 @@ export default function AdminPanel() {
     for (const lead of composeTargets) {
       try {
         const newStep = templateIdx >= 0 ? templateIdx + 1 : (lead.sequence_step || 0) + 1;
+        const isDrip = ["A", "B", "C"].includes(composeTemplate);
         const res = await fetch("/api/admin/leads/send-followup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -752,9 +753,7 @@ export default function AdminPanel() {
             lead_email: lead.email,
             lead_name: lead.name,
             lead_business: lead.business,
-            type: "custom",
-            custom_subject: composeSubject,
-            custom_message: composeMessage,
+            ...(isDrip ? { template_id: composeTemplate } : { type: "custom", custom_subject: composeSubject, custom_message: composeMessage }),
             sequence_step: newStep,
           }),
         });
