@@ -301,7 +301,7 @@ export async function POST(req: NextRequest) {
     }
 
     const firstName = lead_name.split(" ")[0] || "there";
-    const bizName = lead_business || "your firm";
+    const bizName = lead_business || "your business";
     let html: string;
     let subject: string;
 
@@ -325,7 +325,7 @@ export async function POST(req: NextRequest) {
         ? `Following up — ${firstName}`
         : emailType === "cold"
         ? `Quick question for ${lead_business || firstName}`
-        : `Hey ${firstName} — Martin from martin.builds`;
+        : `Hey ${firstName} — Francis from martin.builds`;
     }
 
     await sendEmail({
@@ -337,12 +337,26 @@ export async function POST(req: NextRequest) {
 
     // Auto-update lead status + track email timestamp + sequence step
     if (lead_id) {
-      const newStatus = type === "proposal" ? "proposal_sent" : "contacted";
       const now = new Date();
+      const emailNote = `Email${template_id ? ` (${template_id})` : ""} sent ${now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}`;
+
+      // Fetch current lead to avoid downgrading status or wiping notes
+      const { data: current } = await supabase.from("leads").select("status, notes").eq("id", lead_id).single();
+      const statusRank: Record<string, number> = { new: 0, contacted: 1, qualified: 2, proposal_sent: 3, won: 4, lost: -1 };
+      const intendedStatus = type === "proposal" ? "proposal_sent" : "contacted";
+      const currentRank = statusRank[current?.status || "new"] ?? 0;
+      const intendedRank = statusRank[intendedStatus] ?? 0;
+      // Only upgrade status, never downgrade (e.g. don't move "qualified" back to "contacted")
+      const newStatus = intendedRank > currentRank ? intendedStatus : current?.status || intendedStatus;
+
+      // Append email note to existing notes instead of overwriting
+      const existingNotes = current?.notes || "";
+      const updatedNotes = existingNotes ? `${existingNotes}\n${emailNote}` : emailNote;
+
       const updateData: Record<string, unknown> = {
         status: newStatus,
         last_emailed_at: now.toISOString(),
-        notes: `Email sent ${now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}`,
+        notes: updatedNotes,
       };
       if (typeof sequence_step === "number") {
         updateData.sequence_step = sequence_step;
