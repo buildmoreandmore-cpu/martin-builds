@@ -1,5 +1,5 @@
 const COMPOSIO_API_KEY = process.env.COMPOSIO_API_KEY || "ak_DfieMFaURtUC3XbWlj-Q";
-const GMAIL_CONNECTION_ID = "b3bc9414-a6c2-4430-8f2b-7998a7f70a3b";
+const GMAIL_CONNECTION_ID = "8e6d20c6-817e-4101-8d3e-095df7ace280";
 
 /**
  * Branded email signature block — matches martin.builds identity.
