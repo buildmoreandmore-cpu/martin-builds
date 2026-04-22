@@ -592,9 +592,30 @@ export default function AdminPanel() {
     status: string;
     notes: string | null;
     last_emailed_at: string | null;
+    sequence_step: number;
     created_at: string;
   }
   const INDUSTRIES = ["Law Firm", "Real Estate", "Healthcare", "Construction", "Restaurant", "Retail", "Professional Services", "Technology", "Finance", "Other"];
+  const EMAIL_TEMPLATES = [
+    {
+      id: "A",
+      label: "A — Warm Intro (Day 0)",
+      subject: "hello from martin.builds",
+      message: `Hi {{first_name}},\n\nMy name is Francis Martin with martin.builds and I help firms like {{firm_name}} simplify the workflows that eat up your team's time — intake, conflict checks, engagement letters, all of it.\n\nI'd love to learn more about how your team runs things today and see if there's a way I can help.\n\nI put together a few working demos of what this looks like: martinbuilds.ai/demo\n\nTake a look when you have a minute. If anything in there feels familiar, I'd enjoy a conversation.\n\nFeel free to reply to this email or reach out anytime.\n\nBest,\nFrancis Martin\nmartin.builds\nagent@martinbuilds.ai`,
+    },
+    {
+      id: "B",
+      label: "B — Pain + Demo (Day 5)",
+      subject: "there has to be an easier way",
+      message: `Hi {{first_name}},\n\nEvery business owner I talk to says some version of the same thing: "There has to be an easier way to do this."\n\nAll the steps, all the clicks — and knowing there's a better way but not having the time or the $50K an agency would charge to fix it.\n\nI build the fix — custom dashboards and AI tools that you own. Two weeks, fixed price, no agency runaround.\n\nSee what it looks like: martinbuilds.ai/demo\n\nReply with the one workflow that bugs your team the most. I'll send back a working demo built around it — no call, no commitment.\n\nFrancis\nmartin.builds`,
+    },
+    {
+      id: "C",
+      label: "C — Breakup (Day 12)",
+      subject: "re: hello from martin.builds",
+      message: `Hi {{first_name}},\n\nClosing the loop — should I stop reaching out?\n\nIf the timing isn't right, no hard feelings. The demos are still live if you ever want to take a look: martinbuilds.ai/demo\n\nIf a workflow ever comes up that's eating your team's time, you know where to find me.\n\nFrancis\nmartin.builds`,
+    },
+  ];
   const [leads, setLeads] = useState<Lead[]>([]);
   const [leadsLoading, setLeadsLoading] = useState(false);
   const [showAddLead, setShowAddLead] = useState(false);
@@ -621,6 +642,7 @@ export default function AdminPanel() {
   const [composeMessage, setComposeMessage] = useState("");
   const [composeTargets, setComposeTargets] = useState<Lead[]>([]);
   const [composeSending, setComposeSending] = useState(false);
+  const [composeTemplate, setComposeTemplate] = useState("");
 
   const fetchLeads = useCallback(async () => {
     setLeadsLoading(true);
@@ -699,16 +721,29 @@ export default function AdminPanel() {
     const validTargets = targets.filter((l) => l.email && l.email !== "not found");
     if (validTargets.length === 0) { alert("No valid email addresses in selection."); return; }
     setComposeTargets(validTargets);
-    setComposeSubject(defaultSubject || `Quick question for {{company}}`);
-    setComposeMessage(defaultMessage || `Hey {{firstName}},\n\nI came across your work at {{company}} and wanted to reach out. I build custom dashboards and AI tools for businesses like yours — things that replace the spreadsheets, manual intake forms, and disconnected systems that slow your team down.\n\nA few things I've built recently:\n• Client intake portals — online forms that feed directly into your workflow\n• Operations dashboards — case status, billing, team workload in one view\n• AI agents — 24/7 lead capture and client communication on your website\n\nIf any of that sounds relevant, I'd love to do a quick 15-minute call to learn how your operation runs. No pitch, just a conversation.\n\nBook a call: https://martinbuilds.ai/discovery-call`);
+    // Auto-select next template based on lead's sequence step
+    const minStep = Math.min(...validTargets.map((l) => l.sequence_step || 0));
+    const nextTemplate = EMAIL_TEMPLATES[Math.min(minStep, EMAIL_TEMPLATES.length - 1)];
+    if (!defaultSubject && !defaultMessage && nextTemplate) {
+      setComposeTemplate(nextTemplate.id);
+      setComposeSubject(nextTemplate.subject);
+      setComposeMessage(nextTemplate.message);
+    } else {
+      setComposeTemplate("");
+      setComposeSubject(defaultSubject || nextTemplate?.subject || "");
+      setComposeMessage(defaultMessage || nextTemplate?.message || "");
+    }
     setShowCompose(true);
   }
 
   async function sendCompose() {
     if (!composeMessage.trim() || composeTargets.length === 0) return;
+    // Find which template index was used (for sequence tracking)
+    const templateIdx = EMAIL_TEMPLATES.findIndex((t) => t.id === composeTemplate);
     setComposeSending(true);
     for (const lead of composeTargets) {
       try {
+        const newStep = templateIdx >= 0 ? templateIdx + 1 : (lead.sequence_step || 0) + 1;
         const res = await fetch("/api/admin/leads/send-followup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -720,12 +755,14 @@ export default function AdminPanel() {
             type: "custom",
             custom_subject: composeSubject,
             custom_message: composeMessage,
+            sequence_step: newStep,
           }),
         });
         if (res.ok) {
           const now = new Date().toISOString();
-          const noteText = `Email sent ${new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}`;
-          setLeads((prev) => prev.map((l) => l.id === lead.id ? { ...l, status: l.status === "new" ? "contacted" : l.status, notes: noteText, last_emailed_at: now } : l));
+          const tLabel = templateIdx >= 0 ? ` (${EMAIL_TEMPLATES[templateIdx].id})` : "";
+          const noteText = `Email${tLabel} sent ${new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}`;
+          setLeads((prev) => prev.map((l) => l.id === lead.id ? { ...l, status: l.status === "new" ? "contacted" : l.status, notes: noteText, last_emailed_at: now, sequence_step: newStep } : l));
         }
       } catch { /* continue */ }
     }
@@ -2641,19 +2678,57 @@ export default function AdminPanel() {
                 <div style={{ fontSize: 12, color: DIM, marginBottom: 12 }}>
                   Sending to <strong style={{ color: GREEN }}>{composeTargets.length}</strong> lead{composeTargets.length !== 1 ? "s" : ""}: {composeTargets.slice(0, 3).map((l) => l.name.split(" ")[0]).join(", ")}{composeTargets.length > 3 ? ` +${composeTargets.length - 3} more` : ""}
                 </div>
+                {/* Template selector */}
+                <div style={{ display: "flex", gap: 6, marginBottom: 12, flexWrap: "wrap" }}>
+                  {EMAIL_TEMPLATES.map((t) => (
+                    <button
+                      key={t.id}
+                      onClick={() => { setComposeTemplate(t.id); setComposeSubject(t.subject); setComposeMessage(t.message); }}
+                      style={{
+                        padding: "6px 14px",
+                        fontSize: 11,
+                        fontWeight: 600,
+                        border: `1px solid ${composeTemplate === t.id ? GREEN : BORDER}`,
+                        borderRadius: 4,
+                        background: composeTemplate === t.id ? GREEN : "transparent",
+                        color: composeTemplate === t.id ? BG : DIM,
+                        cursor: "pointer",
+                        fontFamily: "inherit",
+                      }}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => { setComposeTemplate(""); setComposeSubject(""); setComposeMessage(""); }}
+                    style={{
+                      padding: "6px 14px",
+                      fontSize: 11,
+                      fontWeight: 600,
+                      border: `1px solid ${composeTemplate === "" ? GREEN : BORDER}`,
+                      borderRadius: 4,
+                      background: composeTemplate === "" ? GREEN : "transparent",
+                      color: composeTemplate === "" ? BG : DIM,
+                      cursor: "pointer",
+                      fontFamily: "inherit",
+                    }}
+                  >
+                    Custom
+                  </button>
+                </div>
                 <div style={{ fontSize: 10, color: DIM, marginBottom: 8, padding: "6px 10px", background: "#111", borderRadius: 4 }}>
-                  Use <strong style={{ color: GREEN }}>{`{{firstName}}`}</strong> for the contact&apos;s first name and <strong style={{ color: GREEN }}>{`{{company}}`}</strong> for their business name. These auto-fill per lead.
+                  Use <strong style={{ color: GREEN }}>{`{{first_name}}`}</strong> for the contact&apos;s first name and <strong style={{ color: GREEN }}>{`{{firm_name}}`}</strong> for their business name. These auto-fill per lead.
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={s.label}>Subject</label>
-                  <input style={s.input} value={composeSubject} onChange={(e) => setComposeSubject(e.target.value)} placeholder="Email subject..." />
+                  <input style={s.input} value={composeSubject} onChange={(e) => { setComposeSubject(e.target.value); setComposeTemplate(""); }} placeholder="Email subject..." />
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <label style={s.label}>Message</label>
                   <textarea
-                    style={{ ...s.textarea, minHeight: 200, lineHeight: 1.6 }}
+                    style={{ ...s.textarea, minHeight: 220, lineHeight: 1.6 }}
                     value={composeMessage}
-                    onChange={(e) => setComposeMessage(e.target.value)}
+                    onChange={(e) => { setComposeMessage(e.target.value); setComposeTemplate(""); }}
                     placeholder="Write your message..."
                   />
                 </div>
@@ -2870,6 +2945,18 @@ export default function AdminPanel() {
                           <div style={{ fontSize: 10, color: GREEN, whiteSpace: "nowrap", marginTop: 2 }}>
                             Emailed {new Date(lead.last_emailed_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })} {new Date(lead.last_emailed_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
                             {emailCount > 1 && <span style={{ color: DIM, marginLeft: 4 }}>({emailCount}x)</span>}
+                          </div>
+                        )}
+                        {(lead.sequence_step || 0) > 0 && (
+                          <div style={{ display: "flex", gap: 3, justifyContent: "flex-end", marginTop: 4 }}>
+                            {EMAIL_TEMPLATES.map((t, i) => (
+                              <div key={t.id} style={{
+                                width: 20, height: 20, borderRadius: "50%", fontSize: 9, fontWeight: 700,
+                                lineHeight: "20px", textAlign: "center",
+                                background: i < (lead.sequence_step || 0) ? GREEN : "#222",
+                                color: i < (lead.sequence_step || 0) ? BG : DIM,
+                              }}>{t.id}</div>
+                            ))}
                           </div>
                         )}
                       </div>

@@ -137,10 +137,12 @@ ${EMAIL_SIGNATURE}
 }
 
 function buildCustomEmail(firstName: string, businessName: string, subject: string, message: string): string {
-  // Replace placeholders in message
+  // Replace placeholders in message (support both formats)
   const processedMessage = message
     .replace(/\{\{firstName\}\}/g, firstName)
-    .replace(/\{\{company\}\}/g, businessName || "your company");
+    .replace(/\{\{first_name\}\}/g, firstName)
+    .replace(/\{\{company\}\}/g, businessName || "your company")
+    .replace(/\{\{firm_name\}\}/g, businessName || "your firm");
 
   // Convert newlines to HTML paragraphs
   const paragraphs = processedMessage
@@ -178,14 +180,14 @@ function buildCustomEmail(firstName: string, businessName: string, subject: stri
 
 ${paragraphs}
 
-${EMAIL_SIGNATURE}
+${message.includes("martin.builds") ? "" : EMAIL_SIGNATURE}
 
 </div></body></html>`;
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const { lead_id, lead_email, lead_name, lead_business, type, custom_subject, custom_message } = await req.json();
+    const { lead_id, lead_email, lead_name, lead_business, type, custom_subject, custom_message, sequence_step } = await req.json();
 
     if (!lead_email || !lead_name) {
       return NextResponse.json({ error: "Missing lead info" }, { status: 400 });
@@ -199,7 +201,9 @@ export async function POST(req: NextRequest) {
       // Custom compose email
       const processedSubject = (custom_subject || "Quick question")
         .replace(/\{\{firstName\}\}/g, firstName)
-        .replace(/\{\{company\}\}/g, lead_business || firstName);
+        .replace(/\{\{first_name\}\}/g, firstName)
+        .replace(/\{\{company\}\}/g, lead_business || firstName)
+        .replace(/\{\{firm_name\}\}/g, lead_business || firstName);
       html = buildCustomEmail(firstName, lead_business || "", processedSubject, custom_message);
       subject = processedSubject;
     } else {
@@ -219,17 +223,21 @@ export async function POST(req: NextRequest) {
       isHtml: true,
     });
 
-    // Auto-update lead status + track email timestamp
+    // Auto-update lead status + track email timestamp + sequence step
     if (lead_id) {
       const newStatus = type === "proposal" ? "proposal_sent" : "contacted";
       const now = new Date();
+      const updateData: Record<string, unknown> = {
+        status: newStatus,
+        last_emailed_at: now.toISOString(),
+        notes: `Email sent ${now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}`,
+      };
+      if (typeof sequence_step === "number") {
+        updateData.sequence_step = sequence_step;
+      }
       await supabase
         .from("leads")
-        .update({
-          status: newStatus,
-          last_emailed_at: now.toISOString(),
-          notes: `Email sent ${now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}`,
-        })
+        .update(updateData)
         .eq("id", lead_id);
     }
 
