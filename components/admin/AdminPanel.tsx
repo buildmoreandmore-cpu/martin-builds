@@ -583,6 +583,7 @@ export default function AdminPanel() {
     id: string;
     name: string;
     email: string;
+    phone: string | null;
     business: string | null;
     type: string;
     message: string | null;
@@ -597,13 +598,14 @@ export default function AdminPanel() {
   const [newLeadName, setNewLeadName] = useState("");
   const [newLeadEmail, setNewLeadEmail] = useState("");
   const [newLeadBusiness, setNewLeadBusiness] = useState("");
+  const [newLeadPhone, setNewLeadPhone] = useState("");
   const [newLeadType, setNewLeadType] = useState("General");
   const [newLeadMessage, setNewLeadMessage] = useState("");
   const [leadFilter, setLeadFilter] = useState<string>("all");
   const [editingLeadNotes, setEditingLeadNotes] = useState<string | null>(null);
   const [leadNotesValue, setLeadNotesValue] = useState("");
-  const [editingLeadEmail, setEditingLeadEmail] = useState<string | null>(null);
-  const [leadEmailValue, setLeadEmailValue] = useState("");
+  const [editingLeadField, setEditingLeadField] = useState<{ id: string; field: "name" | "email" | "phone" } | null>(null);
+  const [leadFieldValue, setLeadFieldValue] = useState("");
 
   const fetchLeads = useCallback(async () => {
     setLeadsLoading(true);
@@ -627,6 +629,7 @@ export default function AdminPanel() {
           name: newLeadName,
           email: newLeadEmail,
           business: newLeadBusiness || null,
+          phone: newLeadPhone || null,
           type: newLeadType,
           message: newLeadMessage || null,
           source: "manual",
@@ -636,6 +639,7 @@ export default function AdminPanel() {
         setNewLeadName("");
         setNewLeadEmail("");
         setNewLeadBusiness("");
+        setNewLeadPhone("");
         setNewLeadType("General");
         setNewLeadMessage("");
         setShowAddLead(false);
@@ -672,7 +676,7 @@ export default function AdminPanel() {
 
   const [sendingFollowUp, setSendingFollowUp] = useState<string | null>(null);
 
-  async function sendFollowUp(lead: Lead, type: "initial" | "proposal") {
+  async function sendFollowUp(lead: Lead, type: "initial" | "proposal" | "cold") {
     setSendingFollowUp(lead.id);
     try {
       const res = await fetch("/api/admin/leads/send-followup", {
@@ -682,6 +686,7 @@ export default function AdminPanel() {
           lead_id: lead.id,
           lead_email: lead.email,
           lead_name: lead.name,
+          lead_business: lead.business,
           type,
         }),
       });
@@ -2410,6 +2415,10 @@ export default function AdminPanel() {
                     <input style={s.input} value={newLeadBusiness} onChange={(e) => setNewLeadBusiness(e.target.value)} placeholder="Business name" />
                   </div>
                   <div>
+                    <label style={s.label}>Phone</label>
+                    <input style={s.input} value={newLeadPhone} onChange={(e) => setNewLeadPhone(e.target.value)} placeholder="(555) 555-5555" />
+                  </div>
+                  <div>
                     <label style={s.label}>Type</label>
                     <select style={{ ...s.input, cursor: "pointer" }} value={newLeadType} onChange={(e) => setNewLeadType(e.target.value)}>
                       <option value="General">General</option>
@@ -2459,45 +2468,95 @@ export default function AdminPanel() {
                     <div style={s.cardHeader}>
                       <div style={{ flex: 1 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                          <h3 style={s.cardTitle}>{lead.name}</h3>
+                          {/* Editable name */}
+                          {editingLeadField?.id === lead.id && editingLeadField.field === "name" ? (
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                              <input
+                                style={{ ...s.input, width: 200, padding: "4px 8px", fontSize: 15, fontWeight: 700, display: "inline-block" }}
+                                value={leadFieldValue}
+                                onChange={(e) => setLeadFieldValue(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" && leadFieldValue) { updateLead(lead.id, { name: leadFieldValue }); setEditingLeadField(null); }
+                                  if (e.key === "Escape") setEditingLeadField(null);
+                                }}
+                                autoFocus
+                              />
+                              <button onClick={() => { if (leadFieldValue) { updateLead(lead.id, { name: leadFieldValue }); setEditingLeadField(null); } }} style={{ background: GREEN, color: BG, border: "none", borderRadius: 3, padding: "3px 8px", fontSize: 10, fontWeight: 700, cursor: "pointer" }}>Save</button>
+                              <button onClick={() => setEditingLeadField(null)} style={{ background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 3, padding: "3px 8px", fontSize: 10, cursor: "pointer" }}>Cancel</button>
+                            </span>
+                          ) : (
+                            <h3
+                              style={{ ...s.cardTitle, cursor: "pointer", borderBottom: `1px dashed transparent` }}
+                              onClick={() => { setEditingLeadField({ id: lead.id, field: "name" }); setLeadFieldValue(lead.name); }}
+                              title="Click to edit name"
+                            >{lead.name}</h3>
+                          )}
                           <span style={{ ...s.badge, background: sc.bg, color: sc.color }}>
                             {lead.status === "proposal_sent" ? "Proposal Sent" : lead.status}
                           </span>
                           {lead.source !== "manual" && (
                             <span style={{ ...s.badge, background: "rgba(136,136,136,0.15)", color: DIM }}>
-                              {lead.source === "contact_form" ? "Contact Form" : lead.source === "discovery_call" ? "Discovery Call" : lead.source}
+                              {lead.source === "contact_form" ? "Contact Form" : lead.source === "discovery_call" ? "Discovery Call" : lead.source === "csv_import" ? "CSV Import" : lead.source}
                             </span>
                           )}
                         </div>
-                        <p style={s.cardClient}>
-                          {editingLeadEmail === lead.id ? (
+                        <div style={{ ...s.cardClient, display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", marginTop: 2 }}>
+                          {/* Editable email */}
+                          {editingLeadField?.id === lead.id && editingLeadField.field === "email" ? (
                             <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
                               <input
                                 style={{ ...s.input, width: 200, padding: "3px 8px", fontSize: 12, display: "inline-block" }}
-                                value={leadEmailValue}
-                                onChange={(e) => setLeadEmailValue(e.target.value)}
+                                value={leadFieldValue}
+                                onChange={(e) => setLeadFieldValue(e.target.value)}
                                 onKeyDown={(e) => {
-                                  if (e.key === "Enter") { updateLead(lead.id, { email: leadEmailValue || null }); setEditingLeadEmail(null); }
-                                  if (e.key === "Escape") setEditingLeadEmail(null);
+                                  if (e.key === "Enter") { updateLead(lead.id, { email: leadFieldValue || null }); setEditingLeadField(null); }
+                                  if (e.key === "Escape") setEditingLeadField(null);
                                 }}
                                 placeholder="email@example.com"
                                 autoFocus
                               />
-                              <button onClick={() => { updateLead(lead.id, { email: leadEmailValue || null }); setEditingLeadEmail(null); }} style={{ background: GREEN, color: BG, border: "none", borderRadius: 3, padding: "3px 8px", fontSize: 10, fontWeight: 700, cursor: "pointer" }}>Save</button>
-                              <button onClick={() => setEditingLeadEmail(null)} style={{ background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 3, padding: "3px 8px", fontSize: 10, cursor: "pointer" }}>Cancel</button>
+                              <button onClick={() => { updateLead(lead.id, { email: leadFieldValue || null }); setEditingLeadField(null); }} style={{ background: GREEN, color: BG, border: "none", borderRadius: 3, padding: "3px 8px", fontSize: 10, fontWeight: 700, cursor: "pointer" }}>Save</button>
+                              <button onClick={() => setEditingLeadField(null)} style={{ background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 3, padding: "3px 8px", fontSize: 10, cursor: "pointer" }}>Cancel</button>
                             </span>
                           ) : (
                             <span
-                              onClick={() => { setEditingLeadEmail(lead.id); setLeadEmailValue(lead.email || ""); }}
+                              onClick={() => { setEditingLeadField({ id: lead.id, field: "email" }); setLeadFieldValue(lead.email || ""); }}
                               style={{ cursor: "pointer", borderBottom: `1px dashed ${BORDER}` }}
                               title="Click to edit email"
                             >
-                              {lead.email && lead.email !== "not found" ? lead.email : <span style={{ color: "#ff4444", fontStyle: "italic" }}>no email — click to add</span>}
+                              {lead.email && lead.email !== "not found" ? lead.email : <span style={{ color: "#ff4444", fontStyle: "italic" }}>no email</span>}
                             </span>
                           )}
-                          {lead.business && <> &middot; {lead.business}</>}
-                          {lead.type && lead.type !== "General" && <> &middot; {lead.type}</>}
-                        </p>
+                          <span style={{ color: BORDER }}>&middot;</span>
+                          {/* Editable phone */}
+                          {editingLeadField?.id === lead.id && editingLeadField.field === "phone" ? (
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                              <input
+                                style={{ ...s.input, width: 160, padding: "3px 8px", fontSize: 12, display: "inline-block" }}
+                                value={leadFieldValue}
+                                onChange={(e) => setLeadFieldValue(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") { updateLead(lead.id, { phone: leadFieldValue || null }); setEditingLeadField(null); }
+                                  if (e.key === "Escape") setEditingLeadField(null);
+                                }}
+                                placeholder="(555) 555-5555"
+                                autoFocus
+                              />
+                              <button onClick={() => { updateLead(lead.id, { phone: leadFieldValue || null }); setEditingLeadField(null); }} style={{ background: GREEN, color: BG, border: "none", borderRadius: 3, padding: "3px 8px", fontSize: 10, fontWeight: 700, cursor: "pointer" }}>Save</button>
+                              <button onClick={() => setEditingLeadField(null)} style={{ background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 3, padding: "3px 8px", fontSize: 10, cursor: "pointer" }}>Cancel</button>
+                            </span>
+                          ) : (
+                            <span
+                              onClick={() => { setEditingLeadField({ id: lead.id, field: "phone" }); setLeadFieldValue(lead.phone || ""); }}
+                              style={{ cursor: "pointer", borderBottom: `1px dashed ${BORDER}` }}
+                              title="Click to edit phone"
+                            >
+                              {lead.phone ? lead.phone : <span style={{ color: DIM, fontStyle: "italic" }}>no phone</span>}
+                            </span>
+                          )}
+                          {lead.business && <><span style={{ color: BORDER }}>&middot;</span> {lead.business}</>}
+                          {lead.type && lead.type !== "General" && <><span style={{ color: BORDER }}>&middot;</span> {lead.type}</>}
+                        </div>
                       </div>
                       <div style={{ fontSize: 11, color: DIM, whiteSpace: "nowrap" }}>{ageLabel}</div>
                     </div>
@@ -2581,29 +2640,53 @@ export default function AdminPanel() {
                           + Notes
                         </button>
                       )}
-                      {/* Follow-up emails */}
-                      {(lead.status === "new") && (
-                        <button
-                          onClick={() => sendFollowUp(lead, "initial")}
-                          disabled={sendingFollowUp === lead.id}
-                          style={{ padding: "4px 12px", background: "rgba(96,165,250,0.15)", color: "#60a5fa", border: "none", borderRadius: 3, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
-                        >
-                          {sendingFollowUp === lead.id ? "Sending..." : "Send Follow-up"}
-                        </button>
+                      {/* Email actions — available for any lead with a valid email */}
+                      {lead.email && lead.email !== "not found" && lead.status !== "won" && lead.status !== "lost" && (
+                        <>
+                          {lead.status === "new" && (lead.source === "csv_import" || lead.source === "manual") && (
+                            <button
+                              onClick={() => sendFollowUp(lead, "cold")}
+                              disabled={sendingFollowUp === lead.id}
+                              style={{ padding: "4px 12px", background: GREEN, color: BG, border: "none", borderRadius: 3, fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
+                            >
+                              {sendingFollowUp === lead.id ? "Sending..." : "Send Intro"}
+                            </button>
+                          )}
+                          {lead.status === "new" && lead.source !== "csv_import" && lead.source !== "manual" && (
+                            <button
+                              onClick={() => sendFollowUp(lead, "initial")}
+                              disabled={sendingFollowUp === lead.id}
+                              style={{ padding: "4px 12px", background: GREEN, color: BG, border: "none", borderRadius: 3, fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
+                            >
+                              {sendingFollowUp === lead.id ? "Sending..." : "Send Follow-up"}
+                            </button>
+                          )}
+                          {lead.status === "contacted" && (
+                            <button
+                              onClick={() => sendFollowUp(lead, "initial")}
+                              disabled={sendingFollowUp === lead.id}
+                              style={{ padding: "4px 12px", background: GREEN, color: BG, border: "none", borderRadius: 3, fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
+                            >
+                              {sendingFollowUp === lead.id ? "Sending..." : "Send Follow-up"}
+                            </button>
+                          )}
+                          {(lead.status === "qualified" || lead.status === "proposal_sent") && (
+                            <button
+                              onClick={() => sendFollowUp(lead, "proposal")}
+                              disabled={sendingFollowUp === lead.id}
+                              style={{ padding: "4px 12px", background: GREEN, color: BG, border: "none", borderRadius: 3, fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
+                            >
+                              {sendingFollowUp === lead.id ? "Sending..." : "Send Proposal Follow-up"}
+                            </button>
+                          )}
+                        </>
                       )}
-                      {(lead.status === "qualified") && (
-                        <button
-                          onClick={() => sendFollowUp(lead, "proposal")}
-                          disabled={sendingFollowUp === lead.id}
-                          style={{ padding: "4px 12px", background: "rgba(250,204,21,0.15)", color: "#facc15", border: "none", borderRadius: 3, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
-                        >
-                          {sendingFollowUp === lead.id ? "Sending..." : "Send Proposal Follow-up"}
-                        </button>
+                      {/* Gmail fallback */}
+                      {lead.email && lead.email !== "not found" && (
+                        <a href={`mailto:${lead.email}`} style={{ padding: "4px 12px", background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 3, fontSize: 11, cursor: "pointer", fontFamily: "inherit", textDecoration: "none", display: "inline-block" }}>
+                          Gmail
+                        </a>
                       )}
-                      {/* Gmail */}
-                      <a href={`mailto:${lead.email}`} style={{ padding: "4px 12px", background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 3, fontSize: 11, cursor: "pointer", fontFamily: "inherit", textDecoration: "none", display: "inline-block" }}>
-                        Gmail
-                      </a>
                       {/* Delete */}
                       <button onClick={() => { if (confirm(`Delete lead: ${lead.name}?`)) deleteLead(lead.id); }} style={{ padding: "4px 12px", background: "transparent", color: "#ff4444", border: `1px solid rgba(255,68,68,0.2)`, borderRadius: 3, fontSize: 11, cursor: "pointer", fontFamily: "inherit", marginLeft: "auto" }}>
                         Delete
