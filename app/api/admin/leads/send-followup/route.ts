@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendEmail } from "@/lib/send-email";
+import { sendEmail, EMAIL_SIGNATURE } from "@/lib/send-email";
 import { supabase } from "@/lib/supabase";
 
 function buildFollowUpEmail(firstName: string, type: "initial" | "proposal"): string {
@@ -29,12 +29,7 @@ No rush &mdash; just want to make sure I&rsquo;m available if you want to talk t
 <a href="https://martinbuilds.ai/discovery-call" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">Book a Quick Call</a>
 </div>
 
-<p style="color:#888;font-size:14px;line-height:1.7;margin:0 0 24px 0;">Talk soon,<br/><strong style="color:#f5f5f0;">Martin</strong></p>
-
-<div style="height:1px;background:#222;margin-bottom:24px;"></div>
-<p style="color:#666;font-size:12px;text-align:center;margin:0;">
-<a href="https://martinbuilds.ai" style="color:#c8ff00;text-decoration:none;">martinbuilds.ai</a>
-</p>
+${EMAIL_SIGNATURE}
 
 </div></body></html>`;
   }
@@ -83,12 +78,7 @@ I build custom dashboards and AI tools for small businesses &mdash; things like 
 <a href="https://martinbuilds.ai/discovery-call" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">Book a Discovery Call</a>
 </div>
 
-<p style="color:#888;font-size:14px;line-height:1.7;margin:0 0 24px 0;">Talk soon,<br/><strong style="color:#f5f5f0;">Martin</strong></p>
-
-<div style="height:1px;background:#222;margin-bottom:24px;"></div>
-<p style="color:#666;font-size:12px;text-align:center;margin:0;">
-<a href="https://martinbuilds.ai" style="color:#c8ff00;text-decoration:none;">martinbuilds.ai</a>
-</p>
+${EMAIL_SIGNATURE}
 
 </div></body></html>`;
 }

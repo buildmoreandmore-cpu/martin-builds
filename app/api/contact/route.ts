@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendEmail } from "@/lib/send-email";
+import { sendEmail, EMAIL_SIGNATURE } from "@/lib/send-email";
 import { supabase } from "@/lib/supabase";
 
 function buildConfirmationEmail(name: string): string {
@@ -35,10 +35,7 @@ function buildConfirmationEmail(name: string): string {
 </table>
 </div>
 
-<p style="color:#888;font-size:14px;line-height:1.7;margin:0 0 24px 0;">Talk soon,<br/><strong style="color:#f5f5f0;">Martin</strong></p>
-
-<div style="height:1px;background:#222;margin-bottom:20px;"></div>
-<p style="color:#666;font-size:12px;text-align:center;margin:0;"><a href="https://martinbuilds.ai" style="color:#c8ff00;text-decoration:none;">martinbuilds.ai</a></p>
+${EMAIL_SIGNATURE}
 </div></body></html>`;
 }
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendEmail } from "@/lib/send-email";
+import { sendEmail, EMAIL_SIGNATURE } from "@/lib/send-email";
 
 export async function POST(req: NextRequest) {
   try {
@@ -36,10 +36,7 @@ Takes about 2 minutes. Your story gets published on martinbuilds.ai &mdash; inde
 <a href="https://martinbuilds.ai/results" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">Submit Your Build Report</a>
 </div>
 
-<div style="height:1px;background:#222;margin-bottom:24px;"></div>
-<p style="color:#666;font-size:12px;text-align:center;margin:0;">
-<a href="https://martinbuilds.ai" style="color:#c8ff00;text-decoration:none;">martinbuilds.ai</a>
-</p>
+${EMAIL_SIGNATURE}
 
 </div></body></html>`;
 
