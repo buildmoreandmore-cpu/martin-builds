@@ -46,17 +46,25 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // Auto-capture as lead
-    await supabase.from("leads").insert({
-      name,
-      email,
-      business: business || null,
-      type: type || "General",
-      message: message || null,
-      source: "contact_form",
-      status: "new",
-      created_at: new Date().toISOString(),
-    }).catch((e: unknown) => console.error("Lead capture failed:", e));
+    // Auto-capture as lead (skip if duplicate email exists)
+    const { data: existing } = await supabase.from("leads").select("id").eq("email", email).limit(1);
+    if (!existing || existing.length === 0) {
+      await supabase.from("leads").insert({
+        name,
+        email,
+        business: business || null,
+        type: type || "General",
+        message: message || null,
+        source: "contact_form",
+        status: "new",
+        created_at: new Date().toISOString(),
+      }).catch((e: unknown) => console.error("Lead capture failed:", e));
+    } else {
+      // Update existing lead with new message
+      await supabase.from("leads").update({
+        notes: `Re-submitted contact form ${new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}: ${message}`,
+      }).eq("id", existing[0].id).catch((e: unknown) => console.error("Lead update failed:", e));
+    }
 
     // Notify admin
     await sendEmail({

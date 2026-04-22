@@ -136,23 +136,81 @@ ${EMAIL_SIGNATURE}
 </div></body></html>`;
 }
 
+function buildCustomEmail(firstName: string, businessName: string, subject: string, message: string): string {
+  // Replace placeholders in message
+  const processedMessage = message
+    .replace(/\{\{firstName\}\}/g, firstName)
+    .replace(/\{\{company\}\}/g, businessName || "your company");
+
+  // Convert newlines to HTML paragraphs
+  const paragraphs = processedMessage
+    .split(/\n\n+/)
+    .map((p) => {
+      // Handle bullet points
+      if (p.includes("\n")) {
+        const lines = p.split("\n");
+        const processed = lines.map((line) => {
+          if (line.startsWith("• ") || line.startsWith("- ")) {
+            return `<br/>&bull; ${line.slice(2)}`;
+          }
+          return line;
+        });
+        return `<p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">${processed.join("")}</p>`;
+      }
+      // Check if line is a URL
+      if (p.match(/^https?:\/\/\S+$/)) {
+        return `<div style="text-align:center;margin-bottom:24px;"><a href="${p}" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">${p.replace(/^https?:\/\//, "").split("/").slice(0, 2).join("/")}</a></div>`;
+      }
+      return `<p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">${p}</p>`;
+    })
+    .join("\n");
+
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#0a0a0a;color:#f5f5f0;font-family:Arial,'Helvetica Neue',sans-serif;">
+<div style="max-width:600px;margin:0 auto;padding:40px 24px;">
+
+<div style="margin-bottom:32px;">
+<h1 style="font-size:20px;font-weight:700;letter-spacing:-0.5px;margin:0 0 4px 0;"><span style="color:#f5f5f0;">martin</span><span style="color:#c8ff00;">.</span><span style="color:#f5f5f0;">builds</span></h1>
+<p style="color:#888;font-size:12px;margin:0;text-transform:uppercase;letter-spacing:1px;">AI Tools for Small Business</p>
+</div>
+
+<div style="height:1px;background:#222;margin-bottom:32px;"></div>
+
+${paragraphs}
+
+${EMAIL_SIGNATURE}
+
+</div></body></html>`;
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const { lead_id, lead_email, lead_name, lead_business, type } = await req.json();
+    const { lead_id, lead_email, lead_name, lead_business, type, custom_subject, custom_message } = await req.json();
 
     if (!lead_email || !lead_name) {
       return NextResponse.json({ error: "Missing lead info" }, { status: 400 });
     }
 
-    const emailType = (type === "proposal" ? "proposal" : type === "cold" ? "cold" : "initial") as "initial" | "proposal" | "cold";
     const firstName = lead_name.split(" ")[0] || "there";
-    const html = buildFollowUpEmail(firstName, emailType, lead_business || undefined);
+    let html: string;
+    let subject: string;
 
-    const subject = emailType === "proposal"
-      ? `Following up — ${firstName}`
-      : emailType === "cold"
-      ? `Quick question for ${lead_business || firstName}`
-      : `Hey ${firstName} — Martin from martin.builds`;
+    if (type === "custom" && custom_message) {
+      // Custom compose email
+      const processedSubject = (custom_subject || "Quick question")
+        .replace(/\{\{firstName\}\}/g, firstName)
+        .replace(/\{\{company\}\}/g, lead_business || firstName);
+      html = buildCustomEmail(firstName, lead_business || "", processedSubject, custom_message);
+      subject = processedSubject;
+    } else {
+      const emailType = (type === "proposal" ? "proposal" : type === "cold" ? "cold" : "initial") as "initial" | "proposal" | "cold";
+      html = buildFollowUpEmail(firstName, emailType, lead_business || undefined);
+      subject = emailType === "proposal"
+        ? `Following up — ${firstName}`
+        : emailType === "cold"
+        ? `Quick question for ${lead_business || firstName}`
+        : `Hey ${firstName} — Martin from martin.builds`;
+    }
 
     await sendEmail({
       to: lead_email,
@@ -161,14 +219,16 @@ export async function POST(req: NextRequest) {
       isHtml: true,
     });
 
-    // Auto-update lead status
+    // Auto-update lead status + track email timestamp
     if (lead_id) {
-      const newStatus = emailType === "proposal" ? "proposal_sent" : "contacted";
+      const newStatus = type === "proposal" ? "proposal_sent" : "contacted";
+      const now = new Date();
       await supabase
         .from("leads")
         .update({
           status: newStatus,
-          notes: `Follow-up email (${emailType}) sent ${new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`,
+          last_emailed_at: now.toISOString(),
+          notes: `Email sent ${now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}`,
         })
         .eq("id", lead_id);
     }

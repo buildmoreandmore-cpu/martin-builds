@@ -23,7 +23,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, email, business, type, message, source } = body;
+    const { name, email, business, phone, industry, type, message, source } = body;
 
     if (!name || !email) {
       return NextResponse.json({ error: "Name and email are required" }, { status: 400 });
@@ -35,6 +35,8 @@ export async function POST(req: NextRequest) {
         name,
         email,
         business: business || null,
+        phone: phone || null,
+        industry: industry || null,
         type: type || "General",
         message: message || null,
         source: source || "manual",

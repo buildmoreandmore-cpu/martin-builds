@@ -585,13 +585,16 @@ export default function AdminPanel() {
     email: string;
     phone: string | null;
     business: string | null;
+    industry: string | null;
     type: string;
     message: string | null;
     source: string;
     status: string;
     notes: string | null;
+    last_emailed_at: string | null;
     created_at: string;
   }
+  const INDUSTRIES = ["Law Firm", "Real Estate", "Healthcare", "Construction", "Restaurant", "Retail", "Professional Services", "Technology", "Finance", "Other"];
   const [leads, setLeads] = useState<Lead[]>([]);
   const [leadsLoading, setLeadsLoading] = useState(false);
   const [showAddLead, setShowAddLead] = useState(false);
@@ -599,13 +602,25 @@ export default function AdminPanel() {
   const [newLeadEmail, setNewLeadEmail] = useState("");
   const [newLeadBusiness, setNewLeadBusiness] = useState("");
   const [newLeadPhone, setNewLeadPhone] = useState("");
+  const [newLeadIndustry, setNewLeadIndustry] = useState("");
   const [newLeadType, setNewLeadType] = useState("General");
   const [newLeadMessage, setNewLeadMessage] = useState("");
   const [leadFilter, setLeadFilter] = useState<string>("all");
+  const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
+  const [bulkSending, setBulkSending] = useState(false);
   const [editingLeadNotes, setEditingLeadNotes] = useState<string | null>(null);
   const [leadNotesValue, setLeadNotesValue] = useState("");
-  const [editingLeadField, setEditingLeadField] = useState<{ id: string; field: "name" | "email" | "phone" } | null>(null);
+  const [editingLeadField, setEditingLeadField] = useState<{ id: string; field: "name" | "email" | "phone" | "industry" } | null>(null);
   const [leadFieldValue, setLeadFieldValue] = useState("");
+  const [leadSearch, setLeadSearch] = useState("");
+  const [industryFilter, setIndustryFilter] = useState<string>("all");
+  const [leadSort, setLeadSort] = useState<"newest" | "oldest" | "name" | "last_emailed">("newest");
+  // Compose panel
+  const [showCompose, setShowCompose] = useState(false);
+  const [composeSubject, setComposeSubject] = useState("");
+  const [composeMessage, setComposeMessage] = useState("");
+  const [composeTargets, setComposeTargets] = useState<Lead[]>([]);
+  const [composeSending, setComposeSending] = useState(false);
 
   const fetchLeads = useCallback(async () => {
     setLeadsLoading(true);
@@ -621,6 +636,8 @@ export default function AdminPanel() {
 
   async function addLead() {
     if (!newLeadName || !newLeadEmail) return;
+    const duplicate = leads.find((l) => l.email.toLowerCase() === newLeadEmail.toLowerCase());
+    if (duplicate && !confirm(`A lead with email "${newLeadEmail}" already exists (${duplicate.name}). Add anyway?`)) return;
     try {
       const res = await fetch("/api/admin/leads", {
         method: "POST",
@@ -630,6 +647,7 @@ export default function AdminPanel() {
           email: newLeadEmail,
           business: newLeadBusiness || null,
           phone: newLeadPhone || null,
+          industry: newLeadIndustry || null,
           type: newLeadType,
           message: newLeadMessage || null,
           source: "manual",
@@ -640,6 +658,7 @@ export default function AdminPanel() {
         setNewLeadEmail("");
         setNewLeadBusiness("");
         setNewLeadPhone("");
+        setNewLeadIndustry("");
         setNewLeadType("General");
         setNewLeadMessage("");
         setShowAddLead(false);
@@ -676,7 +695,50 @@ export default function AdminPanel() {
 
   const [sendingFollowUp, setSendingFollowUp] = useState<string | null>(null);
 
+  function openCompose(targets: Lead[], defaultSubject?: string, defaultMessage?: string) {
+    const validTargets = targets.filter((l) => l.email && l.email !== "not found");
+    if (validTargets.length === 0) { alert("No valid email addresses in selection."); return; }
+    setComposeTargets(validTargets);
+    setComposeSubject(defaultSubject || `Quick question for {{company}}`);
+    setComposeMessage(defaultMessage || `Hey {{firstName}},\n\nI came across your work at {{company}} and wanted to reach out. I build custom dashboards and AI tools for businesses like yours — things that replace the spreadsheets, manual intake forms, and disconnected systems that slow your team down.\n\nA few things I've built recently:\n• Client intake portals — online forms that feed directly into your workflow\n• Operations dashboards — case status, billing, team workload in one view\n• AI agents — 24/7 lead capture and client communication on your website\n\nIf any of that sounds relevant, I'd love to do a quick 15-minute call to learn how your operation runs. No pitch, just a conversation.\n\nBook a call: https://martinbuilds.ai/discovery-call`);
+    setShowCompose(true);
+  }
+
+  async function sendCompose() {
+    if (!composeMessage.trim() || composeTargets.length === 0) return;
+    setComposeSending(true);
+    for (const lead of composeTargets) {
+      try {
+        const res = await fetch("/api/admin/leads/send-followup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lead_id: lead.id,
+            lead_email: lead.email,
+            lead_name: lead.name,
+            lead_business: lead.business,
+            type: "custom",
+            custom_subject: composeSubject,
+            custom_message: composeMessage,
+          }),
+        });
+        if (res.ok) {
+          const now = new Date().toISOString();
+          const noteText = `Email sent ${new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}`;
+          setLeads((prev) => prev.map((l) => l.id === lead.id ? { ...l, status: l.status === "new" ? "contacted" : l.status, notes: noteText, last_emailed_at: now } : l));
+        }
+      } catch { /* continue */ }
+    }
+    setComposeSending(false);
+    setShowCompose(false);
+    setSelectedLeads(new Set());
+  }
+
   async function sendFollowUp(lead: Lead, type: "initial" | "proposal" | "cold") {
+    if (type === "cold") {
+      openCompose([lead]);
+      return;
+    }
     setSendingFollowUp(lead.id);
     try {
       const res = await fetch("/api/admin/leads/send-followup", {
@@ -691,12 +753,115 @@ export default function AdminPanel() {
         }),
       });
       if (res.ok) {
+        const now = new Date().toISOString();
         const newStatus = type === "proposal" ? "proposal_sent" : "contacted";
-        const noteText = `Follow-up email (${type}) sent ${new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
-        setLeads((prev) => prev.map((l) => l.id === lead.id ? { ...l, status: newStatus, notes: noteText } : l));
+        const noteText = `Follow-up email (${type}) sent ${new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}`;
+        setLeads((prev) => prev.map((l) => l.id === lead.id ? { ...l, status: newStatus, notes: noteText, last_emailed_at: now } : l));
       }
     } catch { /* ignore */ }
     setSendingFollowUp(null);
+  }
+
+  function toggleLeadSelection(id: string) {
+    setSelectedLeads((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  }
+
+  function getFilteredLeads() {
+    return leads
+      .filter((l) => {
+        if (leadFilter !== "all" && l.status !== leadFilter) return false;
+        if (industryFilter !== "all" && (industryFilter === "untagged" ? l.industry : l.industry !== industryFilter)) return false;
+        if (industryFilter === "untagged" && l.industry) return false;
+        if (leadSearch) {
+          const q = leadSearch.toLowerCase();
+          const match = l.name.toLowerCase().includes(q) || (l.email || "").toLowerCase().includes(q) || (l.business || "").toLowerCase().includes(q) || (l.phone || "").toLowerCase().includes(q);
+          if (!match) return false;
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        if (leadSort === "oldest") return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        if (leadSort === "name") return a.name.localeCompare(b.name);
+        if (leadSort === "last_emailed") {
+          if (!a.last_emailed_at && !b.last_emailed_at) return 0;
+          if (!a.last_emailed_at) return 1;
+          if (!b.last_emailed_at) return -1;
+          return new Date(b.last_emailed_at).getTime() - new Date(a.last_emailed_at).getTime();
+        }
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      });
+  }
+
+  function toggleSelectAll() {
+    const filtered = getFilteredLeads();
+    if (filtered.length > 0 && filtered.every((l) => selectedLeads.has(l.id))) {
+      setSelectedLeads(new Set());
+    } else {
+      setSelectedLeads(new Set(filtered.map((l) => l.id)));
+    }
+  }
+
+  function bulkSendIntros() {
+    const selected = leads.filter((l) => selectedLeads.has(l.id) && l.email && l.email !== "not found");
+    if (selected.length === 0) return;
+    openCompose(selected);
+  }
+
+  async function bulkUpdateStatus(status: string) {
+    const ids = Array.from(selectedLeads);
+    if (ids.length === 0) return;
+    for (const id of ids) {
+      await updateLead(id, { status });
+    }
+    setSelectedLeads(new Set());
+  }
+
+  async function bulkSetIndustry(industry: string) {
+    const ids = Array.from(selectedLeads);
+    if (ids.length === 0) return;
+    for (const id of ids) {
+      await updateLead(id, { industry });
+    }
+    setSelectedLeads(new Set());
+  }
+
+  async function bulkDelete() {
+    const ids = Array.from(selectedLeads);
+    if (ids.length === 0) return;
+    if (!confirm(`Delete ${ids.length} lead${ids.length > 1 ? "s" : ""}?`)) return;
+    for (const id of ids) {
+      await deleteLead(id);
+    }
+    setSelectedLeads(new Set());
+  }
+
+  function exportLeadsCSV() {
+    const filtered = getFilteredLeads();
+    if (filtered.length === 0) return;
+    const headers = ["Name", "Email", "Phone", "Business", "Industry", "Status", "Source", "Last Emailed", "Created"];
+    const rows = filtered.map((l) => [
+      l.name, l.email || "", l.phone || "", l.business || "", l.industry || "", l.status, l.source,
+      l.last_emailed_at ? new Date(l.last_emailed_at).toLocaleString() : "",
+      new Date(l.created_at).toLocaleString(),
+    ]);
+    const csv = [headers, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `leads-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function getEmailCount(lead: Lead): number {
+    if (!lead.notes) return 0;
+    const matches = lead.notes.match(/Email sent|Follow-up email/gi);
+    return matches ? matches.length : (lead.last_emailed_at ? 1 : 0);
   }
 
   const fetchReports = useCallback(async () => {
@@ -2350,52 +2515,160 @@ export default function AdminPanel() {
               ))}
             </div>
 
-            {/* Controls */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
-              <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-                {["all", "new", "contacted", "qualified", "proposal_sent", "won", "lost"].map((f) => (
-                  <button
-                    key={f}
-                    onClick={() => setLeadFilter(f)}
-                    style={{
-                      padding: "5px 12px",
-                      fontSize: 11,
-                      fontWeight: 600,
-                      border: `1px solid ${leadFilter === f ? GREEN : BORDER}`,
-                      borderRadius: 4,
-                      background: leadFilter === f ? GREEN : "transparent",
-                      color: leadFilter === f ? BG : DIM,
-                      cursor: "pointer",
-                      fontFamily: "inherit",
-                      textTransform: "capitalize",
-                    }}
-                  >
-                    {f === "proposal_sent" ? "Proposal" : f}
+            {/* Search + Controls */}
+            <div style={{ marginBottom: 12 }}>
+              <input
+                style={{ ...s.input, marginBottom: 10 }}
+                value={leadSearch}
+                onChange={(e) => setLeadSearch(e.target.value)}
+                placeholder="Search by name, email, business, or phone..."
+              />
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+                <div style={{ display: "flex", gap: 4, flexWrap: "wrap", alignItems: "center" }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer", marginRight: 6 }} title="Select all visible">
+                    <input
+                      type="checkbox"
+                      checked={(() => { const f = getFilteredLeads(); return f.length > 0 && f.every((l) => selectedLeads.has(l.id)); })()}
+                      onChange={toggleSelectAll}
+                      style={{ accentColor: GREEN, width: 14, height: 14, cursor: "pointer" }}
+                    />
+                    <span style={{ fontSize: 10, color: DIM }}>All</span>
+                  </label>
+                  {["all", "new", "contacted", "qualified", "proposal_sent", "won", "lost"].map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => setLeadFilter(f)}
+                      style={{
+                        padding: "5px 12px",
+                        fontSize: 11,
+                        fontWeight: 600,
+                        border: `1px solid ${leadFilter === f ? GREEN : BORDER}`,
+                        borderRadius: 4,
+                        background: leadFilter === f ? GREEN : "transparent",
+                        color: leadFilter === f ? BG : DIM,
+                        cursor: "pointer",
+                        fontFamily: "inherit",
+                        textTransform: "capitalize",
+                      }}
+                    >
+                      {f === "proposal_sent" ? "Proposal" : f}
+                    </button>
+                  ))}
+                </div>
+                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  <button onClick={fetchLeads} disabled={leadsLoading} style={{ ...s.logoutBtn, fontSize: 11, color: GREEN, borderColor: GREEN }}>
+                    {leadsLoading ? "Loading..." : "Refresh"}
                   </button>
-                ))}
+                  <button
+                    onClick={() => setShowAddLead(!showAddLead)}
+                    style={{ padding: "6px 14px", background: GREEN, color: BG, border: "none", borderRadius: 4, fontWeight: 700, fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}
+                  >
+                    + Add Lead
+                  </button>
+                </div>
               </div>
-              <div style={{ display: "flex", gap: 8 }}>
-                <button onClick={fetchLeads} disabled={leadsLoading} style={{ ...s.logoutBtn, fontSize: 11, color: GREEN, borderColor: GREEN }}>
-                  {leadsLoading ? "Loading..." : "Refresh"}
-                </button>
-                <button
-                  onClick={() => setShowAddLead(!showAddLead)}
-                  style={{
-                    padding: "6px 14px",
-                    background: GREEN,
-                    color: BG,
-                    border: "none",
-                    borderRadius: 4,
-                    fontWeight: 700,
-                    fontSize: 12,
-                    cursor: "pointer",
-                    fontFamily: "inherit",
-                  }}
+              {/* Industry filter + sort */}
+              <div style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap", alignItems: "center" }}>
+                <select
+                  value={industryFilter}
+                  onChange={(e) => setIndustryFilter(e.target.value)}
+                  style={{ padding: "5px 10px", background: CARD_BG, border: `1px solid ${industryFilter !== "all" ? GREEN : BORDER}`, color: industryFilter !== "all" ? GREEN : DIM, borderRadius: 4, fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}
                 >
-                  + Add Lead
+                  <option value="all">All Industries</option>
+                  <option value="untagged">Untagged</option>
+                  {INDUSTRIES.map((ind) => <option key={ind} value={ind}>{ind}</option>)}
+                </select>
+                <select
+                  value={leadSort}
+                  onChange={(e) => setLeadSort(e.target.value as typeof leadSort)}
+                  style={{ padding: "5px 10px", background: CARD_BG, border: `1px solid ${BORDER}`, color: DIM, borderRadius: 4, fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                  <option value="name">Name A-Z</option>
+                  <option value="last_emailed">Last Emailed</option>
+                </select>
+                <button onClick={exportLeadsCSV} style={{ padding: "5px 12px", background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 4, fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}>
+                  Export CSV
                 </button>
+                <span style={{ fontSize: 11, color: DIM, marginLeft: "auto" }}>{getFilteredLeads().length} leads</span>
               </div>
             </div>
+
+            {/* Bulk action bar */}
+            {selectedLeads.size > 0 && (
+              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", background: "rgba(200,255,0,0.08)", border: `1px solid rgba(200,255,0,0.2)`, borderRadius: 6, marginBottom: 16, flexWrap: "wrap" }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: GREEN }}>{selectedLeads.size} selected</span>
+                <button
+                  onClick={bulkSendIntros}
+                  style={{ padding: "5px 14px", background: GREEN, color: BG, border: "none", borderRadius: 4, fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
+                >
+                  Compose Email
+                </button>
+                <select
+                  value=""
+                  onChange={(e) => { if (e.target.value) bulkSetIndustry(e.target.value); }}
+                  style={{ padding: "5px 10px", background: CARD_BG, border: `1px solid ${GREEN}`, color: GREEN, borderRadius: 4, fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}
+                >
+                  <option value="">Set Industry...</option>
+                  {INDUSTRIES.map((ind) => <option key={ind} value={ind}>{ind}</option>)}
+                </select>
+                <button onClick={() => bulkUpdateStatus("contacted")} style={{ padding: "5px 12px", background: "rgba(96,165,250,0.15)", color: "#60a5fa", border: "none", borderRadius: 4, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                  Mark Contacted
+                </button>
+                <button onClick={() => bulkUpdateStatus("qualified")} style={{ padding: "5px 12px", background: "rgba(192,132,252,0.15)", color: "#c084fc", border: "none", borderRadius: 4, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                  Qualify
+                </button>
+                <button onClick={() => bulkUpdateStatus("lost")} style={{ padding: "5px 12px", background: "rgba(255,68,68,0.1)", color: "#ff4444", border: "none", borderRadius: 4, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                  Mark Lost
+                </button>
+                <button onClick={bulkDelete} style={{ padding: "5px 12px", background: "transparent", color: "#ff4444", border: `1px solid rgba(255,68,68,0.2)`, borderRadius: 4, fontSize: 11, cursor: "pointer", fontFamily: "inherit", marginLeft: "auto" }}>
+                  Delete
+                </button>
+                <button onClick={() => setSelectedLeads(new Set())} style={{ padding: "5px 12px", background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 4, fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}>
+                  Clear
+                </button>
+              </div>
+            )}
+
+            {/* Compose Panel */}
+            {showCompose && (
+              <div style={{ ...s.card, marginBottom: 16, border: `1px solid ${GREEN}`, position: "relative" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                  <div style={{ ...s.sectionTitle, fontSize: 12, margin: 0 }}>Compose Email</div>
+                  <button onClick={() => setShowCompose(false)} style={{ background: "transparent", border: "none", color: DIM, cursor: "pointer", fontSize: 16, fontFamily: "inherit" }}>x</button>
+                </div>
+                <div style={{ fontSize: 12, color: DIM, marginBottom: 12 }}>
+                  Sending to <strong style={{ color: GREEN }}>{composeTargets.length}</strong> lead{composeTargets.length !== 1 ? "s" : ""}: {composeTargets.slice(0, 3).map((l) => l.name.split(" ")[0]).join(", ")}{composeTargets.length > 3 ? ` +${composeTargets.length - 3} more` : ""}
+                </div>
+                <div style={{ fontSize: 10, color: DIM, marginBottom: 8, padding: "6px 10px", background: "#111", borderRadius: 4 }}>
+                  Use <strong style={{ color: GREEN }}>{`{{firstName}}`}</strong> for the contact&apos;s first name and <strong style={{ color: GREEN }}>{`{{company}}`}</strong> for their business name. These auto-fill per lead.
+                </div>
+                <div style={{ marginBottom: 8 }}>
+                  <label style={s.label}>Subject</label>
+                  <input style={s.input} value={composeSubject} onChange={(e) => setComposeSubject(e.target.value)} placeholder="Email subject..." />
+                </div>
+                <div style={{ marginBottom: 8 }}>
+                  <label style={s.label}>Message</label>
+                  <textarea
+                    style={{ ...s.textarea, minHeight: 200, lineHeight: 1.6 }}
+                    value={composeMessage}
+                    onChange={(e) => setComposeMessage(e.target.value)}
+                    placeholder="Write your message..."
+                  />
+                </div>
+                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  <button
+                    onClick={sendCompose}
+                    disabled={composeSending || !composeMessage.trim()}
+                    style={{ ...s.btn, width: "auto", padding: "10px 24px", marginTop: 0, ...(composeSending || !composeMessage.trim() ? s.btnDisabled : {}) }}
+                  >
+                    {composeSending ? `Sending (${composeTargets.length})...` : `Send to ${composeTargets.length} Lead${composeTargets.length !== 1 ? "s" : ""}`}
+                  </button>
+                  <button onClick={() => setShowCompose(false)} style={{ ...s.logoutBtn }}>Cancel</button>
+                </div>
+              </div>
+            )}
 
             {/* Add Lead Form */}
             {showAddLead && (
@@ -2417,6 +2690,13 @@ export default function AdminPanel() {
                   <div>
                     <label style={s.label}>Phone</label>
                     <input style={s.input} value={newLeadPhone} onChange={(e) => setNewLeadPhone(e.target.value)} placeholder="(555) 555-5555" />
+                  </div>
+                  <div>
+                    <label style={s.label}>Industry</label>
+                    <select style={{ ...s.input, cursor: "pointer" }} value={newLeadIndustry} onChange={(e) => setNewLeadIndustry(e.target.value)}>
+                      <option value="">Select industry...</option>
+                      {INDUSTRIES.map((ind) => <option key={ind} value={ind}>{ind}</option>)}
+                    </select>
                   </div>
                   <div>
                     <label style={s.label}>Type</label>
@@ -2448,9 +2728,9 @@ export default function AdminPanel() {
             {leadsLoading && <div style={s.emptyState}>Loading leads...</div>}
             {!leadsLoading && leads.length === 0 && <div style={s.emptyState}>No leads yet. They&apos;ll appear here automatically from your contact form, or add them manually.</div>}
 
-            {leads
-              .filter((l) => leadFilter === "all" || l.status === leadFilter)
+            {getFilteredLeads()
               .map((lead) => {
+                const emailCount = getEmailCount(lead);
                 const statusColors: Record<string, { bg: string; color: string }> = {
                   new: { bg: "rgba(74,222,128,0.15)", color: "#4ade80" },
                   contacted: { bg: "rgba(96,165,250,0.15)", color: "#60a5fa" },
@@ -2464,8 +2744,14 @@ export default function AdminPanel() {
                 const ageLabel = age === 0 ? "Today" : age === 1 ? "1 day ago" : `${age} days ago`;
 
                 return (
-                  <div key={lead.id} style={{ ...s.card, position: "relative" }}>
+                  <div key={lead.id} style={{ ...s.card, position: "relative", border: selectedLeads.has(lead.id) ? `1px solid ${GREEN}` : undefined }}>
                     <div style={s.cardHeader}>
+                      <input
+                        type="checkbox"
+                        checked={selectedLeads.has(lead.id)}
+                        onChange={() => toggleLeadSelection(lead.id)}
+                        style={{ accentColor: GREEN, width: 16, height: 16, cursor: "pointer", flexShrink: 0, marginRight: 4, marginTop: 2 }}
+                      />
                       <div style={{ flex: 1 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                           {/* Editable name */}
@@ -2494,6 +2780,26 @@ export default function AdminPanel() {
                           <span style={{ ...s.badge, background: sc.bg, color: sc.color }}>
                             {lead.status === "proposal_sent" ? "Proposal Sent" : lead.status}
                           </span>
+                          {editingLeadField?.id === lead.id && editingLeadField.field === "industry" ? (
+                            <select
+                              value={leadFieldValue}
+                              onChange={(e) => { updateLead(lead.id, { industry: e.target.value || null }); setEditingLeadField(null); }}
+                              onBlur={() => setEditingLeadField(null)}
+                              autoFocus
+                              style={{ padding: "2px 6px", background: CARD_BG, border: `1px solid ${GREEN}`, color: GREEN, borderRadius: 4, fontSize: 10, cursor: "pointer", fontFamily: "inherit" }}
+                            >
+                              <option value="">No industry</option>
+                              {INDUSTRIES.map((ind) => <option key={ind} value={ind}>{ind}</option>)}
+                            </select>
+                          ) : (
+                            <span
+                              onClick={() => { setEditingLeadField({ id: lead.id, field: "industry" }); setLeadFieldValue(lead.industry || ""); }}
+                              style={{ ...s.badge, background: lead.industry ? "rgba(200,255,0,0.08)" : "rgba(136,136,136,0.08)", color: lead.industry ? GREEN : DIM, cursor: "pointer", borderBottom: `1px dashed ${lead.industry ? GREEN : BORDER}` }}
+                              title="Click to set industry"
+                            >
+                              {lead.industry || "Set industry"}
+                            </span>
+                          )}
                           {lead.source !== "manual" && (
                             <span style={{ ...s.badge, background: "rgba(136,136,136,0.15)", color: DIM }}>
                               {lead.source === "contact_form" ? "Contact Form" : lead.source === "discovery_call" ? "Discovery Call" : lead.source === "csv_import" ? "CSV Import" : lead.source}
@@ -2558,7 +2864,15 @@ export default function AdminPanel() {
                           {lead.type && lead.type !== "General" && <><span style={{ color: BORDER }}>&middot;</span> {lead.type}</>}
                         </div>
                       </div>
-                      <div style={{ fontSize: 11, color: DIM, whiteSpace: "nowrap" }}>{ageLabel}</div>
+                      <div style={{ textAlign: "right", flexShrink: 0 }}>
+                        <div style={{ fontSize: 11, color: DIM, whiteSpace: "nowrap" }}>{ageLabel}</div>
+                        {lead.last_emailed_at && (
+                          <div style={{ fontSize: 10, color: GREEN, whiteSpace: "nowrap", marginTop: 2 }}>
+                            Emailed {new Date(lead.last_emailed_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })} {new Date(lead.last_emailed_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                            {emailCount > 1 && <span style={{ color: DIM, marginLeft: 4 }}>({emailCount}x)</span>}
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     {lead.message && (
@@ -2645,11 +2959,10 @@ export default function AdminPanel() {
                         <>
                           {lead.status === "new" && (lead.source === "csv_import" || lead.source === "manual") && (
                             <button
-                              onClick={() => sendFollowUp(lead, "cold")}
-                              disabled={sendingFollowUp === lead.id}
+                              onClick={() => openCompose([lead])}
                               style={{ padding: "4px 12px", background: GREEN, color: BG, border: "none", borderRadius: 3, fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
                             >
-                              {sendingFollowUp === lead.id ? "Sending..." : "Send Intro"}
+                              Send Intro
                             </button>
                           )}
                           {lead.status === "new" && lead.source !== "csv_import" && lead.source !== "manual" && (
