@@ -21,13 +21,104 @@ ${EMAIL_SIGNATURE}
 </div></body></html>`;
 }
 
+/* ─── Industry pain point map ─── */
+const INDUSTRY_PAINS: Record<string, { pains: string; items: { title: string; desc: string }[] }> = {
+  "Law Firm": {
+    pains: "intake, conflict checks, engagement letters",
+    items: [
+      { title: "Intake &amp; onboarding portal", desc: "clients fill it out once, it feeds directly into your case management" },
+      { title: "Operations dashboard", desc: "cases, billing, and team workload in one view" },
+      { title: "AI assistant on your site", desc: "captures leads and answers client questions 24/7" },
+    ],
+  },
+  "Real Estate": {
+    pains: "tenant applications, lease management, maintenance requests",
+    items: [
+      { title: "Tenant application portal", desc: "online applications that feed directly into your screening workflow" },
+      { title: "Property dashboard", desc: "leases, payments, and maintenance requests in one view" },
+      { title: "AI assistant on your site", desc: "answers tenant questions and captures leads 24/7" },
+    ],
+  },
+  "Healthcare": {
+    pains: "credentialing, provider onboarding, compliance tracking",
+    items: [
+      { title: "Provider onboarding portal", desc: "credentialing docs submitted once, tracked automatically" },
+      { title: "Compliance dashboard", desc: "certifications, expirations, and audit trails in one view" },
+      { title: "AI assistant on your site", desc: "handles patient intake questions and appointment routing 24/7" },
+    ],
+  },
+  "Construction": {
+    pains: "project bids, subcontractor scheduling, change orders",
+    items: [
+      { title: "Project intake portal", desc: "bid requests and scope docs submitted once, organized automatically" },
+      { title: "Operations dashboard", desc: "active jobs, crew schedules, and budgets in one view" },
+      { title: "AI assistant on your site", desc: "captures project inquiries and qualifies leads 24/7" },
+    ],
+  },
+  "Restaurant": {
+    pains: "scheduling, inventory tracking, vendor orders",
+    items: [
+      { title: "Staff scheduling portal", desc: "shifts, availability, and swaps handled in one place" },
+      { title: "Operations dashboard", desc: "inventory, vendor orders, and labor costs in one view" },
+      { title: "AI assistant on your site", desc: "handles reservations and answers menu questions 24/7" },
+    ],
+  },
+  "Retail": {
+    pains: "inventory tracking, vendor orders, customer follow-ups",
+    items: [
+      { title: "Inventory management portal", desc: "stock levels, reorders, and vendor POs in one workflow" },
+      { title: "Sales dashboard", desc: "daily revenue, top products, and customer trends in one view" },
+      { title: "AI assistant on your site", desc: "answers product questions and captures leads 24/7" },
+    ],
+  },
+  "Professional Services": {
+    pains: "client intake, project tracking, invoicing",
+    items: [
+      { title: "Client onboarding portal", desc: "intake forms, contracts, and payments in one flow" },
+      { title: "Operations dashboard", desc: "projects, billing, and team utilization in one view" },
+      { title: "AI assistant on your site", desc: "qualifies leads and books consultations 24/7" },
+    ],
+  },
+  "Technology": {
+    pains: "onboarding, support tickets, usage reporting",
+    items: [
+      { title: "Customer onboarding portal", desc: "setup steps, integrations, and training tracked automatically" },
+      { title: "Operations dashboard", desc: "support tickets, usage metrics, and churn signals in one view" },
+      { title: "AI assistant on your site", desc: "handles support questions and captures demo requests 24/7" },
+    ],
+  },
+  "Finance": {
+    pains: "client onboarding, document collection, compliance reporting",
+    items: [
+      { title: "Client intake portal", desc: "KYC docs, applications, and agreements collected in one flow" },
+      { title: "Operations dashboard", desc: "accounts, compliance deadlines, and team workload in one view" },
+      { title: "AI assistant on your site", desc: "answers client questions and pre-qualifies leads 24/7" },
+    ],
+  },
+};
+
+const DEFAULT_PAINS = {
+  pains: "client intake, scheduling, reporting",
+  items: [
+    { title: "Intake &amp; onboarding portal", desc: "clients fill it out once, it feeds directly into your workflow" },
+    { title: "Operations dashboard", desc: "projects, billing, and team workload in one view" },
+    { title: "AI assistant on your site", desc: "captures leads and answers client questions 24/7" },
+  ],
+};
+
+function getIndustryData(industry?: string | null) {
+  if (industry && INDUSTRY_PAINS[industry]) return INDUSTRY_PAINS[industry];
+  return DEFAULT_PAINS;
+}
+
 /* ─── Drip Template A — Warm Intro (Day 0) ─── */
-function buildDripA(firstName: string, firmName: string): string {
+function buildDripA(firstName: string, firmName: string, industry?: string | null): string {
+  const ind = getIndustryData(industry);
   return shell(`
 <h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
 
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
-My name is Francis with martin.builds and I help businesses like <strong style="color:#f5f5f0;">${firmName}</strong> simplify the workflows that eat up your team&rsquo;s time &mdash; client intake, scheduling, reporting, all of it.
+My name is Francis with martin.builds and I help businesses like <strong style="color:#f5f5f0;">${firmName}</strong> simplify the workflows that eat up your team&rsquo;s time &mdash; ${ind.pains}, all of it.
 </p>
 
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 24px 0;">
@@ -38,20 +129,10 @@ I&rsquo;d love to learn more about how your team runs things today and see if th
 <div style="background:#111;border:1px solid #222;border-radius:12px;padding:24px;margin-bottom:24px;">
 <h3 style="font-size:12px;color:#c8ff00;margin:0 0 16px 0;text-transform:uppercase;letter-spacing:1.5px;">What I&rsquo;d build for ${firmName}</h3>
 <table style="width:100%;border-collapse:collapse;">
-<tr>
-<td style="width:36px;vertical-align:top;padding:8px 0;"><div style="width:28px;height:28px;border-radius:50%;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:13px;line-height:28px;text-align:center;">1</div></td>
-<td style="padding:10px 0 10px 12px;color:#ccc;font-size:14px;line-height:1.5;"><strong style="color:#f5f5f0;">Intake &amp; onboarding portal</strong> &mdash; clients fill it out once, it feeds directly into your workflow</td>
-</tr>
-<tr><td colspan="2" style="padding:0;"><div style="height:1px;background:#222;"></div></td></tr>
-<tr>
-<td style="width:36px;vertical-align:top;padding:8px 0;"><div style="width:28px;height:28px;border-radius:50%;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:13px;line-height:28px;text-align:center;">2</div></td>
-<td style="padding:10px 0 10px 12px;color:#ccc;font-size:14px;line-height:1.5;"><strong style="color:#f5f5f0;">Operations dashboard</strong> &mdash; projects, billing, and team workload in one view</td>
-</tr>
-<tr><td colspan="2" style="padding:0;"><div style="height:1px;background:#222;"></div></td></tr>
-<tr>
-<td style="width:36px;vertical-align:top;padding:8px 0;"><div style="width:28px;height:28px;border-radius:50%;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:13px;line-height:28px;text-align:center;">3</div></td>
-<td style="padding:10px 0 10px 12px;color:#ccc;font-size:14px;line-height:1.5;"><strong style="color:#f5f5f0;">AI assistant on your site</strong> &mdash; captures leads and answers client questions 24/7</td>
-</tr>
+${ind.items.map((item, i) => `<tr>
+<td style="width:36px;vertical-align:top;padding:8px 0;"><div style="width:28px;height:28px;border-radius:50%;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:13px;line-height:28px;text-align:center;">${i + 1}</div></td>
+<td style="padding:10px 0 10px 12px;color:#ccc;font-size:14px;line-height:1.5;"><strong style="color:#f5f5f0;">${item.title}</strong> &mdash; ${item.desc}</td>
+</tr>${i < ind.items.length - 1 ? '<tr><td colspan="2" style="padding:0;"><div style="height:1px;background:#222;"></div></td></tr>' : ""}`).join("\n")}
 </table>
 </div>
 
@@ -70,7 +151,7 @@ Feel free to reply to this email or reach out anytime.
 }
 
 /* ─── Drip Template B — Pain + Demo (Day 5) ─── */
-function buildDripB(firstName: string, _firmName: string): string {
+function buildDripB(firstName: string): string {
   return shell(`
 <h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
 
@@ -125,8 +206,57 @@ All the steps, all the clicks &mdash; and knowing there&rsquo;s a better way but
 `);
 }
 
-/* ─── Drip Template C — Breakup (Day 12) ─── */
-function buildDripC(firstName: string, _firmName: string): string {
+/* ─── Drip Template C — Value + Question (Day 10) ─── */
+function buildDripC(firstName: string, firmName: string): string {
+  return shell(`
+<h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
+
+<p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
+Not following up to pitch &mdash; just sharing something useful.
+</p>
+
+<p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
+A business owner I worked with recently discovered the biggest time drain wasn&rsquo;t the big process everyone complained about. It was a small repetitive one the whole team had accepted as normal &mdash; re-typing the same data into three different places, every single day.
+</p>
+
+<p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 24px 0;">
+That one fix saved his team about 6 hours a week.
+</p>
+
+<!-- The question -->
+<div style="border-left:3px solid #c8ff00;padding:16px 20px;margin:0 0 24px 0;background:#111;border-radius:0 8px 8px 0;">
+<p style="font-size:16px;font-weight:600;color:#f5f5f0;margin:0;line-height:1.5;">
+If you could eliminate one repetitive task at <strong style="color:#c8ff00;">${firmName}</strong> tomorrow, what would it be?
+</p>
+</div>
+
+<p style="color:#888;font-size:14px;line-height:1.6;margin:0 0 0 0;">
+No agenda. Just curious.
+</p>
+`);
+}
+
+/* ─── Drip Template D — Direct Ask (Day 17) ─── */
+function buildDripD(firstName: string): string {
+  return shell(`
+<h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
+
+<p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
+Would 15 minutes this week or next work?
+</p>
+
+<p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 24px 0;">
+I&rsquo;ll look at one workflow and tell you straight up whether it&rsquo;s worth automating. Think of it as a working session, not a sales call.
+</p>
+
+<div style="text-align:center;margin-bottom:24px;">
+<a href="https://martinbuilds.ai/demo" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">See Live Demos</a>
+</div>
+`);
+}
+
+/* ─── Drip Template E — Breakup (Day 24) ─── */
+function buildDripE(firstName: string): string {
   return shell(`
 <h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
 
@@ -171,7 +301,7 @@ A few things I&rsquo;ve built recently for businesses like yours:
 </tr>
 <tr>
 <td style="width:32px;vertical-align:top;padding:6px 0;"><div style="width:24px;height:24px;border-radius:50%;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:12px;line-height:24px;text-align:center;">2</div></td>
-<td style="padding:8px 0 8px 10px;color:#ccc;font-size:14px;line-height:1.5;"><strong style="color:#f5f5f0;">Operations dashboards</strong> &mdash; case status, billing, team workload in one view</td>
+<td style="padding:8px 0 8px 10px;color:#ccc;font-size:14px;line-height:1.5;"><strong style="color:#f5f5f0;">Operations dashboards</strong> &mdash; projects, billing, team workload in one view</td>
 </tr>
 <tr>
 <td style="width:32px;vertical-align:top;padding:6px 0;"><div style="width:24px;height:24px;border-radius:50%;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:12px;line-height:24px;text-align:center;">3</div></td>
@@ -210,7 +340,7 @@ No rush &mdash; just want to make sure I&rsquo;m available if you want to talk t
 
   // Initial follow-up
   return shell(`
-<h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 12px 0;letter-spacing:-0.5px;">Hey ${firstName} &mdash; Martin here</h2>
+<h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 12px 0;letter-spacing:-0.5px;">Hey ${firstName} &mdash; Francis here</h2>
 
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
 Thanks for reaching out. I got your message and wanted to personally follow up.
@@ -250,8 +380,8 @@ function buildCustomEmail(firstName: string, businessName: string, _subject: str
   const processedMessage = message
     .replace(/\{\{firstName\}\}/g, firstName)
     .replace(/\{\{first_name\}\}/g, firstName)
-    .replace(/\{\{company\}\}/g, businessName || "your company")
-    .replace(/\{\{firm_name\}\}/g, businessName || "your firm");
+    .replace(/\{\{company\}\}/g, businessName || "your business")
+    .replace(/\{\{firm_name\}\}/g, businessName || "your business");
 
   // Convert newlines to HTML paragraphs
   const paragraphs = processedMessage
@@ -286,15 +416,17 @@ ${skipSig ? "" : EMAIL_SIGNATURE}
 }
 
 /* ─── Drip template map ─── */
-const DRIP_TEMPLATES: Record<string, { subject: string; build: (fn: string, biz: string) => string }> = {
+const DRIP_TEMPLATES: Record<string, { subject: string | ((fn: string) => string); build: (fn: string, biz: string, industry?: string | null) => string }> = {
   A: { subject: "hello from martin.builds", build: buildDripA },
-  B: { subject: "there has to be an easier way", build: buildDripB },
-  C: { subject: "re: hello from martin.builds", build: buildDripC },
+  B: { subject: "there has to be an easier way", build: (fn) => buildDripB(fn) },
+  C: { subject: (fn) => `quick question for ${fn}`, build: (fn, biz) => buildDripC(fn, biz) },
+  D: { subject: "15 minutes this week?", build: (fn) => buildDripD(fn) },
+  E: { subject: "re: hello from martin.builds", build: (fn) => buildDripE(fn) },
 };
 
 export async function POST(req: NextRequest) {
   try {
-    const { lead_id, lead_email, lead_name, lead_business, type, custom_subject, custom_message, sequence_step, template_id } = await req.json();
+    const { lead_id, lead_email, lead_name, lead_business, lead_industry, type, custom_subject, custom_message, sequence_step, template_id } = await req.json();
 
     if (!lead_email || !lead_name) {
       return NextResponse.json({ error: "Missing lead info" }, { status: 400 });
@@ -308,8 +440,8 @@ export async function POST(req: NextRequest) {
     // Check for drip template first
     if (template_id && DRIP_TEMPLATES[template_id]) {
       const drip = DRIP_TEMPLATES[template_id];
-      html = drip.build(firstName, bizName);
-      subject = drip.subject;
+      html = drip.build(firstName, bizName, lead_industry);
+      subject = typeof drip.subject === "function" ? drip.subject(firstName) : drip.subject;
     } else if (type === "custom" && custom_message) {
       const processedSubject = (custom_subject || "Quick question")
         .replace(/\{\{firstName\}\}/g, firstName)
