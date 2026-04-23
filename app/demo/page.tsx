@@ -89,6 +89,14 @@ const demos = [
     href: "/demo/pi-firm",
     accent: "#1e3a5f",
   },
+  {
+    title: "Staffboard",
+    vertical: "Travel Nurse Staffing",
+    description:
+      "Nurse roster, credentialing tracker, contract pipeline, timesheet approval, and calendar view for travel nurse recruiters.",
+    href: "/demo/travel-nurse",
+    accent: "#1F4A3D",
+  },
 ];
 
 export default function DemoIndex() {
