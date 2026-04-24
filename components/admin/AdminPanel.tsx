@@ -3194,7 +3194,7 @@ export default function AdminPanel() {
                       {/* Email actions — available for any lead with a valid email */}
                       {lead.email && lead.email !== "not found" && lead.status !== "won" && lead.status !== "lost" && (
                         <>
-                          {lead.status === "new" && (lead.source === "csv_import" || lead.source === "manual") && (
+                          {lead.status === "new" && !lead.last_emailed_at && (
                             <button
                               onClick={() => openCompose([lead])}
                               style={{ padding: "4px 12px", background: GREEN, color: BG, border: "none", borderRadius: 3, fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
@@ -3202,7 +3202,7 @@ export default function AdminPanel() {
                               Send Intro
                             </button>
                           )}
-                          {lead.status === "new" && lead.source !== "csv_import" && lead.source !== "manual" && (
+                          {lead.status === "new" && lead.last_emailed_at && (
                             <button
                               onClick={() => sendFollowUp(lead, "initial")}
                               disabled={sendingFollowUp === lead.id}
