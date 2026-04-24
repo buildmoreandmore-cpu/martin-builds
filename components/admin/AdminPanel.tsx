@@ -657,6 +657,8 @@ export default function AdminPanel() {
   const [composeTargets, setComposeTargets] = useState<Lead[]>([]);
   const [composeSending, setComposeSending] = useState(false);
   const [composeTemplate, setComposeTemplate] = useState("");
+  const [csvImporting, setCsvImporting] = useState(false);
+  const csvInputRef = useRef<HTMLInputElement>(null);
 
   const fetchLeads = useCallback(async () => {
     setLeadsLoading(true);
@@ -919,6 +921,102 @@ export default function AdminPanel() {
     a.download = `leads-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  async function handleCSVImport(file: File) {
+    setCsvImporting(true);
+    try {
+      const text = await file.text();
+      const lines = text.split(/\r?\n/).filter((l) => l.trim());
+      if (lines.length < 2) { alert("CSV is empty or has no data rows."); setCsvImporting(false); return; }
+
+      // Parse header row — normalize to lowercase
+      const headerLine = lines[0];
+      const headers = parseCSVLine(headerLine).map((h) => h.toLowerCase().trim());
+
+      // Map common column names
+      const colMap: Record<string, string[]> = {
+        name: ["name", "full name", "fullname", "contact", "contact name"],
+        email: ["email", "email address", "e-mail"],
+        phone: ["phone", "phone number", "telephone", "mobile", "cell"],
+        business: ["business", "company", "company name", "firm", "firm name", "organization"],
+        industry: ["industry", "vertical", "sector", "category"],
+      };
+
+      function findCol(field: string): number {
+        const aliases = colMap[field] || [field];
+        return headers.findIndex((h) => aliases.includes(h));
+      }
+
+      const nameIdx = findCol("name");
+      const emailIdx = findCol("email");
+      const phoneIdx = findCol("phone");
+      const businessIdx = findCol("business");
+      const industryIdx = findCol("industry");
+
+      if (nameIdx === -1 && emailIdx === -1) {
+        alert("CSV must have at least a 'Name' or 'Email' column.");
+        setCsvImporting(false);
+        return;
+      }
+
+      const rows = lines.slice(1).map((line) => parseCSVLine(line));
+      let imported = 0;
+      let skipped = 0;
+
+      for (const row of rows) {
+        const name = (nameIdx >= 0 ? row[nameIdx]?.trim() : "") || "";
+        const email = (emailIdx >= 0 ? row[emailIdx]?.trim() : "") || "";
+        if (!name && !email) { skipped++; continue; }
+
+        const leadData = {
+          name: name || email.split("@")[0] || "Unknown",
+          email: email || "not found",
+          phone: phoneIdx >= 0 ? row[phoneIdx]?.trim() || null : null,
+          business: businessIdx >= 0 ? row[businessIdx]?.trim() || null : null,
+          industry: industryIdx >= 0 ? row[industryIdx]?.trim() || null : null,
+          source: "csv_import",
+        };
+
+        try {
+          const res = await fetch("/api/admin/leads", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(leadData),
+          });
+          if (res.ok) imported++;
+          else skipped++;
+        } catch { skipped++; }
+      }
+
+      alert(`Imported ${imported} lead${imported !== 1 ? "s" : ""}${skipped > 0 ? ` (${skipped} skipped)` : ""}.`);
+      fetchLeads();
+    } catch (err) {
+      console.error("CSV import error:", err);
+      alert("Failed to parse CSV. Check the file format.");
+    }
+    setCsvImporting(false);
+    if (csvInputRef.current) csvInputRef.current.value = "";
+  }
+
+  function parseCSVLine(line: string): string[] {
+    const result: string[] = [];
+    let current = "";
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (inQuotes) {
+        if (ch === '"' && line[i + 1] === '"') { current += '"'; i++; }
+        else if (ch === '"') inQuotes = false;
+        else current += ch;
+      } else {
+        if (ch === '"') inQuotes = true;
+        else if (ch === ",") { result.push(current); current = ""; }
+        else current += ch;
+      }
+    }
+    result.push(current);
+    return result;
   }
 
   function getEmailCount(lead: Lead): number {
@@ -2654,6 +2752,20 @@ export default function AdminPanel() {
                 <button onClick={exportLeadsCSV} style={{ padding: "5px 12px", background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 4, fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}>
                   Export CSV
                 </button>
+                <button
+                  onClick={() => csvInputRef.current?.click()}
+                  disabled={csvImporting}
+                  style={{ padding: "5px 12px", background: "transparent", color: csvImporting ? DIM : GREEN, border: `1px solid ${csvImporting ? BORDER : GREEN}`, borderRadius: 4, fontSize: 11, cursor: csvImporting ? "not-allowed" : "pointer", fontFamily: "inherit" }}
+                >
+                  {csvImporting ? "Importing..." : "Import CSV"}
+                </button>
+                <input
+                  ref={csvInputRef}
+                  type="file"
+                  accept=".csv"
+                  style={{ display: "none" }}
+                  onChange={(e) => { const f = e.target.files?.[0]; if (f) handleCSVImport(f); }}
+                />
                 <span style={{ fontSize: 11, color: DIM, marginLeft: "auto" }}>{getFilteredLeads().length} leads</span>
               </div>
             </div>
