@@ -659,6 +659,15 @@ export default function AdminPanel() {
   const [composeTemplate, setComposeTemplate] = useState("");
   const [csvImporting, setCsvImporting] = useState(false);
   const csvInputRef = useRef<HTMLInputElement>(null);
+  // Industry pains
+  const [industryPainsMap, setIndustryPainsMap] = useState<Record<string, { pains: string; items: { title: string; desc: string }[] }>>({});
+  const [showIndustryModal, setShowIndustryModal] = useState(false);
+  const [industryModalLeadId, setIndustryModalLeadId] = useState<string | null>(null);
+  const [industryModalName, setIndustryModalName] = useState("");
+  const [industryModalPains, setIndustryModalPains] = useState("");
+  const [industryModalItems, setIndustryModalItems] = useState<{ title: string; desc: string }[]>([{ title: "", desc: "" }, { title: "", desc: "" }, { title: "", desc: "" }]);
+  const [industryModalGenerating, setIndustryModalGenerating] = useState(false);
+  const [industryModalSaving, setIndustryModalSaving] = useState(false);
 
   const fetchLeads = useCallback(async () => {
     setLeadsLoading(true);
@@ -716,6 +725,84 @@ export default function AdminPanel() {
         setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, ...updates } : l)));
       }
     } catch { /* ignore */ }
+  }
+
+  // Fetch all saved industry pain points
+  const fetchIndustryPains = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/industry-pains");
+      if (res.ok) {
+        const data = await res.json();
+        const map: Record<string, { pains: string; items: { title: string; desc: string }[] }> = {};
+        for (const p of data.pains || []) {
+          map[p.industry] = { pains: p.pains, items: p.items };
+        }
+        setIndustryPainsMap(map);
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  // Set industry on a lead — if no pain points exist, open modal to generate
+  async function setLeadIndustry(leadId: string, industry: string) {
+    if (!industry) {
+      updateLead(leadId, { industry: null });
+      setEditingLeadField(null);
+      return;
+    }
+    // Save the industry on the lead
+    updateLead(leadId, { industry });
+    setEditingLeadField(null);
+
+    // Check if pain points exist for this industry
+    if (!industryPainsMap[industry] && !INDUSTRIES.includes(industry)) {
+      // No pain points — auto-generate
+      setIndustryModalLeadId(leadId);
+      setIndustryModalName(industry);
+      setIndustryModalPains("");
+      setIndustryModalItems([{ title: "", desc: "" }, { title: "", desc: "" }, { title: "", desc: "" }]);
+      setShowIndustryModal(true);
+      setIndustryModalGenerating(true);
+      try {
+        const res = await fetch("/api/admin/industry-pains/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ industry }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setIndustryModalPains(data.pains || "");
+          setIndustryModalItems(data.items?.length ? data.items : [{ title: "", desc: "" }, { title: "", desc: "" }, { title: "", desc: "" }]);
+        }
+      } catch { /* ignore */ }
+      setIndustryModalGenerating(false);
+    }
+  }
+
+  // Save industry pain points from modal
+  async function saveIndustryPains() {
+    setIndustryModalSaving(true);
+    try {
+      const res = await fetch("/api/admin/industry-pains", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          industry: industryModalName,
+          pains: industryModalPains,
+          items: industryModalItems.filter((i) => i.title && i.desc),
+        }),
+      });
+      if (res.ok) {
+        setIndustryPainsMap((prev) => ({
+          ...prev,
+          [industryModalName]: {
+            pains: industryModalPains,
+            items: industryModalItems.filter((i) => i.title && i.desc),
+          },
+        }));
+        setShowIndustryModal(false);
+      }
+    } catch { /* ignore */ }
+    setIndustryModalSaving(false);
   }
 
   async function deleteLead(id: string) {
@@ -1205,8 +1292,9 @@ export default function AdminPanel() {
       fetchAgents();
       fetchReports();
       fetchLeads();
+      fetchIndustryPains();
     }
-  }, [authed, fetchProjects, fetchAutomation, fetchAgents, fetchReports, fetchLeads]);
+  }, [authed, fetchProjects, fetchAutomation, fetchAgents, fetchReports, fetchLeads, fetchIndustryPains]);
 
   /* ─── Login ─── */
   async function handleLogin(e: FormEvent) {
@@ -2806,6 +2894,79 @@ export default function AdminPanel() {
               </div>
             )}
 
+            {/* Industry Pains Modal */}
+            {showIndustryModal && (
+              <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
+                <div style={{ background: CARD_BG, border: `1px solid ${BORDER}`, borderRadius: 12, padding: "clamp(1.25rem, 4vw, 2rem)", maxWidth: 520, width: "100%", maxHeight: "90vh", overflow: "auto" }}>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, color: TEXT, marginBottom: 4 }}>
+                    Industry Pain Points: <span style={{ color: GREEN }}>{industryModalName}</span>
+                  </h3>
+                  <p style={{ fontSize: 12, color: DIM, marginBottom: 16 }}>
+                    {industryModalGenerating ? "Generating with AI..." : "Review and edit the pain points and build items for this industry. These are used in Template A emails."}
+                  </p>
+
+                  {industryModalGenerating ? (
+                    <div style={{ textAlign: "center", padding: "2rem 0", color: GREEN, fontSize: 13 }}>Generating...</div>
+                  ) : (
+                    <>
+                      <label style={{ fontSize: 11, color: DIM, marginBottom: 4, display: "block" }}>Pain points (comma-separated)</label>
+                      <input
+                        value={industryModalPains}
+                        onChange={(e) => setIndustryModalPains(e.target.value)}
+                        placeholder="e.g. scheduling, dispatch, compliance"
+                        style={{ ...s.input, marginBottom: 16, width: "100%", boxSizing: "border-box" }}
+                      />
+
+                      <label style={{ fontSize: 11, color: DIM, marginBottom: 8, display: "block" }}>What I&apos;d Build (3 items)</label>
+                      {industryModalItems.map((item, idx) => (
+                        <div key={idx} style={{ marginBottom: 12, padding: 12, background: BG, border: `1px solid ${BORDER}`, borderRadius: 8 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                            <div style={{ width: 22, height: 22, borderRadius: "50%", background: GREEN, color: BG, fontWeight: 700, fontSize: 11, lineHeight: "22px", textAlign: "center", flexShrink: 0 }}>{idx + 1}</div>
+                            <input
+                              value={item.title}
+                              onChange={(e) => {
+                                const updated = [...industryModalItems];
+                                updated[idx] = { ...updated[idx], title: e.target.value };
+                                setIndustryModalItems(updated);
+                              }}
+                              placeholder="Title (e.g. Dispatch dashboard)"
+                              style={{ ...s.input, flex: 1, padding: "4px 8px", fontSize: 12 }}
+                            />
+                          </div>
+                          <input
+                            value={item.desc}
+                            onChange={(e) => {
+                              const updated = [...industryModalItems];
+                              updated[idx] = { ...updated[idx], desc: e.target.value };
+                              setIndustryModalItems(updated);
+                            }}
+                            placeholder="Description (e.g. crews, routes, and jobs in one view)"
+                            style={{ ...s.input, width: "100%", boxSizing: "border-box", padding: "4px 8px", fontSize: 12, marginLeft: 30 }}
+                          />
+                        </div>
+                      ))}
+
+                      <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+                        <button
+                          onClick={saveIndustryPains}
+                          disabled={industryModalSaving || !industryModalPains || industryModalItems.filter((i) => i.title && i.desc).length === 0}
+                          style={{ padding: "8px 20px", background: GREEN, color: BG, border: "none", borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", opacity: industryModalSaving ? 0.6 : 1 }}
+                        >
+                          {industryModalSaving ? "Saving..." : "Save"}
+                        </button>
+                        <button
+                          onClick={() => setShowIndustryModal(false)}
+                          style={{ padding: "8px 20px", background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 6, fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}
+                        >
+                          Skip
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Compose Panel */}
             {showCompose && (
               <div style={{ ...s.card, marginBottom: 16, border: `1px solid ${GREEN}`, position: "relative" }}>
@@ -3006,16 +3167,25 @@ export default function AdminPanel() {
                             {lead.status === "proposal_sent" ? "Proposal Sent" : lead.status}
                           </span>
                           {editingLeadField?.id === lead.id && editingLeadField.field === "industry" ? (
-                            <select
-                              value={leadFieldValue}
-                              onChange={(e) => { updateLead(lead.id, { industry: e.target.value || null }); setEditingLeadField(null); }}
-                              onBlur={() => setEditingLeadField(null)}
-                              autoFocus
-                              style={{ padding: "2px 6px", background: CARD_BG, border: `1px solid ${GREEN}`, color: GREEN, borderRadius: 4, fontSize: 10, cursor: "pointer", fontFamily: "inherit" }}
-                            >
-                              <option value="">No industry</option>
-                              {INDUSTRIES.map((ind) => <option key={ind} value={ind}>{ind}</option>)}
-                            </select>
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                              <input
+                                list="industry-options"
+                                value={leadFieldValue}
+                                onChange={(e) => setLeadFieldValue(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") { setLeadIndustry(lead.id, leadFieldValue.trim()); }
+                                  if (e.key === "Escape") setEditingLeadField(null);
+                                }}
+                                placeholder="Type or select industry"
+                                autoFocus
+                                style={{ padding: "2px 6px", background: CARD_BG, border: `1px solid ${GREEN}`, color: GREEN, borderRadius: 4, fontSize: 10, cursor: "pointer", fontFamily: "inherit", width: "min(180px, 40vw)" }}
+                              />
+                              <datalist id="industry-options">
+                                {[...INDUSTRIES, ...Object.keys(industryPainsMap)].filter((v, i, a) => a.indexOf(v) === i).map((ind) => <option key={ind} value={ind} />)}
+                              </datalist>
+                              <button onClick={() => setLeadIndustry(lead.id, leadFieldValue.trim())} style={{ background: GREEN, color: BG, border: "none", borderRadius: 3, padding: "3px 8px", fontSize: 10, fontWeight: 700, cursor: "pointer" }}>Set</button>
+                              <button onClick={() => setEditingLeadField(null)} style={{ background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 3, padding: "3px 6px", fontSize: 10, cursor: "pointer" }}>x</button>
+                            </span>
                           ) : (
                             <span
                               onClick={() => { setEditingLeadField({ id: lead.id, field: "industry" }); setLeadFieldValue(lead.industry || ""); }}

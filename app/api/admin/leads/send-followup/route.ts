@@ -106,14 +106,30 @@ const DEFAULT_PAINS = {
   ],
 };
 
-function getIndustryData(industry?: string | null) {
-  if (industry && INDUSTRY_PAINS[industry]) return INDUSTRY_PAINS[industry];
+async function getIndustryData(industry?: string | null) {
+  if (!industry) return DEFAULT_PAINS;
+
+  // Check hardcoded map first (fast path)
+  if (INDUSTRY_PAINS[industry]) return INDUSTRY_PAINS[industry];
+
+  // Check Supabase for dynamic industry pains
+  try {
+    const { data } = await supabase
+      .from("industry_pains")
+      .select("pains, items")
+      .eq("industry", industry)
+      .single();
+    if (data?.pains && Array.isArray(data.items) && data.items.length > 0) {
+      return { pains: data.pains, items: data.items as { title: string; desc: string }[] };
+    }
+  } catch { /* fall through to default */ }
+
   return DEFAULT_PAINS;
 }
 
 /* ─── Drip Template A — Warm Intro (Day 0) ─── */
-function buildDripA(firstName: string, firmName: string, industry?: string | null): string {
-  const ind = getIndustryData(industry);
+async function buildDripA(firstName: string, firmName: string, industry?: string | null): Promise<string> {
+  const ind = await getIndustryData(industry);
   return shell(`
 <h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
 
@@ -416,7 +432,7 @@ ${skipSig ? "" : EMAIL_SIGNATURE}
 }
 
 /* ─── Drip template map ─── */
-const DRIP_TEMPLATES: Record<string, { subject: string | ((fn: string) => string); build: (fn: string, biz: string, industry?: string | null) => string }> = {
+const DRIP_TEMPLATES: Record<string, { subject: string | ((fn: string) => string); build: (fn: string, biz: string, industry?: string | null) => string | Promise<string> }> = {
   A: { subject: "hello from martin.builds", build: buildDripA },
   B: { subject: "there has to be an easier way", build: (fn) => buildDripB(fn) },
   C: { subject: (fn) => `quick question for ${fn}`, build: (fn, biz) => buildDripC(fn, biz) },
@@ -440,7 +456,7 @@ export async function POST(req: NextRequest) {
     // Check for drip template first
     if (template_id && DRIP_TEMPLATES[template_id]) {
       const drip = DRIP_TEMPLATES[template_id];
-      html = drip.build(firstName, bizName, lead_industry);
+      html = await drip.build(firstName, bizName, lead_industry);
       subject = typeof drip.subject === "function" ? drip.subject(firstName) : drip.subject;
     } else if (type === "custom" && custom_message) {
       const processedSubject = (custom_subject || "Quick question")
