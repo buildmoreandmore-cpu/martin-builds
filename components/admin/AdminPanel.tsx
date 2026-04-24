@@ -603,7 +603,7 @@ export default function AdminPanel() {
       id: "A",
       label: "A — Warm Intro (Day 0)",
       subject: "hello from martin.builds",
-      message: `Hi {{first_name}},\n\nMy name is Francis with martin.builds and I help businesses like {{firm_name}} simplify the workflows that eat up your team's time — uses industry-specific pain points automatically.\n\nI'd love to learn more about how your team runs things today and see if there's a way I can help.\n\nI put together a few working demos: martinbuilds.ai/demo\n\nIf anything feels familiar, I'd enjoy a conversation.\n\nFrancis\nmartin.builds`,
+      message: `Hi {{first_name}},\n\nMy name is Francis with martin.builds and I help businesses like {{firm_name}} simplify the workflows that eat up your team's time — client intake, scheduling, reporting, all of it.\n\n[Pain points auto-tailored to lead's industry]\n\nI'd love to learn more about how your team runs things today and see if there's a way I can help.\n\nI put together a few working demos: martinbuilds.ai/demo\n\nIf anything feels familiar, I'd enjoy a conversation.\n\nFrancis\nmartin.builds`,
     },
     {
       id: "B",
