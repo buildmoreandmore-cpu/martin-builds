@@ -134,11 +134,15 @@ async function buildDripA(firstName: string, firmName: string, industry?: string
 <h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
 
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
-My name is Francis with martin.builds and I help businesses like <strong style="color:#f5f5f0;">${firmName}</strong> simplify the workflows that eat up your team&rsquo;s time &mdash; ${ind.pains}, all of it.
+This isn&rsquo;t a sales email and it&rsquo;s not urgent &mdash; but it might be important for how <strong style="color:#f5f5f0;">${firmName}</strong> runs next year.
+</p>
+
+<p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
+My name is Francis with martin.builds and I help businesses like yours simplify the workflows that eat up your team&rsquo;s time &mdash; ${ind.pains}, all of it.
 </p>
 
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 24px 0;">
-I&rsquo;d love to learn more about how your team runs things today and see if there&rsquo;s a way I can help.
+Most owners I talk to already know which process is costing them the most hours. They just haven&rsquo;t had a reason to fix it yet.
 </p>
 
 <!-- What I'd build for them -->
@@ -153,7 +157,7 @@ ${ind.items.map((item, i) => `<tr>
 </div>
 
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 24px 0;">
-I put together a few working demos of what this looks like. Take a look when you have a minute &mdash; if anything feels familiar, I&rsquo;d enjoy a conversation.
+Here are a few working demos of what this looks like.
 </p>
 
 <div style="text-align:center;margin-bottom:32px;">
@@ -161,7 +165,7 @@ I put together a few working demos of what this looks like. Take a look when you
 </div>
 
 <p style="color:#888;font-size:13px;line-height:1.6;margin:0 0 0 0;">
-Feel free to reply to this email or reach out anytime.
+If anything feels familiar, I&rsquo;d enjoy a conversation.
 </p>
 `);
 }
