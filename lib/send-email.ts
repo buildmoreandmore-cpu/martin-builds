@@ -17,6 +17,28 @@ export const EMAIL_SIGNATURE = `<div style="margin-top:32px;padding-top:24px;bor
 </table>
 </div>`;
 
+/** Hidden preheader text — shows in inbox preview but not in email body */
+export function preheader(text: string): string {
+  return `<div style="display:none;font-size:1px;color:#0a0a0a;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">${text}${"&zwnj;&nbsp;".repeat(30)}</div>`;
+}
+
+/** Wrap a URL through click tracking. Returns tracked URL if leadId provided, original if not. */
+export function trackLink(url: string, leadId?: string, label?: string): string {
+  if (!leadId) return url;
+  const params = new URLSearchParams({ lid: leadId, url });
+  if (label) params.set("label", label);
+  return `https://martinbuilds.ai/api/track/click?${params.toString()}`;
+}
+
+/** Unsubscribe footer — CAN-SPAM compliant */
+export function unsubscribeFooter(leadId?: string): string {
+  if (!leadId) return "";
+  const url = `https://martinbuilds.ai/api/unsubscribe?lid=${leadId}`;
+  return `<div style="text-align:center;padding:16px 0 0 0;margin-top:16px;border-top:1px solid #222;">
+<a href="${url}" style="font-size:11px;color:#555;text-decoration:none;">Unsubscribe from future emails</a>
+</div>`;
+}
+
 /** Append a 1x1 tracking pixel to HTML email body */
 export function appendTrackingPixel(html: string, leadId: string, templateId?: string): string {
   const params = new URLSearchParams({ lid: leadId });

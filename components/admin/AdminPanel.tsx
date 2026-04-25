@@ -596,6 +596,7 @@ export default function AdminPanel() {
     last_emailed_at: string | null;
     email_opens: number | null;
     last_opened_at: string | null;
+    link_clicks: number | null;
     sequence_step: number;
     created_at: string;
   }
@@ -3172,6 +3173,12 @@ export default function AdminPanel() {
                             <span style={{ ...s.badge, background: "rgba(59,130,246,0.15)", color: "#60a5fa", fontSize: 9 }} title={`Last opened: ${lead.last_opened_at ? new Date(lead.last_opened_at).toLocaleString() : "unknown"}`}>
                               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ verticalAlign: "middle", marginRight: 3 }}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                               Opened{lead.email_opens > 1 ? ` ${lead.email_opens}x` : ""}
+                            </span>
+                          ) : null}
+                          {lead.link_clicks && lead.link_clicks > 0 ? (
+                            <span style={{ ...s.badge, background: "rgba(168,85,247,0.15)", color: "#c084fc", fontSize: 9 }}>
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ verticalAlign: "middle", marginRight: 3 }}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                              Clicked{lead.link_clicks > 1 ? ` ${lead.link_clicks}x` : ""}
                             </span>
                           ) : null}
                           {editingLeadField?.id === lead.id && editingLeadField.field === "industry" ? (

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendEmail, EMAIL_SIGNATURE, appendTrackingPixel } from "@/lib/send-email";
+import { sendEmail, EMAIL_SIGNATURE, appendTrackingPixel, preheader, trackLink, unsubscribeFooter } from "@/lib/send-email";
 import { supabase } from "@/lib/supabase";
 
 /* ─── Shared email shell ─── */
@@ -11,13 +11,15 @@ const HEADER = `<div style="margin-bottom:32px;">
 </div>
 <div style="height:2px;background:linear-gradient(90deg,#c8ff00 0%,#c8ff0000 100%);margin-bottom:32px;"></div>`;
 
-function shell(content: string): string {
+function shell(content: string, opts?: { preheaderText?: string; leadId?: string }): string {
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#0a0a0a;color:#f5f5f0;font-family:Arial,'Helvetica Neue',sans-serif;">
+${opts?.preheaderText ? preheader(opts.preheaderText) : ""}
 <div style="max-width:600px;margin:0 auto;padding:40px 24px;">
 ${HEADER}
 ${content}
 ${EMAIL_SIGNATURE}
+${unsubscribeFooter(opts?.leadId)}
 </div></body></html>`;
 }
 
@@ -128,8 +130,9 @@ async function getIndustryData(industry?: string | null) {
 }
 
 /* ─── Drip Template A — Warm Intro (Day 0) ─── */
-async function buildDripA(firstName: string, firmName: string, industry?: string | null): Promise<string> {
+async function buildDripA(firstName: string, firmName: string, industry?: string | null, leadId?: string): Promise<string> {
   const ind = await getIndustryData(industry);
+  const demoLink = trackLink("https://martinbuilds.ai/demo", leadId, "demos");
   return shell(`
 <h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
 
@@ -161,17 +164,18 @@ Here are a few working demos of what this looks like.
 </p>
 
 <div style="text-align:center;margin-bottom:32px;">
-<a href="https://martinbuilds.ai/demo" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">See Live Demos</a>
+<a href="${demoLink}" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">See Live Demos</a>
 </div>
 
 <p style="color:#888;font-size:13px;line-height:1.6;margin:0 0 0 0;">
 If anything feels familiar, I&rsquo;d enjoy a conversation.
 </p>
-`);
+`, { preheaderText: `Not a sales email — just a few ideas for ${firmName}`, leadId });
 }
 
 /* ─── Drip Template B — Pain + Demo (Day 5) ─── */
-function buildDripB(firstName: string): string {
+function buildDripB(firstName: string, _biz?: string, _ind?: string | null, leadId?: string): string {
+  const demoLink = trackLink("https://martinbuilds.ai/demo", leadId, "demos");
   return shell(`
 <h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
 
@@ -217,17 +221,17 @@ All the steps, all the clicks &mdash; and knowing there&rsquo;s a better way but
 </div>
 
 <div style="text-align:center;margin-bottom:24px;">
-<a href="https://martinbuilds.ai/demo" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">See What It Looks Like</a>
+<a href="${demoLink}" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">See What It Looks Like</a>
 </div>
 
 <p style="color:#888;font-size:14px;line-height:1.7;margin:0 0 0 0;padding:16px 0;border-top:1px solid #222;">
 <strong style="color:#ccc;">P.S.</strong> Reply with the one workflow that bugs your team the most. I&rsquo;ll send back a working demo built around it &mdash; no call, no commitment.
 </p>
-`);
+`, { preheaderText: "\"There has to be an easier way to do this.\" — I build the fix.", leadId });
 }
 
 /* ─── Drip Template C — Value + Question (Day 10) ─── */
-function buildDripC(firstName: string, firmName: string): string {
+function buildDripC(firstName: string, firmName: string, _ind?: string | null, leadId?: string): string {
   return shell(`
 <h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
 
@@ -253,11 +257,13 @@ If you could eliminate one repetitive task at <strong style="color:#c8ff00;">${f
 <p style="color:#888;font-size:14px;line-height:1.6;margin:0 0 0 0;">
 No agenda. Just curious.
 </p>
-`);
+`, { preheaderText: "One fix saved a business owner 6 hours a week.", leadId });
 }
 
 /* ─── Drip Template D — Direct Ask (Day 17) ─── */
-function buildDripD(firstName: string): string {
+function buildDripD(firstName: string, _biz?: string, _ind?: string | null, leadId?: string): string {
+  const demoLink = trackLink("https://martinbuilds.ai/demo", leadId, "demos");
+  const calLink = trackLink("https://cal.com/martin-builds/15min", leadId, "book-call");
   return shell(`
 <h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
 
@@ -269,14 +275,19 @@ Would 15 minutes this week or next work?
 I&rsquo;ll look at one workflow and tell you straight up whether it&rsquo;s worth automating. Think of it as a working session, not a sales call.
 </p>
 
-<div style="text-align:center;margin-bottom:24px;">
-<a href="https://martinbuilds.ai/demo" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">See Live Demos</a>
+<div style="text-align:center;margin-bottom:12px;">
+<a href="${calLink}" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">Book 15 Minutes</a>
 </div>
-`);
+
+<div style="text-align:center;margin-bottom:24px;">
+<a href="${demoLink}" style="font-size:13px;color:#888;text-decoration:underline;">or see live demos first</a>
+</div>
+`, { preheaderText: "15 minutes — I'll tell you straight up if it's worth automating.", leadId });
 }
 
 /* ─── Drip Template E — Breakup (Day 24) ─── */
-function buildDripE(firstName: string): string {
+function buildDripE(firstName: string, _biz?: string, _ind?: string | null, leadId?: string): string {
+  const demoLink = trackLink("https://martinbuilds.ai/demo", leadId, "demos");
   return shell(`
 <h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
 
@@ -289,13 +300,13 @@ If the timing isn&rsquo;t right, no hard feelings. The demos are still live if y
 </p>
 
 <div style="text-align:center;margin-bottom:24px;">
-<a href="https://martinbuilds.ai/demo" style="display:inline-block;padding:14px 32px;background:transparent;color:#c8ff00;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;border:2px solid #c8ff00;">See Live Demos</a>
+<a href="${demoLink}" style="display:inline-block;padding:14px 32px;background:transparent;color:#c8ff00;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;border:2px solid #c8ff00;">See Live Demos</a>
 </div>
 
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 0 0;">
 If a workflow ever comes up that&rsquo;s eating your team&rsquo;s time, you know where to find me.
 </p>
-`);
+`, { preheaderText: "Closing the loop — no hard feelings either way.", leadId });
 }
 
 /* ─── Original follow-up templates ─── */
@@ -436,12 +447,15 @@ ${skipSig ? "" : EMAIL_SIGNATURE}
 }
 
 /* ─── Drip template map ─── */
-const DRIP_TEMPLATES: Record<string, { subject: string | ((fn: string) => string); build: (fn: string, biz: string, industry?: string | null) => string | Promise<string> }> = {
+const DRIP_TEMPLATES: Record<string, {
+  subject: string | string[] | ((fn: string) => string);
+  build: (fn: string, biz: string, industry?: string | null, leadId?: string) => string | Promise<string>;
+}> = {
   A: { subject: "hello from martin.builds", build: buildDripA },
-  B: { subject: "there has to be an easier way", build: (fn) => buildDripB(fn) },
-  C: { subject: (fn) => `quick question for ${fn}`, build: (fn, biz) => buildDripC(fn, biz) },
-  D: { subject: "15 minutes this week?", build: (fn) => buildDripD(fn) },
-  E: { subject: "re: hello from martin.builds", build: (fn) => buildDripE(fn) },
+  B: { subject: ["there has to be an easier way", "what if it only took 2 weeks?"], build: buildDripB },
+  C: { subject: (fn) => `quick question for ${fn}`, build: buildDripC },
+  D: { subject: ["15 minutes this week?", "quick working session?"], build: buildDripD },
+  E: { subject: "re: hello from martin.builds", build: buildDripE },
 };
 
 export async function POST(req: NextRequest) {
@@ -452,6 +466,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing lead info" }, { status: 400 });
     }
 
+    // Block sending to unsubscribed leads
+    if (lead_id) {
+      const { data: leadCheck } = await supabase.from("leads").select("status").eq("id", lead_id).single();
+      if (leadCheck?.status === "unsubscribed") {
+        return NextResponse.json({ error: "Lead has unsubscribed" }, { status: 400 });
+      }
+    }
+
     const firstName = lead_name.split(" ")[0] || "there";
     const bizName = lead_business || "your business";
     let html: string;
@@ -460,8 +482,13 @@ export async function POST(req: NextRequest) {
     // Check for drip template first
     if (template_id && DRIP_TEMPLATES[template_id]) {
       const drip = DRIP_TEMPLATES[template_id];
-      html = await drip.build(firstName, bizName, lead_industry);
-      subject = typeof drip.subject === "function" ? drip.subject(firstName) : drip.subject;
+      html = await drip.build(firstName, bizName, lead_industry, lead_id);
+      // A/B subject line: if array, pick randomly
+      if (Array.isArray(drip.subject)) {
+        subject = drip.subject[Math.floor(Math.random() * drip.subject.length)];
+      } else {
+        subject = typeof drip.subject === "function" ? drip.subject(firstName) : drip.subject;
+      }
     } else if (type === "custom" && custom_message) {
       const processedSubject = (custom_subject || "Quick question")
         .replace(/\{\{firstName\}\}/g, firstName)
