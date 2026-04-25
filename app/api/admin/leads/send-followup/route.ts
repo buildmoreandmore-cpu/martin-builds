@@ -331,7 +331,7 @@ If any of that sounds relevant, I&rsquo;d love to do a quick 15-minute call to l
 </p>
 
 <div style="text-align:center;margin-bottom:32px;">
-<a href="https://martinbuilds.ai/discovery-call" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">Book a 15-Min Call</a>
+<a href="https://cal.com/martin-builds/15min" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">Book a 15-Min Call</a>
 </div>
 `);
   }
@@ -349,7 +349,7 @@ No rush &mdash; just want to make sure I&rsquo;m available if you want to talk t
 </p>
 
 <div style="text-align:center;margin-bottom:32px;">
-<a href="https://martinbuilds.ai/discovery-call" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">Book a Quick Call</a>
+<a href="https://cal.com/martin-builds/15min" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">Book a Quick Call</a>
 </div>
 `);
   }
@@ -385,7 +385,7 @@ I build custom dashboards and AI tools for small businesses &mdash; things like 
 </div>
 
 <div style="text-align:center;margin-bottom:32px;">
-<a href="https://martinbuilds.ai/discovery-call" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">Book a Discovery Call</a>
+<a href="https://cal.com/martin-builds/15min" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">Book a Discovery Call</a>
 </div>
 `);
 }

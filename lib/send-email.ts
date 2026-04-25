@@ -11,7 +11,8 @@ export const EMAIL_SIGNATURE = `<div style="margin-top:32px;padding-top:24px;bor
 <tr><td style="padding-bottom:2px;font-size:14px;color:#f5f5f0;">martin.builds</td></tr>
 <tr><td style="padding-bottom:12px;font-size:13px;color:#888;font-style:italic;">Custom dashboards that you own</td></tr>
 <tr><td style="padding-bottom:2px;font-size:13px;"><a href="mailto:agent@martinbuilds.ai" style="color:#f5f5f0;text-decoration:none;">agent@martinbuilds.ai</a></td></tr>
-<tr><td style="padding-bottom:12px;font-size:13px;"><a href="https://martinbuilds.ai" style="color:#f5f5f0;text-decoration:none;">martinbuilds.ai</a></td></tr>
+<tr><td style="padding-bottom:2px;font-size:13px;"><a href="https://martinbuilds.ai" style="color:#f5f5f0;text-decoration:none;">martinbuilds.ai</a></td></tr>
+<tr><td style="padding-bottom:12px;font-size:13px;"><a href="https://cal.com/martin-builds/15min" style="color:#c8ff00;text-decoration:none;">Book a 15-min call</a></td></tr>
 <tr><td style="padding-top:8px;border-top:1px solid #222;"><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#888;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#4ade80;"></span>Accepting new builds</span></td></tr>
 </table>
 </div>`;
