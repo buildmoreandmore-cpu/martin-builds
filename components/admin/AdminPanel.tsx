@@ -660,6 +660,7 @@ export default function AdminPanel() {
   const [composeTargets, setComposeTargets] = useState<Lead[]>([]);
   const [composeSending, setComposeSending] = useState(false);
   const [composeTemplate, setComposeTemplate] = useState("");
+  const [composeProgress, setComposeProgress] = useState(0);
   const [csvImporting, setCsvImporting] = useState(false);
   const csvInputRef = useRef<HTMLInputElement>(null);
   // Industry pains
@@ -847,7 +848,12 @@ export default function AdminPanel() {
     // Find which template index was used (for sequence tracking)
     const templateIdx = EMAIL_TEMPLATES.findIndex((t) => t.id === composeTemplate);
     setComposeSending(true);
-    for (const lead of composeTargets) {
+    setComposeProgress(0);
+    // 1.5s delay between sends when bulk sending (>1 lead) for deliverability
+    const throttleMs = composeTargets.length > 1 ? 1500 : 0;
+    for (let i = 0; i < composeTargets.length; i++) {
+      const lead = composeTargets[i];
+      setComposeProgress(i + 1);
       try {
         const newStep = templateIdx >= 0 ? templateIdx + 1 : (lead.sequence_step || 0) + 1;
         const isDrip = ["A", "B", "C", "D", "E"].includes(composeTemplate);
@@ -876,6 +882,10 @@ export default function AdminPanel() {
           }));
         }
       } catch { /* continue */ }
+      // Delay between sends to avoid Gmail rate limits and look more natural
+      if (throttleMs > 0 && i < composeTargets.length - 1) {
+        await new Promise((r) => setTimeout(r, throttleMs));
+      }
     }
     setComposeSending(false);
     setShowCompose(false);
@@ -3052,7 +3062,7 @@ export default function AdminPanel() {
                     disabled={composeSending || !composeMessage.trim()}
                     style={{ ...s.btn, width: "auto", padding: "10px 24px", marginTop: 0, ...(composeSending || !composeMessage.trim() ? s.btnDisabled : {}) }}
                   >
-                    {composeSending ? `Sending (${composeTargets.length})...` : `Send to ${composeTargets.length} Lead${composeTargets.length !== 1 ? "s" : ""}`}
+                    {composeSending ? `Sending ${composeProgress}/${composeTargets.length}...` : `Send to ${composeTargets.length} Lead${composeTargets.length !== 1 ? "s" : ""}`}
                   </button>
                   <button onClick={() => setShowCompose(false)} style={{ ...s.logoutBtn }}>Cancel</button>
                 </div>
