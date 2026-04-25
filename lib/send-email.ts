@@ -17,6 +17,18 @@ export const EMAIL_SIGNATURE = `<div style="margin-top:32px;padding-top:24px;bor
 </table>
 </div>`;
 
+/** Append a 1x1 tracking pixel to HTML email body */
+export function appendTrackingPixel(html: string, leadId: string, templateId?: string): string {
+  const params = new URLSearchParams({ lid: leadId });
+  if (templateId) params.set("tid", templateId);
+  const pixel = `<img src="https://martinbuilds.ai/api/track/open?${params.toString()}" width="1" height="1" style="display:block;width:1px;height:1px;border:0;" alt="" />`;
+  // Insert before closing </body> or append at end
+  if (html.includes("</body>")) {
+    return html.replace("</body>", `${pixel}</body>`);
+  }
+  return html + pixel;
+}
+
 export async function sendEmail({
   to = "agent@martinbuilds.ai",
   subject,

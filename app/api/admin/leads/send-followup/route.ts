@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendEmail, EMAIL_SIGNATURE } from "@/lib/send-email";
+import { sendEmail, EMAIL_SIGNATURE, appendTrackingPixel } from "@/lib/send-email";
 import { supabase } from "@/lib/supabase";
 
 /* ─── Shared email shell ─── */
@@ -474,6 +474,11 @@ export async function POST(req: NextRequest) {
         : emailType === "cold"
         ? `Quick question for ${lead_business || firstName}`
         : `Hey ${firstName} — Francis from martin.builds`;
+    }
+
+    // Inject tracking pixel if we have a lead ID
+    if (lead_id) {
+      html = appendTrackingPixel(html, lead_id, template_id || undefined);
     }
 
     await sendEmail({

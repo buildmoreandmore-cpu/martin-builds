@@ -594,6 +594,8 @@ export default function AdminPanel() {
     status: string;
     notes: string | null;
     last_emailed_at: string | null;
+    email_opens: number | null;
+    last_opened_at: string | null;
     sequence_step: number;
     created_at: string;
   }
@@ -3166,6 +3168,12 @@ export default function AdminPanel() {
                           <span style={{ ...s.badge, background: sc.bg, color: sc.color }}>
                             {lead.status === "proposal_sent" ? "Proposal Sent" : lead.status}
                           </span>
+                          {lead.email_opens && lead.email_opens > 0 ? (
+                            <span style={{ ...s.badge, background: "rgba(59,130,246,0.15)", color: "#60a5fa", fontSize: 9 }} title={`Last opened: ${lead.last_opened_at ? new Date(lead.last_opened_at).toLocaleString() : "unknown"}`}>
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ verticalAlign: "middle", marginRight: 3 }}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                              Opened{lead.email_opens > 1 ? ` ${lead.email_opens}x` : ""}
+                            </span>
+                          ) : null}
                           {editingLeadField?.id === lead.id && editingLeadField.field === "industry" ? (
                             <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
                               <input
