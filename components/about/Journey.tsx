@@ -18,7 +18,7 @@ const cards = [
   {
     num: "03",
     title: "The Lock-In",
-    body: "When AI hit, I recognized the moment. I knew that to get the most out of it, I couldn't just use the tools — I had to understand them at a technical level. So I learned to code, started building in public, and shipped over 10 AI-powered products. Not concepts. Shipped products.",
+    body: "When AI hit, I recognized the moment. I knew that to get the most out of it, I couldn't just use the tools — I had to understand them at a technical level. So I learned to code, started building in public, and shipped AI-powered products for real businesses. Not concepts. Shipped products.",
     align: "left" as const,
   },
 ];

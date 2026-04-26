@@ -54,8 +54,8 @@ export default function Founder() {
               marginBottom: "1.5rem",
             }}
           >
-            10+ products shipped across staffing, energy, consulting, and
-            retail. Every one in under 14 days.
+            Products shipped across staffing, energy, consulting, retail, and
+            more. Every one in under 14 days.
           </p>
         </ScrollReveal>
 

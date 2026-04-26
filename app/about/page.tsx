@@ -11,7 +11,7 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "About — martin.builds",
   description:
-    "Francis Martin. Self-taught AI builder shipping AI tools for small businesses from Atlanta, GA. 10+ products shipped.",
+    "Francis Martin. AI builder shipping AI tools for small businesses from Atlanta, GA.",
   alternates: { canonical: "https://martinbuilds.ai/about" },
   openGraph: {
     title: "About — martin.builds",

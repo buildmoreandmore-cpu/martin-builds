@@ -1,8 +1,8 @@
 import ScrollReveal from "../ScrollReveal";
 
 const stats = [
-  { num: "10+", label: "AI products shipped" },
   { num: "14 days", label: "average build time" },
+  { num: "$0", label: "monthly fees (you own it)" },
   { num: "6+", label: "industries served" },
   { num: "2026", label: "building every day" },
 ];
