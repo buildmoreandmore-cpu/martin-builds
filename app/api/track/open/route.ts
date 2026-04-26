@@ -28,8 +28,13 @@ export async function GET(req: NextRequest) {
   });
 }
 
+// Debounce window: opens within this window are treated as the same view
+// (filters out preview+open double counts and Apple Mail pre-fetch noise)
+const DEBOUNCE_MS = 5 * 60 * 1000; // 5 minutes
+
 async function trackOpen(leadId: string, templateId: string | null) {
-  const now = new Date().toISOString();
+  const now = new Date();
+  const nowIso = now.toISOString();
 
   // Fetch current lead
   const { data: lead } = await supabase
@@ -40,8 +45,18 @@ async function trackOpen(leadId: string, templateId: string | null) {
 
   if (!lead) return;
 
+  // If last open was within the debounce window, just update the timestamp
+  // — don't increment count or add a new note
+  const lastOpenedAt = lead.last_opened_at ? new Date(lead.last_opened_at) : null;
+  const isDuplicate = lastOpenedAt && now.getTime() - lastOpenedAt.getTime() < DEBOUNCE_MS;
+
+  if (isDuplicate) {
+    await supabase.from("leads").update({ last_opened_at: nowIso }).eq("id", leadId);
+    return;
+  }
+
   const opens = (lead.email_opens || 0) + 1;
-  const openNote = `Email${templateId ? ` (${templateId})` : ""} opened ${new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}`;
+  const openNote = `Email${templateId ? ` (${templateId})` : ""} opened ${now.toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}`;
   const existingNotes = lead.notes || "";
   const updatedNotes = existingNotes ? `${existingNotes}\n${openNote}` : openNote;
 
@@ -49,7 +64,7 @@ async function trackOpen(leadId: string, templateId: string | null) {
     .from("leads")
     .update({
       email_opens: opens,
-      last_opened_at: now,
+      last_opened_at: nowIso,
       notes: updatedNotes,
     })
     .eq("id", leadId);
