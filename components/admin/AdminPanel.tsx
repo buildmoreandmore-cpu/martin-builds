@@ -673,6 +673,10 @@ export default function AdminPanel() {
   const [industryModalItems, setIndustryModalItems] = useState<{ title: string; desc: string }[]>([{ title: "", desc: "" }, { title: "", desc: "" }, { title: "", desc: "" }]);
   const [industryModalGenerating, setIndustryModalGenerating] = useState(false);
   const [industryModalSaving, setIndustryModalSaving] = useState(false);
+  // Email queue
+  type QueueItem = { id: string; lead_id: string; template_id: string | null; type: string | null; scheduled_for: string; sent_at: string | null; status: string; error: string | null; created_at: string };
+  const [emailQueue, setEmailQueue] = useState<QueueItem[]>([]);
+  const [showQueueView, setShowQueueView] = useState(false);
 
   const fetchLeads = useCallback(async () => {
     setLeadsLoading(true);
@@ -746,6 +750,29 @@ export default function AdminPanel() {
       }
     } catch { /* ignore */ }
   }, []);
+
+  const fetchQueue = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/leads/queue");
+      if (res.ok) {
+        const data = await res.json();
+        setEmailQueue(data.queue || []);
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  async function cancelQueueItem(id: string) {
+    try {
+      const res = await fetch("/api/admin/leads/queue", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) {
+        setEmailQueue((prev) => prev.map((q) => (q.id === id ? { ...q, status: "cancelled" } : q)));
+      }
+    } catch { /* ignore */ }
+  }
 
   // Set industry on a lead — if no pain points exist, open modal to generate
   async function setLeadIndustry(leadId: string, industry: string) {
@@ -846,18 +873,47 @@ export default function AdminPanel() {
 
   async function sendCompose() {
     if (!composeMessage.trim() || composeTargets.length === 0) return;
-    // Find which template index was used (for sequence tracking)
     const templateIdx = EMAIL_TEMPLATES.findIndex((t) => t.id === composeTemplate);
+    const isDrip = ["A", "B", "C", "D", "E"].includes(composeTemplate);
+
+    // Bulk sends (>1 lead) go through the queue with scheduled delivery across send windows
+    if (composeTargets.length > 1) {
+      setComposeSending(true);
+      try {
+        const res = await fetch("/api/admin/leads/queue", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lead_ids: composeTargets.map((l) => l.id),
+            ...(isDrip
+              ? { template_id: composeTemplate, sequence_step: templateIdx >= 0 ? templateIdx + 1 : undefined }
+              : { type: "custom", custom_subject: composeSubject, custom_message: composeMessage }),
+          }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          alert(`Queued ${data.queued} emails — they'll send across the next few business days during morning windows. View the queue from the leads page.`);
+          await fetchQueue();
+        } else {
+          alert("Failed to queue emails. Try again.");
+        }
+      } catch {
+        alert("Failed to queue emails. Try again.");
+      }
+      setComposeSending(false);
+      setShowCompose(false);
+      setSelectedLeads(new Set());
+      return;
+    }
+
+    // Single send: immediate
     setComposeSending(true);
     setComposeProgress(0);
-    // 1.5s delay between sends when bulk sending (>1 lead) for deliverability
-    const throttleMs = composeTargets.length > 1 ? 1500 : 0;
     for (let i = 0; i < composeTargets.length; i++) {
       const lead = composeTargets[i];
       setComposeProgress(i + 1);
       try {
         const newStep = templateIdx >= 0 ? templateIdx + 1 : (lead.sequence_step || 0) + 1;
-        const isDrip = ["A", "B", "C", "D", "E"].includes(composeTemplate);
         const res = await fetch("/api/admin/leads/send-followup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -883,10 +939,6 @@ export default function AdminPanel() {
           }));
         }
       } catch { /* continue */ }
-      // Delay between sends to avoid Gmail rate limits and look more natural
-      if (throttleMs > 0 && i < composeTargets.length - 1) {
-        await new Promise((r) => setTimeout(r, throttleMs));
-      }
     }
     setComposeSending(false);
     setShowCompose(false);
@@ -1312,8 +1364,9 @@ export default function AdminPanel() {
       fetchReports();
       fetchLeads();
       fetchIndustryPains();
+      fetchQueue();
     }
-  }, [authed, fetchProjects, fetchAutomation, fetchAgents, fetchReports, fetchLeads, fetchIndustryPains]);
+  }, [authed, fetchProjects, fetchAutomation, fetchAgents, fetchReports, fetchLeads, fetchIndustryPains, fetchQueue]);
 
   /* ─── Login ─── */
   async function handleLogin(e: FormEvent) {
@@ -2885,7 +2938,22 @@ export default function AdminPanel() {
                   style={{ display: "none" }}
                   onChange={(e) => { const f = e.target.files?.[0]; if (f) handleCSVImport(f); }}
                 />
-                <span style={{ fontSize: 11, color: DIM, marginLeft: "auto" }}>{getFilteredLeads().length} leads</span>
+                {(() => {
+                  const today = new Date().toDateString();
+                  const sentToday = emailQueue.filter((q) => q.sent_at && new Date(q.sent_at).toDateString() === today).length;
+                  const queuedToday = emailQueue.filter((q) => q.status === "queued" && new Date(q.scheduled_for).toDateString() === today).length;
+                  const queuedTotal = emailQueue.filter((q) => q.status === "queued").length;
+                  return (
+                    <button
+                      onClick={() => { setShowQueueView(true); fetchQueue(); }}
+                      style={{ padding: "4px 10px", background: "rgba(96,165,250,0.1)", border: `1px solid rgba(96,165,250,0.3)`, color: "#60a5fa", borderRadius: 4, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", marginLeft: "auto", whiteSpace: "nowrap" as const }}
+                      title="View email send queue"
+                    >
+                      {sentToday}/10 today · {queuedTotal} queued
+                    </button>
+                  );
+                })()}
+                <span style={{ fontSize: 11, color: DIM }}>{getFilteredLeads().length} leads</span>
               </div>
             </div>
 
@@ -2922,6 +2990,55 @@ export default function AdminPanel() {
                 <button onClick={() => setSelectedLeads(new Set())} style={{ padding: "5px 12px", background: "transparent", color: DIM, border: `1px solid ${BORDER}`, borderRadius: 4, fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}>
                   Clear
                 </button>
+              </div>
+            )}
+
+            {/* Email Queue View */}
+            {showQueueView && (
+              <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
+                <div style={{ background: CARD_BG, border: `1px solid ${BORDER}`, borderRadius: 12, padding: "clamp(1.25rem, 4vw, 2rem)", maxWidth: 720, width: "100%", maxHeight: "90vh", overflow: "auto" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                    <h3 style={{ fontSize: 16, fontWeight: 700, color: TEXT, margin: 0 }}>Email Send Queue</h3>
+                    <button onClick={() => setShowQueueView(false)} style={{ background: "transparent", border: `1px solid ${BORDER}`, color: DIM, borderRadius: 4, padding: "4px 10px", fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}>Close</button>
+                  </div>
+                  {emailQueue.length === 0 ? (
+                    <p style={{ fontSize: 13, color: DIM, textAlign: "center", padding: "2rem 0" }}>No emails in queue. Bulk-send from the leads page to schedule sends.</p>
+                  ) : (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                      {emailQueue.slice(0, 100).map((q) => {
+                        const lead = leads.find((l) => l.id === q.lead_id);
+                        const scheduledDate = new Date(q.scheduled_for);
+                        const isPast = scheduledDate.getTime() < Date.now();
+                        const statusColors: Record<string, { bg: string; color: string }> = {
+                          queued: { bg: "rgba(96,165,250,0.1)", color: "#60a5fa" },
+                          sent: { bg: "rgba(74,222,128,0.1)", color: "#4ade80" },
+                          failed: { bg: "rgba(255,68,68,0.1)", color: "#ff4444" },
+                          cancelled: { bg: "rgba(136,136,136,0.1)", color: DIM },
+                          skipped: { bg: "rgba(136,136,136,0.1)", color: DIM },
+                        };
+                        const sc = statusColors[q.status] || statusColors.queued;
+                        return (
+                          <div key={q.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 10px", background: BG, border: `1px solid ${BORDER}`, borderRadius: 6, fontSize: 12 }}>
+                            <span style={{ ...s.badge, background: sc.bg, color: sc.color, fontSize: 9 }}>{q.status}</span>
+                            <span style={{ color: TEXT, fontWeight: 600, minWidth: 100 }}>{lead?.name || q.lead_id.slice(0, 8)}</span>
+                            <span style={{ color: DIM, fontSize: 11 }}>{q.template_id ? `Template ${q.template_id}` : (q.type || "custom")}</span>
+                            <span style={{ color: isPast && q.status === "queued" ? "#ff4444" : DIM, fontSize: 11, marginLeft: "auto" }}>
+                              {scheduledDate.toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                            </span>
+                            {q.status === "queued" && (
+                              <button
+                                onClick={() => cancelQueueItem(q.id)}
+                                style={{ background: "transparent", border: `1px solid rgba(255,68,68,0.2)`, color: "#ff4444", borderRadius: 3, padding: "2px 8px", fontSize: 10, cursor: "pointer", fontFamily: "inherit" }}
+                              >
+                                Cancel
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 

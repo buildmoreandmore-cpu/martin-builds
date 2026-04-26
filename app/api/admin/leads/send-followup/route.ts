@@ -132,54 +132,11 @@ async function getIndustryData(industry?: string | null) {
 /* ─── Drip Template A — Warm Intro (Day 0) ─── */
 async function buildDripA(firstName: string, firmName: string, industry?: string | null, leadId?: string): Promise<string> {
   const ind = await getIndustryData(industry);
-  const demoLink = trackLink("https://martinbuilds.ai/demo", leadId, "demos");
+  const calLink = trackLink("https://cal.com/martin-builds/15min", leadId, "book-call");
   return shell(`
 <h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
 
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
-This isn&rsquo;t a sales email and it&rsquo;s not urgent &mdash; but it might be important for how <strong style="color:#f5f5f0;">${firmName}</strong> runs next year.
-</p>
-
-<p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
-My name is Francis with martin.builds and I help businesses like yours simplify the workflows that eat up your team&rsquo;s time &mdash; ${ind.pains}, all of it.
-</p>
-
-<p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 24px 0;">
-Most owners I talk to already know which process is costing them the most hours. They just haven&rsquo;t had a reason to fix it yet.
-</p>
-
-<!-- What I'd build for them -->
-<div style="background:#111;border:1px solid #222;border-radius:12px;padding:24px;margin-bottom:24px;">
-<h3 style="font-size:12px;color:#c8ff00;margin:0 0 16px 0;text-transform:uppercase;letter-spacing:1.5px;">What I&rsquo;d build for ${firmName}</h3>
-<table style="width:100%;border-collapse:collapse;">
-${ind.items.map((item, i) => `<tr>
-<td style="width:36px;vertical-align:top;padding:8px 0;"><div style="width:28px;height:28px;border-radius:50%;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:13px;line-height:28px;text-align:center;">${i + 1}</div></td>
-<td style="padding:10px 0 10px 12px;color:#ccc;font-size:14px;line-height:1.5;"><strong style="color:#f5f5f0;">${item.title}</strong> &mdash; ${item.desc}</td>
-</tr>${i < ind.items.length - 1 ? '<tr><td colspan="2" style="padding:0;"><div style="height:1px;background:#222;"></div></td></tr>' : ""}`).join("\n")}
-</table>
-</div>
-
-<p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 24px 0;">
-Here are a few working demos of what this looks like.
-</p>
-
-<div style="text-align:center;margin-bottom:32px;">
-<a href="${demoLink}" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">See Live Demos</a>
-</div>
-
-<p style="color:#888;font-size:13px;line-height:1.6;margin:0 0 0 0;">
-If anything feels familiar, I&rsquo;d enjoy a conversation.
-</p>
-`, { preheaderText: `Not a sales email — just a few ideas for ${firmName}`, leadId });
-}
-
-/* ─── Drip Template B — Pain + Demo (Day 5) ─── */
-function buildDripB(firstName: string, _biz?: string, _ind?: string | null, leadId?: string): string {
-  const demoLink = trackLink("https://martinbuilds.ai/demo", leadId, "demos");
-  return shell(`
-<h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
-
-<p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 24px 0;">
 Every business owner I talk to says some version of the same thing:
 </p>
 
@@ -191,7 +148,39 @@ Every business owner I talk to says some version of the same thing:
 </div>
 
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
-All the steps, all the clicks &mdash; and knowing there&rsquo;s a better way but not having the time or the $50K an agency would charge to fix it.
+I&rsquo;m Francis with martin.builds and I help businesses like <strong style="color:#f5f5f0;">${firmName}</strong> simplify the workflows that eat up your team&rsquo;s time &mdash; ${ind.pains}, all of it.
+</p>
+
+<p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 24px 0;">
+If that sounds familiar, I&rsquo;d love 15 minutes to hear how your team runs things today:
+</p>
+
+<div style="text-align:center;margin-bottom:24px;">
+<a href="${calLink}" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">Book 15 Minutes</a>
+</div>
+
+<p style="color:#888;font-size:14px;line-height:1.7;margin:0;padding-top:16px;border-top:1px solid #222;">
+Not ready for a call? Just reply with the one workflow that eats the most time and I&rsquo;ll send you a custom demo built around it.
+</p>
+`, { preheaderText: `Every business owner I talk to says some version of the same thing...`, leadId });
+}
+
+/* ─── Drip Template B — The Demo Reveal (Day 5) ─── */
+function buildDripB(firstName: string, firmName?: string, _ind?: string | null, leadId?: string): string {
+  const demoLink = trackLink("https://martinbuilds.ai/demo", leadId, "demos");
+  return shell(`
+<h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
+
+<p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
+Last time I asked if &ldquo;there has to be an easier way&rdquo; sounded familiar. Here&rsquo;s what &ldquo;easier&rdquo; actually looks like in practice:
+</p>
+
+<div style="text-align:center;margin-bottom:24px;">
+<a href="${demoLink}" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">See Live Demos</a>
+</div>
+
+<p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
+These are real working tools I&rsquo;ve built &mdash; client portals, operations dashboards, AI assistants. Yours would be <strong style="color:#f5f5f0;">custom to how ${firmName || "your business"} actually runs</strong>, not a template.
 </p>
 
 <!-- The fix -->
@@ -447,16 +436,37 @@ ${skipSig ? "" : EMAIL_SIGNATURE}
 }
 
 /* ─── Drip template map ─── */
+type SubjectFn = (firstName: string, firmName: string) => string;
+type SubjectOption = string | SubjectFn;
 const DRIP_TEMPLATES: Record<string, {
-  subject: string | string[] | ((fn: string) => string);
+  subject: SubjectOption | SubjectOption[];
   build: (fn: string, biz: string, industry?: string | null, leadId?: string) => string | Promise<string>;
 }> = {
-  A: { subject: "hello from martin.builds", build: buildDripA },
-  B: { subject: ["there has to be an easier way", "what if it only took 2 weeks?"], build: buildDripB },
+  A: {
+    subject: [
+      "hello from martin.builds",
+      "Francis from martin.builds",
+      (_fn, biz) => `for ${biz}`,
+      "how many clicks does one task take your team?",
+    ],
+    build: buildDripA,
+  },
+  B: {
+    subject: [
+      "here's what \"easier\" actually looks like",
+      "the demo I mentioned",
+    ],
+    build: buildDripB,
+  },
   C: { subject: (fn) => `quick question for ${fn}`, build: buildDripC },
   D: { subject: ["15 minutes this week?", "quick working session?"], build: buildDripD },
   E: { subject: "re: hello from martin.builds", build: buildDripE },
 };
+
+function resolveSubject(option: SubjectOption | SubjectOption[], firstName: string, firmName: string): string {
+  const picked = Array.isArray(option) ? option[Math.floor(Math.random() * option.length)] : option;
+  return typeof picked === "function" ? picked(firstName, firmName) : picked;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -483,12 +493,7 @@ export async function POST(req: NextRequest) {
     if (template_id && DRIP_TEMPLATES[template_id]) {
       const drip = DRIP_TEMPLATES[template_id];
       html = await drip.build(firstName, bizName, lead_industry, lead_id);
-      // A/B subject line: if array, pick randomly
-      if (Array.isArray(drip.subject)) {
-        subject = drip.subject[Math.floor(Math.random() * drip.subject.length)];
-      } else {
-        subject = typeof drip.subject === "function" ? drip.subject(firstName) : drip.subject;
-      }
+      subject = resolveSubject(drip.subject, firstName, bizName);
     } else if (type === "custom" && custom_message) {
       const processedSubject = (custom_subject || "Quick question")
         .replace(/\{\{firstName\}\}/g, firstName)
