@@ -2825,6 +2825,8 @@ export default function AdminPanel() {
                 { label: "Total", value: leads.length, color: TEXT },
                 { label: "New", value: leads.filter((l) => l.status === "new").length, color: "#4ade80" },
                 { label: "Contacted", value: leads.filter((l) => l.status === "contacted").length, color: "#60a5fa" },
+                { label: "Opened", value: leads.filter((l) => (l.email_opens || 0) > 0).length, color: "#60a5fa" },
+                { label: "Clicked", value: leads.filter((l) => (l.link_clicks || 0) > 0).length, color: "#c084fc" },
                 { label: "Qualified", value: leads.filter((l) => l.status === "qualified").length, color: "#c084fc" },
                 { label: "Proposal", value: leads.filter((l) => l.status === "proposal_sent").length, color: "#facc15" },
                 { label: "Won", value: leads.filter((l) => l.status === "won").length, color: GREEN },

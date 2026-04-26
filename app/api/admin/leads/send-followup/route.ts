@@ -133,6 +133,7 @@ async function getIndustryData(industry?: string | null) {
 async function buildDripA(firstName: string, firmName: string, industry?: string | null, leadId?: string): Promise<string> {
   const ind = await getIndustryData(industry);
   const calLink = trackLink("https://cal.com/martin-builds/15min", leadId, "book-call");
+  const siteLink = trackLink("https://martinbuilds.ai", leadId, "site");
   return shell(`
 <h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
 
@@ -148,7 +149,7 @@ Every business owner I talk to says some version of the same thing:
 </div>
 
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
-I&rsquo;m Francis with martin.builds and I help businesses like <strong style="color:#f5f5f0;">${firmName}</strong> simplify the workflows that eat up your team&rsquo;s time &mdash; ${ind.pains}, all of it.
+I&rsquo;m Francis with <a href="${siteLink}" style="color:#c8ff00;text-decoration:none;border-bottom:1px solid rgba(200,255,0,0.4);">martin.builds</a> and I help businesses like <strong style="color:#f5f5f0;">${firmName}</strong> simplify the workflows that eat up your team&rsquo;s time &mdash; ${ind.pains}, all of it.
 </p>
 
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 24px 0;">
