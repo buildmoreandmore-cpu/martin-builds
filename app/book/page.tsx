@@ -120,12 +120,35 @@ export default function BookPage() {
 
       <div style={{ maxWidth: 720, margin: "0 auto", position: "relative", zIndex: 1 }}>
         {/* Header */}
-        <div style={{ marginBottom: 40, textAlign: "center" }} className="fade-in">
-          <h1 style={{ fontSize: "clamp(28px,5vw,40px)", fontWeight: 800, letterSpacing: "-1px", margin: 0 }}>
-            <span style={{ color: GREEN }}>m</span>artin<span style={{ color: GREEN }}>.</span>builds
-          </h1>
+        <div style={{ marginBottom: 24, textAlign: "center" }} className="fade-in">
+          <a href="https://martinbuilds.ai" style={{ textDecoration: "none", color: "inherit", display: "inline-block" }}>
+            <h1 style={{ fontSize: "clamp(28px,5vw,40px)", fontWeight: 800, letterSpacing: "-1px", margin: 0 }}>
+              <span style={{ color: GREEN }}>m</span>artin<span style={{ color: GREEN }}>.</span>builds
+            </h1>
+          </a>
           <p style={{ fontSize: 12, color: DIM, marginTop: 8, textTransform: "uppercase", letterSpacing: 2 }}>Book a 15-min discovery call</p>
         </div>
+
+        {/* Context card — shown only on first step */}
+        {step === "pick-date" && (
+          <div className="fade-in" style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: "20px 24px", marginBottom: 32 }}>
+            <p style={{ fontSize: 14, color: TEXT, lineHeight: 1.7, margin: "0 0 12px 0" }}>
+              I build custom dashboards, client portals, and AI tools for small businesses — fast (2 weeks), fixed-price, and you own the code.
+            </p>
+            <p style={{ fontSize: 13, color: DIM, lineHeight: 1.6, margin: "0 0 14px 0" }}>
+              On this call: tell me how your team runs things today. I&apos;ll tell you straight up whether automation is worth it for you, and roughly what it would look like.
+            </p>
+            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center" }}>
+              <a href="https://martinbuilds.ai/demo" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: GREEN, textDecoration: "none", borderBottom: `1px solid ${GREEN}40`, paddingBottom: 1 }}>
+                See live demos →
+              </a>
+              <span style={{ fontSize: 12, color: DIM }}>·</span>
+              <a href="https://martinbuilds.ai" style={{ fontSize: 13, color: DIM, textDecoration: "none" }}>
+                martinbuilds.ai
+              </a>
+            </div>
+          </div>
+        )}
 
         {/* Stepper */}
         <div style={{ display: "flex", gap: 6, justifyContent: "center", marginBottom: 32 }}>

@@ -541,7 +541,10 @@ export default function AdminPanel() {
   const [loginLoading, setLoginLoading] = useState(false);
 
   // Tab
-  const [activeTab, setActiveTab] = useState<"invoices" | "automate" | "agents" | "reports" | "leads">("invoices");
+  const [activeTab, setActiveTab] = useState<"invoices" | "automate" | "agents" | "reports" | "leads" | "bookings">("invoices");
+  type Booking = { id: string; start_at: string; end_at: string; name: string; email: string; business: string | null; message: string | null; timezone: string | null; status: string; created_at: string };
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookingsLoading, setBookingsLoading] = useState(false);
 
   // Automation
   const [autoClients, setAutoClients] = useState<AutoClient[]>([]);
@@ -760,6 +763,32 @@ export default function AdminPanel() {
       }
     } catch { /* ignore */ }
   }, []);
+
+  const fetchBookings = useCallback(async () => {
+    setBookingsLoading(true);
+    try {
+      const res = await fetch("/api/admin/bookings");
+      if (res.ok) {
+        const data = await res.json();
+        setBookings(data.bookings || []);
+      }
+    } catch { /* ignore */ }
+    setBookingsLoading(false);
+  }, []);
+
+  async function cancelBooking(id: string) {
+    if (!confirm("Cancel this booking? The attendee won't be auto-notified.")) return;
+    try {
+      const res = await fetch("/api/admin/bookings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: "cancelled" }),
+      });
+      if (res.ok) {
+        setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status: "cancelled" } : b)));
+      }
+    } catch { /* ignore */ }
+  }
 
   async function cancelQueueItem(id: string) {
     try {
@@ -1365,8 +1394,9 @@ export default function AdminPanel() {
       fetchLeads();
       fetchIndustryPains();
       fetchQueue();
+      fetchBookings();
     }
-  }, [authed, fetchProjects, fetchAutomation, fetchAgents, fetchReports, fetchLeads, fetchIndustryPains, fetchQueue]);
+  }, [authed, fetchProjects, fetchAutomation, fetchAgents, fetchReports, fetchLeads, fetchIndustryPains, fetchQueue, fetchBookings]);
 
   /* ─── Login ─── */
   async function handleLogin(e: FormEvent) {
@@ -1746,7 +1776,7 @@ export default function AdminPanel() {
 
       {/* Tab Navigation */}
       <div style={{ display: "flex", borderBottom: `1px solid ${BORDER}`, padding: "0 clamp(12px, 4vw, 24px)" }}>
-        {(["invoices", "leads", "automate", "agents", "reports"] as const).map((t) => (
+        {(["invoices", "leads", "bookings", "automate", "agents", "reports"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setActiveTab(t)}
@@ -1764,7 +1794,7 @@ export default function AdminPanel() {
               letterSpacing: 0.5,
             }}
           >
-            {t === "invoices" ? "Invoices" : t === "leads" ? "Leads" : t === "automate" ? "Automate" : t === "agents" ? "AI Agents" : "Reports"}
+            {t === "invoices" ? "Invoices" : t === "leads" ? "Leads" : t === "bookings" ? "Bookings" : t === "automate" ? "Automate" : t === "agents" ? "AI Agents" : "Reports"}
           </button>
         ))}
       </div>
@@ -2817,6 +2847,98 @@ export default function AdminPanel() {
         )}
 
         {/* ─── LEADS TAB ─── */}
+        {activeTab === "bookings" && (
+          <>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
+              <div>
+                <h2 style={{ fontSize: 20, fontWeight: 700, color: TEXT, margin: 0 }}>Bookings</h2>
+                <p style={{ fontSize: 12, color: DIM, margin: "4px 0 0 0" }}>15-min discovery calls booked through martinbuilds.ai/book</p>
+              </div>
+              <button onClick={fetchBookings} disabled={bookingsLoading} style={{ ...s.logoutBtn, fontSize: 11, color: GREEN, borderColor: GREEN }}>
+                {bookingsLoading ? "..." : "Refresh"}
+              </button>
+            </div>
+
+            {/* Summary cards */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: 8, marginBottom: 24 }}>
+              {(() => {
+                const now = Date.now();
+                const upcoming = bookings.filter((b) => b.status === "confirmed" && new Date(b.start_at).getTime() >= now);
+                const past = bookings.filter((b) => b.status === "confirmed" && new Date(b.start_at).getTime() < now);
+                const cancelled = bookings.filter((b) => b.status === "cancelled");
+                const today = new Date().toDateString();
+                const todayCount = bookings.filter((b) => b.status === "confirmed" && new Date(b.start_at).toDateString() === today).length;
+                return [
+                  { label: "Upcoming", value: upcoming.length, color: GREEN },
+                  { label: "Today", value: todayCount, color: "#facc15" },
+                  { label: "Past", value: past.length, color: DIM },
+                  { label: "Cancelled", value: cancelled.length, color: "#ff4444" },
+                ].map((c) => (
+                  <div key={c.label} style={{ ...s.card, textAlign: "center", padding: "clamp(8px, 2vw, 14px) 6px" }}>
+                    <div style={{ fontSize: "clamp(18px, 4vw, 22px)", fontWeight: 700, color: c.color }}>{c.value}</div>
+                    <div style={{ fontSize: 10, color: DIM, marginTop: 2 }}>{c.label}</div>
+                  </div>
+                ));
+              })()}
+            </div>
+
+            {/* Booking list */}
+            {bookings.length === 0 ? (
+              <div style={{ ...s.card, textAlign: "center", padding: "3rem 1rem", color: DIM, fontSize: 14 }}>
+                No bookings yet. Share <strong style={{ color: GREEN }}>martinbuilds.ai/book</strong> to start collecting calls.
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {bookings.map((b) => {
+                  const startMs = new Date(b.start_at).getTime();
+                  const isPast = startMs < Date.now();
+                  const isToday = new Date(b.start_at).toDateString() === new Date().toDateString();
+                  const tz = b.timezone || "America/New_York";
+                  const whenText = new Date(b.start_at).toLocaleString("en-US", { timeZone: tz, weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+                  const myWhen = new Date(b.start_at).toLocaleString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit", timeZoneName: "short" });
+                  const statusColors: Record<string, { bg: string; color: string }> = {
+                    confirmed: { bg: "rgba(74,222,128,0.1)", color: "#4ade80" },
+                    cancelled: { bg: "rgba(255,68,68,0.1)", color: "#ff4444" },
+                  };
+                  const sc = statusColors[b.status] || statusColors.confirmed;
+                  return (
+                    <div key={b.id} style={{ ...s.card, padding: "clamp(12px, 3vw, 16px)", display: "flex", flexDirection: "column", gap: 8, opacity: b.status === "cancelled" ? 0.5 : 1, borderColor: isToday && b.status === "confirmed" ? GREEN : BORDER }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                        <span style={{ ...s.badge, background: sc.bg, color: sc.color }}>{b.status}</span>
+                        {isToday && b.status === "confirmed" && <span style={{ ...s.badge, background: "rgba(250,204,21,0.15)", color: "#facc15" }}>TODAY</span>}
+                        {isPast && b.status === "confirmed" && <span style={{ ...s.badge, background: "rgba(136,136,136,0.1)", color: DIM }}>past</span>}
+                        <h3 style={{ ...s.cardTitle, margin: 0 }}>{b.name}</h3>
+                        {b.business && <span style={{ fontSize: 12, color: DIM }}>· {b.business}</span>}
+                      </div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center", fontSize: 13, color: DIM }}>
+                        <span style={{ color: TEXT, fontWeight: 600 }}>{whenText}</span>
+                        <span>(their TZ)</span>
+                        <span style={{ color: GREEN }}>· {myWhen}</span>
+                        <span>(yours)</span>
+                      </div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center", fontSize: 12, color: DIM }}>
+                        <a href={`mailto:${b.email}`} style={{ color: TEXT, textDecoration: "none", borderBottom: `1px dashed ${BORDER}` }}>{b.email}</a>
+                      </div>
+                      {b.message && (
+                        <div style={{ fontSize: 13, color: "#ccc", padding: "8px 12px", background: BG, border: `1px solid ${BORDER}`, borderRadius: 6, marginTop: 4 }}>
+                          <strong style={{ color: DIM, fontSize: 11, textTransform: "uppercase", letterSpacing: 1 }}>Note:</strong> <span style={{ marginLeft: 6 }}>{b.message}</span>
+                        </div>
+                      )}
+                      {b.status === "confirmed" && !isPast && (
+                        <div style={{ marginTop: 4 }}>
+                          <button onClick={() => cancelBooking(b.id)} style={{ padding: "4px 10px", background: "transparent", color: "#ff4444", border: `1px solid rgba(255,68,68,0.2)`, borderRadius: 3, fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}>
+                            Cancel booking
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </>
+        )}
+
         {activeTab === "leads" && (
           <>
             {/* Summary cards */}
