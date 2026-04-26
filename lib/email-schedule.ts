@@ -1,83 +1,63 @@
 /**
- * Email scheduling — spread sends across send windows and days
- * to look like a human, not a script.
+ * Email scheduling — spread sends across business days.
+ *
+ * Vercel Hobby tier only allows daily crons, so within-day window distribution
+ * isn't possible without an external pinger. Instead we schedule each email for
+ * a random morning time on a future business day, and the daily cron at 8 AM ET
+ * processes everything that's due. This keeps sends out of bulk-blast territory
+ * (max ~10/day, all in the morning when business inboxes are active).
+ *
+ * To get true within-day window spread, upgrade to Vercel Pro and switch the
+ * cron in vercel.json to "* /5 * * * *".
  */
 
-// Send windows in Eastern Time (most US business activity)
-// Each window is [startHour, startMinute, endHour, endMinute]
-const SEND_WINDOWS: Array<[number, number, number, number]> = [
-  [7, 30, 8, 0],    // 7:30-8:00 AM ET
-  [9, 0, 9, 30],    // 9:00-9:30 AM ET
-  [11, 0, 11, 30],  // 11:00-11:30 AM ET
-];
-
 const MAX_PER_DAY = 10;
-const ET_OFFSET_HOURS = -5; // EST. (Doesn't account for DST — close enough for warmup phase.)
+// Send window in Eastern Time — 7:30 AM to 11:30 AM ET
+const WINDOW_START_MIN = 7 * 60 + 30; // 7:30 AM ET
+const WINDOW_END_MIN = 11 * 60 + 30;  // 11:30 AM ET
+const ET_OFFSET_HOURS = -5; // EST. Doesn't account for DST — close enough during warmup.
 
 /**
- * Generate scheduled send times for N emails, spread across send windows
- * and days. Returns ISO timestamp strings.
+ * Generate scheduled send times for N emails, spread across business days.
+ * Each email gets a random time in the morning window. Returns ISO strings.
  */
 export function generateSchedule(count: number, startFrom: Date = new Date()): string[] {
   const schedule: string[] = [];
-  let currentDate = roundUpToNextBusinessDay(startFrom);
+  let currentDate = nextEligibleDay(startFrom);
   let dayCount = 0;
-  let windowIdx = 0;
-  let perWindowCount = 0;
-  const perWindow = Math.ceil(MAX_PER_DAY / SEND_WINDOWS.length);
 
   for (let i = 0; i < count; i++) {
-    // If we've filled today's quota, move to next business day
     if (dayCount >= MAX_PER_DAY) {
       currentDate = nextBusinessDay(currentDate);
       dayCount = 0;
-      windowIdx = 0;
-      perWindowCount = 0;
     }
 
-    // If current window is full, move to next window
-    if (perWindowCount >= perWindow && windowIdx < SEND_WINDOWS.length - 1) {
-      windowIdx++;
-      perWindowCount = 0;
-    }
-
-    const [sH, sM, eH, eM] = SEND_WINDOWS[windowIdx];
-    const startMin = sH * 60 + sM;
-    const endMin = eH * 60 + eM;
-    // Random minute within the window
-    const pickMin = startMin + Math.floor(Math.random() * (endMin - startMin));
+    // Random minute within the morning window
+    const pickMin = WINDOW_START_MIN + Math.floor(Math.random() * (WINDOW_END_MIN - WINDOW_START_MIN));
     const hour = Math.floor(pickMin / 60);
     const minute = pickMin % 60;
     const second = Math.floor(Math.random() * 60);
 
-    // Build the scheduled time in ET, convert to UTC
     const sendDate = new Date(Date.UTC(
       currentDate.getUTCFullYear(),
       currentDate.getUTCMonth(),
       currentDate.getUTCDate(),
-      hour - ET_OFFSET_HOURS, // ET → UTC
+      hour - ET_OFFSET_HOURS,
       minute,
       second,
     ));
 
-    // If the computed time is already in the past (e.g. queueing at 2pm for today),
-    // skip ahead to the next valid window
+    // If computed time is in the past (e.g. queueing today after 11:30 AM ET),
+    // move to next business day
     if (sendDate.getTime() < Date.now()) {
-      // Move to next window, or next day if we exhausted today
-      windowIdx++;
-      perWindowCount = 0;
-      if (windowIdx >= SEND_WINDOWS.length) {
-        currentDate = nextBusinessDay(currentDate);
-        dayCount = 0;
-        windowIdx = 0;
-      }
-      i--; // retry this lead
+      currentDate = nextBusinessDay(currentDate);
+      dayCount = 0;
+      i--; // retry
       continue;
     }
 
     schedule.push(sendDate.toISOString());
     dayCount++;
-    perWindowCount++;
   }
 
   return schedule;
@@ -91,8 +71,8 @@ function nextBusinessDay(date: Date): Date {
   return next;
 }
 
-function roundUpToNextBusinessDay(date: Date): Date {
-  // If today is weekend, advance to Monday
+function nextEligibleDay(date: Date): Date {
+  // If weekend, advance to Monday
   if (date.getUTCDay() === 0) {
     const next = new Date(date);
     next.setUTCDate(next.getUTCDate() + 1);
@@ -106,7 +86,7 @@ function roundUpToNextBusinessDay(date: Date): Date {
   return date;
 }
 
-/** Format a schedule for display: "3 today, 4 tomorrow, 3 Wed" */
+/** Format a schedule for display: "3 Mon Apr 27, 4 Tue Apr 28, 3 Wed Apr 29" */
 export function summarizeSchedule(scheduledTimes: string[]): string {
   const byDay = new Map<string, number>();
   for (const iso of scheduledTimes) {
