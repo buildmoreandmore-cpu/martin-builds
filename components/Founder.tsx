@@ -37,26 +37,10 @@ export default function Founder() {
               marginBottom: "1.5rem",
             }}
           >
-            I&apos;m a self-taught builder based in Atlanta. I run martin.builds
-            as a solo studio. No account managers. No offshore team. No
-            handoffs.
-          </p>
-        </ScrollReveal>
-
-        <ScrollReveal>
-          <p
-            style={{
-              fontSize: "clamp(1.1rem, 2vw, 1.3rem)",
-              fontWeight: 400,
-              color: "#f5f5f0",
-              lineHeight: 1.8,
-              marginBottom: "1.5rem",
-            }}
-          >
-            Every site I ship, I built myself. That&apos;s not a limitation —
-            it&apos;s the point. You get one person who knows the business
-            problem, designed the solution, wrote the code, and will answer your
-            message the same day.
+            martin.builds is one operator out of Atlanta who designs, builds,
+            and ships everything personally. The same person who scopes your
+            project writes the code and answers your texts. No account managers.
+            No offshore team. No handoffs.
           </p>
         </ScrollReveal>
 
@@ -70,8 +54,24 @@ export default function Founder() {
               marginBottom: "1.5rem",
             }}
           >
-            I&apos;ve shipped 10+ products across staffing, energy, consulting,
-            and retail. Every one in under 14 days.
+            10+ products shipped across staffing, energy, consulting, and
+            retail. Every one in under 14 days.
+          </p>
+        </ScrollReveal>
+
+        <ScrollReveal>
+          <p
+            style={{
+              fontSize: "clamp(1.1rem, 2vw, 1.3rem)",
+              fontWeight: 400,
+              color: "#f5f5f0",
+              lineHeight: 1.8,
+              marginBottom: "1.5rem",
+            }}
+          >
+            That&apos;s not a limitation — it&apos;s the point. You get one
+            person who knows the business problem, designed the solution, wrote
+            the code, and will answer your message the same day.
           </p>
         </ScrollReveal>
 
