@@ -132,7 +132,7 @@ async function getIndustryData(industry?: string | null) {
 /* ─── Drip Template A — Warm Intro (Day 0) ─── */
 async function buildDripA(firstName: string, firmName: string, industry?: string | null, leadId?: string): Promise<string> {
   const ind = await getIndustryData(industry);
-  const calLink = trackLink("https://cal.com/martin-builds/15min", leadId, "book-call");
+  const calLink = trackLink("https://martinbuilds.ai/book", leadId, "book-call");
   const siteLink = trackLink("https://martinbuilds.ai", leadId, "site");
   return shell(`
 <h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
@@ -253,7 +253,7 @@ No agenda. Just curious.
 /* ─── Drip Template D — Direct Ask (Day 17) ─── */
 function buildDripD(firstName: string, _biz?: string, _ind?: string | null, leadId?: string): string {
   const demoLink = trackLink("https://martinbuilds.ai/demo", leadId, "demos");
-  const calLink = trackLink("https://cal.com/martin-builds/15min", leadId, "book-call");
+  const calLink = trackLink("https://martinbuilds.ai/book", leadId, "book-call");
   return shell(`
 <h2 style="font-size:22px;font-weight:700;color:#f5f5f0;margin:0 0 16px 0;letter-spacing:-0.5px;">Hi ${firstName},</h2>
 
@@ -336,7 +336,7 @@ If any of that sounds relevant, I&rsquo;d love to do a quick 15-minute call to l
 </p>
 
 <div style="text-align:center;margin-bottom:32px;">
-<a href="https://cal.com/martin-builds/15min" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">Book a 15-Min Call</a>
+<a href="https://martinbuilds.ai/book" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">Book a 15-Min Call</a>
 </div>
 `);
   }
@@ -354,7 +354,7 @@ No rush &mdash; just want to make sure I&rsquo;m available if you want to talk t
 </p>
 
 <div style="text-align:center;margin-bottom:32px;">
-<a href="https://cal.com/martin-builds/15min" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">Book a Quick Call</a>
+<a href="https://martinbuilds.ai/book" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">Book a Quick Call</a>
 </div>
 `);
   }
@@ -390,7 +390,7 @@ I build custom dashboards and AI tools for small businesses &mdash; things like 
 </div>
 
 <div style="text-align:center;margin-bottom:32px;">
-<a href="https://cal.com/martin-builds/15min" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">Book a Discovery Call</a>
+<a href="https://martinbuilds.ai/book" style="display:inline-block;padding:14px 32px;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:14px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;">Book a Discovery Call</a>
 </div>
 `);
 }
