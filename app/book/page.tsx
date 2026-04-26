@@ -130,22 +130,6 @@ export default function BookPage() {
           <p style={{ fontSize: 12, color: DIM, marginTop: 8, textTransform: "uppercase", letterSpacing: 2 }}>Book a 15-min discovery call</p>
         </div>
 
-        {/* Visual value prop — shown only on first step */}
-        {step === "pick-date" && (
-          <>
-            <CostAnimation />
-            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center", justifyContent: "center", marginBottom: 32, fontSize: 13 }}>
-              <a href="https://martinbuilds.ai/demo" target="_blank" rel="noopener noreferrer" style={{ color: GREEN, textDecoration: "none", borderBottom: `1px solid ${GREEN}40`, paddingBottom: 1 }}>
-                See live demos →
-              </a>
-              <span style={{ color: DIM }}>·</span>
-              <a href="https://martinbuilds.ai" style={{ color: DIM, textDecoration: "none" }}>
-                martinbuilds.ai
-              </a>
-            </div>
-          </>
-        )}
-
         {/* Stepper */}
         <div style={{ display: "flex", gap: 6, justifyContent: "center", marginBottom: 32 }}>
           {(["pick-date", "pick-time", "details", "success"] as Step[]).map((s, i) => {
@@ -181,6 +165,20 @@ export default function BookPage() {
                   <div style={{ fontSize: 16, fontWeight: 700, marginTop: 4 }}>{d.sub}</div>
                 </button>
               ))}
+            </div>
+
+            {/* Visual value prop — below the calendar */}
+            <div style={{ marginTop: 40 }}>
+              <CostAnimation />
+              <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center", justifyContent: "center", marginTop: 8, fontSize: 13 }}>
+                <a href="https://martinbuilds.ai/demo" target="_blank" rel="noopener noreferrer" style={{ color: GREEN, textDecoration: "none", borderBottom: `1px solid ${GREEN}40`, paddingBottom: 1 }}>
+                  See live demos →
+                </a>
+                <span style={{ color: DIM }}>·</span>
+                <a href="https://martinbuilds.ai" style={{ color: DIM, textDecoration: "none" }}>
+                  martinbuilds.ai
+                </a>
+              </div>
             </div>
           </section>
         )}

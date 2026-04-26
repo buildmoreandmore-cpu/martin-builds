@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
-import { generateSlotsForDate, filterAvailableSlots, isValidBookingDate, type Slot } from "@/lib/booking-availability";
+import { generateSlotsForDate, filterAvailableSlots, isValidBookingDate, looksBusy, type Slot } from "@/lib/booking-availability";
 
 export async function GET(req: NextRequest) {
   const date = req.nextUrl.searchParams.get("date"); // YYYY-MM-DD
@@ -34,5 +34,8 @@ export async function GET(req: NextRequest) {
     end: b.end_at,
   }));
 
-  return NextResponse.json({ slots: filterAvailableSlots(allSlots, booked) });
+  const realAvailable = filterAvailableSlots(allSlots, booked);
+  // Show only slots that aren't real-booked AND aren't fake-busy
+  const visible = realAvailable.filter((s) => !looksBusy(s.start));
+  return NextResponse.json({ slots: visible });
 }

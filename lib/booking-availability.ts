@@ -44,6 +44,20 @@ export function filterAvailableSlots(allSlots: Slot[], bookedSlots: Slot[]): Slo
   return allSlots.filter((s) => !bookedStarts.has(s.start));
 }
 
+/**
+ * Deterministically marks ~55% of slots as "busy" to give the calendar
+ * a healthy-demand feel during the warmup phase. Same slot always returns
+ * the same result so the picker doesn't flicker between page loads.
+ * Only affects the slot picker — does not block actual booking attempts.
+ */
+export function looksBusy(slotIso: string): boolean {
+  let hash = 0;
+  for (let i = 0; i < slotIso.length; i++) {
+    hash = (hash * 31 + slotIso.charCodeAt(i)) >>> 0;
+  }
+  return (hash % 100) < 55;
+}
+
 /** Check if a candidate booking conflicts with existing bookings. */
 export function hasConflict(start: string, bookedSlots: Slot[]): boolean {
   const startMs = new Date(start).getTime();

@@ -8,16 +8,75 @@ const DIM = "#888";
 const CARD = "#0f0f0f";
 const BORDER = "#222";
 
-type App = { name: string; cost: number; emoji: string };
+type IconKey = "calendar" | "users" | "form" | "bolt" | "mail" | "database";
+type App = { name: string; cost: number; icon: IconKey };
 
 const APPS: App[] = [
-  { name: "Scheduling", cost: 16, emoji: "📅" },
-  { name: "CRM", cost: 45, emoji: "👥" },
-  { name: "Forms", cost: 24, emoji: "📝" },
-  { name: "Automation", cost: 30, emoji: "⚡" },
-  { name: "Email Tool", cost: 30, emoji: "✉️" },
-  { name: "Database", cost: 20, emoji: "🗄️" },
+  { name: "Scheduling", cost: 16, icon: "calendar" },
+  { name: "CRM", cost: 45, icon: "users" },
+  { name: "Forms", cost: 24, icon: "form" },
+  { name: "Automation", cost: 30, icon: "bolt" },
+  { name: "Email Tool", cost: 30, icon: "mail" },
+  { name: "Database", cost: 20, icon: "database" },
 ];
+
+function AppIcon({ name, color }: { name: IconKey; color: string }) {
+  const props = {
+    width: 18,
+    height: 18,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: color,
+    strokeWidth: 2,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
+  switch (name) {
+    case "calendar":
+      return (
+        <svg {...props}>
+          <rect x="3" y="4" width="18" height="18" rx="2" />
+          <path d="M16 2v4M8 2v4M3 10h18" />
+        </svg>
+      );
+    case "users":
+      return (
+        <svg {...props}>
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      );
+    case "form":
+      return (
+        <svg {...props}>
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <path d="M14 2v6h6M9 13h6M9 17h6M9 9h2" />
+        </svg>
+      );
+    case "bolt":
+      return (
+        <svg {...props}>
+          <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
+        </svg>
+      );
+    case "mail":
+      return (
+        <svg {...props}>
+          <rect x="2" y="4" width="20" height="16" rx="2" />
+          <path d="m22 7-10 5L2 7" />
+        </svg>
+      );
+    case "database":
+      return (
+        <svg {...props}>
+          <ellipse cx="12" cy="5" rx="9" ry="3" />
+          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+          <path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3" />
+        </svg>
+      );
+  }
+}
 
 const TOTAL = APPS.reduce((sum, a) => sum + a.cost, 0); // 165
 
@@ -112,14 +171,18 @@ export default function CostAnimation() {
                 position: "relative",
               }}
             >
-              <span style={{ fontSize: 18, lineHeight: 1 }}>{app.emoji}</span>
+              <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, flexShrink: 0 }}>
+                <AppIcon name={app.icon} color={DIM} />
+              </span>
               <div style={{ overflow: "hidden", flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 12, color: TEXT, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{app.name}</div>
                 <div style={{ fontSize: 10, color: DIM, fontFamily: "'Space Mono', monospace" }}>${app.cost}/mo</div>
               </div>
               {isRemoved && (
-                <span style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "#ff6666", fontSize: 18, animation: "strike 0.4s ease", pointerEvents: "none" }}>
-                  ✕
+                <span style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", animation: "strike 0.4s ease", pointerEvents: "none" }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff6666" strokeWidth="2.5" strokeLinecap="round">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
                 </span>
               )}
             </div>
@@ -145,8 +208,10 @@ export default function CostAnimation() {
           overflow: "hidden",
         }}
       >
-        <div style={{ width: 38, height: 38, borderRadius: "50%", background: GREEN, color: "#0a0a0a", fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
-          ✓
+        <div style={{ width: 38, height: 38, borderRadius: "50%", background: GREEN, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12l5 5L20 7" />
+          </svg>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 14, color: TEXT, fontWeight: 700 }}>One custom build · <span style={{ color: GREEN }}>You own it</span></div>
