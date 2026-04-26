@@ -13,6 +13,15 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: "/discovery-call",
+        destination: "/book",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
