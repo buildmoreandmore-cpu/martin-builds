@@ -652,6 +652,7 @@ export default function AdminPanel() {
   const [leadFieldValue, setLeadFieldValue] = useState("");
   const [leadSearch, setLeadSearch] = useState("");
   const [industryFilter, setIndustryFilter] = useState<string>("all");
+  const [engagementFilter, setEngagementFilter] = useState<string>("all");
   const [leadSort, setLeadSort] = useState<"newest" | "oldest" | "name" | "last_emailed">("newest");
   // Compose panel
   const [showCompose, setShowCompose] = useState(false);
@@ -941,6 +942,11 @@ export default function AdminPanel() {
         if (leadFilter !== "all" && l.status !== leadFilter) return false;
         if (industryFilter !== "all" && (industryFilter === "untagged" ? l.industry : l.industry !== industryFilter)) return false;
         if (industryFilter === "untagged" && l.industry) return false;
+        if (engagementFilter === "opened" && !(l.email_opens && l.email_opens > 0)) return false;
+        if (engagementFilter === "clicked" && !(l.link_clicks && l.link_clicks > 0)) return false;
+        if (engagementFilter === "unsubscribed" && l.status !== "unsubscribed") return false;
+        if (engagementFilter === "no_email" && l.email && l.email !== "not found") return false;
+        if (engagementFilter === "no_engagement" && ((l.email_opens || 0) > 0 || (l.link_clicks || 0) > 0)) return false;
         if (leadSearch) {
           const q = leadSearch.toLowerCase();
           const match = l.name.toLowerCase().includes(q) || (l.email || "").toLowerCase().includes(q) || (l.business || "").toLowerCase().includes(q) || (l.phone || "").toLowerCase().includes(q);
@@ -2839,6 +2845,18 @@ export default function AdminPanel() {
                   <option value="all">All Industries</option>
                   <option value="untagged">Untagged</option>
                   {INDUSTRIES.map((ind) => <option key={ind} value={ind}>{ind}</option>)}
+                </select>
+                <select
+                  value={engagementFilter}
+                  onChange={(e) => setEngagementFilter(e.target.value)}
+                  style={{ padding: "5px 10px", background: CARD_BG, border: `1px solid ${engagementFilter !== "all" ? GREEN : BORDER}`, color: engagementFilter !== "all" ? GREEN : DIM, borderRadius: 4, fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}
+                >
+                  <option value="all">All Engagement</option>
+                  <option value="opened">Opened email</option>
+                  <option value="clicked">Clicked a link</option>
+                  <option value="no_engagement">No engagement</option>
+                  <option value="unsubscribed">Unsubscribed</option>
+                  <option value="no_email">Missing email</option>
                 </select>
                 <select
                   value={leadSort}
