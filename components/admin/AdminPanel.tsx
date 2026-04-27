@@ -656,6 +656,7 @@ export default function AdminPanel() {
   const [leadSearch, setLeadSearch] = useState("");
   const [industryFilter, setIndustryFilter] = useState<string>("all");
   const [engagementFilter, setEngagementFilter] = useState<string>("all");
+  const [bulkIndustryInput, setBulkIndustryInput] = useState<string>("");
   const [leadSort, setLeadSort] = useState<"newest" | "oldest" | "name" | "last_emailed">("newest");
   // Compose panel
   const [showCompose, setShowCompose] = useState(false);
@@ -3104,14 +3105,33 @@ export default function AdminPanel() {
                 >
                   Compose Email
                 </button>
-                <select
-                  value=""
-                  onChange={(e) => { if (e.target.value) bulkSetIndustry(e.target.value); }}
-                  style={{ padding: "5px 10px", background: CARD_BG, border: `1px solid ${GREEN}`, color: GREEN, borderRadius: 4, fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}
-                >
-                  <option value="">Set Industry...</option>
-                  {INDUSTRIES.map((ind) => <option key={ind} value={ind}>{ind}</option>)}
-                </select>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                  <input
+                    list="bulk-industry-options"
+                    value={bulkIndustryInput}
+                    onChange={(e) => setBulkIndustryInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && bulkIndustryInput.trim()) {
+                        bulkSetIndustry(bulkIndustryInput.trim());
+                        setBulkIndustryInput("");
+                      }
+                      if (e.key === "Escape") setBulkIndustryInput("");
+                    }}
+                    placeholder="Set Industry..."
+                    style={{ padding: "5px 10px", background: CARD_BG, border: `1px solid ${GREEN}`, color: GREEN, borderRadius: 4, fontSize: 11, cursor: "text", fontFamily: "inherit", width: "min(160px, 40vw)" }}
+                  />
+                  <datalist id="bulk-industry-options">
+                    {[...INDUSTRIES, ...Object.keys(industryPainsMap)].filter((v, i, a) => a.indexOf(v) === i).map((ind) => <option key={ind} value={ind} />)}
+                  </datalist>
+                  {bulkIndustryInput.trim() && (
+                    <button
+                      onClick={() => { bulkSetIndustry(bulkIndustryInput.trim()); setBulkIndustryInput(""); }}
+                      style={{ background: GREEN, color: BG, border: "none", borderRadius: 3, padding: "4px 10px", fontSize: 10, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
+                    >
+                      Set
+                    </button>
+                  )}
+                </span>
                 <button onClick={() => bulkUpdateStatus("contacted")} style={{ padding: "5px 12px", background: "rgba(96,165,250,0.15)", color: "#60a5fa", border: "none", borderRadius: 4, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
                   Mark Contacted
                 </button>
