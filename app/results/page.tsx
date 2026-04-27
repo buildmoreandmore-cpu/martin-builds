@@ -233,16 +233,17 @@ export default async function ResultsPage() {
                   {/* Accent line */}
                   <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "#c8ff00" }} />
 
-                  {/* Header */}
+                  {/* Header — anonymized to industry + location only */}
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "0.75rem", marginBottom: "1.25rem" }}>
                     <div>
                       <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "1.1rem", fontWeight: 700, marginBottom: 2 }}>
-                        {r.name}
+                        {r.industry} Client
                       </div>
-                      <div style={{ fontSize: "0.8rem", color: "#888" }}>
-                        {r.business_name} &middot; {r.industry}
-                        {r.location && <> &middot; {r.location}</>}
-                      </div>
+                      {r.location && (
+                        <div style={{ fontSize: "0.8rem", color: "#888" }}>
+                          {r.location}
+                        </div>
+                      )}
                     </div>
                     {r.rating && <RatingBadge rating={r.rating} />}
                   </div>
