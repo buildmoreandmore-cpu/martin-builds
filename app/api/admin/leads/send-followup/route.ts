@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendEmail, EMAIL_SIGNATURE, appendTrackingPixel, preheader, trackLink, unsubscribeFooter } from "@/lib/send-email";
+import { INTRO_TESTIMONIAL, renderTestimonialHtml } from "@/lib/email-testimonials";
 import { supabase } from "@/lib/supabase";
 
 /* ─── Shared email shell ─── */
@@ -151,6 +152,8 @@ Every business owner I talk to says some version of the same thing:
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
 I&rsquo;m Francis with <a href="${siteLink}" style="color:#c8ff00;text-decoration:none;border-bottom:1px solid rgba(200,255,0,0.4);">martin.builds</a> and I help businesses like <strong style="color:#f5f5f0;">${firmName}</strong> simplify the workflows that eat up your team&rsquo;s time &mdash; ${ind.pains}, all of it.
 </p>
+
+${renderTestimonialHtml(INTRO_TESTIMONIAL)}
 
 <p style="color:#ccc;font-size:15px;line-height:1.7;margin:0 0 24px 0;">
 If that sounds familiar, I&rsquo;d love 15 minutes to hear how your team runs things today:
