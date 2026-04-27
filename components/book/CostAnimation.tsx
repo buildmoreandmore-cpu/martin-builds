@@ -134,30 +134,30 @@ export default function CostAnimation() {
   }, [hasPlayed]);
 
   return (
-    <div ref={ref} style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 16, padding: "24px clamp(16px, 4vw, 28px)", marginBottom: 32, position: "relative", overflow: "hidden" }}>
+    <div ref={ref} className="cost-anim" style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 16, padding: "clamp(16px, 4vw, 24px) clamp(14px, 4vw, 28px)", marginBottom: "clamp(20px, 5vw, 32px)", position: "relative", overflow: "hidden" }}>
       {/* Header with counter */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 18, gap: 12, flexWrap: "wrap" }}>
-        <div>
+      <div className="cost-anim-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 18, gap: 12, flexWrap: "wrap" }}>
+        <div style={{ flex: "1 1 200px", minWidth: 0 }}>
           <p style={{ fontSize: 11, color: DIM, textTransform: "uppercase", letterSpacing: 1.5, margin: 0 }}>What you stop paying for</p>
-          <p style={{ fontSize: 13, color: TEXT, margin: "4px 0 0 0", lineHeight: 1.5 }}>One custom build replaces the SaaS stack you&rsquo;re renting forever.</p>
+          <p style={{ fontSize: "clamp(12px, 3vw, 13px)", color: TEXT, margin: "4px 0 0 0", lineHeight: 1.5 }}>One custom build replaces the SaaS stack you&rsquo;re renting forever.</p>
         </div>
-        <div style={{ textAlign: "right", whiteSpace: "nowrap" }}>
-          <div style={{ fontSize: 11, color: DIM, textTransform: "uppercase", letterSpacing: 1.5 }}>Per month</div>
-          <div style={{ fontSize: 28, fontWeight: 800, color: counter === 0 ? GREEN : "#ff6666", letterSpacing: "-1px", fontFamily: "'Space Mono', monospace", lineHeight: 1.1, transition: "color 0.6s ease" }}>
+        <div style={{ textAlign: "right", whiteSpace: "nowrap", flexShrink: 0 }}>
+          <div style={{ fontSize: 10, color: DIM, textTransform: "uppercase", letterSpacing: 1.5 }}>Per month</div>
+          <div style={{ fontSize: "clamp(22px, 7vw, 28px)", fontWeight: 800, color: counter === 0 ? GREEN : "#ff6666", letterSpacing: "-1px", fontFamily: "'Space Mono', monospace", lineHeight: 1.1, transition: "color 0.6s ease" }}>
             ${counter}
           </div>
         </div>
       </div>
 
-      {/* App grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, marginBottom: showOwn ? 16 : 0, transition: "margin 0.4s ease" }}>
+      {/* App grid — auto-fit drops to 2 cols on narrow screens */}
+      <div className="cost-anim-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 8, marginBottom: showOwn ? 16 : 0, transition: "margin 0.4s ease" }}>
         {APPS.map((app, i) => {
           const isRemoved = removed.includes(i);
           return (
             <div
               key={app.name}
               style={{
-                padding: "12px 10px",
+                padding: "10px 10px",
                 background: "#0a0a0a",
                 border: `1px solid ${BORDER}`,
                 borderRadius: 8,
@@ -192,46 +192,50 @@ export default function CostAnimation() {
 
       {/* "You Own It" card slides in */}
       <div
+        className="cost-anim-own"
         style={{
-          padding: "16px 18px",
+          padding: "clamp(12px, 3vw, 16px) clamp(14px, 3vw, 18px)",
           background: `linear-gradient(135deg, ${GREEN}15, ${GREEN}05)`,
           border: `1px solid ${GREEN}`,
           borderRadius: 10,
           display: "flex",
           alignItems: "center",
-          gap: 14,
+          gap: 12,
+          flexWrap: "wrap",
           opacity: showOwn ? 1 : 0,
           transform: showOwn ? "translateY(0)" : "translateY(20px)",
           transition: "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
-          maxHeight: showOwn ? 200 : 0,
+          maxHeight: showOwn ? 300 : 0,
           marginTop: showOwn ? 0 : -16,
           overflow: "hidden",
         }}
       >
-        <div style={{ width: 38, height: 38, borderRadius: "50%", background: GREEN, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+        <div style={{ width: 36, height: 36, borderRadius: "50%", background: GREEN, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12l5 5L20 7" />
           </svg>
         </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 14, color: TEXT, fontWeight: 700 }}>One custom build · <span style={{ color: GREEN }}>You own it</span></div>
-          <div style={{ fontSize: 12, color: DIM, marginTop: 2 }}>Built once. No subscription. No vendor lock-in.</div>
+        <div style={{ flex: "1 1 180px", minWidth: 0 }}>
+          <div style={{ fontSize: "clamp(13px, 3.5vw, 14px)", color: TEXT, fontWeight: 700, lineHeight: 1.3 }}>One custom build · <span style={{ color: GREEN }}>You own it</span></div>
+          <div style={{ fontSize: "clamp(11px, 3vw, 12px)", color: DIM, marginTop: 4, lineHeight: 1.4 }}>Built once. No subscription. No vendor lock-in.</div>
         </div>
-        <div style={{ textAlign: "right", whiteSpace: "nowrap" }}>
-          <div style={{ fontSize: 22, fontWeight: 800, color: GREEN, fontFamily: "'Space Mono', monospace", lineHeight: 1, letterSpacing: "-0.5px" }}>$0</div>
-          <div style={{ fontSize: 9, color: DIM, textTransform: "uppercase", letterSpacing: 1, marginTop: 2 }}>/mo forever</div>
+        <div style={{ textAlign: "right", whiteSpace: "nowrap", flexShrink: 0 }}>
+          <div style={{ fontSize: "clamp(20px, 5.5vw, 24px)", fontWeight: 800, color: GREEN, fontFamily: "'Space Mono', monospace", lineHeight: 1, letterSpacing: "-0.5px" }}>$0</div>
+          <div style={{ fontSize: 9, color: DIM, textTransform: "uppercase", letterSpacing: 1, marginTop: 3 }}>/mo forever</div>
         </div>
       </div>
 
-      {/* Subtle replay button after animation finishes */}
+      {/* Subtle replay button — bottom-right, doesn't overlap header */}
       {showOwn && (
-        <button
-          onClick={() => { setHasPlayed(false); play(); }}
-          style={{ position: "absolute", top: 10, right: 10, background: "transparent", border: "none", color: DIM, fontSize: 11, cursor: "pointer", fontFamily: "inherit", padding: "4px 8px", opacity: 0.6 }}
-          title="Replay animation"
-        >
-          ↻ replay
-        </button>
+        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
+          <button
+            onClick={() => { setHasPlayed(false); play(); }}
+            style={{ background: "transparent", border: `1px solid ${BORDER}`, color: DIM, fontSize: 11, cursor: "pointer", fontFamily: "inherit", padding: "4px 10px", borderRadius: 4 }}
+            title="Replay animation"
+          >
+            ↻ replay
+          </button>
+        </div>
       )}
 
       <style jsx>{`
