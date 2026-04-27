@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
+// Allow longer execution so we can drain the daily batch in one run
+export const maxDuration = 60;
+
 const CRON_SECRET = process.env.CRON_SECRET || "";
-const MAX_PER_RUN = 5; // Cap to avoid blowing past Gmail's per-second rate
+const MAX_PER_RUN = 15; // Daily cap is 10 — 15 gives buffer for any catch-up
 
 export async function GET(req: NextRequest) {
   // Optional auth: Vercel Cron sends "Authorization: Bearer <CRON_SECRET>" automatically

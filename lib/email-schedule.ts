@@ -1,25 +1,26 @@
 /**
  * Email scheduling — spread sends across business days.
  *
- * Vercel Hobby tier only allows daily crons, so within-day window distribution
- * isn't possible without an external pinger. Instead we schedule each email for
- * a random morning time on a future business day, and the daily cron at 8 AM ET
- * processes everything that's due. This keeps sends out of bulk-blast territory
- * (max ~10/day, all in the morning when business inboxes are active).
+ * Architecture: Vercel Hobby tier allows only daily crons. Our cron fires
+ * every weekday at 13:00 UTC (8 AM EST / 9 AM EDT) and processes everything
+ * that's due. To make sure items actually fire on their target day, we schedule
+ * them for ~12:00 UTC of that day (well before the 13:00 cron). Within-day
+ * distribution (e.g. 7:30/9:00/11:00 AM ET windows) is not achievable on
+ * Hobby — all of a day's sends fire in the same cron run.
  *
- * To get true within-day window spread, upgrade to Vercel Pro and switch the
- * cron in vercel.json to "* /5 * * * *".
+ * Result: 10 emails per day, all going out in a single morning batch around
+ * 8-9 AM ET. Spread across DAYS rather than within a day.
  */
 
 const MAX_PER_DAY = 10;
-// Send window in Eastern Time — 7:30 AM to 11:30 AM ET
-const WINDOW_START_MIN = 7 * 60 + 30; // 7:30 AM ET
-const WINDOW_END_MIN = 11 * 60 + 30;  // 11:30 AM ET
-const ET_OFFSET_HOURS = -5; // EST. Doesn't account for DST — close enough during warmup.
+// We schedule items at 12:00 UTC of their target day so the 13:00 UTC cron catches them.
+// Random minute jitter (0-50) so the rows aren't identical timestamps.
+const SCHEDULE_HOUR_UTC = 12;
 
 /**
  * Generate scheduled send times for N emails, spread across business days.
- * Each email gets a random time in the morning window. Returns ISO strings.
+ * Each email is scheduled for ~12:00 UTC of its target day so the daily cron
+ * at 13:00 UTC will pick it up. Returns ISO strings.
  */
 export function generateSchedule(count: number, startFrom: Date = new Date()): string[] {
   const schedule: string[] = [];
@@ -32,23 +33,21 @@ export function generateSchedule(count: number, startFrom: Date = new Date()): s
       dayCount = 0;
     }
 
-    // Random minute within the morning window
-    const pickMin = WINDOW_START_MIN + Math.floor(Math.random() * (WINDOW_END_MIN - WINDOW_START_MIN));
-    const hour = Math.floor(pickMin / 60);
-    const minute = pickMin % 60;
+    // Schedule at 12:00 UTC + random 0-50 minutes (still well before 13:00 cron)
+    const minute = Math.floor(Math.random() * 50);
     const second = Math.floor(Math.random() * 60);
 
     const sendDate = new Date(Date.UTC(
       currentDate.getUTCFullYear(),
       currentDate.getUTCMonth(),
       currentDate.getUTCDate(),
-      hour - ET_OFFSET_HOURS,
+      SCHEDULE_HOUR_UTC,
       minute,
       second,
     ));
 
-    // If computed time is in the past (e.g. queueing today after 11:30 AM ET),
-    // move to next business day
+    // If computed time is in the past (e.g. queueing today after 12:50 UTC),
+    // push to next business day
     if (sendDate.getTime() < Date.now()) {
       currentDate = nextBusinessDay(currentDate);
       dayCount = 0;
