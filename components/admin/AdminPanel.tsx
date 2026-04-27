@@ -791,6 +791,47 @@ export default function AdminPanel() {
     } catch { /* ignore */ }
   }
 
+  // Manual stagger send — fires next N queued items now
+  const [staggerRunning, setStaggerRunning] = useState(false);
+  const [staggerProgress, setStaggerProgress] = useState({ sent: 0, total: 0 });
+
+  async function sendQueueNow(count: number = 5) {
+    try {
+      const res = await fetch("/api/admin/leads/queue/send-now", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ count }),
+      });
+      const data = await res.json();
+      await fetchQueue();
+      return data;
+    } catch {
+      return { sent: 0, failed: 0, pushed: 0 };
+    }
+  }
+
+  async function staggerSendAll(batchSize: number = 3, delaySeconds: number = 30) {
+    const queuedCount = emailQueue.filter((q) => q.status === "queued").length;
+    if (queuedCount === 0) return;
+    if (!confirm(`Send all ${queuedCount} queued emails staggered (${batchSize} every ${delaySeconds}s)? This will take ~${Math.ceil(queuedCount / batchSize) * delaySeconds}s.`)) return;
+
+    setStaggerRunning(true);
+    setStaggerProgress({ sent: 0, total: queuedCount });
+
+    let totalSent = 0;
+    const maxLoops = Math.ceil(queuedCount / batchSize) + 2; // safety
+    for (let i = 0; i < maxLoops; i++) {
+      const result = await sendQueueNow(batchSize);
+      totalSent += result.sent || 0;
+      setStaggerProgress({ sent: totalSent, total: queuedCount });
+      if (!result.pushed) break; // queue is empty
+      if (totalSent >= queuedCount) break;
+      await new Promise((r) => setTimeout(r, delaySeconds * 1000));
+    }
+    setStaggerRunning(false);
+    alert(`Stagger send complete. ${totalSent} emails sent.`);
+  }
+
   async function cancelQueueItem(id: string) {
     try {
       const res = await fetch("/api/admin/leads/queue", {
@@ -3158,6 +3199,35 @@ export default function AdminPanel() {
                     <h3 style={{ fontSize: 16, fontWeight: 700, color: TEXT, margin: 0 }}>Email Send Queue</h3>
                     <button onClick={() => setShowQueueView(false)} style={{ background: "transparent", border: `1px solid ${BORDER}`, color: DIM, borderRadius: 4, padding: "4px 10px", fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}>Close</button>
                   </div>
+
+                  {/* Manual send controls */}
+                  {emailQueue.filter((q) => q.status === "queued").length > 0 && (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", padding: "12px 14px", background: BG, border: `1px solid ${BORDER}`, borderRadius: 8, marginBottom: 16 }}>
+                      <span style={{ fontSize: 11, color: DIM, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>Manual send:</span>
+                      <button
+                        onClick={async () => { const r = await sendQueueNow(1); alert(`Sent ${r.sent} of ${r.pushed} pushed`); }}
+                        disabled={staggerRunning}
+                        style={{ padding: "5px 12px", background: "transparent", color: GREEN, border: `1px solid ${GREEN}`, borderRadius: 4, fontSize: 11, fontWeight: 600, cursor: staggerRunning ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: staggerRunning ? 0.5 : 1 }}
+                      >
+                        Send 1 now
+                      </button>
+                      <button
+                        onClick={async () => { const r = await sendQueueNow(5); alert(`Sent ${r.sent} of ${r.pushed} pushed`); }}
+                        disabled={staggerRunning}
+                        style={{ padding: "5px 12px", background: "transparent", color: GREEN, border: `1px solid ${GREEN}`, borderRadius: 4, fontSize: 11, fontWeight: 600, cursor: staggerRunning ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: staggerRunning ? 0.5 : 1 }}
+                      >
+                        Send 5 now
+                      </button>
+                      <button
+                        onClick={() => staggerSendAll(3, 30)}
+                        disabled={staggerRunning}
+                        style={{ padding: "5px 12px", background: GREEN, color: BG, border: "none", borderRadius: 4, fontSize: 11, fontWeight: 700, cursor: staggerRunning ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: staggerRunning ? 0.5 : 1 }}
+                      >
+                        {staggerRunning ? `Staggering ${staggerProgress.sent}/${staggerProgress.total}...` : "Stagger send all (3/30s)"}
+                      </button>
+                    </div>
+                  )}
+
                   {emailQueue.length === 0 ? (
                     <p style={{ fontSize: 13, color: DIM, textAlign: "center", padding: "2rem 0" }}>No emails in queue. Bulk-send from the leads page to schedule sends.</p>
                   ) : (
