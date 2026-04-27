@@ -3014,15 +3014,28 @@ export default function AdminPanel() {
               </div>
               {/* Industry filter + sort */}
               <div style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap", alignItems: "center" }}>
-                <select
-                  value={industryFilter}
-                  onChange={(e) => setIndustryFilter(e.target.value)}
-                  style={{ padding: "5px 10px", background: CARD_BG, border: `1px solid ${industryFilter !== "all" ? GREEN : BORDER}`, color: industryFilter !== "all" ? GREEN : DIM, borderRadius: 4, fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}
-                >
-                  <option value="all">All Industries</option>
-                  <option value="untagged">Untagged</option>
-                  {INDUSTRIES.map((ind) => <option key={ind} value={ind}>{ind}</option>)}
-                </select>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                  <input
+                    list="industry-filter-options"
+                    value={industryFilter === "all" ? "" : industryFilter === "untagged" ? "Untagged" : industryFilter}
+                    onChange={(e) => {
+                      const v = e.target.value.trim();
+                      if (!v) setIndustryFilter("all");
+                      else if (v.toLowerCase() === "untagged") setIndustryFilter("untagged");
+                      else setIndustryFilter(v);
+                    }}
+                    onKeyDown={(e) => { if (e.key === "Escape") { setIndustryFilter("all"); (e.target as HTMLInputElement).blur(); } }}
+                    placeholder="All industries"
+                    style={{ padding: "5px 10px", background: CARD_BG, border: `1px solid ${industryFilter !== "all" ? GREEN : BORDER}`, color: industryFilter !== "all" ? GREEN : DIM, borderRadius: 4, fontSize: 11, cursor: "text", fontFamily: "inherit", width: "min(180px, 50vw)" }}
+                  />
+                  <datalist id="industry-filter-options">
+                    <option value="Untagged" />
+                    {[...INDUSTRIES, ...Object.keys(industryPainsMap)].filter((v, i, a) => a.indexOf(v) === i).map((ind) => <option key={ind} value={ind} />)}
+                  </datalist>
+                  {industryFilter !== "all" && (
+                    <button onClick={() => setIndustryFilter("all")} style={{ background: "transparent", border: `1px solid ${BORDER}`, color: DIM, borderRadius: 3, padding: "3px 6px", fontSize: 10, cursor: "pointer", fontFamily: "inherit" }} title="Clear industry filter">×</button>
+                  )}
+                </span>
                 <select
                   value={engagementFilter}
                   onChange={(e) => setEngagementFilter(e.target.value)}
