@@ -2,106 +2,92 @@
 
 import ScrollReveal from "./ScrollReveal";
 
-const ShieldIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+const XIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2.5" strokeLinecap="round">
+    <path d="M18 6L6 18M6 6l12 12" />
   </svg>
 );
 
-const ChainIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+const CheckIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12l5 5L20 7" />
   </svg>
 );
 
-const UnlockIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-    <path d="M7 11V7a5 5 0 0 1 9.9-1" />
-  </svg>
-);
+const ROWS: Array<{ agency: string; mb: string }> = [
+  { agency: "Multiple layers — account managers, project managers, devs you never meet", mb: "One operator. The person who scopes it writes the code and answers your texts." },
+  { agency: "Months of delays and scope creep", mb: "Shipped in 2 weeks. Fixed price. No surprises." },
+  { agency: "Generic templates wearing your logo", mb: "Custom infrastructure, built around how your team actually runs" },
+  { agency: "You rent it forever — vendor lock-in, monthly fees", mb: "You own the code. No subscription. Walk away anytime." },
+  { agency: "Onboarding takes weeks. Your team has to learn their tool.", mb: "Familiar on day one. Built around your existing workflow, not against it." },
+];
 
 export default function ObjectionHandler() {
   return (
     <section style={{ padding: "clamp(3rem,6vw,5rem) clamp(1.25rem,5vw,3rem)" }}>
       <ScrollReveal>
-        <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
-          <p style={tagStyle}>The Real Objection</p>
+        <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+          <p style={tagStyle}>The Difference</p>
           <h2 style={titleStyle}>
-            You don&apos;t stay because it&apos;s good.
-            <br />
-            <span style={{ color: "#c8ff00" }}>You stay because it&apos;s familiar.</span>
+            This isn&rsquo;t an{" "}
+            <span style={{ color: "#c8ff00" }}>agency.</span>
           </h2>
-        </div>
-      </ScrollReveal>
-
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: "1.5rem",
-          maxWidth: "1000px",
-          margin: "0 auto",
-        }}
-        className="objection-grid"
-      >
-        {/* The Comfort Trap */}
-        <ScrollReveal>
-          <div style={painCardStyle}>
-            <div style={iconWrapStyle}><ShieldIcon /></div>
-            <h3 style={painTitleStyle}>The Comfort Trap</h3>
-            <p style={painTextStyle}>You&apos;ve spent months learning Salesforce. Your team knows where things are. Switching feels risky.</p>
-            <p style={{ ...painTextStyle, marginTop: "0.8rem", fontStyle: "italic", fontSize: "0.85rem" }}>But familiar doesn&apos;t mean efficient. It means you&apos;ve memorized the workarounds.</p>
-          </div>
-        </ScrollReveal>
-
-        {/* The Hidden Cost */}
-        <ScrollReveal>
-          <div style={painCardStyle}>
-            <div style={iconWrapStyle}><ChainIcon /></div>
-            <h3 style={painTitleStyle}>The Hidden Cost</h3>
-            <p style={painTextStyle}>Every new hire takes weeks to onboard. Dashboards nobody opens. Features you pay for but ignore. Per-seat pricing that scales against you.</p>
-            <p style={{ ...painTextStyle, marginTop: "0.8rem", fontStyle: "italic", fontSize: "0.85rem" }}>Familiar is expensive when it&apos;s not built for you.</p>
-          </div>
-        </ScrollReveal>
-
-        {/* The Switch */}
-        <ScrollReveal>
-          <div style={solutionCardStyle}>
-            <div style={{ ...iconWrapStyle, background: "rgba(200,255,0,0.1)" }}><UnlockIcon /></div>
-            <h3 style={{ ...painTitleStyle, color: "#f5f5f0" }}>Custom is familiar on day one.</h3>
-            <p style={{ ...painTextStyle, color: "rgba(245,245,240,0.7)" }}>A dashboard built around your workflow has nothing to learn. Six pages instead of sixty. Your data, your metrics, your language.</p>
-            <p style={{ ...painTextStyle, color: "rgba(245,245,240,0.5)", marginTop: "0.8rem", fontSize: "0.85rem" }}>Your team opens it because it&apos;s useful — not because they have to. That&apos;s the difference between renting a tool and owning one.</p>
-          </div>
-        </ScrollReveal>
-      </div>
-
-      {/* Cost of inaction */}
-      <ScrollReveal>
-        <div
-          style={{
-            maxWidth: "1000px",
-            margin: "2.5rem auto 0",
-            padding: "1.5rem 2rem",
-            background: "rgba(255,68,68,0.03)",
-            border: "1px solid rgba(255,68,68,0.08)",
-            borderRadius: "12px",
-            textAlign: "center",
-          }}
-        >
-          <p style={{ fontSize: "0.95rem", color: "#ccc", lineHeight: 1.7, margin: 0 }}>
-            Your competitors already stopped renting. They own their tools, their data, their workflow.{" "}
-            <span style={{ color: "#c8ff00", fontWeight: 600 }}>Every week you stay comfortable is revenue you&apos;re handing to someone who isn&apos;t.</span>
+          <p style={{ fontSize: "clamp(1rem, 1.8vw, 1.15rem)", color: "#888", maxWidth: "600px", margin: "1.5rem auto 0", lineHeight: 1.6 }}>
+            You&rsquo;re not hiring a team — you&rsquo;re installing a system.
           </p>
         </div>
       </ScrollReveal>
 
+      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
+        {/* Column headers */}
+        <div className="comparison-headers" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", marginBottom: "1rem" }}>
+          <div style={{ textAlign: "center" }}>
+            <span style={{ ...colHeaderStyle, color: "#888" }}>Typical Agency</span>
+          </div>
+          <div style={{ textAlign: "center" }}>
+            <span style={{ ...colHeaderStyle, color: "#c8ff00" }}>martin.builds</span>
+          </div>
+        </div>
+
+        {/* Comparison rows */}
+        <div className="comparison-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            {ROWS.map((r, i) => (
+              <ScrollReveal key={`a-${i}`}>
+                <div style={agencyRowStyle}>
+                  <span style={iconWrap}><XIcon /></span>
+                  <span style={agencyText}>{r.agency}</span>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            {ROWS.map((r, i) => (
+              <ScrollReveal key={`m-${i}`}>
+                <div style={mbRowStyle}>
+                  <span style={iconWrap}><CheckIcon /></span>
+                  <span style={mbText}>{r.mb}</span>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <style>{`
         @media (max-width: 768px) {
-          .objection-grid {
+          .comparison-headers {
+            display: none !important;
+          }
+          .comparison-grid {
             grid-template-columns: 1fr !important;
-            max-width: 400px !important;
+            gap: 0.75rem !important;
+          }
+          .comparison-grid > div:first-child {
+            order: 2;
+          }
+          .comparison-grid > div:last-child {
+            order: 1;
           }
         }
       `}</style>
@@ -127,46 +113,57 @@ const titleStyle: React.CSSProperties = {
   margin: "0 auto",
 };
 
-const painCardStyle: React.CSSProperties = {
-  background: "#1a1a1a",
-  border: "1px solid rgba(245,245,240,0.06)",
-  borderRadius: "16px",
-  padding: "2rem",
-  height: "100%",
+const colHeaderStyle: React.CSSProperties = {
+  fontFamily: "'Space Mono', monospace",
+  fontSize: "0.75rem",
+  letterSpacing: "2px",
+  textTransform: "uppercase",
+  fontWeight: 600,
 };
 
-const solutionCardStyle: React.CSSProperties = {
+const iconWrap: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: 24,
+  height: 24,
+  flexShrink: 0,
+  marginTop: 2,
+};
+
+const agencyRowStyle: React.CSSProperties = {
+  background: "#141414",
+  border: "1px solid rgba(245,245,240,0.04)",
+  borderRadius: 10,
+  padding: "1rem 1.25rem",
+  display: "flex",
+  alignItems: "flex-start",
+  gap: 12,
+};
+
+const mbRowStyle: React.CSSProperties = {
   background: "#1a1a1a",
   border: "1px solid rgba(200,255,0,0.15)",
   borderLeft: "3px solid #c8ff00",
-  borderRadius: "16px",
-  padding: "2rem",
-  height: "100%",
-};
-
-const iconWrapStyle: React.CSSProperties = {
-  width: "48px",
-  height: "48px",
-  background: "rgba(245,245,240,0.04)",
-  borderRadius: "12px",
+  borderRadius: 10,
+  padding: "1rem 1.25rem",
   display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  marginBottom: "1.2rem",
+  alignItems: "flex-start",
+  gap: 12,
 };
 
-const painTitleStyle: React.CSSProperties = {
-  fontFamily: "'Outfit', sans-serif",
-  fontSize: "1.15rem",
-  fontWeight: 700,
-  color: "#888",
-  marginBottom: "0.6rem",
-};
-
-const painTextStyle: React.CSSProperties = {
+const agencyText: React.CSSProperties = {
   fontFamily: "'Outfit', sans-serif",
   fontSize: "0.95rem",
-  fontWeight: 300,
-  color: "#666",
-  lineHeight: 1.7,
+  color: "#888",
+  lineHeight: 1.6,
+  fontWeight: 400,
+};
+
+const mbText: React.CSSProperties = {
+  fontFamily: "'Outfit', sans-serif",
+  fontSize: "0.95rem",
+  color: "#f5f5f0",
+  lineHeight: 1.6,
+  fontWeight: 500,
 };

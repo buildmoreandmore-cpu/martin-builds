@@ -26,7 +26,7 @@ export default function Hero() {
       />
 
       <div className="animate-fade-up-1" style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.8rem", color: "#c8ff00", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "2rem" }}>
-        Custom Websites &amp; Dashboards That Work
+        Custom Dashboards · Portals · AI Tools
       </div>
 
       <h1
@@ -39,9 +39,9 @@ export default function Hero() {
           maxWidth: "900px",
         }}
       >
-        Your business deserves a system that runs like{" "}
+        See exactly where your money is &mdash; and where{" "}
         <span style={{ color: "#c8ff00", position: "relative", display: "inline-block" }}>
-          you do.
+          it&rsquo;s leaking.
           <span
             style={{
               position: "absolute",
@@ -61,15 +61,15 @@ export default function Hero() {
       <p
         className="animate-fade-up-3"
         style={{
-          fontSize: "clamp(1.3rem, 2.5vw, 1.8rem)",
-          fontWeight: 600,
+          fontSize: "clamp(1.1rem, 2vw, 1.5rem)",
+          fontWeight: 500,
           color: "#f5f5f0",
-          maxWidth: "560px",
+          maxWidth: "640px",
           marginTop: "1.5rem",
           lineHeight: 1.5,
         }}
       >
-        Owned by you forever.
+        Custom dashboards, portals, and AI tools that replace manual work and give you real-time visibility.
       </p>
 
       <p
@@ -77,13 +77,13 @@ export default function Hero() {
         style={{
           fontSize: "clamp(0.9rem, 1.5vw, 1rem)",
           fontWeight: 400,
-          color: "#666",
+          color: "#888",
           maxWidth: "560px",
           marginTop: "0.75rem",
           lineHeight: 1.6,
         }}
       >
-        Your site. Your dashboard. Built around how you actually win.
+        Built in 2 weeks. Fixed price. <span style={{ color: "#c8ff00" }}>You own the code.</span>
       </p>
 
       <div

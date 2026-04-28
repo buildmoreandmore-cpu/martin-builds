@@ -5,23 +5,23 @@ import ScrollReveal from "./ScrollReveal";
 const steps = [
   {
     num: "01",
-    title: "Discovery Call",
-    desc: "30 minutes. You tell me the problem. I tell you exactly what I'd build, how long it takes, and what it costs. No fluff.",
+    title: "Audit",
+    desc: "We break down your current workflow, tools, and data gaps in a 15-minute call. You'll walk away knowing exactly what's worth automating.",
   },
   {
     num: "02",
-    title: "Blueprint & Scope",
-    desc: "Day 1: You get a locked scope document — features, architecture, timeline. No surprises. No scope creep.",
+    title: "Blueprint",
+    desc: "Day 1: You get a clear system design — what we're building and why. Locked scope, locked timeline, locked price. No surprises.",
   },
   {
     num: "03",
-    title: "Build Week",
-    desc: "Heads down. Daily progress updates. You see it come to life in real time. No disappearing acts.",
+    title: "Build",
+    desc: "Heads down. Daily updates. You see it come to life in real time. No disappearing acts. No handoffs.",
   },
   {
     num: "04",
-    title: "Ship & Support",
-    desc: "Day 14: Deployed, tested, and live. Your team gets a full walkthrough. I underpromise and overdeliver — every time.",
+    title: "Deploy",
+    desc: "Day 14: Fully live, tested, and ready to use. Your team gets a full walkthrough. You own the code from day one.",
   },
 ];
 
@@ -33,10 +33,13 @@ export default function Process() {
       </ScrollReveal>
       <ScrollReveal>
         <h2 style={sectionTitle}>
-          You tell me the problem Monday.
+          Built in 4 steps.
           <br />
-          It&apos;s live by Friday.
+          <span style={{ color: "#c8ff00" }}>Deployed in 14 days.</span>
         </h2>
+        <p style={{ fontSize: "clamp(1rem, 1.8vw, 1.15rem)", color: "#888", marginTop: "1.5rem", maxWidth: "560px", lineHeight: 1.6 }}>
+          No confusion. No delays. No handoffs.
+        </p>
       </ScrollReveal>
 
       <div

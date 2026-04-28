@@ -16,6 +16,8 @@ import Hero from "@/components/Hero";
 import ObjectionHandler from "@/components/ObjectionHandler";
 import Services from "@/components/Services";
 import AppAudit from "@/components/AppAudit";
+import NamedSystem from "@/components/NamedSystem";
+import AuthorityStack from "@/components/AuthorityStack";
 import DashboardPreview from "@/components/DashboardPreview";
 import Process from "@/components/Process";
 import WhatIBuild from "@/components/WhatIBuild";
@@ -31,7 +33,9 @@ export default function Home() {
       <Hero />
       <DashboardPreview />
       <AppAudit />
+      <NamedSystem />
       <WhatIBuild />
+      <AuthorityStack />
       <Services />
       <Founder />
       <ObjectionHandler />

@@ -88,10 +88,12 @@ export default function AppAudit() {
           <div style={{ textAlign: "center", marginBottom: "3rem" }}>
             <p style={tagStyle}>Reality Check</p>
             <h2 style={titleStyle}>
-              How many apps are you paying for
-              <br />
-              <span style={{ color: "#c8ff00" }}>to run your business?</span>
+              Most businesses are{" "}
+              <span style={{ color: "#c8ff00" }}>running blind.</span>
             </h2>
+            <p style={{ fontSize: "clamp(1rem, 1.8vw, 1.15rem)", color: "#888", maxWidth: "560px", margin: "1.5rem auto 0", lineHeight: 1.7 }}>
+              Spreadsheets. Multiple tools. No real visibility into where leads come from, what&rsquo;s converting, or where revenue is leaking.
+            </p>
           </div>
         </ScrollReveal>
 

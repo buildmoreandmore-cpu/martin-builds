@@ -31,14 +31,14 @@ export default function CTA() {
       </ScrollReveal>
       <ScrollReveal>
         <h2 style={{ ...sectionTitle, margin: "0 auto" }}>
-          Your website and dashboard.
+          If you don&rsquo;t know your numbers,
           <br />
-          <span style={{ color: "#c8ff00" }}>Ready in 2 weeks.</span>
+          <span style={{ color: "#c8ff00" }}>you&rsquo;re guessing.</span>
         </h2>
       </ScrollReveal>
       <ScrollReveal>
         <p style={{ ...sectionSub, margin: "1.5rem auto 0" }}>
-          30-minute call. No pitch deck. No follow-up spam. Just a real conversation about what you need built.
+          Let&rsquo;s fix that. 15-minute call. No pitch deck. No follow-up spam. Just a real conversation about what you need built.
         </p>
       </ScrollReveal>
 
@@ -80,7 +80,7 @@ export default function CTA() {
           >
             <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#c8ff00", display: "inline-block", animation: "pulse-dot 2s infinite" }} />
             <span style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", color: "#888", letterSpacing: "0.5px" }}>
-              I take 2 new projects per month — <span style={{ color: "#c8ff00", fontWeight: 600 }}>1 spot open for May</span>
+              Limited build capacity — <span style={{ color: "#c8ff00", fontWeight: 600 }}>2 new builds this month</span>
             </span>
           </div>
         </div>
