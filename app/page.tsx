@@ -22,6 +22,7 @@ import DashboardPreview from "@/components/DashboardPreview";
 import Process from "@/components/Process";
 import WhatIBuild from "@/components/WhatIBuild";
 import Founder from "@/components/Founder";
+import Testimonials from "@/components/Testimonials";
 import FAQ from "@/components/FAQ";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
@@ -41,6 +42,7 @@ export default function Home() {
       <Founder />
       <ObjectionHandler />
       <Process />
+      <Testimonials />
       <FAQ />
       <CTA />
       <Footer />

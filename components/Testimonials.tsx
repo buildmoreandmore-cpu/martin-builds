@@ -4,24 +4,14 @@ import ScrollReveal from "./ScrollReveal";
 
 const testimonials = [
   {
-    before: "Had a clear vision for the business but no way to translate it into tools the team could use. Previous developers couldn't bridge the gap between strategy and execution.",
-    after: "Shipped a working system in 12 days that the team adopted same-week. First new client closed through the system within two weeks of launch.",
-    metric: "12-day build, revenue in 2 weeks",
+    before: "We were replacing a fragmented process involving multiple systems, manual steps, and legacy limitations. This wasn't 'just a website,' it was workflow strategy + product build + business infrastructure.",
+    after: "Faster client and candidate intake. Cleaner screening submission workflow. Stronger client experience and trust. A new platform ready for client rollout — and the foundation for automation and scale we didn't have before.",
+    metric: "From 'I have an idea' to 'I have a platform.'",
     quote:
-      "He understands the business side and the tech side — that's rare. He translated what I needed into something my team could actually use, in less time than I expected.",
-    initials: "CA",
-    name: "Camisha Alford",
-    role: "Kingly Consulting — Business Consulting",
-  },
-  {
-    before: "Needed a site that matched the experience of being in the shop — warm, intentional, inviting. Previous attempts missed the mark and dragged on for months.",
-    after: "Shipped in 2 weeks flat. Clean, fast, on-brand. Zero revision rounds — the first version was the final version. Online orders started coming in day one.",
-    metric: "2 weeks, 0 revision rounds",
-    quote:
-      "Fast, clear communication, and the final product was exactly what we needed. No scope creep, no guessing. Francis ships.",
-    initials: "BC",
-    name: "Birdhouse Coffee Room",
-    role: "Web Design Client — Atlanta, GA",
+      "Martin helped me architect and launch a new client-facing screening platform — modern employer dashboard, candidate intake workflow, package selection logic, admin-side operational tools, and the foundation for a scalable screening portal. He helped me move from 'I have an idea' to 'I have a platform.'",
+    initials: "GB",
+    name: "Gwendolyn Brandon",
+    role: "PCG Screening Services — Background Screening, Cumming GA",
   },
 ];
 
@@ -60,9 +50,9 @@ export default function Testimonials() {
           }}
         >
           {[
-            { num: "10+", label: "products shipped" },
             { num: "14 days", label: "avg delivery" },
             { num: "$5K", label: "starting price" },
+            { num: "$0", label: "monthly fees (you own it)" },
             { num: "0", label: "clients ghosted" },
           ].map((s) => (
             <div key={s.label} style={{ textAlign: "center" }}>
