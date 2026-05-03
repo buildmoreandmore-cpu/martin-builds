@@ -32,16 +32,16 @@ export default function Hero() {
       <h1
         className="animate-fade-up-2"
         style={{
-          fontSize: "clamp(2.8rem, 7vw, 6rem)",
+          fontSize: "clamp(2.6rem, 6.5vw, 5.5rem)",
           fontWeight: 900,
-          lineHeight: 1,
-          letterSpacing: "-3px",
-          maxWidth: "900px",
+          lineHeight: 1.05,
+          letterSpacing: "-2.5px",
+          maxWidth: "920px",
         }}
       >
-        See exactly where your money is &mdash; and where{" "}
+        The custom platform agencies quote at $30K.{" "}
         <span style={{ color: "#c8ff00", position: "relative", display: "inline-block" }}>
-          it&rsquo;s leaking.
+          Built in 14 days.
           <span
             style={{
               position: "absolute",
@@ -61,40 +61,43 @@ export default function Hero() {
       <p
         className="animate-fade-up-3"
         style={{
-          fontSize: "clamp(1.1rem, 2vw, 1.5rem)",
-          fontWeight: 500,
+          fontSize: "clamp(1.1rem, 2vw, 1.4rem)",
+          fontWeight: 600,
           color: "#f5f5f0",
           maxWidth: "640px",
           marginTop: "1.5rem",
           lineHeight: 1.5,
         }}
       >
-        Custom dashboards, portals, and AI tools that replace manual work and give you real-time visibility.
+        One operator. Fixed price. You own the code. No retainers, no account managers, no offshore handoffs.
       </p>
 
       <p
         className="animate-fade-up-3"
         style={{
-          fontSize: "clamp(0.9rem, 1.5vw, 1rem)",
+          fontSize: "clamp(0.95rem, 1.6vw, 1.05rem)",
           fontWeight: 400,
           color: "#888",
-          maxWidth: "560px",
-          marginTop: "0.75rem",
-          lineHeight: 1.6,
+          maxWidth: "620px",
+          marginTop: "1rem",
+          lineHeight: 1.7,
         }}
       >
-        Built in 2 weeks. Fixed price. <span style={{ color: "#c8ff00" }}>You own the code.</span>
+        Custom dashboards, portals, and AI tools &mdash; designed, built, and shipped by the same person who answers your texts. Most builds ship in 14 days.
       </p>
 
       <div
         className="animate-fade-up-4"
-        style={{ display: "flex", gap: "1rem", marginTop: "3rem", flexWrap: "wrap" }}
+        style={{ display: "flex", gap: "1.5rem", marginTop: "3rem", flexWrap: "wrap", alignItems: "center" }}
       >
         <a href="/discovery-call" style={primaryBtnStyle}
           onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-3px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 30px rgba(200,255,0,0.25)"; }}
           onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
         >
-          See What I&apos;d Build For You
+          Get Your 14-Day Quote
+        </a>
+        <a href="/demo" style={{ color: "#c8ff00", fontSize: "0.95rem", fontWeight: 600, textDecoration: "none", borderBottom: "1px solid rgba(200,255,0,0.4)", paddingBottom: 2 }}>
+          See live demos &rarr;
         </a>
       </div>
     </section>

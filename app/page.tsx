@@ -15,13 +15,14 @@ export const metadata: Metadata = {
 import Hero from "@/components/Hero";
 import ObjectionHandler from "@/components/ObjectionHandler";
 import Services from "@/components/Services";
-import AppAudit from "@/components/AppAudit";
+import WhyThisExists from "@/components/WhyThisExists";
 import NamedSystem from "@/components/NamedSystem";
 import AuthorityStack from "@/components/AuthorityStack";
 import DashboardPreview from "@/components/DashboardPreview";
 import Process from "@/components/Process";
 import WhatIBuild from "@/components/WhatIBuild";
 import Founder from "@/components/Founder";
+import FAQ from "@/components/FAQ";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
 
@@ -32,7 +33,7 @@ export default function Home() {
       <Nav />
       <Hero />
       <DashboardPreview />
-      <AppAudit />
+      <WhyThisExists />
       <NamedSystem />
       <WhatIBuild />
       <AuthorityStack />
@@ -40,6 +41,7 @@ export default function Home() {
       <Founder />
       <ObjectionHandler />
       <Process />
+      <FAQ />
       <CTA />
       <Footer />
     </>
