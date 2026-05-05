@@ -52,6 +52,14 @@ export default function Nav() {
           <NavLink href="/see-you-friday">Friday Letter</NavLink>
           <NavLink href="/contact">Contact</NavLink>
           <a
+            href="https://app.martinbuilds.ai"
+            style={{ background: "transparent", color: "#c8ff00", padding: "0.55rem 1.1rem", border: "1px solid rgba(200,255,0,0.35)", borderRadius: "100px", fontWeight: 600, fontSize: "0.78rem", letterSpacing: "0.5px", textTransform: "uppercase", transition: "all 0.25s", textDecoration: "none", whiteSpace: "nowrap" }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "rgba(200,255,0,0.08)"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "#c8ff00"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(200,255,0,0.35)"; }}
+          >
+            Pre-Build · $50/mo
+          </a>
+          <a
             href="/discovery-call"
             style={{ background: "#c8ff00", color: "#0a0a0a", padding: "0.6rem 1.5rem", borderRadius: "100px", fontWeight: 700, fontSize: "0.8rem", letterSpacing: "0.5px", textTransform: "uppercase", transition: "transform 0.3s, box-shadow 0.3s", textDecoration: "none", whiteSpace: "nowrap" }}
             onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 4px 20px rgba(200,255,0,0.3)"; }}
@@ -103,6 +111,7 @@ export default function Nav() {
           { href: "/utility/ai-audit", label: "AI Gap Audit" },
           { href: "/see-you-friday", label: "Friday Letter" },
           { href: "/contact", label: "Contact" },
+          { href: "https://app.martinbuilds.ai", label: "Pre-Build · $50/mo" },
         ].map((link) => (
           <a
             key={link.href}
