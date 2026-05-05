@@ -94,13 +94,90 @@ export default function Services() {
         </h2>
       </ScrollReveal>
 
-      {/* Phases 1 + 2 */}
+      {/* Pre-Build — entry tier ($50/mo SaaS) */}
+      <ScrollReveal>
+        <div
+          style={{
+            marginTop: "3rem",
+            background: "linear-gradient(135deg, rgba(200,255,0,0.06), rgba(200,255,0,0.01))",
+            border: "1px solid rgba(200,255,0,0.25)",
+            borderRadius: 20,
+            padding: "clamp(1.5rem, 4vw, 2.25rem)",
+            display: "flex",
+            gap: "1.5rem",
+            alignItems: "center",
+            flexWrap: "wrap",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
+          <div style={{ position: "absolute", top: -40, right: -40, width: 200, height: 200, background: "radial-gradient(circle, rgba(200,255,0,0.1) 0%, transparent 70%)", pointerEvents: "none" }} />
+          <div
+            style={{
+              width: 56,
+              height: 56,
+              background: "rgba(200,255,0,0.15)",
+              borderRadius: 16,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="9" cy="10" r="1" fill="#c8ff00" />
+              <circle cx="15" cy="10" r="1" fill="#c8ff00" />
+              <path d="M9 16h6" />
+            </svg>
+          </div>
+          <div style={{ flex: "1 1 280px", minWidth: 0 }}>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 6, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 10, color: "#c8ff00", fontFamily: "'Space Mono', monospace", textTransform: "uppercase", letterSpacing: 2, fontWeight: 700, padding: "3px 10px", background: "rgba(200,255,0,0.1)", border: "1px solid rgba(200,255,0,0.25)", borderRadius: 100 }}>
+                Start here · $50/mo
+              </span>
+              <span style={{ fontSize: 10, color: "#c8ff00", fontFamily: "'Space Mono', monospace", textTransform: "uppercase", letterSpacing: 1.5, fontWeight: 600 }}>
+                Founder pricing $30/mo · first 50
+              </span>
+            </div>
+            <h3 style={{ fontSize: "clamp(1.25rem, 2.5vw, 1.5rem)", fontWeight: 700, margin: "0 0 8px 0", letterSpacing: "-0.5px" }}>
+              Pre-Build &mdash; the SaaS dashboard for solo operators
+            </h3>
+            <p style={{ fontSize: "0.95rem", color: "#aaa", lineHeight: 1.6, margin: "0 0 16px 0" }}>
+              Not ready for a $5K custom build? Pre-Build is the same builder brain &mdash; daily AI brief, playbook, AI assistant, and tool connections (Gmail, Stripe, Calendar, more) &mdash; available the moment you sign up. <strong style={{ color: "#f5f5f0" }}>Live in 24 hours.</strong>
+            </p>
+            <a
+              href="https://app.martinbuilds.ai/signup"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "10px 20px",
+                background: "#c8ff00",
+                color: "#0a0a0a",
+                borderRadius: 100,
+                fontWeight: 700,
+                fontSize: 13,
+                textDecoration: "none",
+                letterSpacing: 0.5,
+              }}
+            >
+              Start free →
+            </a>
+          </div>
+        </div>
+      </ScrollReveal>
+
+      {/* Custom builds — Foundation + Full Stack */}
+      <ScrollReveal>
+        <p style={{ ...sectionTag, marginTop: "clamp(3rem, 6vw, 4rem)", marginBottom: 0 }}>Or go custom</p>
+      </ScrollReveal>
       <div
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
           gap: "2rem",
-          marginTop: "4rem",
+          marginTop: "1.5rem",
         }}
       >
         <ScrollReveal>
