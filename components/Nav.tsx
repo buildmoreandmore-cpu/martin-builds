@@ -53,11 +53,31 @@ export default function Nav() {
           <NavLink href="/contact">Contact</NavLink>
           <a
             href="https://app.martinbuilds.ai"
-            style={{ background: "transparent", color: "#c8ff00", padding: "0.55rem 1.1rem", border: "1px solid rgba(200,255,0,0.35)", borderRadius: "100px", fontWeight: 600, fontSize: "0.78rem", letterSpacing: "0.5px", textTransform: "uppercase", transition: "all 0.25s", textDecoration: "none", whiteSpace: "nowrap" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "rgba(200,255,0,0.08)"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "#c8ff00"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(200,255,0,0.35)"; }}
+            className="fusion-nav-btn"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              background: "rgba(200,255,0,0.05)",
+              color: "#c8ff00",
+              padding: "0.55rem 1.1rem",
+              border: "1px solid rgba(200,255,0,0.3)",
+              borderRadius: "100px",
+              fontWeight: 600,
+              fontSize: "0.78rem",
+              letterSpacing: "1px",
+              textTransform: "uppercase",
+              transition: "all 0.25s",
+              textDecoration: "none",
+              whiteSpace: "nowrap",
+              backdropFilter: "blur(8px)",
+              fontFamily: "'Space Mono', monospace",
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "rgba(200,255,0,0.12)"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "#c8ff00"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 0 24px -4px rgba(200,255,0,0.4)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "rgba(200,255,0,0.05)"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(200,255,0,0.3)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
           >
-            Fusion · $30/mo
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#c8ff00", display: "inline-block", animation: "fusionPulse 2s ease-in-out infinite", boxShadow: "0 0 8px rgba(200,255,0,0.8)" }} />
+            Fusion
           </a>
           <a
             href="/discovery-call"
@@ -111,7 +131,7 @@ export default function Nav() {
           { href: "/utility/ai-audit", label: "AI Gap Audit" },
           { href: "/see-you-friday", label: "Friday Letter" },
           { href: "/contact", label: "Contact" },
-          { href: "https://app.martinbuilds.ai", label: "Fusion · $30/mo" },
+          { href: "https://app.martinbuilds.ai", label: "Fusion" },
         ].map((link) => (
           <a
             key={link.href}
@@ -138,6 +158,10 @@ export default function Nav() {
           .nav-desktop { display: none !important; }
           .nav-hamburger { display: flex !important; }
           .nav-mobile-menu { display: flex !important; }
+        }
+        @keyframes fusionPulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.4; transform: scale(0.8); }
         }
       `}</style>
     </>

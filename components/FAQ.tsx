@@ -5,8 +5,8 @@ import ScrollReveal from "./ScrollReveal";
 
 const FAQS: Array<{ q: string; a: string }> = [
   {
-    q: "Why is this only $5,000?",
-    a: "Because there's no agency overhead. One operator, fixed scope, modern AI-assisted tooling. The savings come from removing layers, not cutting corners.",
+    q: "Why does this start at $5,000?",
+    a: "Builds start at $5,000 and scale up from there based on scope and complexity. There's no agency overhead — one operator, fixed scope, modern AI-assisted tooling — so you're paying for the work, not for layers. Final price is set before we start, no surprise invoices.",
   },
   {
     q: "What if we go past 14 days?",
