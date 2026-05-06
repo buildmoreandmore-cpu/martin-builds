@@ -97,6 +97,14 @@ const demos = [
     href: "/demo/travel-nurse",
     accent: "#1F4A3D",
   },
+  {
+    title: "Smoke & Kettle Operator Dashboard",
+    vertical: "Food Truck",
+    description:
+      "Today's briefing, item performance, schedule, catering inbox, prep lists, and regulars tracking — for solo food truck operators.",
+    href: "/demo/food-truck",
+    accent: "#c0421f",
+  },
 ];
 
 export default function DemoIndex() {

@@ -57,7 +57,7 @@ export default function Nav() {
             onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "rgba(200,255,0,0.08)"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "#c8ff00"; }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(200,255,0,0.35)"; }}
           >
-            Pre-Build · $50/mo
+            Fusion · $30/mo
           </a>
           <a
             href="/discovery-call"
@@ -111,7 +111,7 @@ export default function Nav() {
           { href: "/utility/ai-audit", label: "AI Gap Audit" },
           { href: "/see-you-friday", label: "Friday Letter" },
           { href: "/contact", label: "Contact" },
-          { href: "https://app.martinbuilds.ai", label: "Pre-Build · $50/mo" },
+          { href: "https://app.martinbuilds.ai", label: "Fusion · $30/mo" },
         ].map((link) => (
           <a
             key={link.href}
