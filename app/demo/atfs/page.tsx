@@ -153,7 +153,7 @@ export default function App() {
             <span style={{ background: green, color: "#fff", fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 9999, letterSpacing: "0.05em", textTransform: "uppercase" }}>Demo</span>
           </div>
           <div style={{ color: muted, fontSize: 13, marginTop: 4 }}>
-            Supply intelligence · ATFS Ltd · what to make, what to import, and when
+            Supply intelligence · what to make, what to import, and when
           </div>
         </header>
 
