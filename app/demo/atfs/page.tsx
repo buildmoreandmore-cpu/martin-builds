@@ -80,6 +80,8 @@ const LayersIcon = ({ color, size }: { color?: string; size?: number }) => <Svg 
 const BellIcon = ({ color, size }: { color?: string; size?: number }) => <Svg size={size} color={color}><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" /></Svg>;
 
 type ActionedItem = { id: string; name: string; source: Source; verb: string; detail: string; at: number };
+type View = "overview" | "replenish" | "margins" | "suppliers" | "orders" | "reports";
+type AlertFilter = null | "late" | "cny";
 
 export default function App() {
   const [query, setQuery] = useState("");
@@ -87,14 +89,37 @@ export default function App() {
   const [actioned, setActioned] = useState<ActionedItem[]>([]);
   const actionedIds = useMemo(() => new Set(actioned.map((a) => a.id)), [actioned]);
   const [toast, setToast] = useState<string | null>(null);
+  const [view, setView] = useState<View>("overview");
+  const [sourceFilter, setSourceFilter] = useState<Source | null>(null);
+  const [alertFilter, setAlertFilter] = useState<AlertFilter>(null);
+  const [bellOpen, setBellOpen] = useState(false);
 
   const allRows = useMemo(
     () => SKUS.map((s) => ({ ...s, margin: (s.sell - s.cost) / s.sell })).sort((a, b) => a.cover - b.cover),
     []
   );
-  const rows = allRows.filter((s) => !actionedIds.has(s.id));
+  const baseRows = allRows.filter((s) => !actionedIds.has(s.id));
+  const rows = baseRows.filter((s) => {
+    if (sourceFilter && s.source !== sourceFilter) return false;
+    if (alertFilter === "late" && s.reason !== "late") return false;
+    if (alertFilter === "cny" && s.reason !== "cny") return false;
+    return true;
+  });
   const act = rows.filter((s) => s.cover < s.leadWk / 4 + 0.5 || s.reason === "cny");
   const byMargin = [...rows].sort((a, b) => a.margin - b.margin);
+
+  function pickSource(s: Source) {
+    setSourceFilter((cur) => (cur === s ? null : s));
+    if (view === "overview" || view === "reports") setView("replenish");
+  }
+  function pickAlert(a: Exclude<AlertFilter, null>) {
+    setAlertFilter((cur) => (cur === a ? null : a));
+    setView("replenish");
+  }
+  function clearFilters() {
+    setSourceFilter(null);
+    setAlertFilter(null);
+  }
 
   // KPIs
   const linesShort = act.length;
@@ -216,47 +241,65 @@ export default function App() {
       `}</style>
 
       {/* Top nav */}
-      <div style={{ background: nav, color: navText, height: 56, display: "flex", alignItems: "center", paddingLeft: 20, paddingRight: 20, gap: 32 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 26, height: 26, borderRadius: 6, background: "#fff", color: nav, display: "inline-flex", alignItems: "center", justifyContent: "center", fontFamily: fontDisplay, fontWeight: 700, fontSize: 15 }}>S</div>
-          <div style={{ fontFamily: fontDisplay, fontSize: 17, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em" }}>
-            StockSense
-          </div>
-        </div>
+      <div style={{ background: nav, color: navText, height: 56, display: "flex", alignItems: "center", paddingLeft: 20, paddingRight: 20, gap: 24 }}>
         <nav style={{ display: "flex", alignItems: "center", gap: 4, flex: 1 }}>
-          {[
-            { label: "Dashboard", active: true },
-            { label: "Replenish" },
-            { label: "Margins" },
-            { label: "Suppliers" },
-            { label: "Orders" },
-            { label: "Reports" },
-          ].map((t) => (
-            <div key={t.label} className="nav-tab" style={{
-              padding: "8px 14px",
-              fontSize: 13,
-              fontWeight: t.active ? 600 : 500,
-              borderRadius: 6,
-              cursor: "pointer",
-              color: t.active ? navTextActive : navText,
-              background: "transparent",
-              borderBottom: t.active ? `2px solid ${navTextActive}` : "2px solid transparent",
-              marginBottom: -2,
-            }}>{t.label}</div>
-          ))}
+          {([
+            { label: "Dashboard", v: "overview" as const },
+            { label: "Replenish", v: "replenish" as const },
+            { label: "Margins", v: "margins" as const },
+            { label: "Suppliers", v: "suppliers" as const },
+            { label: "Orders", v: "orders" as const },
+            { label: "Reports", v: "reports" as const },
+          ]).map((t) => {
+            const active = view === t.v;
+            return (
+              <button
+                key={t.label}
+                onClick={() => setView(t.v)}
+                className="nav-tab"
+                style={{
+                  padding: "8px 14px",
+                  fontSize: 13,
+                  fontWeight: active ? 600 : 500,
+                  borderRadius: 6,
+                  cursor: "pointer",
+                  color: active ? navTextActive : navText,
+                  background: "transparent",
+                  borderTop: "none",
+                  borderLeft: "none",
+                  borderRight: "none",
+                  borderBottom: active ? `2px solid ${navTextActive}` : "2px solid transparent",
+                  marginBottom: -2,
+                  fontFamily: fontBody,
+                }}
+              >
+                {t.label}
+              </button>
+            );
+          })}
         </nav>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <span style={{ fontSize: 11, color: navText, display: "inline-flex", alignItems: "center", gap: 6 }}>
             <span style={{ width: 6, height: 6, borderRadius: 9999, background: okQuiet, display: "inline-block" }} />
             Live
           </span>
-          <div style={{ position: "relative", display: "inline-flex" }}>
+          <button
+            onClick={() => { setBellOpen((o) => !o); }}
+            aria-label="Notifications"
+            style={{ position: "relative", display: "inline-flex", background: "transparent", border: "none", padding: 4, cursor: "pointer" }}
+          >
             <BellIcon color="#fff" size={18} />
             {notifs.length > 0 && (
-              <span style={{ position: "absolute", top: -4, right: -6, background: pop, color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 9999, padding: "1px 5px", minWidth: 16, textAlign: "center" }}>{notifs.length}</span>
+              <span style={{ position: "absolute", top: 0, right: -2, background: pop, color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 9999, padding: "1px 5px", minWidth: 16, textAlign: "center" }}>{notifs.length}</span>
             )}
-          </div>
-          <div style={{ width: 28, height: 28, borderRadius: 9999, background: "rgba(255,255,255,0.14)", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 600, border: "1px solid rgba(255,255,255,0.18)" }}>JP</div>
+          </button>
+          <button
+            onClick={() => { setView("orders"); }}
+            title="Open profile / orders"
+            style={{ width: 28, height: 28, borderRadius: 9999, background: "rgba(255,255,255,0.14)", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 600, border: "1px solid rgba(255,255,255,0.18)", cursor: "pointer", fontFamily: fontBody }}
+          >
+            JP
+          </button>
         </div>
       </div>
 
@@ -264,19 +307,19 @@ export default function App() {
         {/* Sidebar */}
         <aside style={{ background: sidebarBg, borderRight: `1px solid ${border}`, padding: "20px 12px", display: "flex", flexDirection: "column", gap: 18 }}>
           <SideGroup label="Quick access" items={[
-            { label: "Overview", active: true, icon: <LayersIcon size={14} color={sidebarText} /> },
-            { label: "Replenish", icon: <BoxIcon size={14} color={sidebarText} /> },
-            { label: "True margin", icon: <TrendIcon size={14} color={sidebarText} /> },
-            { label: "Suppliers", icon: <ShipIcon size={14} color={sidebarText} /> },
+            { label: "Overview", active: view === "overview", onClick: () => setView("overview"), icon: <LayersIcon size={14} color={sidebarText} /> },
+            { label: "Replenish", active: view === "replenish", onClick: () => setView("replenish"), icon: <BoxIcon size={14} color={sidebarText} /> },
+            { label: "True margin", active: view === "margins", onClick: () => setView("margins"), icon: <TrendIcon size={14} color={sidebarText} /> },
+            { label: "Suppliers", active: view === "suppliers", onClick: () => setView("suppliers"), icon: <ShipIcon size={14} color={sidebarText} /> },
           ]} />
           <SideGroup label="By source" items={[
-            { label: "Local production", icon: <FactoryIcon size={14} color={sidebarText} />, badge: String(sourceCounts.Local || 0) },
-            { label: "China imports", icon: <ShipIcon size={14} color={sidebarText} />, badge: String(sourceCounts.China || 0) },
-            { label: "Thailand", icon: <ShipIcon size={14} color={sidebarText} />, badge: String(sourceCounts.Thailand || 0) },
+            { label: "Local production", active: sourceFilter === "Local", onClick: () => pickSource("Local"), icon: <FactoryIcon size={14} color={sidebarText} />, badge: String(sourceCounts.Local || 0) },
+            { label: "China imports", active: sourceFilter === "China", onClick: () => pickSource("China"), icon: <ShipIcon size={14} color={sidebarText} />, badge: String(sourceCounts.China || 0) },
+            { label: "Thailand", active: sourceFilter === "Thailand", onClick: () => pickSource("Thailand"), icon: <ShipIcon size={14} color={sidebarText} />, badge: String(sourceCounts.Thailand || 0) },
           ]} />
           <SideGroup label="Alerts" items={[
-            { label: "Behind cover", icon: <AlertIcon size={14} color={pop} />, badge: String(act.filter((s) => s.reason === "late").length) },
-            { label: "CNY at risk", icon: <AlertIcon size={14} color={sidebarText} />, badge: String(act.filter((s) => s.reason === "cny").length) },
+            { label: "Behind cover", active: alertFilter === "late", onClick: () => pickAlert("late"), icon: <AlertIcon size={14} color={pop} />, badge: String(baseRows.filter((s) => s.reason === "late").length) },
+            { label: "CNY at risk", active: alertFilter === "cny", onClick: () => pickAlert("cny"), icon: <AlertIcon size={14} color={sidebarText} />, badge: String(baseRows.filter((s) => s.reason === "cny").length) },
           ]} />
           <div style={{ marginTop: "auto", fontSize: 11, color: muted, lineHeight: 1.5 }}>
             Last update<br /><span style={{ color: textDark, fontWeight: 600 }}>just now</span>
@@ -288,9 +331,26 @@ export default function App() {
           {/* Filter bar */}
           <div className="rise" style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
             <FilterPill label="Mar 1 → May 30, 2026" />
-            <FilterPill label="All sources" />
-            <FilterPill label="All SKUs" />
+            {sourceFilter ? (
+              <button onClick={() => setSourceFilter(null)} style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, padding: "5px 10px", background: popSoft, border: `1px solid ${pop}33`, borderRadius: 6, color: pop, cursor: "pointer", fontFamily: fontBody, fontWeight: 600 }}>
+                Source: {sourceFilter} <span style={{ marginLeft: 4 }}>×</span>
+              </button>
+            ) : (
+              <FilterPill label="All sources" />
+            )}
+            {alertFilter ? (
+              <button onClick={() => setAlertFilter(null)} style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, padding: "5px 10px", background: popSoft, border: `1px solid ${pop}33`, borderRadius: 6, color: pop, cursor: "pointer", fontFamily: fontBody, fontWeight: 600 }}>
+                Alert: {alertFilter === "late" ? "Behind cover" : "CNY at risk"} <span style={{ marginLeft: 4 }}>×</span>
+              </button>
+            ) : (
+              <FilterPill label="All SKUs" />
+            )}
             <div style={{ flex: 1 }} />
+            {(sourceFilter || alertFilter) && (
+              <button onClick={clearFilters} style={{ fontSize: 11, color: muted, background: "transparent", border: "none", cursor: "pointer", textDecoration: "underline", fontFamily: fontBody, marginRight: 12 }}>
+                Clear filters
+              </button>
+            )}
             {actioned.length > 0 && (
               <button onClick={reset} style={{ fontSize: 11, color: muted, background: "transparent", border: "none", cursor: "pointer", textDecoration: "underline", fontFamily: fontBody }}>
                 Reset demo
@@ -300,8 +360,22 @@ export default function App() {
 
           {/* Title */}
           <div className="rise" style={{ marginTop: 16, display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
-            <h1 style={{ fontFamily: fontDisplay, fontSize: 26, fontWeight: 600, margin: 0, letterSpacing: "-0.01em" }}>Dashboard</h1>
-            <span style={{ fontSize: 12, color: muted }}>Upstream supply intelligence</span>
+            <h1 style={{ fontFamily: fontDisplay, fontSize: 26, fontWeight: 600, margin: 0, letterSpacing: "-0.01em" }}>
+              {view === "overview" && "Dashboard"}
+              {view === "replenish" && "Replenish"}
+              {view === "margins" && "True margin"}
+              {view === "suppliers" && "Suppliers"}
+              {view === "orders" && "Orders"}
+              {view === "reports" && "Reports"}
+            </h1>
+            <span style={{ fontSize: 12, color: muted }}>
+              {view === "overview" && "Upstream supply intelligence"}
+              {view === "replenish" && "What needs action this week"}
+              {view === "margins" && "Profit after real costs"}
+              {view === "suppliers" && "Health by supply line"}
+              {view === "orders" && "Production runs and POs you've queued"}
+              {view === "reports" && "This week at a glance"}
+            </span>
           </div>
 
           {/* KPI strip */}
@@ -339,6 +413,7 @@ export default function App() {
           </div>
 
           {/* Row 1: Replenish + Source coverage */}
+          {(view === "overview" || view === "replenish" || view === "suppliers") && (
           <div className="rise ss-row" style={{ marginTop: 16 }}>
             <Panel
               title="Replenish now"
@@ -426,8 +501,10 @@ export default function App() {
               </Panel>
             </div>
           </div>
+          )}
 
           {/* Row 2: True margin + Ask */}
+          {(view === "overview" || view === "margins") && (
           <div className="rise ss-row" style={{ marginTop: 16 }}>
             <Panel title="True margin" sub="After production or landed cost — not shelf price">
               <div style={{ borderRadius: 8, overflow: "hidden", border: `1px solid ${border}` }}>
@@ -487,14 +564,15 @@ export default function App() {
               )}
             </Panel>
           </div>
+          )}
 
           {/* Actions taken */}
-          {actioned.length > 0 && (
+          {(view === "overview" || view === "orders") && actioned.length > 0 && (
             <div className="rise" style={{ marginTop: 16 }}>
               <Panel title="Actions taken" sub="What you queued in this session — PO drafts and production slots">
                 <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                   {actioned.map((a) => (
-                    <div key={a.id} style={{ borderRadius: 8, padding: "10px 12px", background: "#FBFAF7", border: `1px solid ${border}`, borderLeft: `3px solid ${srcColor(a.source)}` }}>
+                    <div key={a.id} style={{ borderRadius: 8, padding: "10px 12px", background: "#FBFAF7", border: `1px solid ${border}`, borderLeft: `3px solid ${mutedDeep}` }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                           <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 18, height: 18, borderRadius: 9999, background: okQuiet, color: "#fff", fontSize: 10, fontWeight: 700 }}>✓</span>
@@ -510,9 +588,88 @@ export default function App() {
             </div>
           )}
 
+          {/* Orders view — empty state */}
+          {view === "orders" && actioned.length === 0 && (
+            <div className="rise" style={{ marginTop: 16 }}>
+              <Panel title="No orders queued yet" sub="Take an action on the Replenish view to draft a PO or schedule a production run">
+                <div style={{ padding: "24px 0", textAlign: "center", color: muted, fontSize: 13 }}>
+                  <button onClick={() => setView("replenish")} style={{ padding: "8px 14px", background: nav, color: "#fff", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: fontBody }}>
+                    Go to Replenish →
+                  </button>
+                </div>
+              </Panel>
+            </div>
+          )}
+
+          {/* Reports view — weekly summary */}
+          {view === "reports" && (
+            <div className="rise ss-row" style={{ marginTop: 16 }}>
+              <Panel title="This week" sub="What changed and what's next">
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <Stat label="Actions taken" value={String(actioned.length)} sub="orders + production runs" />
+                  <Stat label="Lines still flagged" value={String(act.length)} sub="open after your actions" tone={act.length > 0 ? pop : textDark} />
+                  <Stat label="Source mix" value={`${sourceCounts.Local || 0}·${sourceCounts.China || 0}·${sourceCounts.Thailand || 0}`} sub="local · CN · TH active SKUs" />
+                  <Stat label="Coverage health" value={`${overallHealthPct}%`} sub="SKUs not flagged" />
+                </div>
+              </Panel>
+              <Panel title="Action breakdown" sub="By supply line">
+                {actioned.length === 0 ? (
+                  <div style={{ color: muted, fontSize: 13, padding: "20px 0", textAlign: "center" }}>
+                    No actions yet this session — try the Replenish view.
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {(["Local", "China", "Thailand"] as Source[]).map((src) => {
+                      const count = actioned.filter((a) => a.source === src).length;
+                      return (
+                        <div key={src} style={{ fontSize: 12 }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                            <span>{src}</span>
+                            <span style={{ color: muted }}>{count}</span>
+                          </div>
+                          <div style={{ height: 4, background: track, borderRadius: 9999, overflow: "hidden" }}>
+                            <div style={{ height: "100%", width: `${actioned.length ? (count / actioned.length) * 100 : 0}%`, background: mutedDeep, opacity: 0.5, borderRadius: 9999 }} />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </Panel>
+            </div>
+          )}
+
           <div style={{ height: 28 }} />
         </main>
       </div>
+
+      {/* Bell dropdown */}
+      {bellOpen && (
+        <>
+          <div onClick={() => setBellOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 40 }} />
+          <div style={{ position: "fixed", top: 56, right: 14, width: 320, background: card, border: `1px solid ${border}`, borderRadius: 10, boxShadow: "0 12px 28px rgba(0,0,0,0.12)", zIndex: 50, padding: 12, animation: "rise .2s ease both" }}>
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8 }}>
+              <div style={{ fontSize: 13, fontWeight: 700 }}>Alerts</div>
+              <button onClick={() => { setView("replenish"); setBellOpen(false); }} style={{ fontSize: 11, color: pop, background: "transparent", border: "none", cursor: "pointer", fontFamily: fontBody, fontWeight: 600 }}>View all →</button>
+            </div>
+            {notifs.length === 0 ? (
+              <div style={{ color: muted, fontSize: 12, padding: "12px 0" }}>All clear.</div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+                {notifs.map((n, i) => (
+                  <button key={i} onClick={() => { setView("replenish"); setAlertFilter(act.find((s) => `${s.name} behind` === n.title || `${s.name} — CNY risk` === n.title)?.reason === "cny" ? "cny" : "late"); setBellOpen(false); }} style={{ display: "flex", gap: 8, fontSize: 12, alignItems: "flex-start", padding: "8px 4px", borderTop: i === 0 ? "none" : `1px solid ${border}`, background: "transparent", border: "none", borderRadius: 4, cursor: "pointer", fontFamily: fontBody, textAlign: "left", color: textDark, width: "100%" }}>
+                    <span style={{ width: 6, height: 6, borderRadius: 9999, background: n.tone, marginTop: 6, flexShrink: 0 }} />
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ fontWeight: 600 }}>{n.title}</div>
+                      <div style={{ color: muted, fontSize: 11.5 }}>{n.body}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </>
+      )}
 
       {/* Toast */}
       {toast && (
@@ -565,30 +722,49 @@ function Panel({ title, sub, children }: { title: string; sub?: string; children
   );
 }
 
-function SideGroup({ label, items }: { label: string; items: { label: string; active?: boolean; icon?: React.ReactNode; badge?: string }[] }) {
+function SideGroup({ label, items }: { label: string; items: { label: string; active?: boolean; icon?: React.ReactNode; badge?: string; onClick?: () => void }[] }) {
   return (
     <div>
       <div style={{ fontSize: 10, fontWeight: 700, color: "#9a8e7e", textTransform: "uppercase", letterSpacing: "0.08em", padding: "0 10px 6px 10px" }}>{label}</div>
       <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
         {items.map((it) => (
-          <div key={it.label} className="side-item" style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            padding: "7px 10px",
-            borderRadius: 6,
-            fontSize: 13,
-            cursor: "pointer",
-            color: it.active ? textDark : sidebarText,
-            background: it.active ? card : "transparent",
-            fontWeight: it.active ? 600 : 500,
-          }}>
+          <button
+            key={it.label}
+            onClick={it.onClick}
+            className="side-item"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "7px 10px",
+              borderRadius: 6,
+              fontSize: 13,
+              cursor: "pointer",
+              color: it.active ? textDark : sidebarText,
+              background: it.active ? card : "transparent",
+              fontWeight: it.active ? 600 : 500,
+              border: "none",
+              textAlign: "left",
+              width: "100%",
+              fontFamily: fontBody,
+            }}
+          >
             {it.icon}
             <span style={{ flex: 1 }}>{it.label}</span>
             {it.badge && <span style={{ fontSize: 10, fontWeight: 700, color: muted, background: bg, padding: "1px 6px", borderRadius: 9999 }}>{it.badge}</span>}
-          </div>
+          </button>
         ))}
       </div>
+    </div>
+  );
+}
+
+function Stat({ label, value, sub, tone: t }: { label: string; value: string; sub: string; tone?: string }) {
+  return (
+    <div style={{ background: cardSubtle, border: `1px solid ${border}`, borderRadius: 8, padding: 12 }}>
+      <div style={{ fontSize: 10.5, fontWeight: 700, color: muted, textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</div>
+      <div style={{ fontFamily: fontDisplay, fontSize: 22, fontWeight: 700, lineHeight: 1.1, marginTop: 4, color: t || textDark }}>{value}</div>
+      <div style={{ fontSize: 11, color: muted, marginTop: 2 }}>{sub}</div>
     </div>
   );
 }
