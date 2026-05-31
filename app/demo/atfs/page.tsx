@@ -100,14 +100,20 @@ const SparkIcon = (p: { color?: string }) => <Icon d="M12 3v18M3 12h18" color={p
 const ArrowIcon = () => <Icon d="M5 12h14M13 5l7 7-7 7" color="#ffffff" />;
 const CalIcon = (p: { color?: string }) => <Icon d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" color={p.color} />;
 
+type ActionedItem = { id: string; name: string; source: Source; verb: string; detail: string; at: number };
+
 export default function App() {
   const [query, setQuery] = useState("");
   const [answer, setAnswer] = useState<null | { title: string; lead: string; rows: string[]; action: string }>(null);
+  const [actioned, setActioned] = useState<ActionedItem[]>([]);
+  const actionedIds = useMemo(() => new Set(actioned.map((a) => a.id)), [actioned]);
+  const [toast, setToast] = useState<string | null>(null);
 
-  const rows = useMemo(
+  const allRows = useMemo(
     () => SKUS.map((s) => ({ ...s, margin: (s.sell - s.cost) / s.sell })).sort((a, b) => a.cover - b.cover),
     []
   );
+  const rows = allRows.filter((s) => !actionedIds.has(s.id));
   const act = rows.filter((s) => s.cover < s.leadWk / 4 + 0.5 || s.reason === "cny");
   const byMargin = [...rows].sort((a, b) => a.margin - b.margin);
 
@@ -169,6 +175,27 @@ export default function App() {
   const srcColor = (s: Source) => (s === "China" ? red : s === "Local" ? green : amber);
   const tone = (r: Reason) => (r === "late" || r === "cny" || r === "produce" ? red : r === "watch" ? amber : green);
   const action = (s: { source: Source }) => (s.source === "Local" ? "Schedule run" : `Order — ${s.source}`);
+
+  function take(s: (typeof allRows)[number]) {
+    if (actionedIds.has(s.id)) return;
+    const verb = s.source === "Local" ? "Production scheduled" : "PO drafted";
+    const detail =
+      s.source === "Local"
+        ? "Slot booked at Macoya · raw materials confirmed"
+        : s.source === "China"
+        ? `${s.leadWk}-wk ocean lead · ETA logged, ${s.reason === "cny" ? "ahead of CNY shutdown" : "container space requested"}`
+        : `${s.leadWk}-wk Thailand lead · supplier acknowledged`;
+    const item: ActionedItem = { id: s.id, name: s.name, source: s.source, verb, detail, at: Date.now() };
+    setActioned((p) => [item, ...p]);
+    setToast(`${verb}: ${s.name}`);
+    setTimeout(() => setToast(null), 2600);
+  }
+
+  function reset() {
+    setActioned([]);
+    setAnswer(null);
+    setQuery("");
+  }
 
   return (
     <div style={{ background: bg, color: textDark, minHeight: "100vh", fontFamily: fontBody }}>
@@ -286,9 +313,21 @@ export default function App() {
 
         {/* Replenish */}
         <section className="rise" style={{ marginTop: 28, animationDelay: "120ms" }}>
-          <h2 style={{ fontFamily: fontDisplay, fontSize: 18, fontWeight: 600, margin: 0 }}>Replenish now</h2>
+          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+            <h2 style={{ fontFamily: fontDisplay, fontSize: 18, fontWeight: 600, margin: 0 }}>Replenish now</h2>
+            {actioned.length > 0 && (
+              <button
+                onClick={reset}
+                style={{ fontSize: 11, color: muted, background: "transparent", border: "none", cursor: "pointer", textDecoration: "underline", fontFamily: fontBody }}
+              >
+                Reset demo
+              </button>
+            )}
+          </div>
           <div style={{ color: muted, fontSize: 12, marginTop: 4, marginBottom: 12 }}>
-            Each line judged against its own supply clock — local, China, or Thailand
+            {rows.length === 0
+              ? "Everything actioned — your supply lines are caught up."
+              : "Each line judged against its own supply clock — local, China, or Thailand · click an action pill to take it"}
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {rows.map((s) => (
@@ -298,9 +337,32 @@ export default function App() {
                     {s.source === "Local" ? <FactoryIcon color={srcColor(s.source)} /> : <ShipIcon color={srcColor(s.source)} />}
                     <span style={{ fontWeight: 600, fontSize: 14 }}>{s.name}</span>
                   </div>
-                  <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 9999, color: tone(s.reason), border: `1px solid ${tone(s.reason)}33` }}>
-                    {s.cover < s.leadWk / 4 + 0.5 || s.reason === "cny" ? action(s) : s.source}
-                  </span>
+                  {s.cover < s.leadWk / 4 + 0.5 || s.reason === "cny" ? (
+                    <button
+                      onClick={() => take(s)}
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        padding: "4px 10px",
+                        borderRadius: 9999,
+                        color: "#fff",
+                        background: tone(s.reason),
+                        border: "none",
+                        cursor: "pointer",
+                        fontFamily: fontBody,
+                        transition: "transform .12s ease, opacity .12s ease",
+                      }}
+                      onMouseDown={(e) => (e.currentTarget.style.transform = "scale(0.97)")}
+                      onMouseUp={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                    >
+                      {action(s)} →
+                    </button>
+                  ) : (
+                    <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 9999, color: tone(s.reason), border: `1px solid ${tone(s.reason)}33` }}>
+                      {s.source}
+                    </span>
+                  )}
                 </div>
                 <div style={{ color: muted, fontSize: 12, marginTop: 4, display: "flex", alignItems: "center", gap: 6 }}>
                   <CalIcon color={muted} />
@@ -361,8 +423,71 @@ export default function App() {
           </div>
         </section>
 
+        {/* Recent actions */}
+        {actioned.length > 0 && (
+          <section className="rise" style={{ marginTop: 28, animationDelay: "240ms" }}>
+            <h2 style={{ fontFamily: fontDisplay, fontSize: 18, fontWeight: 600, margin: 0 }}>Actions taken</h2>
+            <div style={{ color: muted, fontSize: 12, marginTop: 4, marginBottom: 12 }}>
+              What you queued in this session — PO drafts and production slots
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {actioned.map((a) => (
+                <div
+                  key={a.id}
+                  className="rise"
+                  style={{
+                    borderRadius: 12,
+                    padding: "12px 16px",
+                    background: card,
+                    border: `1px solid ${border}`,
+                    borderLeft: `3px solid ${srcColor(a.source)}`,
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 20, height: 20, borderRadius: 9999, background: green, color: "#fff", fontSize: 11, fontWeight: 700, flexShrink: 0 }}>✓</span>
+                      <span style={{ fontWeight: 600, fontSize: 14 }}>{a.name}</span>
+                    </div>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: srcColor(a.source) }}>{a.verb}</span>
+                  </div>
+                  <div style={{ color: muted, fontSize: 12, marginTop: 4, paddingLeft: 28 }}>{a.detail}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         <div style={{ height: 28 }} />
       </div>
+
+      {/* Toast */}
+      {toast && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: 20,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: ink,
+            color: bg,
+            padding: "10px 16px",
+            borderRadius: 9999,
+            fontSize: 13,
+            fontWeight: 500,
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+            zIndex: 50,
+            animation: "rise .25s ease both",
+            fontFamily: fontBody,
+            maxWidth: "90vw",
+          }}
+        >
+          <span style={{ color: green }}>●</span>
+          {toast}
+        </div>
+      )}
     </div>
   );
 }
