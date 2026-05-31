@@ -523,7 +523,7 @@ export default function App() {
               </div>
             </Panel>
 
-            <Panel title="Ask StockSense" sub="Plain English — your supply, your numbers">
+            <Panel title="Ask" sub="Plain English — your supply, your numbers">
               <div style={{ display: "flex", alignItems: "center", gap: 10, borderRadius: 10, padding: "8px 10px", background: "#FBFAF7", border: `1px solid ${border}` }}>
                 <SearchIcon size={15} color={muted} />
                 <input
