@@ -7,25 +7,32 @@ import { useState, useMemo } from "react";
   Built under martin.builds. Upstream + source-aware.
 */
 
-/* ── palette ── */
-const bg = "#F5F2EC";
+/* ── palette: neutrals + one urgency pop ── */
+const bg = "#FAFAF7";
 const card = "#ffffff";
-const border = "#E2DCD0";
-const green = "#16a34a";
-const amber = "#d97706";
-const red = "#dc2626";
-const blue = "#2563eb";
-const muted = "#78716c";
-const textDark = "#1a1a1a";
+const cardSubtle = "#FBFAF7";
+const border = "#ECE7DC";
+const borderSoft = "#F0EBE0";
+const track = "#F1ECDF";
+const muted = "#8B8378";
+const mutedDeep = "#5F574D";
+const textDark = "#1c1917";
 const ink = "#1c1917";
-const nav = "#3D2A5C";
-const navAccent = "#2A1B43";
-const navText = "rgba(255,255,255,0.78)";
+const nav = "#2D2438";          // signature deep ink-purple — used only on top bar
+const navText = "rgba(255,255,255,0.82)";
 const navTextActive = "#ffffff";
-const sidebarBg = "#EFEAE0";
-const sidebarText = "#5a5048";
+const sidebarBg = "#F4F0E6";
+const sidebarText = "#6B6256";
+const pop = "#C84231";           // the single accent — for urgent / take-action moments
+const popSoft = "#FBE9E5";       // light wash of the same family
+const okQuiet = "#7B8B6F";       // muted sage for "on track" — not a true green
 const fontDisplay = "'Fraunces', serif";
 const fontBody = "'DM Sans', sans-serif";
+/* legacy alias — kept so action-color logic stays simple */
+const red = pop;
+const amber = "#9B7B3A";
+const green = okQuiet;
+const blue = mutedDeep;
 
 /* ── data ── */
 type Reason = "late" | "cny" | "produce" | "watch" | "ok";
@@ -151,8 +158,9 @@ export default function App() {
     setAnswer(body);
   }
 
-  const srcColor = (s: Source) => (s === "China" ? red : s === "Local" ? green : amber);
-  const tone = (r: Reason) => (r === "late" || r === "cny" || r === "produce" ? red : r === "watch" ? amber : green);
+  // Source coloring is intentionally muted — the pop is reserved for urgency.
+  const srcColor = (_s: Source) => mutedDeep;
+  const tone = (r: Reason) => (r === "late" || r === "cny" || r === "produce" ? pop : mutedDeep);
   const action = (s: { source: Source }) => (s.source === "Local" ? "Schedule run" : `Order — ${s.source}`);
 
   function take(s: (typeof allRows)[number]) {
@@ -178,8 +186,8 @@ export default function App() {
 
   /* notifications: dynamic flags from data */
   const notifs = [
-    ...act.filter((s) => s.reason === "late").map((s) => ({ tone: red, title: `${s.name} behind`, body: `${s.cover.toFixed(1)} wks cover vs ${s.leadWk}-wk lead` })),
-    ...act.filter((s) => s.reason === "cny").map((s) => ({ tone: amber, title: `${s.name} — CNY risk`, body: "Factory shutdown approaching" })),
+    ...act.filter((s) => s.reason === "late").map((s) => ({ tone: pop, title: `${s.name} behind`, body: `${s.cover.toFixed(1)} wks cover vs ${s.leadWk}-wk lead` })),
+    ...act.filter((s) => s.reason === "cny").map((s) => ({ tone: mutedDeep, title: `${s.name} — CNY risk`, body: "Factory shutdown approaching" })),
   ].slice(0, 5);
 
   return (
@@ -212,7 +220,7 @@ export default function App() {
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 26, height: 26, borderRadius: 6, background: "#fff", color: nav, display: "inline-flex", alignItems: "center", justifyContent: "center", fontFamily: fontDisplay, fontWeight: 700, fontSize: 15 }}>S</div>
           <div style={{ fontFamily: fontDisplay, fontSize: 17, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em" }}>
-            Stock<span style={{ color: "#F4C95D" }}>Sense</span>
+            StockSense
           </div>
         </div>
         <nav style={{ display: "flex", alignItems: "center", gap: 4, flex: 1 }}>
@@ -227,23 +235,28 @@ export default function App() {
             <div key={t.label} className="nav-tab" style={{
               padding: "8px 14px",
               fontSize: 13,
-              fontWeight: 500,
+              fontWeight: t.active ? 600 : 500,
               borderRadius: 6,
               cursor: "pointer",
               color: t.active ? navTextActive : navText,
-              background: t.active ? navAccent : "transparent",
+              background: "transparent",
+              borderBottom: t.active ? `2px solid ${navTextActive}` : "2px solid transparent",
+              marginBottom: -2,
             }}>{t.label}</div>
           ))}
         </nav>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <span style={{ width: 8, height: 8, borderRadius: 9999, background: "#3fd96f", display: "inline-block" }} title="Sync live" />
+          <span style={{ fontSize: 11, color: navText, display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <span style={{ width: 6, height: 6, borderRadius: 9999, background: okQuiet, display: "inline-block" }} />
+            Live
+          </span>
           <div style={{ position: "relative", display: "inline-flex" }}>
             <BellIcon color="#fff" size={18} />
             {notifs.length > 0 && (
-              <span style={{ position: "absolute", top: -4, right: -6, background: "#F4C95D", color: nav, fontSize: 10, fontWeight: 700, borderRadius: 9999, padding: "1px 5px", minWidth: 16, textAlign: "center" }}>{notifs.length}</span>
+              <span style={{ position: "absolute", top: -4, right: -6, background: pop, color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 9999, padding: "1px 5px", minWidth: 16, textAlign: "center" }}>{notifs.length}</span>
             )}
           </div>
-          <div style={{ width: 28, height: 28, borderRadius: 9999, background: "#5A4078", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 600 }}>JP</div>
+          <div style={{ width: 28, height: 28, borderRadius: 9999, background: "rgba(255,255,255,0.14)", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 600, border: "1px solid rgba(255,255,255,0.18)" }}>JP</div>
         </div>
       </div>
 
@@ -257,13 +270,13 @@ export default function App() {
             { label: "Suppliers", icon: <ShipIcon size={14} color={sidebarText} /> },
           ]} />
           <SideGroup label="By source" items={[
-            { label: "Local production", icon: <FactoryIcon size={14} color={green} />, badge: String(sourceCounts.Local || 0) },
-            { label: "China imports", icon: <ShipIcon size={14} color={red} />, badge: String(sourceCounts.China || 0) },
-            { label: "Thailand", icon: <ShipIcon size={14} color={amber} />, badge: String(sourceCounts.Thailand || 0) },
+            { label: "Local production", icon: <FactoryIcon size={14} color={sidebarText} />, badge: String(sourceCounts.Local || 0) },
+            { label: "China imports", icon: <ShipIcon size={14} color={sidebarText} />, badge: String(sourceCounts.China || 0) },
+            { label: "Thailand", icon: <ShipIcon size={14} color={sidebarText} />, badge: String(sourceCounts.Thailand || 0) },
           ]} />
           <SideGroup label="Alerts" items={[
-            { label: "Behind cover", icon: <AlertIcon size={14} color={red} />, badge: String(act.filter((s) => s.reason === "late").length) },
-            { label: "CNY at risk", icon: <AlertIcon size={14} color={amber} />, badge: String(act.filter((s) => s.reason === "cny").length) },
+            { label: "Behind cover", icon: <AlertIcon size={14} color={pop} />, badge: String(act.filter((s) => s.reason === "late").length) },
+            { label: "CNY at risk", icon: <AlertIcon size={14} color={sidebarText} />, badge: String(act.filter((s) => s.reason === "cny").length) },
           ]} />
           <div style={{ marginTop: "auto", fontSize: 11, color: muted, lineHeight: 1.5 }}>
             Last update<br /><span style={{ color: textDark, fontWeight: 600 }}>just now</span>
@@ -294,30 +307,31 @@ export default function App() {
           {/* KPI strip */}
           <div className="rise ss-kpi" style={{ marginTop: 14 }}>
             <KpiTile
-              icon={<AlertIcon size={18} color="#fff" />}
-              tile={red}
+              icon={<AlertIcon size={18} color={linesShort > 0 ? pop : mutedDeep} />}
+              tile={linesShort > 0 ? popSoft : track}
               label="Need action"
               value={String(linesShort)}
               sub={`of ${rows.length} active SKUs`}
+              valueColor={linesShort > 0 ? pop : textDark}
             />
             <KpiTile
-              icon={<TrendIcon size={18} color="#fff" />}
-              tile={worstGapWks > 5 ? red : amber}
+              icon={<TrendIcon size={18} color={mutedDeep} />}
+              tile={track}
               label="Worst gap"
               value={`${worstGapWks.toFixed(0)}`}
               valueSuffix=" wks"
               sub="cover vs lead time"
             />
             <KpiTile
-              icon={<SparkIcon size={18} color="#fff" />}
-              tile={avgMargin < 0.4 ? amber : green}
+              icon={<SparkIcon size={18} color={mutedDeep} />}
+              tile={track}
               label="Avg true margin"
               value={pct(avgMargin)}
               sub="after landed cost"
             />
             <KpiTile
-              icon={<LayersIcon size={18} color="#fff" />}
-              tile={blue}
+              icon={<LayersIcon size={18} color={mutedDeep} />}
+              tile={track}
               label="Supply lines"
               value={`${sourceCounts.Local || 0}/${sourceCounts.China || 0}/${sourceCounts.Thailand || 0}`}
               sub="local / CN / TH"
@@ -365,8 +379,8 @@ export default function App() {
                     <div style={{ color: muted, fontSize: 11.5, marginTop: 4 }}>
                       {s.cover.toFixed(1)} wks cover · {s.leadWk}-wk lead · {pct(s.margin)} margin
                     </div>
-                    <div style={{ marginTop: 6, position: "relative", height: 5, background: "#EFE9DD", borderRadius: 9999, overflow: "hidden" }}>
-                      <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: `${Math.min(100, (s.cover / s.leadWk) * 100)}%`, background: tone(s.reason), borderRadius: 9999, transition: "width .4s ease" }} />
+                    <div style={{ marginTop: 6, position: "relative", height: 4, background: track, borderRadius: 9999, overflow: "hidden" }}>
+                      <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: `${Math.min(100, (s.cover / s.leadWk) * 100)}%`, background: tone(s.reason) === pop ? pop : mutedDeep, borderRadius: 9999, transition: "width .4s ease", opacity: tone(s.reason) === pop ? 1 : 0.35 }} />
                     </div>
                     {(s.reason === "late" || s.reason === "cny" || s.reason === "produce") && (
                       <div style={{ color: tone(s.reason), fontSize: 11.5, marginTop: 6, fontWeight: 500 }}>{s.note}</div>
@@ -379,19 +393,16 @@ export default function App() {
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <Panel title="Supply coverage" sub="Healthy SKUs by source">
                 <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                  <Donut percent={overallHealthPct} color={overallHealthPct > 60 ? green : amber} />
+                  <Donut percent={overallHealthPct} color={overallHealthPct < 60 ? pop : mutedDeep} />
                   <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
                     {sourceHealth.map((s) => (
                       <div key={s.src} style={{ fontSize: 12 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                            <span style={{ width: 8, height: 8, borderRadius: 2, background: srcColor(s.src), display: "inline-block" }} />
-                            {s.src}
-                          </span>
+                          <span>{s.src}</span>
                           <span style={{ color: muted }}>{s.ok}/{s.total}</span>
                         </div>
-                        <div style={{ marginTop: 4, height: 4, background: "#EFE9DD", borderRadius: 9999, overflow: "hidden" }}>
-                          <div style={{ height: "100%", width: `${s.pct * 100}%`, background: srcColor(s.src), borderRadius: 9999, transition: "width .4s ease" }} />
+                        <div style={{ marginTop: 4, height: 4, background: track, borderRadius: 9999, overflow: "hidden" }}>
+                          <div style={{ height: "100%", width: `${s.pct * 100}%`, background: s.pct < 0.5 ? pop : mutedDeep, opacity: s.pct < 0.5 ? 1 : 0.5, borderRadius: 9999, transition: "width .4s ease" }} />
                         </div>
                       </div>
                     ))}
@@ -428,7 +439,7 @@ export default function App() {
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
                       <div style={{ color: muted, fontSize: 11.5 }}>{TT(s.sell)} → {TT(s.cost)}</div>
-                      <div style={{ fontFamily: fontDisplay, fontWeight: 600, width: 44, textAlign: "right", color: s.margin < 0.4 ? red : green }}>{pct(s.margin)}</div>
+                      <div style={{ fontFamily: fontDisplay, fontWeight: 600, width: 44, textAlign: "right", color: s.margin < 0.4 ? pop : textDark }}>{pct(s.margin)}</div>
                     </div>
                   </div>
                 ))}
@@ -458,15 +469,15 @@ export default function App() {
               </div>
               {answer && (
                 <div style={{ marginTop: 12, borderRadius: 10, padding: 14, background: ink, color: bg }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6, color: "#F4C95D" }}>
-                    <SparkIcon size={13} color="#F4C95D" />
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+                    <SparkIcon size={13} color="#fff" />
                     <span style={{ fontSize: 12, fontWeight: 700 }}>{answer.title}</span>
                   </div>
                   <p style={{ fontSize: 13, lineHeight: 1.4, margin: 0, marginBottom: 8, opacity: 0.95 }}>{answer.lead}</p>
                   <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 4, marginBottom: 8 }}>
                     {answer.rows.map((r, i) => (
                       <li key={i} style={{ fontSize: 12, display: "flex", gap: 6, opacity: 0.85 }}>
-                        <span style={{ color: "#F4C95D" }}>▸</span>
+                        <span style={{ opacity: 0.5 }}>▸</span>
                         {r}
                       </li>
                     ))}
@@ -486,10 +497,10 @@ export default function App() {
                     <div key={a.id} style={{ borderRadius: 8, padding: "10px 12px", background: "#FBFAF7", border: `1px solid ${border}`, borderLeft: `3px solid ${srcColor(a.source)}` }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 18, height: 18, borderRadius: 9999, background: green, color: "#fff", fontSize: 10, fontWeight: 700 }}>✓</span>
+                          <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 18, height: 18, borderRadius: 9999, background: okQuiet, color: "#fff", fontSize: 10, fontWeight: 700 }}>✓</span>
                           <span style={{ fontWeight: 600, fontSize: 13 }}>{a.name}</span>
                         </div>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: srcColor(a.source) }}>{a.verb}</span>
+                        <span style={{ fontSize: 11, fontWeight: 600, color: muted }}>{a.verb}</span>
                       </div>
                       <div style={{ color: muted, fontSize: 11.5, marginTop: 3, paddingLeft: 26 }}>{a.detail}</div>
                     </div>
@@ -506,7 +517,7 @@ export default function App() {
       {/* Toast */}
       {toast && (
         <div style={{ position: "fixed", bottom: 20, left: "50%", transform: "translateX(-50%)", background: ink, color: bg, padding: "10px 16px", borderRadius: 9999, fontSize: 13, fontWeight: 500, display: "flex", alignItems: "center", gap: 8, boxShadow: "0 8px 24px rgba(0,0,0,0.15)", zIndex: 50, animation: "rise .25s ease both", fontFamily: fontBody, maxWidth: "90vw" }}>
-          <span style={{ color: green }}>●</span>
+          <span style={{ color: okQuiet }}>●</span>
           {toast}
         </div>
       )}
@@ -525,7 +536,7 @@ function FilterPill({ label }: { label: string }) {
   );
 }
 
-function KpiTile({ icon, tile, label, value, valueSuffix, sub }: { icon: React.ReactNode; tile: string; label: string; value: string; valueSuffix?: string; sub: string }) {
+function KpiTile({ icon, tile, label, value, valueSuffix, sub, valueColor }: { icon: React.ReactNode; tile: string; label: string; value: string; valueSuffix?: string; sub: string; valueColor?: string }) {
   return (
     <div style={{ background: card, border: `1px solid ${border}`, borderRadius: 10, padding: 14, display: "flex", gap: 12, alignItems: "center" }}>
       <div style={{ width: 38, height: 38, borderRadius: 8, background: tile, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -533,7 +544,7 @@ function KpiTile({ icon, tile, label, value, valueSuffix, sub }: { icon: React.R
       </div>
       <div style={{ minWidth: 0, flex: 1 }}>
         <div style={{ fontSize: 10.5, fontWeight: 700, color: muted, textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</div>
-        <div style={{ fontFamily: fontDisplay, fontSize: 22, fontWeight: 700, lineHeight: 1.1, marginTop: 2, color: textDark }}>
+        <div style={{ fontFamily: fontDisplay, fontSize: 22, fontWeight: 700, lineHeight: 1.1, marginTop: 2, color: valueColor || textDark }}>
           {value}{valueSuffix && <span style={{ fontSize: 12, color: muted, marginLeft: 3, fontFamily: fontBody, fontWeight: 500 }}>{valueSuffix}</span>}
         </div>
         <div style={{ fontSize: 10.5, color: muted, marginTop: 2 }}>{sub}</div>
