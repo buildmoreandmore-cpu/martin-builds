@@ -26,6 +26,36 @@ const ink = "#1c1917";
 const fontDisplay = "'Fraunces', serif";
 const fontBody = "'DM Sans', sans-serif";
 
+/* ── style fragments ── */
+const kpiCard: React.CSSProperties = {
+  background: card,
+  border: `1px solid ${border}`,
+  borderRadius: 12,
+  padding: "12px 14px",
+  display: "flex",
+  flexDirection: "column",
+  gap: 2,
+};
+const kpiLabel: React.CSSProperties = {
+  fontSize: 11,
+  fontWeight: 700,
+  color: muted,
+  textTransform: "uppercase",
+  letterSpacing: "0.05em",
+};
+const kpiValue: React.CSSProperties = {
+  fontFamily: fontDisplay,
+  fontSize: 26,
+  fontWeight: 700,
+  lineHeight: 1,
+  marginTop: 4,
+};
+const kpiSub: React.CSSProperties = {
+  fontSize: 11,
+  color: muted,
+  marginTop: 4,
+};
+
 /* ── data ── */
 type Reason = "late" | "cny" | "produce" | "watch" | "ok";
 type Source = "China" | "Local" | "Thailand";
@@ -80,6 +110,18 @@ export default function App() {
   );
   const act = rows.filter((s) => s.cover < s.leadWk / 4 + 0.5 || s.reason === "cny");
   const byMargin = [...rows].sort((a, b) => a.margin - b.margin);
+
+  // KPIs
+  const linesShort = act.length;
+  const avgMargin = rows.reduce((acc, s) => acc + s.margin, 0) / rows.length;
+  const sourceCounts = rows.reduce(
+    (acc, s) => {
+      acc[s.source] = (acc[s.source] || 0) + 1;
+      return acc;
+    },
+    {} as Record<Source, number>
+  );
+  const worstGapWks = Math.max(...act.map((s) => s.leadWk - s.cover), 0);
 
   const examples = [
     "What do I need to replenish now?",
@@ -141,6 +183,8 @@ export default function App() {
         .chip { transition: all .15s ease } .chip:hover { background: ${ink}; color: ${bg} }
         .card-hover { transition: transform .15s ease } .card-hover:hover { transform: translateY(-2px) }
         input::placeholder { color: #9a9086 }
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        @media (max-width: 640px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
       `}</style>
 
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "28px 20px" }}>
@@ -156,6 +200,37 @@ export default function App() {
             Supply intelligence · what to make, what to import, and when
           </div>
         </header>
+
+        {/* KPI strip */}
+        <div className="rise kpi-grid" style={{ marginTop: 20, animationDelay: "30ms" }}>
+          <div style={kpiCard}>
+            <div style={kpiLabel}>Need action</div>
+            <div style={{ ...kpiValue, color: linesShort > 0 ? red : green }}>{linesShort}</div>
+            <div style={kpiSub}>of {rows.length} SKUs</div>
+          </div>
+          <div style={kpiCard}>
+            <div style={kpiLabel}>Worst gap</div>
+            <div style={{ ...kpiValue, color: worstGapWks > 5 ? red : amber }}>{worstGapWks.toFixed(0)}<span style={{ fontSize: 14, color: muted, marginLeft: 4 }}>wks</span></div>
+            <div style={kpiSub}>cover vs lead time</div>
+          </div>
+          <div style={kpiCard}>
+            <div style={kpiLabel}>Avg true margin</div>
+            <div style={{ ...kpiValue, color: avgMargin < 0.4 ? amber : green }}>{pct(avgMargin)}</div>
+            <div style={kpiSub}>after landed cost</div>
+          </div>
+          <div style={kpiCard}>
+            <div style={kpiLabel}>Sources</div>
+            <div style={{ display: "flex", gap: 8, alignItems: "baseline", marginTop: 4 }}>
+              <span style={{ fontSize: 16, fontWeight: 700, color: green }}>{sourceCounts.Local || 0}</span>
+              <span style={{ fontSize: 11, color: muted }}>local</span>
+              <span style={{ fontSize: 16, fontWeight: 700, color: red, marginLeft: 6 }}>{sourceCounts.China || 0}</span>
+              <span style={{ fontSize: 11, color: muted }}>CN</span>
+              <span style={{ fontSize: 16, fontWeight: 700, color: amber, marginLeft: 6 }}>{sourceCounts.Thailand || 0}</span>
+              <span style={{ fontSize: 11, color: muted }}>TH</span>
+            </div>
+            <div style={kpiSub}>by supply line</div>
+          </div>
+        </div>
 
         {/* Ask bar */}
         <div className="rise" style={{ marginTop: 24, animationDelay: "60ms" }}>
@@ -231,8 +306,23 @@ export default function App() {
                   <CalIcon color={muted} />
                   {s.cover.toFixed(1)} wks cover · {s.leadWk}-wk lead · {pct(s.margin)} margin
                 </div>
+                {/* Cover-vs-lead visual: bar width = lead time; fill = cover */}
+                <div style={{ marginTop: 8, position: "relative", height: 6, background: "#F3EFE7", borderRadius: 9999, overflow: "hidden" }}>
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      width: `${Math.min(100, (s.cover / s.leadWk) * 100)}%`,
+                      background: tone(s.reason),
+                      borderRadius: 9999,
+                      transition: "width .4s ease",
+                    }}
+                  />
+                </div>
                 {(s.reason === "late" || s.reason === "cny" || s.reason === "produce") && (
-                  <div style={{ color: tone(s.reason), fontSize: 12, marginTop: 6, fontWeight: 500 }}>{s.note}</div>
+                  <div style={{ color: tone(s.reason), fontSize: 12, marginTop: 8, fontWeight: 500 }}>{s.note}</div>
                 )}
               </div>
             ))}
@@ -271,10 +361,7 @@ export default function App() {
           </div>
         </section>
 
-        <footer style={{ marginTop: 36, marginBottom: 16, textAlign: "center", color: muted, fontSize: 12 }}>
-          Upstream only — your store-order software already covers downstream.
-          Production seeds from your purchase, production &amp; sales history.
-        </footer>
+        <div style={{ height: 28 }} />
       </div>
     </div>
   );
