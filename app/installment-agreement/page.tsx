@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const GREEN = "#c8ff00";
 const BG = "#0a0a0a";
@@ -11,20 +11,64 @@ const DIM = "#888";
 export default function InstallmentAgreement() {
   const [clientName, setClientName] = useState("");
   const [projectName, setProjectName] = useState("");
+  const [clientEmail, setClientEmail] = useState("");
   const [totalAmount, setTotalAmount] = useState("");
   const [monthlyAmount, setMonthlyAmount] = useState("");
   const [signatureName, setSignatureName] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [inviteId, setInviteId] = useState<string | null>(null);
+
+  // Pre-fill from query params (admin sends a link with ?client=&project=&total=&monthly=&email=&invite=)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const p = new URLSearchParams(window.location.search);
+    if (p.get("client")) setClientName(p.get("client") || "");
+    if (p.get("project")) setProjectName(p.get("project") || "");
+    if (p.get("email")) setClientEmail(p.get("email") || "");
+    if (p.get("total")) setTotalAmount(p.get("total") || "");
+    if (p.get("monthly")) setMonthlyAmount(p.get("monthly") || "");
+    if (p.get("invite")) setInviteId(p.get("invite"));
+  }, []);
 
   const total = parseFloat(totalAmount) || 0;
   const monthly = parseFloat(monthlyAmount) || 0;
   const numPayments = monthly >= 300 ? Math.ceil(total / monthly) : 0;
   const finalPayment = total % monthly !== 0 ? total % monthly : monthly;
 
-  const handleSign = () => {
+  const handleSign = async () => {
     if (!clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed) return;
-    setSubmitted(true);
+    if (submitting) return;
+    setSubmitting(true);
+    setSubmitError("");
+    try {
+      const res = await fetch("/api/agreement/sign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          clientName,
+          projectName,
+          clientEmail: clientEmail || null,
+          totalAmount: total,
+          monthlyAmount: monthly,
+          numPayments,
+          signatureName,
+          inviteId,
+        }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => null);
+        setSubmitError(d?.error || "Couldn't record signature — please email agent@martinbuilds.ai");
+        setSubmitting(false);
+        return;
+      }
+      setSubmitted(true);
+    } catch {
+      setSubmitError("Network error — please try again");
+      setSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -83,6 +127,10 @@ export default function InstallmentAgreement() {
             <div>
               <label style={{ fontSize: "0.75rem", color: DIM, display: "block", marginBottom: 4 }}>Monthly Payment</label>
               <input type="number" value={monthlyAmount} onChange={(e) => setMonthlyAmount(e.target.value)} placeholder="500" min="300" style={inputStyle} />
+            </div>
+            <div style={{ gridColumn: "1 / -1" }}>
+              <label style={{ fontSize: "0.75rem", color: DIM, display: "block", marginBottom: 4 }}>Your Email <span style={{ color: "#555" }}>(for your copy of the signed agreement)</span></label>
+              <input type="email" value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} placeholder="you@example.com" style={inputStyle} />
             </div>
           </div>
 
@@ -164,22 +212,25 @@ export default function InstallmentAgreement() {
           </div>
           <button
             onClick={handleSign}
-            disabled={!clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed || monthly < 300}
+            disabled={submitting || !clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed || monthly < 300}
             style={{
               width: "100%",
               padding: "0.9rem",
-              background: (!clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed || monthly < 300) ? "#333" : GREEN,
-              color: (!clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed || monthly < 300) ? "#666" : BG,
+              background: (submitting || !clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed || monthly < 300) ? "#333" : GREEN,
+              color: (submitting || !clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed || monthly < 300) ? "#666" : BG,
               border: "none",
               borderRadius: 8,
               fontWeight: 700,
               fontSize: "0.9rem",
-              cursor: (!clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed || monthly < 300) ? "not-allowed" : "pointer",
+              cursor: (submitting || !clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed || monthly < 300) ? "not-allowed" : "pointer",
               transition: "all 0.2s",
             }}
           >
-            Sign Agreement
+            {submitting ? "Submitting…" : "Sign Agreement"}
           </button>
+          {submitError && (
+            <p style={{ marginTop: "0.75rem", color: "#ff6b6b", fontSize: "0.8rem", textAlign: "center" }}>{submitError}</p>
+          )}
         </div>
 
         <p style={{ textAlign: "center", marginTop: "2rem", fontSize: "0.75rem", color: "#555" }}>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef, type CSSProperties, type FormEvent } from "react";
+import AgreementsTab from "./AgreementsTab";
 
 /* ─── Design tokens ─── */
 const GREEN = "#c8ff00";
@@ -541,7 +542,7 @@ export default function AdminPanel() {
   const [loginLoading, setLoginLoading] = useState(false);
 
   // Tab
-  const [activeTab, setActiveTab] = useState<"invoices" | "automate" | "agents" | "reports" | "leads" | "bookings">("invoices");
+  const [activeTab, setActiveTab] = useState<"invoices" | "automate" | "agents" | "reports" | "leads" | "bookings" | "agreements">("invoices");
   type Booking = { id: string; start_at: string; end_at: string; name: string; email: string; business: string | null; message: string | null; timezone: string | null; status: string; created_at: string };
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [bookingsLoading, setBookingsLoading] = useState(false);
@@ -1818,7 +1819,7 @@ export default function AdminPanel() {
 
       {/* Tab Navigation */}
       <div style={{ display: "flex", borderBottom: `1px solid ${BORDER}`, padding: "0 clamp(12px, 4vw, 24px)" }}>
-        {(["invoices", "leads", "bookings", "automate", "agents", "reports"] as const).map((t) => (
+        {(["invoices", "leads", "bookings", "automate", "agents", "reports", "agreements"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setActiveTab(t)}
@@ -1836,7 +1837,7 @@ export default function AdminPanel() {
               letterSpacing: 0.5,
             }}
           >
-            {t === "invoices" ? "Invoices" : t === "leads" ? "Leads" : t === "bookings" ? "Bookings" : t === "automate" ? "Automate" : t === "agents" ? "AI Agents" : "Reports"}
+            {t === "invoices" ? "Invoices" : t === "leads" ? "Leads" : t === "bookings" ? "Bookings" : t === "automate" ? "Automate" : t === "agents" ? "AI Agents" : t === "reports" ? "Reports" : "Agreements"}
           </button>
         ))}
       </div>
@@ -3951,6 +3952,9 @@ export default function AdminPanel() {
             )}
           </>
         )}
+
+        {/* ─── AGREEMENTS TAB ─── */}
+        {activeTab === "agreements" && <AgreementsTab />}
       </div>
 
       {/* Conversation Modal */}
