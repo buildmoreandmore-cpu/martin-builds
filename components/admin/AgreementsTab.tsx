@@ -43,6 +43,7 @@ export default function AgreementsTab() {
   const [signed, setSigned] = useState<SignedRow[]>([]);
   const [invites, setInvites] = useState<InviteRow[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -135,7 +136,7 @@ export default function AgreementsTab() {
           </div>
         )}
 
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 14 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 14, flexWrap: "wrap" }}>
           <button
             onClick={send}
             disabled={!canSend || sending}
@@ -153,14 +154,58 @@ export default function AgreementsTab() {
           >
             {sending ? "Sending…" : "Send signing link"}
           </button>
+          <button
+            onClick={() => setShowPreview((v) => !v)}
+            style={{
+              padding: "9px 14px",
+              background: "transparent",
+              color: TEXT,
+              border: `1px solid ${BORDER}`,
+              borderRadius: 8,
+              fontWeight: 600,
+              fontSize: "0.8rem",
+              cursor: "pointer",
+              fontFamily: "inherit",
+            }}
+          >
+            {showPreview ? "Hide preview" : "Preview agreement"}
+          </button>
           {msg && (
             <div style={{ fontSize: "0.8rem", color: msg.kind === "ok" ? GREEN : "#ff6b6b" }}>
               {msg.text}
-              {msg.link && <> · <a href={msg.link} target="_blank" rel="noreferrer" style={{ color: GREEN }}>preview link</a></>}
+              {msg.link && <> · <a href={msg.link} target="_blank" rel="noreferrer" style={{ color: GREEN }}>open link</a></>}
             </div>
           )}
         </div>
       </section>
+
+      {/* Preview pane */}
+      {showPreview && (
+        <section style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: "1rem", marginTop: "1rem" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+            <div style={{ fontSize: "0.7rem", color: GREEN, fontFamily: "'Space Mono', monospace", letterSpacing: "1.5px", textTransform: "uppercase" }}>
+              Preview — what the prospect will see
+            </div>
+            <a
+              href={previewUrl(clientName, projectName, clientEmail, totalAmount, monthlyAmount, numPayments)}
+              target="_blank"
+              rel="noreferrer"
+              style={{ fontSize: "0.75rem", color: DIM, textDecoration: "none", border: `1px solid ${BORDER}`, padding: "4px 10px", borderRadius: 6 }}
+            >
+              Open in new tab ↗
+            </a>
+          </div>
+          <iframe
+            key={previewUrl(clientName, projectName, clientEmail, totalAmount, monthlyAmount, numPayments)}
+            src={previewUrl(clientName, projectName, clientEmail, totalAmount, monthlyAmount, numPayments)}
+            style={{ width: "100%", height: 600, border: `1px solid ${BORDER}`, borderRadius: 8, background: BG }}
+            title="Agreement preview"
+          />
+          <div style={{ fontSize: "0.72rem", color: DIM, marginTop: 8 }}>
+            Live preview — updates as you fill the form. Clicking Sign inside the preview will fire the real signing flow, so use this read-only.
+          </div>
+        </section>
+      )}
 
       {/* Signed */}
       <section style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: "1.25rem", marginTop: "1.5rem" }}>
@@ -221,6 +266,18 @@ export default function AgreementsTab() {
       </section>
     </div>
   );
+}
+
+function previewUrl(client: string, project: string, email: string, total: string, monthly: string, numPayments: number): string {
+  const params = new URLSearchParams();
+  if (client) params.set("client", client);
+  if (project) params.set("project", project);
+  if (email) params.set("email", email);
+  if (total) params.set("total", total);
+  if (monthly) params.set("monthly", monthly);
+  if (numPayments) params.set("payments", String(numPayments));
+  const q = params.toString();
+  return `/installment-agreement${q ? `?${q}` : ""}`;
 }
 
 function Field({ label, full, children }: { label: string; full?: boolean; children: React.ReactNode }) {
