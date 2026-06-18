@@ -21,7 +21,9 @@ export default function InstallmentAgreement() {
   const [submitError, setSubmitError] = useState("");
   const [inviteId, setInviteId] = useState<string | null>(null);
 
-  // Pre-fill from query params (admin sends a link with ?client=&project=&total=&monthly=&email=&invite=)
+  const [paymentType, setPaymentType] = useState<"one_time" | "installments">("installments");
+
+  // Pre-fill from query params (admin sends a link with ?client=&project=&total=&monthly=&email=&invite=&type=)
   useEffect(() => {
     if (typeof window === "undefined") return;
     const p = new URLSearchParams(window.location.search);
@@ -31,13 +33,17 @@ export default function InstallmentAgreement() {
     if (p.get("total")) setTotalAmount(p.get("total") || "");
     if (p.get("monthly")) setMonthlyAmount(p.get("monthly") || "");
     if (p.get("invite")) setInviteId(p.get("invite"));
+    const t = p.get("type");
+    if (t === "one_time" || t === "installments") setPaymentType(t);
   }, []);
 
   const total = parseFloat(totalAmount) || 0;
-  const monthly = parseFloat(monthlyAmount) || 0;
-  const numPayments = monthly > 0 ? Math.ceil(total / monthly) : 0;
-  const finalPayment = total % monthly !== 0 ? total % monthly : monthly;
-  const isOneTime = numPayments === 1;
+  const monthlyRaw = parseFloat(monthlyAmount) || 0;
+  // In one-time mode the "monthly" is just the total.
+  const monthly = paymentType === "one_time" ? total : monthlyRaw;
+  const numPayments = paymentType === "one_time" ? 1 : (monthly > 0 ? Math.ceil(total / monthly) : 0);
+  const finalPayment = monthly > 0 && total % monthly !== 0 ? total % monthly : monthly;
+  const isOneTime = paymentType === "one_time" || numPayments === 1;
 
   const handleSign = async () => {
     if (!clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed) return;
@@ -53,6 +59,7 @@ export default function InstallmentAgreement() {
           clientName,
           projectName,
           clientEmail: clientEmail || null,
+          paymentType,
           totalAmount: total,
           monthlyAmount: monthly,
           numPayments,
@@ -127,14 +134,23 @@ export default function InstallmentAgreement() {
               <label style={{ fontSize: "0.75rem", color: DIM, display: "block", marginBottom: 4 }}>Project Name</label>
               <input value={projectName} onChange={(e) => setProjectName(e.target.value)} placeholder="Project name" style={inputStyle} />
             </div>
-            <div>
-              <label style={{ fontSize: "0.75rem", color: DIM, display: "block", marginBottom: 4 }}>Total Project Cost</label>
-              <input type="number" value={totalAmount} onChange={(e) => setTotalAmount(e.target.value)} placeholder="5000" style={inputStyle} />
-            </div>
-            <div>
-              <label style={{ fontSize: "0.75rem", color: DIM, display: "block", marginBottom: 4 }}>Payment Amount</label>
-              <input type="number" value={monthlyAmount} onChange={(e) => setMonthlyAmount(e.target.value)} placeholder="500" style={inputStyle} />
-            </div>
+            {isOneTime ? (
+              <div style={{ gridColumn: "1 / -1" }}>
+                <label style={{ fontSize: "0.75rem", color: DIM, display: "block", marginBottom: 4 }}>Amount</label>
+                <input type="number" value={totalAmount} onChange={(e) => setTotalAmount(e.target.value)} placeholder="5000" style={inputStyle} />
+              </div>
+            ) : (
+              <>
+                <div>
+                  <label style={{ fontSize: "0.75rem", color: DIM, display: "block", marginBottom: 4 }}>Total Project Cost</label>
+                  <input type="number" value={totalAmount} onChange={(e) => setTotalAmount(e.target.value)} placeholder="5000" style={inputStyle} />
+                </div>
+                <div>
+                  <label style={{ fontSize: "0.75rem", color: DIM, display: "block", marginBottom: 4 }}>Monthly Payment</label>
+                  <input type="number" value={monthlyAmount} onChange={(e) => setMonthlyAmount(e.target.value)} placeholder="500" style={inputStyle} />
+                </div>
+              </>
+            )}
             <div style={{ gridColumn: "1 / -1" }}>
               <label style={{ fontSize: "0.75rem", color: DIM, display: "block", marginBottom: 4 }}>Your Email <span style={{ color: "#555" }}>(for your copy of the signed agreement)</span></label>
               <input type="email" value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} placeholder="you@example.com" style={inputStyle} />

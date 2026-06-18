@@ -34,6 +34,7 @@ export default function AgreementsTab() {
   const [clientName, setClientName] = useState("");
   const [projectName, setProjectName] = useState("");
   const [clientEmail, setClientEmail] = useState("");
+  const [paymentType, setPaymentType] = useState<"one_time" | "installments">("installments");
   const [totalAmount, setTotalAmount] = useState("");
   const [monthlyAmount, setMonthlyAmount] = useState("");
   const [note, setNote] = useState("");
@@ -59,11 +60,15 @@ export default function AgreementsTab() {
 
   useEffect(() => { load(); }, [load]);
 
-  const monthly = parseFloat(monthlyAmount) || 0;
   const total = parseFloat(totalAmount) || 0;
-  const numPayments = monthly > 0 ? Math.ceil(total / monthly) : 0;
-  const isOneTime = numPayments === 1;
-  const canSend = Boolean(clientName && projectName && clientEmail && total > 0 && monthly > 0);
+  const isOneTime = paymentType === "one_time";
+  // For one-time, monthly == total (single payment); for installments use entered monthly.
+  const monthly = isOneTime ? total : (parseFloat(monthlyAmount) || 0);
+  const numPayments = isOneTime ? 1 : (monthly > 0 ? Math.ceil(total / monthly) : 0);
+  const canSend = Boolean(
+    clientName && projectName && clientEmail && total > 0 &&
+    (isOneTime || monthly > 0)
+  );
 
   async function send() {
     if (!canSend || sending) return;
@@ -77,6 +82,7 @@ export default function AgreementsTab() {
           clientName,
           projectName,
           clientEmail,
+          paymentType,
           totalAmount: total,
           monthlyAmount: monthly,
           numPayments,
@@ -90,7 +96,7 @@ export default function AgreementsTab() {
         setMsg({ kind: "err", text: d.error || "Send failed", link: d.signingUrl });
       } else {
         setMsg({ kind: "ok", text: `Sent to ${clientEmail}`, link: d.signingUrl });
-        setClientName(""); setProjectName(""); setClientEmail(""); setTotalAmount(""); setMonthlyAmount(""); setNote("");
+        setClientName(""); setProjectName(""); setClientEmail(""); setTotalAmount(""); setMonthlyAmount(""); setNote(""); setPaymentType("installments");
         load();
       }
     } catch (err) {
@@ -122,23 +128,39 @@ export default function AgreementsTab() {
           <Field label="Project name *" full>
             <input value={projectName} onChange={(e) => setProjectName(e.target.value)} placeholder="Vendor Portal" style={inp} />
           </Field>
-          <Field label="Total amount *">
-            <input type="number" value={totalAmount} onChange={(e) => setTotalAmount(e.target.value)} placeholder="5000" style={inp} />
+          <Field label="Payment type *" full>
+            <div style={{ display: "flex", gap: 8 }}>
+              <PaymentTypeOption active={paymentType === "one_time"} onClick={() => setPaymentType("one_time")} label="One-time" sub="Single flat fee" />
+              <PaymentTypeOption active={paymentType === "installments"} onClick={() => setPaymentType("installments")} label="Installments" sub="Monthly payments" />
+            </div>
           </Field>
-          <Field label="Payment amount * (per instalment, or same as total for one-time)">
-            <input type="number" value={monthlyAmount} onChange={(e) => setMonthlyAmount(e.target.value)} placeholder="500" style={inp} />
-          </Field>
+          {isOneTime ? (
+            <Field label="Amount *" full>
+              <input type="number" value={totalAmount} onChange={(e) => setTotalAmount(e.target.value)} placeholder="5000" style={inp} />
+            </Field>
+          ) : (
+            <>
+              <Field label="Total amount *">
+                <input type="number" value={totalAmount} onChange={(e) => setTotalAmount(e.target.value)} placeholder="5000" style={inp} />
+              </Field>
+              <Field label="Monthly payment *">
+                <input type="number" value={monthlyAmount} onChange={(e) => setMonthlyAmount(e.target.value)} placeholder="500" style={inp} />
+              </Field>
+            </>
+          )}
           <Field label="Optional note (shows in the email)" full>
             <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Looking forward to building this with you." style={{ ...inp, minHeight: 60, fontFamily: "inherit" }} />
           </Field>
         </div>
 
-        {numPayments > 0 && (
-          <div style={{ marginTop: 12, padding: "10px 12px", background: BG, borderRadius: 8, border: "1px solid rgba(200,255,0,0.12)", fontSize: "0.85rem", color: TEXT }}>
+        {total > 0 && (
+          <div style={{ marginTop: 12, padding: "12px 14px", background: BG, borderRadius: 8, border: "1px solid rgba(200,255,0,0.12)", fontSize: "0.85rem", color: TEXT }}>
             {isOneTime ? (
-              <><strong style={{ color: GREEN }}>One-time payment</strong> of ${total.toLocaleString()}</>
+              <><strong style={{ color: GREEN }}>Flat fee</strong> · ${total.toLocaleString()} one-time</>
+            ) : monthly > 0 ? (
+              <><strong style={{ color: GREEN }}>{numPayments} payments</strong> of ${monthly.toLocaleString()}/mo → total ${total.toLocaleString()}</>
             ) : (
-              <><strong style={{ color: GREEN }}>{numPayments} payments</strong> of ${monthly.toLocaleString()} → total ${total.toLocaleString()}</>
+              <span style={{ color: DIM }}>Enter a monthly payment to see the schedule</span>
             )}
           </div>
         )}
@@ -194,7 +216,7 @@ export default function AgreementsTab() {
               Preview — what the prospect will see
             </div>
             <a
-              href={previewUrl(clientName, projectName, clientEmail, totalAmount, monthlyAmount, numPayments)}
+              href={previewUrl(clientName, projectName, clientEmail, totalAmount, isOneTime ? totalAmount : monthlyAmount, numPayments, paymentType)}
               target="_blank"
               rel="noreferrer"
               style={{ fontSize: "0.75rem", color: DIM, textDecoration: "none", border: `1px solid ${BORDER}`, padding: "4px 10px", borderRadius: 6 }}
@@ -203,8 +225,8 @@ export default function AgreementsTab() {
             </a>
           </div>
           <iframe
-            key={previewUrl(clientName, projectName, clientEmail, totalAmount, monthlyAmount, numPayments)}
-            src={previewUrl(clientName, projectName, clientEmail, totalAmount, monthlyAmount, numPayments)}
+            key={previewUrl(clientName, projectName, clientEmail, totalAmount, isOneTime ? totalAmount : monthlyAmount, numPayments, paymentType)}
+            src={previewUrl(clientName, projectName, clientEmail, totalAmount, isOneTime ? totalAmount : monthlyAmount, numPayments, paymentType)}
             style={{ width: "100%", height: 600, border: `1px solid ${BORDER}`, borderRadius: 8, background: BG }}
             title="Agreement preview"
           />
@@ -275,7 +297,7 @@ export default function AgreementsTab() {
   );
 }
 
-function previewUrl(client: string, project: string, email: string, total: string, monthly: string, numPayments: number): string {
+function previewUrl(client: string, project: string, email: string, total: string, monthly: string, numPayments: number, paymentType?: "one_time" | "installments"): string {
   const params = new URLSearchParams();
   if (client) params.set("client", client);
   if (project) params.set("project", project);
@@ -283,8 +305,31 @@ function previewUrl(client: string, project: string, email: string, total: strin
   if (total) params.set("total", total);
   if (monthly) params.set("monthly", monthly);
   if (numPayments) params.set("payments", String(numPayments));
+  if (paymentType) params.set("type", paymentType);
   const q = params.toString();
   return `/installment-agreement${q ? `?${q}` : ""}`;
+}
+
+function PaymentTypeOption({ active, onClick, label, sub }: { active: boolean; onClick: () => void; label: string; sub: string }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        flex: 1,
+        padding: "10px 14px",
+        background: active ? "rgba(200,255,0,0.08)" : BG,
+        border: `1px solid ${active ? GREEN : BORDER}`,
+        borderRadius: 8,
+        cursor: "pointer",
+        textAlign: "left",
+        fontFamily: "inherit",
+      }}
+    >
+      <div style={{ fontSize: "0.82rem", fontWeight: 700, color: active ? GREEN : TEXT, marginBottom: 2 }}>{label}</div>
+      <div style={{ fontSize: "0.72rem", color: DIM }}>{sub}</div>
+    </button>
+  );
 }
 
 function Field({ label, full, children }: { label: string; full?: boolean; children: React.ReactNode }) {
