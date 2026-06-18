@@ -70,5 +70,13 @@ export async function POST(req: NextRequest) {
   </div>`;
 
   const sent = await sendEmail({ to: clientEmail, subject, body: html, isHtml: true });
-  return NextResponse.json({ ok: sent, inviteId, signingUrl });
+  if (!sent) {
+    return NextResponse.json({
+      ok: false,
+      inviteId,
+      signingUrl,
+      error: "Email delivery failed. Check Composio connection / Vercel logs. Signing URL is still valid — you can copy it from the response.",
+    }, { status: 502 });
+  }
+  return NextResponse.json({ ok: true, inviteId, signingUrl });
 }

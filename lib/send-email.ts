@@ -68,15 +68,17 @@ export async function sendEmail({
   }
 
   try {
-    const res = await fetch("https://backend.composio.dev/api/v2/actions/GMAIL_SEND_EMAIL/execute", {
+    // Composio v3 (v2 was deprecated mid-2026; the v2 endpoint now returns
+    // "Please upgrade to v3 APIs" instead of doing the send).
+    const res = await fetch("https://backend.composio.dev/api/v3/tools/execute/GMAIL_SEND_EMAIL", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-api-key": COMPOSIO_API_KEY,
       },
       body: JSON.stringify({
-        connectedAccountId: GMAIL_CONNECTION_ID,
-        input: {
+        connected_account_id: GMAIL_CONNECTION_ID,
+        arguments: {
           recipient_email: to,
           subject,
           body,
@@ -85,12 +87,12 @@ export async function sendEmail({
       }),
     });
 
-    const data = await res.json();
-    if (data.successfull || data.successful) {
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && !data?.error && data?.successful !== false) {
       console.log(`[Email sent] To: ${to} | Subject: ${subject}`);
       return true;
     }
-    console.error(`[Email failed]`, JSON.stringify(data).slice(0, 300));
+    console.error(`[Email failed]`, res.status, JSON.stringify(data).slice(0, 400));
     return false;
   } catch (err) {
     console.error(`[Email error]`, err);

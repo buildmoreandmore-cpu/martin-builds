@@ -35,11 +35,13 @@ export default function InstallmentAgreement() {
 
   const total = parseFloat(totalAmount) || 0;
   const monthly = parseFloat(monthlyAmount) || 0;
-  const numPayments = monthly >= 300 ? Math.ceil(total / monthly) : 0;
+  const numPayments = monthly > 0 ? Math.ceil(total / monthly) : 0;
   const finalPayment = total % monthly !== 0 ? total % monthly : monthly;
+  const isOneTime = numPayments === 1;
 
   const handleSign = async () => {
     if (!clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed) return;
+    if (monthly <= 0) return;
     if (submitting) return;
     setSubmitting(true);
     setSubmitError("");
@@ -78,8 +80,11 @@ export default function InstallmentAgreement() {
           <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>&#9989;</div>
           <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#f5f5f0", marginBottom: "0.75rem" }}>Agreement Signed</h1>
           <p style={{ color: DIM, lineHeight: 1.7 }}>
-            Your installment plan for <strong style={{ color: GREEN }}>{projectName}</strong> is confirmed.
-            {numPayments} monthly payments of ${monthly.toLocaleString()}/mo begin on your billing date.
+            {isOneTime ? (
+              <>Your agreement for <strong style={{ color: GREEN }}>{projectName}</strong> is confirmed. A one-time payment of ${total.toLocaleString()} will be processed.</>
+            ) : (
+              <>Your installment plan for <strong style={{ color: GREEN }}>{projectName}</strong> is confirmed. {numPayments} monthly payments of ${monthly.toLocaleString()}/mo begin on your billing date.</>
+            )}
           </p>
           <p style={{ color: DIM, fontSize: "0.85rem", marginTop: "1rem" }}>
             Signed by {signatureName} on {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
@@ -100,10 +105,12 @@ export default function InstallmentAgreement() {
         </div>
 
         <h1 style={{ fontSize: "clamp(1.5rem, 4vw, 2rem)", fontWeight: 800, color: "#f5f5f0", marginBottom: "0.5rem" }}>
-          Installment Payment Agreement
+          {isOneTime ? "Service Agreement" : "Installment Payment Agreement"}
         </h1>
         <p style={{ color: DIM, fontSize: "0.9rem", lineHeight: 1.7, marginBottom: "2rem" }}>
-          This agreement outlines the terms of your monthly installment plan with Martin Builds.
+          {isOneTime
+            ? "This agreement outlines the terms of your one-time payment with Martin Builds."
+            : "This agreement outlines the terms of your installment plan with Martin Builds."}
         </p>
 
         {/* Project Details */}
@@ -125,8 +132,8 @@ export default function InstallmentAgreement() {
               <input type="number" value={totalAmount} onChange={(e) => setTotalAmount(e.target.value)} placeholder="5000" style={inputStyle} />
             </div>
             <div>
-              <label style={{ fontSize: "0.75rem", color: DIM, display: "block", marginBottom: 4 }}>Monthly Payment</label>
-              <input type="number" value={monthlyAmount} onChange={(e) => setMonthlyAmount(e.target.value)} placeholder="500" min="300" style={inputStyle} />
+              <label style={{ fontSize: "0.75rem", color: DIM, display: "block", marginBottom: 4 }}>Payment Amount</label>
+              <input type="number" value={monthlyAmount} onChange={(e) => setMonthlyAmount(e.target.value)} placeholder="500" style={inputStyle} />
             </div>
             <div style={{ gridColumn: "1 / -1" }}>
               <label style={{ fontSize: "0.75rem", color: DIM, display: "block", marginBottom: 4 }}>Your Email <span style={{ color: "#555" }}>(for your copy of the signed agreement)</span></label>
@@ -137,14 +144,22 @@ export default function InstallmentAgreement() {
           {numPayments > 0 && (
             <div style={{ marginTop: "1rem", padding: "1rem", background: BG, borderRadius: 8, border: "1px solid rgba(200,255,0,0.1)" }}>
               <div style={{ fontSize: "0.85rem", color: TEXT }}>
-                <strong style={{ color: GREEN }}>{numPayments} payments</strong> of ${monthly.toLocaleString("en-US", { minimumFractionDigits: 2 })}/mo
-                {finalPayment !== monthly && (
-                  <span style={{ color: DIM }}> (final payment: ${finalPayment.toLocaleString("en-US", { minimumFractionDigits: 2 })})</span>
+                {isOneTime ? (
+                  <><strong style={{ color: GREEN }}>One-time payment</strong> of ${total.toLocaleString("en-US", { minimumFractionDigits: 2 })}</>
+                ) : (
+                  <>
+                    <strong style={{ color: GREEN }}>{numPayments} payments</strong> of ${monthly.toLocaleString("en-US", { minimumFractionDigits: 2 })}/mo
+                    {finalPayment !== monthly && (
+                      <span style={{ color: DIM }}> (final payment: ${finalPayment.toLocaleString("en-US", { minimumFractionDigits: 2 })})</span>
+                    )}
+                  </>
                 )}
               </div>
-              <div style={{ fontSize: "0.75rem", color: DIM, marginTop: 4 }}>
-                Total: ${total.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-              </div>
+              {!isOneTime && (
+                <div style={{ fontSize: "0.75rem", color: DIM, marginTop: 4 }}>
+                  Total: ${total.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -157,13 +172,17 @@ export default function InstallmentAgreement() {
           <div style={{ fontSize: "0.85rem", color: TEXT, lineHeight: 1.8 }}>
             <ol style={{ paddingLeft: "1.25rem", margin: 0 }}>
               <li style={{ marginBottom: "0.75rem" }}>
-                <strong>Autopay Required.</strong> A valid credit or debit card must remain on file. Payments are processed automatically on the same date each month via Stripe.
+                {isOneTime ? (
+                  <><strong>Payment Method.</strong> Payment is processed via Stripe at the time of signing or shortly after, using the card or method provided.</>
+                ) : (
+                  <><strong>Autopay Required.</strong> A valid credit or debit card must remain on file. Payments are processed automatically on the same date each month via Stripe.</>
+                )}
               </li>
               <li style={{ marginBottom: "0.75rem" }}>
-                <strong>Minimum Payment.</strong> Monthly payments must be at least $300. The payment amount is fixed for the duration of the plan.
+                <strong>Fixed Payment.</strong> The payment amount agreed above is fixed for the duration of this plan.
               </li>
               <li style={{ marginBottom: "0.75rem" }}>
-                <strong>Ownership Transfer.</strong> Full ownership and unrestricted access to the delivered product transfers only after the final installment is received in full.
+                <strong>Ownership Transfer.</strong> Full ownership and unrestricted access to the delivered product transfers only after {isOneTime ? "the payment is received in full" : "the final installment is received in full"}.
               </li>
               <li style={{ marginBottom: "0.75rem" }}>
                 <strong>Failed Payments.</strong> If a scheduled payment fails, Stripe will automatically retry up to 3 times. If all retries fail, Martin Builds reserves the right to pause access until the outstanding balance is resolved.
@@ -195,9 +214,11 @@ export default function InstallmentAgreement() {
                 style={{ accentColor: GREEN, marginTop: 3, width: 16, height: 16, flexShrink: 0 }}
               />
               <span style={{ fontSize: "0.82rem", color: TEXT, lineHeight: 1.6 }}>
-                I have read and agree to the installment payment terms above and the{" "}
+                I have read and agree to the {isOneTime ? "payment" : "installment payment"} terms above and the{" "}
                 <a href="/terms" target="_blank" style={{ color: GREEN, textDecoration: "none" }}>Terms of Service</a>.
-                I authorize Martin Builds to charge the card on file for the agreed monthly amount until the total project cost is paid in full.
+                {isOneTime
+                  ? " I authorize Martin Builds to charge the agreed amount for this project."
+                  : " I authorize Martin Builds to charge the card on file for the agreed amount on each scheduled date until the total is paid in full."}
               </span>
             </label>
           </div>
@@ -212,17 +233,17 @@ export default function InstallmentAgreement() {
           </div>
           <button
             onClick={handleSign}
-            disabled={submitting || !clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed || monthly < 300}
+            disabled={submitting || !clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed || monthly <= 0}
             style={{
               width: "100%",
               padding: "0.9rem",
-              background: (submitting || !clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed || monthly < 300) ? "#333" : GREEN,
-              color: (submitting || !clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed || monthly < 300) ? "#666" : BG,
+              background: (submitting || !clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed || monthly <= 0) ? "#333" : GREEN,
+              color: (submitting || !clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed || monthly <= 0) ? "#666" : BG,
               border: "none",
               borderRadius: 8,
               fontWeight: 700,
               fontSize: "0.9rem",
-              cursor: (submitting || !clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed || monthly < 300) ? "not-allowed" : "pointer",
+              cursor: (submitting || !clientName || !projectName || !totalAmount || !monthlyAmount || !signatureName || !agreed || monthly <= 0) ? "not-allowed" : "pointer",
               transition: "all 0.2s",
             }}
           >

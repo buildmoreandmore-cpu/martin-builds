@@ -61,8 +61,9 @@ export default function AgreementsTab() {
 
   const monthly = parseFloat(monthlyAmount) || 0;
   const total = parseFloat(totalAmount) || 0;
-  const numPayments = monthly >= 300 ? Math.ceil(total / monthly) : 0;
-  const canSend = clientName && projectName && clientEmail && total > 0 && monthly >= 300;
+  const numPayments = monthly > 0 ? Math.ceil(total / monthly) : 0;
+  const isOneTime = numPayments === 1;
+  const canSend = Boolean(clientName && projectName && clientEmail && total > 0 && monthly > 0);
 
   async function send() {
     if (!canSend || sending) return;
@@ -84,7 +85,9 @@ export default function AgreementsTab() {
       });
       const d = await r.json();
       if (!r.ok || !d.ok) {
-        setMsg({ kind: "err", text: d.error || "Send failed" });
+        // Even when the email fails, the invite + URL were generated — let
+        // the user copy the link and send it themselves.
+        setMsg({ kind: "err", text: d.error || "Send failed", link: d.signingUrl });
       } else {
         setMsg({ kind: "ok", text: `Sent to ${clientEmail}`, link: d.signingUrl });
         setClientName(""); setProjectName(""); setClientEmail(""); setTotalAmount(""); setMonthlyAmount(""); setNote("");
@@ -122,8 +125,8 @@ export default function AgreementsTab() {
           <Field label="Total amount *">
             <input type="number" value={totalAmount} onChange={(e) => setTotalAmount(e.target.value)} placeholder="5000" style={inp} />
           </Field>
-          <Field label="Monthly payment * (min $300)">
-            <input type="number" value={monthlyAmount} onChange={(e) => setMonthlyAmount(e.target.value)} placeholder="500" min="300" style={inp} />
+          <Field label="Payment amount * (per instalment, or same as total for one-time)">
+            <input type="number" value={monthlyAmount} onChange={(e) => setMonthlyAmount(e.target.value)} placeholder="500" style={inp} />
           </Field>
           <Field label="Optional note (shows in the email)" full>
             <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Looking forward to building this with you." style={{ ...inp, minHeight: 60, fontFamily: "inherit" }} />
@@ -132,7 +135,11 @@ export default function AgreementsTab() {
 
         {numPayments > 0 && (
           <div style={{ marginTop: 12, padding: "10px 12px", background: BG, borderRadius: 8, border: "1px solid rgba(200,255,0,0.12)", fontSize: "0.85rem", color: TEXT }}>
-            <strong style={{ color: GREEN }}>{numPayments} payments</strong> of ${monthly.toLocaleString()} → total ${total.toLocaleString()}
+            {isOneTime ? (
+              <><strong style={{ color: GREEN }}>One-time payment</strong> of ${total.toLocaleString()}</>
+            ) : (
+              <><strong style={{ color: GREEN }}>{numPayments} payments</strong> of ${monthly.toLocaleString()} → total ${total.toLocaleString()}</>
+            )}
           </div>
         )}
 
