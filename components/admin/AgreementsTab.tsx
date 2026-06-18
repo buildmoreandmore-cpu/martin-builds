@@ -19,6 +19,7 @@ type SignedRow = {
   num_payments: number | null;
   signature_name: string;
   signed_at: string;
+  invite_id: string | null;
 };
 type InviteRow = {
   id: string;
@@ -45,6 +46,7 @@ export default function AgreementsTab() {
   const [invites, setInvites] = useState<InviteRow[]>([]);
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -59,6 +61,43 @@ export default function AgreementsTab() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  async function deleteOne(id: string) {
+    if (deletingId) return;
+    if (!confirm("Delete this invite?")) return;
+    setDeletingId(id);
+    try {
+      const r = await fetch("/api/admin/agreements", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (!r.ok) {
+        const d = await r.json().catch(() => null);
+        alert(d?.error || "Delete failed");
+        return;
+      }
+      setInvites((p) => p.filter((x) => x.id !== id));
+      setSigned((p) => p.filter((x) => x.invite_id !== id));
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
+  async function clearTestData() {
+    if (!confirm("Delete every invite sent to agent@martinbuilds.ai or martinjdfrancis@gmail.com?")) return;
+    const r = await fetch("/api/admin/agreements", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ filter: { emailIn: ["agent@martinbuilds.ai", "martinjdfrancis@gmail.com"] } }),
+    });
+    const d = await r.json().catch(() => null);
+    if (!r.ok) {
+      alert(d?.error || "Bulk delete failed");
+      return;
+    }
+    load();
+  }
 
   const total = parseFloat(totalAmount) || 0;
   const isOneTime = paymentType === "one_time";
@@ -269,8 +308,18 @@ export default function AgreementsTab() {
 
       {/* Invites */}
       <section style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: "1.25rem", marginTop: "1.5rem", marginBottom: "1.5rem" }}>
-        <div style={{ fontSize: "0.7rem", color: DIM, fontFamily: "'Space Mono', monospace", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>
-          Pending invites · {invites.filter((i) => !signed.find((s) => s.client_email === i.client_email && s.project_name === i.project_name)).length}
+        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 12 }}>
+          <div style={{ fontSize: "0.7rem", color: DIM, fontFamily: "'Space Mono', monospace", letterSpacing: "1.5px", textTransform: "uppercase" }}>
+            Pending invites · {invites.filter((i) => !signed.find((s) => s.client_email === i.client_email && s.project_name === i.project_name)).length}
+          </div>
+          {invites.some((i) => i.client_email === "agent@martinbuilds.ai" || i.client_email === "martinjdfrancis@gmail.com") && (
+            <button
+              onClick={clearTestData}
+              style={{ background: "transparent", border: `1px solid ${BORDER}`, color: "#ff6b6b", fontSize: "0.7rem", padding: "4px 10px", borderRadius: 6, cursor: "pointer", fontFamily: "inherit" }}
+            >
+              Clear test data
+            </button>
+          )}
         </div>
         {invites.length === 0 ? (
           <div style={{ color: DIM, fontSize: "0.85rem" }}>No invites sent yet.</div>
@@ -278,15 +327,25 @@ export default function AgreementsTab() {
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             {invites.map((i) => {
               const isSigned = !!signed.find((s) => s.client_email === i.client_email && s.project_name === i.project_name);
+              const deleting = deletingId === i.id;
               return (
-                <div key={i.id} style={{ padding: "8px 12px", background: BG, border: `1px solid ${BORDER}`, borderRadius: 6, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div style={{ fontSize: "0.82rem" }}>
+                <div key={i.id} style={{ padding: "8px 12px", background: BG, border: `1px solid ${BORDER}`, borderRadius: 6, display: "flex", justifyContent: "space-between", alignItems: "center", opacity: deleting ? 0.45 : 1 }}>
+                  <div style={{ fontSize: "0.82rem", minWidth: 0, flex: 1 }}>
                     {i.client_name} · {i.project_name}
                     <span style={{ color: DIM, marginLeft: 8, fontSize: "0.75rem" }}>({i.client_email})</span>
                   </div>
-                  <div style={{ fontSize: "0.7rem", fontFamily: "'Space Mono', monospace", color: isSigned ? GREEN : DIM }}>
+                  <div style={{ fontSize: "0.7rem", fontFamily: "'Space Mono', monospace", color: isSigned ? GREEN : DIM, marginRight: 10 }}>
                     {isSigned ? "✓ signed" : `sent ${new Date(i.sent_at).toLocaleDateString()}`}
                   </div>
+                  <button
+                    onClick={() => deleteOne(i.id)}
+                    disabled={deleting}
+                    aria-label="Delete invite"
+                    title="Delete"
+                    style={{ background: "transparent", border: "none", color: DIM, fontSize: "1rem", cursor: deleting ? "wait" : "pointer", padding: "2px 6px", lineHeight: 1, fontFamily: "inherit" }}
+                  >
+                    ×
+                  </button>
                 </div>
               );
             })}
