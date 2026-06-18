@@ -55,17 +55,27 @@ export async function POST(req: NextRequest) {
   const signingUrl = `${BASE}/installment-agreement?${params.toString()}`;
 
   const firstName = clientName.split(" ")[0];
-  const subject = `Your installment agreement — ${projectName}`;
+  const isOneTime = Number(numPayments) === 1 || Number(totalAmount) === Number(monthlyAmount);
+  const subject = isOneTime
+    ? `Your service agreement — ${projectName}`
+    : `Your installment agreement — ${projectName}`;
+  const intro = isOneTime
+    ? `Here's the agreement for <strong>${projectName}</strong>. The details are already filled in — just review, type your name to sign, and you're done.`
+    : `Here's the installment agreement for <strong>${projectName}</strong>. The details are already filled in — just review, type your name to sign, and you're done.`;
+  const tableRows = isOneTime
+    ? `<tr><td style="color:#6b7280;padding:6px 12px 6px 0;">Payment</td><td style="padding:6px 0;"><strong>$${Number(totalAmount).toLocaleString()}</strong> <span style="color:#6b7280;font-weight:400;">(one-time)</span></td></tr>`
+    : `<tr><td style="color:#6b7280;padding:6px 12px 6px 0;">Total</td><td style="padding:6px 0;"><strong>$${Number(totalAmount).toLocaleString()}</strong></td></tr>
+       <tr><td style="color:#6b7280;padding:6px 12px 6px 0;">Monthly</td><td style="padding:6px 0;"><strong>$${Number(monthlyAmount).toLocaleString()}</strong>${numPayments ? ` <span style="color:#6b7280;font-weight:400;">× ${numPayments}</span>` : ""}</td></tr>`;
+
   const html = `<div style="font-family:Arial,'Helvetica Neue',sans-serif;color:#1a1a1a;max-width:560px;line-height:1.6;">
-    <h2 style="margin:0 0 12px 0;">Hi ${firstName},</h2>
-    <p>Here's the installment agreement for <strong>${projectName}</strong>. The details are already filled in — just review, type your name to sign, and you're done.</p>
-    <table cellpadding="6" cellspacing="0" style="font-size:14px;border-collapse:collapse;margin:12px 0;background:#FAFAF7;border:1px solid #E8E3DC;border-radius:6px;">
-      <tr><td style="color:#666;">Total</td><td><strong>$${Number(totalAmount).toLocaleString()}</strong></td></tr>
-      <tr><td style="color:#666;">Monthly</td><td><strong>$${Number(monthlyAmount).toLocaleString()}</strong>${numPayments ? ` × ${numPayments}` : ""}</td></tr>
+    <p style="margin:0 0 12px 0;font-size:15px;">Hi ${firstName},</p>
+    <p style="margin:0 0 16px 0;">${intro}</p>
+    <table cellpadding="0" cellspacing="0" style="font-size:14px;border-collapse:collapse;margin:16px 0;background:#FAFAF7;border:1px solid #E8E3DC;border-radius:8px;padding:8px 14px;">
+      ${tableRows}
     </table>
-    ${note ? `<p style="background:#FBFAF7;border-left:3px solid #c8ff00;padding:10px 14px;font-size:14px;margin:14px 0;">${note}</p>` : ""}
+    ${note ? `<p style="background:#FBFAF7;border-left:3px solid #c8ff00;padding:10px 14px;font-size:14px;margin:14px 0;color:#1a1a1a;">${note}</p>` : ""}
     <p style="margin:20px 0;"><a href="${signingUrl}" style="display:inline-block;background:#c8ff00;color:#0a0a0a;padding:12px 22px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Review and sign →</a></p>
-    <p style="font-size:12px;color:#888;">If the button doesn't open, paste this into your browser:<br/><a href="${signingUrl}" style="color:#888;word-break:break-all;">${signingUrl}</a></p>
+    <p style="font-size:12px;color:#6b7280;margin-top:18px;">If the button doesn't open, paste this into your browser:<br/><a href="${signingUrl}" style="color:#6b7280;word-break:break-all;">${signingUrl}</a></p>
     ${EMAIL_SIGNATURE}
   </div>`;
 

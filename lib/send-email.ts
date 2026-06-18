@@ -6,17 +6,19 @@ const COMPOSIO_USER_ID = process.env.COMPOSIO_USER_ID || "martin-builds-prod";
 
 /**
  * Branded email signature block — matches martin.builds identity.
+ * Colors tuned to read on a WHITE Gmail/Outlook background. The old
+ * #f5f5f0 wash rendered as near-invisible "ghost text" in production.
  * Drop this at the bottom of every outgoing HTML email.
  */
-export const EMAIL_SIGNATURE = `<div style="margin-top:32px;padding-top:24px;border-top:1px solid #222;">
-<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial,'Helvetica Neue',sans-serif;">
-<tr><td style="padding-bottom:4px;"><strong style="font-size:18px;color:#f5f5f0;letter-spacing:-0.5px;">Francis</strong></td></tr>
-<tr><td style="padding-bottom:2px;font-size:14px;color:#f5f5f0;">martin.builds</td></tr>
-<tr><td style="padding-bottom:12px;font-size:13px;color:#888;font-style:italic;">Custom dashboards that you own</td></tr>
-<tr><td style="padding-bottom:2px;font-size:13px;"><a href="mailto:agent@martinbuilds.ai" style="color:#f5f5f0;text-decoration:none;">agent@martinbuilds.ai</a></td></tr>
-<tr><td style="padding-bottom:2px;font-size:13px;"><a href="https://martinbuilds.ai" style="color:#f5f5f0;text-decoration:none;">martinbuilds.ai</a></td></tr>
-<tr><td style="padding-bottom:12px;font-size:13px;"><a href="https://martinbuilds.ai/book" style="color:#c8ff00;text-decoration:none;">Book a 15-min call</a></td></tr>
-<tr><td style="padding-top:8px;border-top:1px solid #222;"><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#888;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#4ade80;"></span>Accepting new builds</span></td></tr>
+export const EMAIL_SIGNATURE = `<div style="margin-top:32px;padding-top:20px;border-top:1px solid #e5e5e5;font-family:Arial,'Helvetica Neue',sans-serif;">
+<table cellpadding="0" cellspacing="0" border="0">
+<tr><td style="padding-bottom:4px;"><strong style="font-size:16px;color:#0a0a0a;letter-spacing:-0.3px;">Francis</strong></td></tr>
+<tr><td style="padding-bottom:2px;font-size:13px;color:#0a0a0a;font-weight:600;">martin.builds</td></tr>
+<tr><td style="padding-bottom:10px;font-size:12px;color:#6b7280;font-style:italic;">Custom dashboards that you own</td></tr>
+<tr><td style="padding-bottom:2px;font-size:13px;"><a href="mailto:agent@martinbuilds.ai" style="color:#1f2937;text-decoration:none;">agent@martinbuilds.ai</a></td></tr>
+<tr><td style="padding-bottom:2px;font-size:13px;"><a href="https://martinbuilds.ai" style="color:#1f2937;text-decoration:none;">martinbuilds.ai</a></td></tr>
+<tr><td style="padding-bottom:10px;font-size:13px;"><a href="https://martinbuilds.ai/book" style="color:#4d8400;text-decoration:none;font-weight:600;">Book a 15-min call →</a></td></tr>
+<tr><td style="padding-top:8px;border-top:1px solid #e5e5e5;"><span style="font-size:12px;color:#6b7280;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10b981;vertical-align:middle;margin-right:6px;"></span>Accepting new builds</span></td></tr>
 </table>
 </div>`;
 
