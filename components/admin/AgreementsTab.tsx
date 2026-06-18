@@ -289,19 +289,34 @@ export default function AgreementsTab() {
           <div style={{ color: DIM, fontSize: "0.85rem", padding: "8px 0" }}>No signed agreements yet.</div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {signed.map((s) => (
-              <div key={s.id} style={{ padding: "10px 12px", background: BG, border: `1px solid ${BORDER}`, borderRadius: 8 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                  <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>{s.client_name} — {s.project_name}</div>
-                  <div style={{ fontSize: "0.7rem", color: DIM, fontFamily: "'Space Mono', monospace" }}>{new Date(s.signed_at).toLocaleString()}</div>
-                </div>
-                <div style={{ fontSize: "0.78rem", color: DIM, marginTop: 4 }}>
-                  ${s.total_amount.toLocaleString()} · ${s.monthly_amount.toLocaleString()}/mo{s.num_payments ? ` × ${s.num_payments}` : ""}
-                  {s.client_email && <> · {s.client_email}</>}
-                  · signed by <span style={{ color: TEXT, fontStyle: "italic" }}>{s.signature_name}</span>
-                </div>
-              </div>
-            ))}
+            {signed.map((s) => {
+              const isOneTime = s.num_payments === 1 || s.total_amount === s.monthly_amount;
+              return (
+                <a
+                  key={s.id}
+                  href={`/admin/agreements/${s.id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ padding: "10px 12px", background: BG, border: `1px solid ${BORDER}`, borderRadius: 8, textDecoration: "none", color: TEXT, display: "block", transition: "border-color .15s ease" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = GREEN)}
+                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = BORDER)}
+                  title="Open signed agreement (download via Print → Save as PDF)"
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                    <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>{s.client_name} — {s.project_name}</div>
+                    <div style={{ fontSize: "0.7rem", color: DIM, fontFamily: "'Space Mono', monospace" }}>{new Date(s.signed_at).toLocaleString()}</div>
+                  </div>
+                  <div style={{ fontSize: "0.78rem", color: DIM, marginTop: 4 }}>
+                    {isOneTime
+                      ? `$${s.total_amount.toLocaleString()} one-time`
+                      : `$${s.total_amount.toLocaleString()} · $${s.monthly_amount.toLocaleString()}/mo${s.num_payments ? ` × ${s.num_payments}` : ""}`}
+                    {s.client_email && <> · {s.client_email}</>}
+                    · signed by <span style={{ color: TEXT, fontStyle: "italic" }}>{s.signature_name}</span>
+                  </div>
+                  <div style={{ fontSize: "0.7rem", color: GREEN, marginTop: 4, fontFamily: "'Space Mono', monospace" }}>open ↗</div>
+                </a>
+              );
+            })}
           </div>
         )}
       </section>
