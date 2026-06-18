@@ -1,5 +1,8 @@
-const COMPOSIO_API_KEY = process.env.COMPOSIO_API_KEY || "ak_DfieMFaURtUC3XbWlj-Q";
-const GMAIL_CONNECTION_ID = "8e6d20c6-817e-4101-8d3e-095df7ace280";
+const COMPOSIO_API_KEY = process.env.COMPOSIO_API_KEY || "";
+// v3 ids look like ca_xxx; user_id is the entity that owns the connection.
+// The legacy UUID 8e6d20c6-... is gone after the v2 → v3 migration.
+const GMAIL_CONNECTION_ID = process.env.GMAIL_CONNECTION_ID || "ca_xK4gbyKwbxNc";
+const COMPOSIO_USER_ID = process.env.COMPOSIO_USER_ID || "martin-builds-prod";
 
 /**
  * Branded email signature block — matches martin.builds identity.
@@ -78,6 +81,7 @@ export async function sendEmail({
       },
       body: JSON.stringify({
         connected_account_id: GMAIL_CONNECTION_ID,
+        user_id: COMPOSIO_USER_ID,
         arguments: {
           recipient_email: to,
           subject,
