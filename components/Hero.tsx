@@ -1,6 +1,10 @@
 "use client";
 
+import { useState } from "react";
+
 export default function Hero() {
+  const [spinning, setSpinning] = useState(false);
+
   return (
     <section
       style={{
@@ -10,8 +14,68 @@ export default function Hero() {
         justifyContent: "center",
         padding: "clamp(6rem,12vw,8rem) clamp(1.25rem,5vw,3rem) clamp(3rem,6vw,4rem)",
         position: "relative",
+        overflow: "hidden",
       }}
     >
+      <style>{`
+        @keyframes earth-spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .earth-wrap {
+          position: absolute;
+          top: 50%;
+          right: clamp(-380px, -16vw, -180px);
+          transform: translateY(-50%);
+          width: clamp(520px, 60vw, 880px);
+          height: clamp(520px, 60vw, 880px);
+          pointer-events: none;
+          z-index: 0;
+        }
+        .earth-img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          opacity: 0.55;
+          cursor: pointer;
+          pointer-events: auto;
+          filter: drop-shadow(0 0 80px rgba(80,150,255,0.18));
+          transition: opacity .25s ease, filter .25s ease;
+        }
+        .earth-img:hover {
+          opacity: 0.75;
+          filter: drop-shadow(0 0 100px rgba(120,180,255,0.32));
+        }
+        .earth-img.spinning {
+          animation: earth-spin 22s linear infinite;
+          opacity: 0.7;
+          filter: drop-shadow(0 0 120px rgba(120,180,255,0.4));
+        }
+        @media (max-width: 768px) {
+          .earth-wrap {
+            top: auto;
+            bottom: -200px;
+            right: -180px;
+            transform: none;
+            width: 480px;
+            height: 480px;
+          }
+          .earth-img { opacity: 0.35; }
+        }
+        .hero-content { position: relative; z-index: 1; }
+      `}</style>
+
+      {/* Earth — click to spin */}
+      <div className="earth-wrap">
+        <img
+          src="/earth.png"
+          alt="Earth from space"
+          className={`earth-img${spinning ? " spinning" : ""}`}
+          onClick={() => setSpinning((v) => !v)}
+          title={spinning ? "Click to stop" : "Click to spin"}
+        />
+      </div>
+
       {/* Glow */}
       <div
         style={{
@@ -25,6 +89,7 @@ export default function Hero() {
         }}
       />
 
+      <div className="hero-content">
       <div className="animate-fade-up-1" style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.8rem", color: "#c8ff00", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "2rem" }}>
         Custom Dashboards · Portals · AI Tools
       </div>
@@ -99,6 +164,7 @@ export default function Hero() {
         <a href="/demo" style={{ color: "#c8ff00", fontSize: "0.95rem", fontWeight: 600, textDecoration: "none", borderBottom: "1px solid rgba(200,255,0,0.4)", paddingBottom: 2 }}>
           See live demos &rarr;
         </a>
+      </div>
       </div>
     </section>
   );
