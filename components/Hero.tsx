@@ -18,42 +18,50 @@ export default function Hero() {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
         }
-        /* Earth sits behind the text, centered on the hero, with a soft
-           radial mask so the PNG's square background dissolves into the
-           page rather than reading as a box. */
-        .earth-bg {
+        /* Outer holds position/centering, inner holds the rotation —
+           a single transform can't do both, so they must be nested. */
+        .earth-anchor {
           position: absolute;
           top: 50%;
           left: 50%;
-          width: min(110vh, 1100px);
-          height: min(110vh, 1100px);
-          transform: translate(-50%, -50%);
+          width: min(95vh, 1000px);
+          height: min(95vh, 1000px);
+          margin-top: calc(min(95vh, 1000px) / -2);
+          margin-left: calc(min(95vh, 1000px) / -2);
+          pointer-events: none;
+          z-index: 0;
+        }
+        .earth-bg {
+          width: 100%;
+          height: 100%;
           background-image: url('/earth.png');
           background-size: contain;
           background-position: center;
           background-repeat: no-repeat;
-          opacity: 0.42;
-          pointer-events: none;
-          z-index: 0;
+          opacity: 0.5;
           animation: earth-spin 80s linear infinite;
           /* Radial mask: solid in the middle (where the planet is),
              feathered transparent at the edges (where the dark PNG
              background would otherwise show its rectangle). */
-          -webkit-mask-image: radial-gradient(circle, black 38%, transparent 62%);
-                  mask-image: radial-gradient(circle, black 38%, transparent 62%);
+          -webkit-mask-image: radial-gradient(circle, black 42%, transparent 70%);
+                  mask-image: radial-gradient(circle, black 42%, transparent 70%);
           will-change: transform;
         }
         @media (max-width: 768px) {
-          .earth-bg {
-            width: 120vh;
-            height: 120vh;
-            opacity: 0.32;
+          .earth-anchor {
+            width: 130vw;
+            height: 130vw;
+            margin-top: -65vw;
+            margin-left: -65vw;
           }
+          .earth-bg { opacity: 0.38; }
         }
         .hero-content { position: relative; z-index: 1; }
       `}</style>
 
-      <div className="earth-bg" aria-hidden="true" />
+      <div className="earth-anchor" aria-hidden="true">
+        <div className="earth-bg" />
+      </div>
 
       {/* Glow */}
       <div
