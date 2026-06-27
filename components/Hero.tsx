@@ -1,10 +1,6 @@
 "use client";
 
-import { useState } from "react";
-
 export default function Hero() {
-  const [spinning, setSpinning] = useState(false);
-
   return (
     <section
       style={{
@@ -22,59 +18,42 @@ export default function Hero() {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
         }
-        .earth-wrap {
+        /* Earth sits behind the text, centered on the hero, with a soft
+           radial mask so the PNG's square background dissolves into the
+           page rather than reading as a box. */
+        .earth-bg {
           position: absolute;
           top: 50%;
-          right: clamp(-380px, -16vw, -180px);
-          transform: translateY(-50%);
-          width: clamp(520px, 60vw, 880px);
-          height: clamp(520px, 60vw, 880px);
+          left: 50%;
+          width: min(110vh, 1100px);
+          height: min(110vh, 1100px);
+          transform: translate(-50%, -50%);
+          background-image: url('/earth.png');
+          background-size: contain;
+          background-position: center;
+          background-repeat: no-repeat;
+          opacity: 0.42;
           pointer-events: none;
           z-index: 0;
-        }
-        .earth-img {
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-          opacity: 0.55;
-          cursor: pointer;
-          pointer-events: auto;
-          filter: drop-shadow(0 0 80px rgba(80,150,255,0.18));
-          transition: opacity .25s ease, filter .25s ease;
-        }
-        .earth-img:hover {
-          opacity: 0.75;
-          filter: drop-shadow(0 0 100px rgba(120,180,255,0.32));
-        }
-        .earth-img.spinning {
-          animation: earth-spin 22s linear infinite;
-          opacity: 0.7;
-          filter: drop-shadow(0 0 120px rgba(120,180,255,0.4));
+          animation: earth-spin 80s linear infinite;
+          /* Radial mask: solid in the middle (where the planet is),
+             feathered transparent at the edges (where the dark PNG
+             background would otherwise show its rectangle). */
+          -webkit-mask-image: radial-gradient(circle, black 38%, transparent 62%);
+                  mask-image: radial-gradient(circle, black 38%, transparent 62%);
+          will-change: transform;
         }
         @media (max-width: 768px) {
-          .earth-wrap {
-            top: auto;
-            bottom: -200px;
-            right: -180px;
-            transform: none;
-            width: 480px;
-            height: 480px;
+          .earth-bg {
+            width: 120vh;
+            height: 120vh;
+            opacity: 0.32;
           }
-          .earth-img { opacity: 0.35; }
         }
         .hero-content { position: relative; z-index: 1; }
       `}</style>
 
-      {/* Earth — click to spin */}
-      <div className="earth-wrap">
-        <img
-          src="/earth.png"
-          alt="Earth from space"
-          className={`earth-img${spinning ? " spinning" : ""}`}
-          onClick={() => setSpinning((v) => !v)}
-          title={spinning ? "Click to stop" : "Click to spin"}
-        />
-      </div>
+      <div className="earth-bg" aria-hidden="true" />
 
       {/* Glow */}
       <div
