@@ -18,16 +18,79 @@ export default function Hero() {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
         }
-        /* Outer holds position/centering, inner holds the rotation —
-           a single transform can't do both, so they must be nested. */
+        @keyframes twinkle {
+          0%, 100% { opacity: 0.2; }
+          50% { opacity: 0.9; }
+        }
+
+        /* Deep-space backdrop: a layered radial gradient that gives a
+           subtle nebula glow + pitch-black corners. Sits beneath the
+           stars and the planet. */
+        .space-bg {
+          position: absolute;
+          inset: 0;
+          background:
+            radial-gradient(ellipse at 70% 40%, rgba(60, 90, 180, 0.10) 0%, transparent 50%),
+            radial-gradient(ellipse at 30% 70%, rgba(120, 60, 180, 0.06) 0%, transparent 55%),
+            #03050b;
+          z-index: 0;
+        }
+
+        /* Stars: a stack of tiny dots scattered via box-shadow. Two
+           sizes for parallax-like depth; the small ones twinkle. */
+        .stars, .stars-sm {
+          position: absolute;
+          width: 1px; height: 1px;
+          background: white;
+          border-radius: 50%;
+          z-index: 0;
+          pointer-events: none;
+        }
+        .stars {
+          top: 0; left: 0;
+          box-shadow:
+            120px 80px white, 230px 140px white, 410px 60px white,
+            560px 220px white, 720px 110px white, 890px 320px white,
+            1100px 80px white, 1240px 200px white, 1360px 420px white,
+            1520px 80px white, 1680px 240px white, 1820px 140px white,
+            2000px 360px white, 80px 380px white, 320px 480px white,
+            540px 620px white, 780px 540px white, 1020px 700px white,
+            1280px 580px white, 1480px 660px white, 1720px 740px white,
+            1940px 520px white, 200px 760px white, 460px 820px white,
+            680px 900px white, 920px 860px white;
+          opacity: 0.85;
+        }
+        .stars-sm {
+          top: 0; left: 0;
+          box-shadow:
+            60px 130px rgba(255,255,255,0.7), 180px 250px rgba(255,255,255,0.7),
+            340px 180px rgba(255,255,255,0.7), 500px 80px rgba(255,255,255,0.7),
+            660px 280px rgba(255,255,255,0.7), 820px 180px rgba(255,255,255,0.7),
+            980px 380px rgba(255,255,255,0.7), 1140px 240px rgba(255,255,255,0.7),
+            1320px 100px rgba(255,255,255,0.7), 1480px 340px rgba(255,255,255,0.7),
+            1640px 200px rgba(255,255,255,0.7), 1800px 420px rgba(255,255,255,0.7),
+            1960px 280px rgba(255,255,255,0.7), 140px 540px rgba(255,255,255,0.7),
+            380px 700px rgba(255,255,255,0.7), 600px 480px rgba(255,255,255,0.7),
+            840px 660px rgba(255,255,255,0.7), 1080px 580px rgba(255,255,255,0.7),
+            1340px 720px rgba(255,255,255,0.7), 1560px 480px rgba(255,255,255,0.7),
+            1780px 620px rgba(255,255,255,0.7), 1980px 700px rgba(255,255,255,0.7),
+            260px 880px rgba(255,255,255,0.7), 540px 820px rgba(255,255,255,0.7),
+            780px 940px rgba(255,255,255,0.7), 1020px 880px rgba(255,255,255,0.7),
+            1260px 940px rgba(255,255,255,0.7);
+          animation: twinkle 4s ease-in-out infinite;
+        }
+
+        /* Earth — shifted off the right edge so it reads as background,
+           not centrepiece. Roughly two-thirds of it sits off-screen on
+           desktop; on mobile it tucks under the text. */
         .earth-anchor {
           position: absolute;
           top: 50%;
-          left: 50%;
-          width: min(95vh, 1000px);
-          height: min(95vh, 1000px);
-          margin-top: calc(min(95vh, 1000px) / -2);
-          margin-left: calc(min(95vh, 1000px) / -2);
+          left: auto;
+          right: calc(min(80vh, 900px) * -0.45);
+          width: min(80vh, 900px);
+          height: min(80vh, 900px);
+          margin-top: calc(min(80vh, 900px) / -2);
           pointer-events: none;
           z-index: 0;
         }
@@ -38,41 +101,48 @@ export default function Hero() {
           background-size: contain;
           background-position: center;
           background-repeat: no-repeat;
-          opacity: 0.5;
+          opacity: 0.7;
           animation: earth-spin 80s linear infinite;
-          /* Radial mask: solid in the middle (where the planet is),
-             feathered transparent at the edges (where the dark PNG
-             background would otherwise show its rectangle). */
-          -webkit-mask-image: radial-gradient(circle, black 42%, transparent 70%);
-                  mask-image: radial-gradient(circle, black 42%, transparent 70%);
+          -webkit-mask-image: radial-gradient(circle, black 44%, transparent 68%);
+                  mask-image: radial-gradient(circle, black 44%, transparent 68%);
           will-change: transform;
+          filter: drop-shadow(0 0 60px rgba(80, 140, 255, 0.18));
         }
         @media (max-width: 768px) {
           .earth-anchor {
-            width: 130vw;
-            height: 130vw;
-            margin-top: -65vw;
-            margin-left: -65vw;
+            top: auto;
+            bottom: -30vw;
+            right: -40vw;
+            width: 110vw;
+            height: 110vw;
+            margin-top: 0;
           }
-          .earth-bg { opacity: 0.38; }
+          .earth-bg { opacity: 0.45; }
         }
         .hero-content { position: relative; z-index: 1; }
       `}</style>
 
+      {/* Space backdrop + stars (behind everything) */}
+      <div className="space-bg" aria-hidden="true" />
+      <div className="stars" aria-hidden="true" />
+      <div className="stars-sm" aria-hidden="true" />
+
+      {/* Earth */}
       <div className="earth-anchor" aria-hidden="true">
         <div className="earth-bg" />
       </div>
 
-      {/* Glow */}
+      {/* Subtle yellow-green brand glow on the left */}
       <div
         style={{
           position: "absolute",
-          top: "-20%",
-          right: "-10%",
-          width: "60vw",
-          height: "60vw",
-          background: "radial-gradient(circle, rgba(200,255,0,0.06) 0%, transparent 70%)",
+          top: "10%",
+          left: "-15%",
+          width: "55vw",
+          height: "55vw",
+          background: "radial-gradient(circle, rgba(200,255,0,0.05) 0%, transparent 65%)",
           pointerEvents: "none",
+          zIndex: 0,
         }}
       />
 
