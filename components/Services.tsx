@@ -51,7 +51,7 @@ const phaseTwo = {
 const utilityAgent = {
   icon: <AgentIcon />,
   title: "Utility Agent",
-  price: "From [set price]/mo",
+  price: "Custom · scoped per use case",
   badge: "Most popular",
   description: "A trained AI agent embedded in your dashboard. Handles day-to-day questions, small fixes, content updates, and routine data work — 24/7. Available on your dashboard, by Telegram, or wherever your team already communicates.",
   bullets: [
@@ -67,7 +67,7 @@ const utilityAgent = {
 const monthlyRetainer = {
   icon: <RetainerIcon />,
   title: "Monthly Retainer",
-  price: "From [set price]/mo · Flexible scope",
+  price: "Custom · scoped per engagement",
   description: "Me, on call. New features, deeper iterations, integrations, performance work, and strategy as your business grows. For clients who want a builder in their corner — not just an agent. Cancel anytime.",
   bullets: [
     "New features and dashboard expansions",

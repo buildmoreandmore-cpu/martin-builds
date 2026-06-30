@@ -47,38 +47,18 @@ export default function Nav() {
         <div className="nav-desktop" style={{ display: "flex", gap: "2.5rem", alignItems: "center" }}>
           <NavLink href="/#services">Services</NavLink>
           <NavLink href="/demo">Demos</NavLink>
-          <NavLink href="/utility">Utility</NavLink>
-          <NavLink href="/utility/ai-audit">AI Audit</NavLink>
-          <NavLink href="/see-you-friday">Friday Letter</NavLink>
+          <NavLink href="/#process">Process</NavLink>
           <NavLink href="/contact">Contact</NavLink>
-          <a
-            href="https://app.martinbuilds.ai"
-            className="fusion-nav-btn"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              background: "rgba(200,255,0,0.05)",
-              color: "#c8ff00",
-              padding: "0.55rem 1.1rem",
-              border: "1px solid rgba(200,255,0,0.3)",
-              borderRadius: "100px",
-              fontWeight: 600,
-              fontSize: "0.78rem",
-              letterSpacing: "1px",
-              textTransform: "uppercase",
-              transition: "all 0.25s",
-              textDecoration: "none",
-              whiteSpace: "nowrap",
-              backdropFilter: "blur(8px)",
-              fontFamily: "'Space Mono', monospace",
-            }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "rgba(200,255,0,0.12)"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "#c8ff00"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 0 24px -4px rgba(200,255,0,0.4)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "rgba(200,255,0,0.05)"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(200,255,0,0.3)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
-          >
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#c8ff00", display: "inline-block", animation: "fusionPulse 2s ease-in-out infinite", boxShadow: "0 0 8px rgba(200,255,0,0.8)" }} />
-            Fusion
-          </a>
+          <NavDropdown
+            label="More"
+            href="#"
+            items={[
+              { href: "/utility", label: "Utility Agents" },
+              { href: "/utility/ai-audit", label: "AI Audit" },
+              { href: "/see-you-friday", label: "Friday Letter" },
+              { href: "https://app.martinbuilds.ai", label: "Fusion ↗" },
+            ]}
+          />
           <a
             href="/discovery-call"
             style={{ background: "#c8ff00", color: "#0a0a0a", padding: "0.6rem 1.5rem", borderRadius: "100px", fontWeight: 700, fontSize: "0.8rem", letterSpacing: "0.5px", textTransform: "uppercase", transition: "transform 0.3s, box-shadow 0.3s", textDecoration: "none", whiteSpace: "nowrap" }}
@@ -127,23 +107,40 @@ export default function Nav() {
         {[
           { href: "/#services", label: "Services" },
           { href: "/demo", label: "Demos" },
-          { href: "/utility", label: "Utility" },
-          { href: "/utility/ai-audit", label: "AI Gap Audit" },
-          { href: "/see-you-friday", label: "Friday Letter" },
+          { href: "/#process", label: "Process" },
           { href: "/contact", label: "Contact" },
-          { href: "https://app.martinbuilds.ai", label: "Fusion" },
         ].map((link) => (
           <a
             key={link.href}
             href={link.href}
             onClick={() => setMenuOpen(false)}
-            style={{ display: "block", padding: "1rem 0", fontSize: "1.05rem", fontWeight: 500, color: "#888", textDecoration: "none", borderBottom: "1px solid rgba(245,245,240,0.06)", transition: "color 0.2s" }}
-            onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#f5f5f0")}
-            onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#888")}
+            style={{ display: "block", padding: "1rem 0", fontSize: "1.05rem", fontWeight: 500, color: "#f5f5f0", textDecoration: "none", borderBottom: "1px solid rgba(245,245,240,0.06)", transition: "color 0.2s" }}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#c8ff00")}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#f5f5f0")}
           >
             {link.label}
           </a>
         ))}
+        <div style={{ padding: "1rem 0 0", marginTop: "0.25rem", borderTop: "1px solid rgba(245,245,240,0.06)" }}>
+          <p style={{ fontSize: "0.7rem", color: "#666", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "0.5rem" }}>More</p>
+          {[
+            { href: "/utility", label: "Utility Agents" },
+            { href: "/utility/ai-audit", label: "AI Audit" },
+            { href: "/see-you-friday", label: "Friday Letter" },
+            { href: "https://app.martinbuilds.ai", label: "Fusion ↗" },
+          ].map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              onClick={() => setMenuOpen(false)}
+              style={{ display: "block", padding: "0.75rem 0", fontSize: "0.95rem", fontWeight: 500, color: "#888", textDecoration: "none", transition: "color 0.2s" }}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#f5f5f0")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#888")}
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
         <a
           href="/discovery-call"
           onClick={() => setMenuOpen(false)}
