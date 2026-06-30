@@ -35,6 +35,9 @@ export default function ObjectionHandler() {
               You&rsquo;re not hiring an agency.<br />
               <span style={{ color: "#c8ff00" }}>You&rsquo;re installing a system.</span>
             </h2>
+            <p style={{ fontSize: "clamp(1rem, 1.7vw, 1.1rem)", color: "#888", maxWidth: "640px", margin: "1.5rem auto 0", lineHeight: 1.65 }}>
+              Most agencies treat custom software like a six-month construction project &mdash; discovery phases, account managers, change orders, retainers. By the time it ships, the problem has changed. Here&rsquo;s the same project, run two different ways.
+            </p>
           </div>
         </ScrollReveal>
 

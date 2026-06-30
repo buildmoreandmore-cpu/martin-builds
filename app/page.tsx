@@ -37,9 +37,10 @@ export default function Home() {
       <Testimonials />
       <AuthorityStack />
       <Services />
-      <Process />
-      {/* Sharp comparison — the most screenshottable section */}
+      {/* Sharp comparison — sits between Services (here's what I sell)
+          and Process (here's what happens after you buy). */}
       <ObjectionHandler />
+      <Process />
       {/* "How I scope it" — the configurable preview anchors the
           how-we-work narrative. */}
       <DashboardPreview />
