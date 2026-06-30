@@ -16,12 +16,9 @@ import Hero from "@/components/Hero";
 import LiveBuilds from "@/components/LiveBuilds";
 import ObjectionHandler from "@/components/ObjectionHandler";
 import Services from "@/components/Services";
-import WhyThisExists from "@/components/WhyThisExists";
-import NamedSystem from "@/components/NamedSystem";
 import AuthorityStack from "@/components/AuthorityStack";
 import DashboardPreview from "@/components/DashboardPreview";
 import Process from "@/components/Process";
-import WhatIBuild from "@/components/WhatIBuild";
 import Founder from "@/components/Founder";
 import Testimonials from "@/components/Testimonials";
 import FAQ from "@/components/FAQ";
@@ -38,17 +35,14 @@ export default function Home() {
       <LiveBuilds />
       {/* Strongest trust signal — named client, named outcome */}
       <Testimonials />
-      <WhyThisExists />
       <AuthorityStack />
       <Services />
       <Process />
       {/* Sharp comparison — the most screenshottable section */}
       <ObjectionHandler />
-      {/* "See how I scope it" — the configurable preview now anchors the
-          how-we-work narrative instead of leading the page. */}
+      {/* "How I scope it" — the configurable preview anchors the
+          how-we-work narrative. */}
       <DashboardPreview />
-      <WhatIBuild />
-      <NamedSystem />
       <Founder />
       <FAQ />
       <CTA />
