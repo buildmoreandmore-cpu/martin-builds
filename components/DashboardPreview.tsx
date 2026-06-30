@@ -91,14 +91,13 @@ export default function DashboardPreview() {
       }}
     >
       <ScrollReveal>
-        <p style={tagStyle}>Your Dashboard</p>
+        <p style={tagStyle}>How I Scope It</p>
         <h2 style={titleStyle}>
-          Pick what matters.
-          <br />
-          <span style={{ color: "#c8ff00" }}>We build it in.</span>
+          Toggle what you want.<br />
+          <span style={{ color: "#c8ff00" }}>That&rsquo;s the scope.</span>
         </h2>
         <p style={subStyle}>
-          Toggle features on and off. This is how we scope your build.
+          Every build starts as a list of features. You pick what&rsquo;s in, I quote the build. No proposal docs, no &ldquo;phase 2&rdquo; surprises.
         </p>
       </ScrollReveal>
 

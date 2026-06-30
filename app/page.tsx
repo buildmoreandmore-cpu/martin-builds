@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   },
 };
 import Hero from "@/components/Hero";
+import LiveBuilds from "@/components/LiveBuilds";
 import ObjectionHandler from "@/components/ObjectionHandler";
 import Services from "@/components/Services";
 import WhyThisExists from "@/components/WhyThisExists";
@@ -33,16 +34,22 @@ export default function Home() {
       <ProfessionalServiceJsonLd />
       <Nav />
       <Hero />
-      <DashboardPreview />
+      {/* PROOF FIRST — real shipped demos right under the hero */}
+      <LiveBuilds />
+      {/* Strongest trust signal — named client, named outcome */}
+      <Testimonials />
       <WhyThisExists />
-      <NamedSystem />
-      <WhatIBuild />
       <AuthorityStack />
       <Services />
-      <Founder />
-      <ObjectionHandler />
       <Process />
-      <Testimonials />
+      {/* Sharp comparison — the most screenshottable section */}
+      <ObjectionHandler />
+      {/* "See how I scope it" — the configurable preview now anchors the
+          how-we-work narrative instead of leading the page. */}
+      <DashboardPreview />
+      <WhatIBuild />
+      <NamedSystem />
+      <Founder />
       <FAQ />
       <CTA />
       <Footer />
