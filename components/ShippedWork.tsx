@@ -29,14 +29,6 @@ const PROJECTS = [
     proof: null,
     href: "https://myheartpathcare.com",
   },
-  {
-    name: "AZURE",
-    what: "Coastal Restaurant & Bar",
-    accent: "#2E7A86",
-    body: "A bespoke, art-directed marketing site for a modern coastal restaurant in College Park, GA — built from the owner's real interior photography, not a template.",
-    proof: null,
-    href: "https://azure-college-park.vercel.app",
-  },
 ];
 
 export default function ShippedWork() {
