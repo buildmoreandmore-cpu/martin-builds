@@ -161,8 +161,8 @@ export default function Hero() {
           maxWidth: "920px",
         }}
       >
-        The custom platform agencies quote at $30K.{" "}
-        <span style={{ color: "#c8ff00", position: "relative", display: "inline-block" }}>
+        Your platform.{" "}
+        <span style={{ color: "#c8ff00", position: "relative", display: "inline-block", whiteSpace: "nowrap" }}>
           Built in 14 days.
           <span
             style={{
@@ -177,7 +177,8 @@ export default function Hero() {
               display: "block",
             }}
           />
-        </span>
+        </span>{" "}
+        Yours forever.
       </h1>
 
       <p
@@ -191,7 +192,7 @@ export default function Hero() {
           lineHeight: 1.5,
         }}
       >
-        One operator. Fixed price. You own the code. No retainers, no account managers, no offshore handoffs.
+        Custom dashboards, portals, and AI tools &mdash; designed, built, and shipped by the same person who answers your texts.
       </p>
 
       <p
@@ -205,7 +206,7 @@ export default function Hero() {
           lineHeight: 1.7,
         }}
       >
-        Custom dashboards, portals, and AI tools &mdash; designed, built, and shipped by the same person who answers your texts. Most builds ship in 14 days.
+        One operator. Fixed price. You own the code. No retainers, no account managers, no offshore handoffs.
       </p>
 
       <div
