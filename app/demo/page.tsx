@@ -105,6 +105,14 @@ const demos = [
     href: "/demo/food-truck",
     accent: "#c0421f",
   },
+  {
+    title: "Ads Engine Command Center",
+    vertical: "Managed Paid Ads",
+    description:
+      "Owner-facing control center for managed Meta + Google ads — plain-English campaign performance, budget guardrails, creative approvals, and a full lead pipeline. Agencies hide the ad account; this hands over the keys.",
+    href: "/demo/ads-engine",
+    accent: "#16a34a",
+  },
 ];
 
 export default function DemoIndex() {
