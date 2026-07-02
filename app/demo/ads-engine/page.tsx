@@ -110,6 +110,7 @@ type Tab = "overview" | "campaigns" | "creative" | "leads" | "reports";
 
 export default function AdsEngineDemo() {
   const [tab, setTab] = useState<Tab>("overview");
+  const [showVideo, setShowVideo] = useState(false);
   const [campaigns, setCampaigns] = useState(CAMPAIGNS);
   const [creatives, setCreatives] = useState(CREATIVES);
   const [leads, setLeads] = useState(LEADS);
@@ -179,9 +180,20 @@ export default function AdsEngineDemo() {
           </div>
           <span style={{ fontSize: 10, fontWeight: 700, background: "rgba(22,163,74,0.2)", color: "#7ee2a0", padding: "3px 9px", borderRadius: 100, textTransform: "uppercase", letterSpacing: 0.5 }}>Demo</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 12, opacity: 0.75 }}>
-          <span>Owner: {BUSINESS.owner}</span>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 12, opacity: 0.85 }}>
+          <button
+            onClick={() => setShowVideo(true)}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(200,255,0,0.12)",
+              border: "1px solid rgba(200,255,0,0.35)", color: green, borderRadius: 100, padding: "6px 12px",
+              fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: fontBody,
+            }}
+          >
+            <svg width="10" height="10" viewBox="0 0 24 24" fill={green}><polygon points="6 3 20 12 6 21" /></svg>
+            Watch 30s overview
+          </button>
+          <span style={{ opacity: 0.75 }}>Owner: {BUSINESS.owner}</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 5, opacity: 0.75 }}>
             <span style={{ width: 6, height: 6, borderRadius: 9999, background: green, display: "inline-block" }} />
             Synced 40 min ago
           </span>
@@ -239,6 +251,24 @@ export default function AdsEngineDemo() {
       {toast && (
         <div style={{ position: "fixed", bottom: 20, left: "50%", transform: "translateX(-50%)", background: ink, color: "#fff", padding: "10px 18px", borderRadius: 9999, fontSize: 13, fontWeight: 500, boxShadow: "0 8px 24px rgba(0,0,0,0.2)", zIndex: 50, animation: "rise .2s ease both" }}>
           {toast}
+        </div>
+      )}
+
+      {showVideo && (
+        <div
+          onClick={() => setShowVideo(false)}
+          style={{ position: "fixed", inset: 0, background: "rgba(10,10,10,0.85)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}
+        >
+          <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", width: "min(90vw, 480px)" }}>
+            <video src="/ads-engine-promo.mp4" controls autoPlay playsInline style={{ width: "100%", borderRadius: 16, display: "block", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }} />
+            <button
+              onClick={() => setShowVideo(false)}
+              aria-label="Close video"
+              style={{ position: "absolute", top: -14, right: -14, width: 32, height: 32, borderRadius: "50%", background: "#fff", border: "none", cursor: "pointer", fontSize: 16, fontWeight: 700, color: ink, boxShadow: "0 4px 12px rgba(0,0,0,0.3)" }}
+            >
+              ×
+            </button>
+          </div>
         </div>
       )}
     </div>
