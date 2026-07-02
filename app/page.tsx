@@ -13,7 +13,8 @@ export const metadata: Metadata = {
   },
 };
 import Hero from "@/components/Hero";
-import LiveBuilds from "@/components/LiveBuilds";
+import ShippedWork from "@/components/ShippedWork";
+import IndustryConcepts from "@/components/IndustryConcepts";
 import ObjectionHandler from "@/components/ObjectionHandler";
 import Services from "@/components/Services";
 import AuthorityStack from "@/components/AuthorityStack";
@@ -31,10 +32,14 @@ export default function Home() {
       <ProfessionalServiceJsonLd />
       <Nav />
       <Hero />
-      {/* PROOF FIRST — real shipped demos right under the hero */}
-      <LiveBuilds />
+      {/* PROOF FIRST — real, verified client platforms with live links.
+          This must lead; it's the only section making a "shipped" claim. */}
+      <ShippedWork />
       {/* Strongest trust signal — named client, named outcome */}
       <Testimonials />
+      {/* Concept demos — explicitly framed as design concepts, not client
+          work, so this never contradicts ShippedWork's claim above it. */}
+      <IndustryConcepts />
       <AuthorityStack />
       <Services />
       {/* Sharp comparison — sits between Services (here's what I sell)

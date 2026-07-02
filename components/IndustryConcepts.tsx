@@ -2,16 +2,15 @@
 
 import ScrollReveal from "./ScrollReveal";
 
-// Six representative demos. Each thumbnail iframes the real, live page —
-// not a screenshot — so a prospect can see actual shipped work the moment
-// the hero ends.
+// Four industry concepts, trimmed to the verticals closest to the core
+// client base (legacy service businesses). These are interactive DESIGN
+// CONCEPTS, not client projects — see ShippedWork.tsx (real, delivered
+// platforms with a live link). Full set of concepts lives on /demo.
 const DEMOS = [
   { href: "/demo/staffing",     title: "Coverage Command",      vertical: "Staffing" },
   { href: "/demo/hvac",         title: "HVAC Command Center",   vertical: "HVAC" },
   { href: "/demo/restaurant",   title: "Restaurant Owner",      vertical: "Restaurant" },
   { href: "/demo/realestate",   title: "Investor Command",      vertical: "Real Estate" },
-  { href: "/demo/pi-firm",      title: "PI Case Platform",      vertical: "Law" },
-  { href: "/demo/ecommerce",    title: "Ecommerce Profit",      vertical: "DTC" },
 ];
 
 const PREVIEW_W = 1280;
@@ -20,7 +19,7 @@ const SCALE = 0.32;
 const CARD_W = Math.round(PREVIEW_W * SCALE); // ~410
 const CARD_H = Math.round(PREVIEW_H * SCALE); // ~256
 
-export default function LiveBuilds() {
+export default function IndustryConcepts() {
   return (
     <section style={{ padding: "clamp(3.5rem,6vw,5.5rem) 0 clamp(4rem,7vw,6rem)", background: "#0a0a0a", position: "relative" }}>
       {/* Heading */}
@@ -30,14 +29,17 @@ export default function LiveBuilds() {
             <div>
               <p style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.7rem", color: "#c8ff00", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "0.75rem" }}>
                 <span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: "#c8ff00", marginRight: "0.6rem", animation: "live-dot 1.6s ease-in-out infinite" }} />
-                Live · Click any tile
+                Interactive · Click any tile
               </p>
               <h2 style={{ fontSize: "clamp(1.75rem, 3.6vw, 2.6rem)", fontWeight: 800, letterSpacing: "-1.5px", lineHeight: 1.1, margin: 0 }}>
-                Real dashboards. Real shipped work.
+                See what it could look like for your industry.
               </h2>
+              <p style={{ fontSize: "0.85rem", color: "#888", marginTop: "0.6rem", maxWidth: 520 }}>
+                Design concepts, not client work — real delivered platforms are above. These show what a custom build looks like for businesses like yours.
+              </p>
             </div>
             <a href="/demo" style={{ color: "#c8ff00", fontSize: "0.9rem", fontWeight: 600, textDecoration: "none", borderBottom: "1px solid rgba(200,255,0,0.4)", paddingBottom: 2, whiteSpace: "nowrap" }}>
-              See all demos &rarr;
+              See all concepts &rarr;
             </a>
           </div>
         </ScrollReveal>
