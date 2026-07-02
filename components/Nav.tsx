@@ -53,6 +53,8 @@ export default function Nav() {
             label="More"
             href="#"
             items={[
+              { href: "/team", label: "Build Your Team" },
+              { href: "/ads-engine", label: "Ads Engine" },
               { href: "/utility", label: "Utility Agents" },
               { href: "/utility/ai-audit", label: "AI Audit" },
               { href: "/see-you-friday", label: "Friday Letter" },
@@ -124,6 +126,8 @@ export default function Nav() {
         <div style={{ padding: "1rem 0 0", marginTop: "0.25rem", borderTop: "1px solid rgba(245,245,240,0.06)" }}>
           <p style={{ fontSize: "0.7rem", color: "#666", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "0.5rem" }}>More</p>
           {[
+            { href: "/team", label: "Build Your Team" },
+            { href: "/ads-engine", label: "Ads Engine" },
             { href: "/utility", label: "Utility Agents" },
             { href: "/utility/ai-audit", label: "AI Audit" },
             { href: "/see-you-friday", label: "Friday Letter" },

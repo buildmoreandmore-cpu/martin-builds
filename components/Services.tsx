@@ -33,6 +33,21 @@ const RetainerIcon = () => (
   </svg>
 );
 
+const AdsIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+  </svg>
+);
+
+const TeamIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+  </svg>
+);
+
 // Phase 1 + 2 — unchanged
 const phaseOne = {
   icon: <SprintIcon />,
@@ -108,6 +123,37 @@ export default function Services() {
         </ScrollReveal>
         <ScrollReveal>
           <ServiceCard {...phaseTwo} />
+        </ScrollReveal>
+      </div>
+
+      {/* Additional engines — Ads + Team */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
+          gap: "2rem",
+          marginTop: "2rem",
+        }}
+      >
+        <ScrollReveal>
+          <a href="/ads-engine" style={{ textDecoration: "none", color: "inherit", display: "block", height: "100%" }}>
+            <ServiceCard
+              icon={<AdsIcon />}
+              title="Ads Engine"
+              description="Managed Meta + Google ads with an owner-facing command center. You see every dollar, every lead, every change — and you own the ad account."
+              tags="Managed Ads · Owner Dashboard · No Hidden Fees"
+            />
+          </a>
+        </ScrollReveal>
+        <ScrollReveal>
+          <a href="/team" style={{ textDecoration: "none", color: "inherit", display: "block", height: "100%" }}>
+            <ServiceCard
+              icon={<TeamIcon />}
+              title="Build Your Team"
+              description="A productized hiring system — job pages, candidate ads, screening, pipeline dashboard. Your people, your payroll, our system. No placement fees, no markups."
+              tags="Hiring Engine · Team Launch · Sourced Introductions"
+            />
+          </a>
         </ScrollReveal>
       </div>
 
